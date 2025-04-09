@@ -1,0 +1,77 @@
+
+import { SubscribeForm } from "@/components/SubscribeForm";
+
+export function Hero() {
+  return (
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40 z-0"></div>
+      
+      {/* Background image */}
+      <div 
+        className="absolute inset-0 z-[-1] bg-cover bg-center"
+        style={{ 
+          backgroundImage: "url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')" 
+        }}
+      ></div>
+      
+      {/* Floating tickets animation - decorative elements */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute animate-float opacity-70"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              transform: `rotate(${Math.random() * 360}deg)`,
+            }}
+          >
+            <div className="w-12 h-16 md:w-16 md:h-20 bg-white/80 rounded-lg shadow-lg"></div>
+          </div>
+        ))}
+      </div>
+      
+      {/* Hero content */}
+      <div className="container mx-auto px-4 z-10 text-center py-20">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 animate-fade-in-up">
+            Pārdodiet un pērciet biļetes <span className="text-gradient">droši un vienkārši</span>
+          </h1>
+          
+          <div className="animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+            <p className="text-xl md:text-2xl text-white/90 mb-4">
+              Pirmā C2C platforma biļešu apmaiņai Latvijā
+            </p>
+          </div>
+          
+          <div className="bg-orange-500 text-white text-lg md:text-xl font-semibold py-2 px-6 rounded-full inline-block mb-8 animate-pulse-slow animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+            Drīzumā
+          </div>
+          
+          <div className="flex flex-col items-center space-y-6 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+            <p className="text-white text-lg">
+              Piesakieties, lai uzzinātu par platformas palaišanu
+            </p>
+            <div className="w-full max-w-md mx-auto">
+              <SubscribeForm />
+            </div>
+          </div>
+          
+          <div className="pt-12 animate-fade-in-up" style={{ animationDelay: "0.5s" }}>
+            <a 
+              href="#how-it-works" 
+              className="inline-flex items-center text-white hover:text-orange-300 transition-colors"
+            >
+              <span className="mr-2">Uzzināt vairāk</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-bounce">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
