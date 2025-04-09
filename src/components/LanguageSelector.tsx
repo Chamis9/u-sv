@@ -68,7 +68,7 @@ const translationsData: Record<string, Translations> = {
         },
         {
           title: "Sazinies ar pircēju",
-          description: "Izmantojiet platformas drošās saziņas iespējas"
+          description: "Izmantojiet platformas saziņas iespējas"
         },
         {
           title: "Droša apmaiņa",
@@ -107,7 +107,7 @@ const translationsData: Record<string, Translations> = {
         },
         {
           title: "Connect with buyers",
-          description: "Use the platform's secure communication features"
+          description: "Use the platform's communication features"
         },
         {
           title: "Secure exchange",
@@ -146,7 +146,7 @@ const translationsData: Record<string, Translations> = {
         },
         {
           title: "Свяжитесь с покупателем",
-          description: "Используйте безопасные возможности связи платформы"
+          description: "Используйте возможности общения платформы"
         },
         {
           title: "Безопасный обмен",
