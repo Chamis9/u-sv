@@ -53,7 +53,7 @@ const translationsData: Record<string, Translations> = {
       titleHighlight: "vienkārši un droši",
       subtitle: "Pirmā C2C* platforma biļešu apmaiņai Latvijā",
       comingSoon: "Drīzumā",
-      subscribeText: "Piesakieties, lai uzzinātu par platformas palaišanu",
+      subscribeText: "Piesakieties, lai uzzinātu par platformas atklāšanu",
       learnMoreBtn: "Uzzināt vairāk",
       c2cExplanation: "* C2C (Consumer-to-Consumer) ir tirdzniecības modelis, kur privātpersonas pārdod preces vai pakalpojumus citām privātpersonām."
     },
