@@ -1,4 +1,3 @@
-
 import { useState, useContext, createContext, ReactNode } from "react";
 import { 
   DropdownMenu,
@@ -83,7 +82,7 @@ const translationsData: Record<string, Translations> = {
     footer: {
       allRightsReserved: "Visas tiesības aizsargātas.",
       madeWith: "Veidots ar",
-      c2cExplanation: "* C2C (Consumer-to-Consumer) - tirdzniecības modelis, kurā patērētāji pārdod produktus vai pakalpojumus citiem patērētājiem, izmantojot tiešsaistes platformu."
+      c2cExplanation: "* C2C (Consumer-to-Consumer) ir tirdzniecības modelis, kur privātpersonas pārdod preces vai pakalpojumus citām privātpersonām."
     }
   },
   en: {
@@ -121,7 +120,7 @@ const translationsData: Record<string, Translations> = {
     footer: {
       allRightsReserved: "All rights reserved.",
       madeWith: "Made with",
-      c2cExplanation: "* C2C (Consumer-to-Consumer) - a trading model where consumers sell products or services to other consumers using an online platform."
+      c2cExplanation: "* C2C (Consumer-to-Consumer) is a trading model where individuals sell products or services to other individuals."
     }
   },
   ru: {
@@ -211,19 +210,18 @@ export function LanguageSelector() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button 
-            variant="ghost" 
-            className="text-xl p-2 h-auto"
-            aria-label="Select language"
+            variant="outline" 
+            className="rounded-full bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20"
           >
-            {currentLanguage.flag}
+            {currentLanguage.flag} <span className="ml-1">{currentLanguage.name}</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" className="bg-white/90 backdrop-blur-sm border-white/20">
           {languages.map((language) => (
             <DropdownMenuItem
               key={language.code}
               onClick={() => setLanguage(language)}
-              className="cursor-pointer"
+              className="cursor-pointer hover:bg-orange-100"
             >
               <span className="mr-2">{language.flag}</span>
               {language.name}
