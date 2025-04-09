@@ -81,7 +81,7 @@ const translationsData: Record<string, Translations> = {
     },
     footer: {
       allRightsReserved: "Visas tiesības aizsargātas.",
-      madeWith: "Veidots ar (heart icon) Latvijā",
+      madeWith: "Veidots ar Latvijā",
       c2cExplanation: "",
     }
   },
@@ -119,7 +119,7 @@ const translationsData: Record<string, Translations> = {
     },
     footer: {
       allRightsReserved: "All rights reserved.",
-      madeWith: "Made with (heart icon) in Latvia",
+      madeWith: "Made with in Latvia",
       c2cExplanation: "",
     }
   },
@@ -157,7 +157,7 @@ const translationsData: Record<string, Translations> = {
     },
     footer: {
       allRightsReserved: "Все права защищены.",
-      madeWith: "Создано с (heart icon) Латвии",
+      madeWith: "Создано с Латвии",
       c2cExplanation: "",
     }
   }
