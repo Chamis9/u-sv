@@ -163,7 +163,6 @@ const translationsData: Record<string, Translations> = {
   }
 };
 
-// Create the language context
 interface LanguageContextType {
   currentLanguage: Language;
   setLanguage: (language: Language) => void;
@@ -176,7 +175,6 @@ const LanguageContext = createContext<LanguageContextType>({
   translations: translationsData.lv,
 });
 
-// Create the provider component
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [currentLanguage, setCurrentLanguage] = useState(languages[0]);
 
@@ -197,7 +195,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// Hook to use the language context
 export function useLanguage() {
   return useContext(LanguageContext);
 }

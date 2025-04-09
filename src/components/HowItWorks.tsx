@@ -27,7 +27,7 @@ export function HowItWorks() {
           {howItWorks.steps.map((step, index) => (
             <div 
               key={index} 
-              className="flex flex-col items-center p-6 border border-gray-200 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow"
+              className="flex flex-col items-center text-center p-6 border border-gray-200 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="mb-4 p-3 bg-orange-100 rounded-full">
                 {icons[index]}
