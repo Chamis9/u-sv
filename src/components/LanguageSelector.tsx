@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext, createContext } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -17,9 +17,34 @@ const languages: Language[] = [
   { code: "lt", name: "Lietuvių", flag: "🇱🇹" },
 ];
 
+// Create a context for language state
+export const LanguageContext = createContext<{
+  currentLanguage: Language;
+  setLanguage: (language: Language) => void;
+}>({
+  currentLanguage: languages[0],
+  setLanguage: () => {},
+});
+
+// Provider component
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  const [currentLanguage, setCurrentLanguage] = useState(languages[0]);
+
+  const setLanguage = (language: Language) => {
+    setCurrentLanguage(language);
+    console.log(`Language changed to ${language.name}`);
+  };
+
+  return (
+    <LanguageContext.Provider value={{ currentLanguage, setLanguage }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+}
+
 export function LanguageSelector() {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState(languages[0]);
+  const { currentLanguage, setLanguage } = useContext(LanguageContext);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -37,10 +62,8 @@ export function LanguageSelector() {
   }, []);
 
   const handleLanguageChange = (language: Language) => {
-    setCurrentLanguage(language);
+    setLanguage(language);
     setIsOpen(false);
-    // Here we would normally change the language in the app
-    console.log(`Language changed to ${language.name}`);
   };
 
   return (
