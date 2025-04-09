@@ -125,7 +125,7 @@ const translationsData: Record<string, Translations> = {
   },
   ru: {
     hero: {
-      title: "П��одавайте и покупайте билеты",
+      title: "Продавайте и покупайте билеты",
       titleHighlight: "просто и безопасно",
       subtitle: "Первая C2C* платформа для обмена билетами в Латвии",
       comingSoon: "Скоро",
