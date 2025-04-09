@@ -41,6 +41,7 @@ export type Translations = {
   footer: {
     allRightsReserved: string;
     madeWith: string;
+    location: string;
     c2cExplanation: string;
   };
 };
@@ -81,7 +82,8 @@ const translationsData: Record<string, Translations> = {
     },
     footer: {
       allRightsReserved: "Visas tiesības aizsargātas.",
-      madeWith: "Veidots ar Latvijā",
+      madeWith: "Veidots ar",
+      location: "Latvijā",
       c2cExplanation: "",
     }
   },
@@ -119,7 +121,8 @@ const translationsData: Record<string, Translations> = {
     },
     footer: {
       allRightsReserved: "All rights reserved.",
-      madeWith: "Made with in Latvia",
+      madeWith: "Made with",
+      location: "in Latvia",
       c2cExplanation: "",
     }
   },
@@ -157,7 +160,8 @@ const translationsData: Record<string, Translations> = {
     },
     footer: {
       allRightsReserved: "Все права защищены.",
-      madeWith: "Создано с Латвии",
+      madeWith: "Создано с",
+      location: "Латвии",
       c2cExplanation: "",
     }
   }
