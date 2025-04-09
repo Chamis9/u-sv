@@ -81,7 +81,7 @@ const translationsData: Record<string, Translations> = {
     },
     footer: {
       allRightsReserved: "Visas tiesības aizsargātas.",
-      madeWith: "Veidots ar",
+      madeWith: "Veidots ar Latvijā",
       c2cExplanation: "",
     }
   },
