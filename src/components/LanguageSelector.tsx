@@ -82,7 +82,7 @@ const translationsData: Record<string, Translations> = {
     footer: {
       allRightsReserved: "Visas tiesības aizsargātas.",
       madeWith: "Veidots ar",
-      c2cExplanation: "* C2C (Consumer-to-Consumer) ir tirdzniecības modelis, kur privātpersonas pārdod preces vai pakalpojumus citām privātpersonām."
+      c2cExplanation: "",
     }
   },
   en: {
@@ -120,7 +120,7 @@ const translationsData: Record<string, Translations> = {
     footer: {
       allRightsReserved: "All rights reserved.",
       madeWith: "Made with",
-      c2cExplanation: "* C2C (Consumer-to-Consumer) is a trading model where individuals sell products or services to other individuals."
+      c2cExplanation: "",
     }
   },
   ru: {
@@ -158,7 +158,7 @@ const translationsData: Record<string, Translations> = {
     footer: {
       allRightsReserved: "Все права защищены.",
       madeWith: "Сделано с",
-      c2cExplanation: "* C2C (Consumer-to-Consumer) — это модель торговли, при которой потребители продают товары или услуги другим потребителям, используя онлайн-платформу."
+      c2cExplanation: "",
     }
   }
 };
