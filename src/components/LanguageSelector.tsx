@@ -1,4 +1,3 @@
-
 import { useState, useContext, createContext, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -48,14 +47,13 @@ export function LanguageSelector() {
   const { currentLanguage } = useLanguage();
 
   return (
-    <div className="relative language-selector">
+    <div className="language-selector">
       <Button
         variant="outline"
-        size="icon"
-        className="rounded-full w-10 h-10 flex items-center justify-center bg-white/20 backdrop-blur-sm border-white/10 hover:bg-white/30"
+        className="rounded text-xl bg-transparent border-none hover:bg-transparent"
         aria-label="Select language"
       >
-        <span className="text-xl">{currentLanguage.flag}</span>
+        {currentLanguage.flag}
       </Button>
     </div>
   );
