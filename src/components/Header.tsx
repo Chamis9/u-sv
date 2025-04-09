@@ -1,5 +1,4 @@
 
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { LanguageSelector } from "@/components/LanguageSelector";
 
 export function Header() {
@@ -8,11 +7,10 @@ export function Header() {
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <h1 className="text-2xl font-bold text-white">
-            <span className="text-orange-500">Ticket</span>Swap
+            <span className="text-orange-500">netieku</span>.es
           </h1>
         </div>
         <div className="flex items-center space-x-2">
-          <ThemeToggle />
           <LanguageSelector />
         </div>
       </div>
