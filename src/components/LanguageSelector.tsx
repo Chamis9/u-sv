@@ -25,10 +25,10 @@ export type Translations = {
     title: string;
     titleHighlight: string;
     subtitle: string;
+    c2cExplanation: string;
     comingSoon: string;
     subscribeText: string;
     learnMoreBtn: string;
-    c2cExplanation: string;
   };
   howItWorks: {
     title: string;
@@ -52,10 +52,10 @@ const translationsData: Record<string, Translations> = {
       title: "Pārdodiet un pērciet biļetes",
       titleHighlight: "vienkārši un droši",
       subtitle: "Pirmā C2C* platforma biļešu apmaiņai Latvijā",
+      c2cExplanation: "* C2C (Consumer-to-Consumer) ir tirdzniecības modelis, kur privātpersonas pārdod preces vai pakalpojumus citām privātpersonām.",
       comingSoon: "Drīzumā",
       subscribeText: "Piesakieties, lai uzzinātu par platformas atklāšanu",
       learnMoreBtn: "Uzzināt vairāk",
-      c2cExplanation: "* C2C (Consumer-to-Consumer) ir tirdzniecības modelis, kur privātpersonas pārdod preces vai pakalpojumus citām privātpersonām."
     },
     howItWorks: {
       title: "Kā tas strādā",
@@ -90,10 +90,10 @@ const translationsData: Record<string, Translations> = {
       title: "Buy and sell tickets",
       titleHighlight: "simply and securely",
       subtitle: "The first C2C* platform for ticket exchange in Latvia",
+      c2cExplanation: "* C2C (Consumer-to-Consumer) is a trading model where individuals sell products or services to other individuals.",
       comingSoon: "Coming soon",
       subscribeText: "Subscribe to learn about platform launch",
       learnMoreBtn: "Learn more",
-      c2cExplanation: "* C2C (Consumer-to-Consumer) is a trading model where individuals sell products or services to other individuals."
     },
     howItWorks: {
       title: "How it works",
@@ -128,10 +128,10 @@ const translationsData: Record<string, Translations> = {
       title: "Продавайте и покупайте билеты",
       titleHighlight: "просто и безопасно",
       subtitle: "Первая C2C* платформа для обмена билетами в Латвии",
+      c2cExplanation: "* C2C (Consumer-to-Consumer) — это модель торговли, при которой частные лица продают товары или услуги другим частным лицам.",
       comingSoon: "Скоро",
       subscribeText: "Подпишитесь, чтобы узнать о запуске платформы",
       learnMoreBtn: "Узнать больше",
-      c2cExplanation: "* C2C (Consumer-to-Consumer) — это модель торговли, при которой частные лица продают товары или услуги другим частным лицам."
     },
     howItWorks: {
       title: "Как это работает",
