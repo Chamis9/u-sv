@@ -19,7 +19,7 @@ export function Hero() {
       <div className="container mx-auto px-4 z-10 text-center py-20">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            Pārdodiet un pērciet biļetes <span className="text-gradient">droši un vienkārši</span>
+            Pārdodiet un pērciet biļetes <span className="text-gradient">vienkārši un droši</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-white/90 mb-4">
@@ -49,6 +49,10 @@ export function Hero() {
                 <path d="M12 5v14M5 12l7 7 7-7"/>
               </svg>
             </a>
+          </div>
+          
+          <div className="mt-4 text-white/70 text-sm">
+            * C2C (Consumer-to-Consumer) ir tirdzniecības modelis, kur privātpersonas pārdod preces vai pakalpojumus citām privātpersonām.
           </div>
         </div>
       </div>
