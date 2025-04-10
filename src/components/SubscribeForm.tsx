@@ -5,13 +5,6 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/components/LanguageSelector";
 import { supabase } from "@/integrations/supabase/client";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
 
 // Global storage key for all previously used emails across the app
 const GLOBAL_EMAILS_STORAGE_KEY = 'globalPreviousEmails';
@@ -135,7 +128,10 @@ export function SubscribeForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+    <form 
+      onSubmit={handleSubmit} 
+      className="flex flex-col sm:flex-row gap-3 w-full max-w-md bg-transparent p-0"
+    >
       <div className="relative flex-grow">
         <Input
           type="email"
@@ -144,16 +140,16 @@ export function SubscribeForm() {
           onChange={handleEmailChange}
           onFocus={() => previousEmails.length > 0 && setShowDropdown(true)}
           required
-          className="flex-grow h-12 text-base" // Increased height and text size
+          className="flex-grow h-12 text-base font-playfair placeholder-orange-500/70 bg-white border-orange-300/50" 
         />
         
         {showDropdown && previousEmails.length > 0 && (
-          <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-gray-200">
-            <div className="py-1 text-sm text-gray-700">
+          <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-orange-200/50">
+            <div className="py-1 text-sm text-orange-700 font-playfair">
               {previousEmails.map((prevEmail, index) => (
                 <div 
                   key={index} 
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  className="px-4 py-2 hover:bg-orange-100/50 cursor-pointer"
                   onClick={() => handleEmailSelect(prevEmail)}
                 >
                   {prevEmail}
@@ -167,7 +163,7 @@ export function SubscribeForm() {
       <Button 
         type="submit" 
         disabled={isLoading} 
-        className="bg-orange-500 hover:bg-orange-600 text-white h-12 text-lg px-6 font-semibold" // Increased height, text size and font weight
+        className="bg-orange-500 hover:bg-orange-600 text-white h-12 text-lg px-6 font-semibold font-playfair" 
       >
         {isLoading ? texts.sending : texts.button}
       </Button>
