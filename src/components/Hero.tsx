@@ -2,13 +2,33 @@
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/components/LanguageSelector";
 import { FallingTickets } from "@/components/FallingTickets";
+import { Helmet } from "react-helmet-async";
 
 export function Hero() {
   const { translations } = useLanguage();
   const { hero } = translations;
 
+  // Generate structured data for the event
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "netieku.es - biļešu apmaiņas platforma",
+    "description": "Pirmā Latvijas C2C biļešu apmaiņas platforma",
+    "offers": {
+      "@type": "Offer",
+      "availability": "https://schema.org/ComingSoon"
+    }
+  };
+
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Structured data */}
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+      </Helmet>
+      
       {/* Background overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40 z-0"></div>
       
@@ -21,6 +41,7 @@ export function Hero() {
         style={{ 
           backgroundImage: "url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80')" 
         }}
+        aria-hidden="true"
       ></div>
       
       {/* Hero content */}
@@ -51,9 +72,10 @@ export function Hero() {
             <a 
               href="#how-it-works" 
               className="inline-flex items-center text-white hover:text-orange-300 transition-colors"
+              aria-label="Learn more about how it works"
             >
               <span className="mr-2">{hero.learnMoreBtn}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M12 5v14M5 12l7 7 7-7"/>
               </svg>
             </a>
@@ -64,6 +86,6 @@ export function Hero() {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
