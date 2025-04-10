@@ -83,3 +83,16 @@
     @apply bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent;
   }
 }
+
+@keyframes fall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+
+.animate-fall {
+  animation: fall 15s linear infinite;
+}

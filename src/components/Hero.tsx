@@ -1,6 +1,7 @@
 
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/components/LanguageSelector";
+import { FallingTickets } from "@/components/FallingTickets";
 
 export function Hero() {
   const { translations } = useLanguage();
@@ -10,6 +11,9 @@ export function Hero() {
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40 z-0"></div>
+      
+      {/* Falling tickets animation */}
+      <FallingTickets />
       
       {/* Background image */}
       <div 
