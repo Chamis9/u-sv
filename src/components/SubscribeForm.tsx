@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/components/LanguageSelector";
+import { supabase } from "@/integrations/supabase/client";
 
 export function SubscribeForm() {
   const [email, setEmail] = useState("");
@@ -18,39 +19,62 @@ export function SubscribeForm() {
       button: "Pieteikties",
       sending: "Sūta...",
       successTitle: "Paldies par pieteikšanos!",
-      successMessage: "Mēs jūs informēsim par visiem jaunumiem."
+      successMessage: "Mēs jūs informēsim par visiem jaunumiem.",
+      errorTitle: "Kļūda!",
+      errorMessage: "Neizdevās saglabāt e-pasta adresi. Lūdzu, mēģiniet vēlreiz."
     },
     en: {
       placeholder: "Email address",
       button: "Subscribe",
       sending: "Sending...",
       successTitle: "Thank you for subscribing!",
-      successMessage: "We will keep you updated with all the news."
+      successMessage: "We will keep you updated with all the news.",
+      errorTitle: "Error!",
+      errorMessage: "Failed to save email address. Please try again."
     },
     ru: {
       placeholder: "Электронная почта",
       button: "Подписаться",
       sending: "Отправка...",
       successTitle: "Спасибо за подписку!",
-      successMessage: "Мы будем держать вас в курсе всех новостей."
+      successMessage: "Мы будем держать вас в курсе всех новостей.",
+      errorTitle: "Ошибка!",
+      errorMessage: "Не удалось сохранить адрес электронной почты. Пожалуйста, попробуйте еще раз."
     }
   };
 
   const texts = subscribeTexts[currentLanguage.code];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      // Save email to Supabase
+      const { error } = await supabase
+        .from('newsletter_subscribers')
+        .insert([{ email }]);
+      
+      if (error) {
+        console.error("Error saving email:", error);
+        throw error;
+      }
+      
       setEmail("");
       toast({
         title: texts.successTitle,
         description: texts.successMessage,
       });
-    }, 1000);
+    } catch (error) {
+      console.error("Failed to subscribe:", error);
+      toast({
+        title: texts.errorTitle,
+        description: texts.errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
