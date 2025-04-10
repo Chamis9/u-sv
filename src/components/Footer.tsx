@@ -19,11 +19,11 @@ export function Footer() {
             <span className="flex items-center">
               {footer.madeWith} 
               <div className="relative mx-1">
-                {/* Latvian flag colors: red-white-red */}
+                {/* Latvian flag colors with orange heart */}
                 <Heart 
                   className="h-4 w-4" 
                   strokeWidth={0}
-                  fill="#9E3039" 
+                  fill="#F97316" // Bright orange from tailwind color palette
                 />
                 <div className="absolute top-1/3 bottom-1/3 left-1/4 right-1/4 bg-white" />
               </div>
