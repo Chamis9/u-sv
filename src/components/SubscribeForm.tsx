@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -139,16 +140,16 @@ export function SubscribeForm() {
           onChange={handleEmailChange}
           onFocus={() => previousEmails.length > 0 && setShowDropdown(true)}
           required
-          className="flex-grow h-12 text-base font-playfair placeholder-orange-500/70 bg-white/20 border-none backdrop-blur-sm" 
+          className="flex-grow h-12 text-base font-playfair placeholder-orange-500/70 bg-white border-orange-300/50" 
         />
         
         {showDropdown && previousEmails.length > 0 && (
-          <div className="absolute z-10 mt-1 w-full bg-white/30 backdrop-blur-md shadow-lg rounded-md border border-orange-200/20">
+          <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-orange-200/50">
             <div className="py-1 text-sm text-orange-700 font-playfair">
               {previousEmails.map((prevEmail, index) => (
                 <div 
                   key={index} 
-                  className="px-4 py-2 hover:bg-orange-100/30 cursor-pointer"
+                  className="px-4 py-2 hover:bg-orange-100/50 cursor-pointer"
                   onClick={() => handleEmailSelect(prevEmail)}
                 >
                   {prevEmail}
@@ -162,7 +163,7 @@ export function SubscribeForm() {
       <Button 
         type="submit" 
         disabled={isLoading} 
-        className="bg-orange-500/80 hover:bg-orange-600/80 text-white h-12 text-lg px-6 font-semibold font-playfair backdrop-blur-sm" 
+        className="bg-orange-500 hover:bg-orange-600 text-white h-12 text-lg px-6 font-semibold font-playfair" 
       >
         {isLoading ? texts.sending : texts.button}
       </Button>
