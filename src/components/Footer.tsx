@@ -18,13 +18,15 @@ export function Footer() {
           <div className="flex items-center text-sm text-gray-600">
             <span className="flex items-center">
               {footer.madeWith} 
-              <Heart 
-                className="h-4 w-4 mx-1" 
-                strokeWidth={2} 
-                stroke="red" 
-                fill="white" 
-                fillRule="evenodd"
-              />
+              <div className="relative mx-1">
+                {/* Latvian flag colors: red-white-red */}
+                <Heart 
+                  className="h-4 w-4" 
+                  strokeWidth={0}
+                  fill="#9E3039" 
+                />
+                <div className="absolute top-1/3 bottom-1/3 left-1/4 right-1/4 bg-white" />
+              </div>
               {footer.location}
             </span>
           </div>
