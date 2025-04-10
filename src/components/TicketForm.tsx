@@ -93,14 +93,12 @@ export function TicketForm() {
     setIsLoading(true);
     
     try {
-      // Save ticket request to Supabase
+      // Save ticket request to the newsletter_subscribers table instead of ticket_requests
       const { error } = await supabase
-        .from('ticket_requests')
+        .from('newsletter_subscribers')
         .insert([{ 
-          name: formData.name,
           email: formData.email,
-          quantity: formData.quantity,
-          request_date: new Date().toISOString()
+          // Note: we're only saving the email as that's the only field in the newsletter_subscribers table
         }]);
       
       if (error) {
