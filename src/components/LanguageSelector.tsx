@@ -1,3 +1,4 @@
+
 import { useState, useContext, createContext, ReactNode } from "react";
 import { 
   DropdownMenu,
@@ -52,7 +53,7 @@ const translationsData: Record<string, Translations> = {
     hero: {
       title: "Pārdodiet un pērciet biļetes",
       titleHighlight: "vienkārši un droši",
-      subtitle: "Pirmā C2C* platforma biļešu apmaiņai Latvijā",
+      subtitle: "Pirmā platforma biļešu apmaiņai Latvijā",
       c2cExplanation: "",
       comingSoon: "Drīzumā",
       subscribeText: "Piesakieties, lai uzzinātu par platformas atklāšanu",
@@ -84,14 +85,14 @@ const translationsData: Record<string, Translations> = {
       allRightsReserved: "Visas tiesības aizsargātas.",
       madeWith: "Veidots ar",
       location: "Latvijā",
-      c2cExplanation: "C2C (Consumer-to-Consumer) ir tirdzniecības modelis, kur privātpersonas pārdod preces vai pakalpojumus citām privātpersonām.",
+      c2cExplanation: "",
     }
   },
   en: {
     hero: {
       title: "Buy and sell tickets",
       titleHighlight: "simply and securely",
-      subtitle: "The first C2C* platform for ticket exchange in Latvia",
+      subtitle: "The first platform for ticket exchange in Latvia",
       c2cExplanation: "",
       comingSoon: "Coming soon",
       subscribeText: "Subscribe to learn about platform launch",
@@ -123,14 +124,14 @@ const translationsData: Record<string, Translations> = {
       allRightsReserved: "All rights reserved.",
       madeWith: "Made with",
       location: "in Latvia",
-      c2cExplanation: "* C2C (Consumer-to-Consumer) is a trading model where individuals sell products or services to other individuals.",
+      c2cExplanation: "",
     }
   },
   ru: {
     hero: {
       title: "Продавайте и покупайте билеты",
       titleHighlight: "просто и безопасно",
-      subtitle: "Первая C2C* платформа для обмена билетами в Латвии",
+      subtitle: "Первая платформа для обмена билетами в Латвии",
       c2cExplanation: "",
       comingSoon: "Скоро",
       subscribeText: "Подпишитесь, чтобы узнать о запуске платформы",
@@ -162,7 +163,7 @@ const translationsData: Record<string, Translations> = {
       allRightsReserved: "Все права защищены.",
       madeWith: "Создано с",
       location: "Латвии",
-      c2cExplanation: "* C2C (Consumer-to-Consumer) — это модель торговли, при которой частные лица продают товары или услуги другим частным лицам.",
+      c2cExplanation: "",
     }
   }
 };
