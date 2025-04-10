@@ -82,15 +82,4 @@
   .text-gradient {
     @apply bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent;
   }
-  
-  /* Vertical text for ticket sides */
-  .writing-mode-vertical-rl {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-  }
-  
-  .writing-mode-vertical-lr {
-    writing-mode: vertical-lr;
-    text-orientation: mixed;
-  }
 }
