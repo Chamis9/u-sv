@@ -13,6 +13,9 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 
+// Global storage key for all previously used emails across the app
+const GLOBAL_EMAILS_STORAGE_KEY = 'globalPreviousEmails';
+
 export function SubscribeForm() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +65,7 @@ export function SubscribeForm() {
 
   // Load previously used emails from localStorage on component mount
   useEffect(() => {
-    const savedEmails = localStorage.getItem('previousEmails');
+    const savedEmails = localStorage.getItem(GLOBAL_EMAILS_STORAGE_KEY);
     if (savedEmails) {
       setPreviousEmails(JSON.parse(savedEmails));
     }
@@ -72,8 +75,17 @@ export function SubscribeForm() {
   const saveEmailToLocalStorage = (emailToSave: string) => {
     if (!emailToSave || emailToSave.trim() === '') return;
     
-    const updatedEmails = [...new Set([emailToSave, ...previousEmails])].slice(0, 5); // Keep only last 5 unique emails
-    localStorage.setItem('previousEmails', JSON.stringify(updatedEmails));
+    // Get any existing emails from global storage
+    const existingEmails = localStorage.getItem(GLOBAL_EMAILS_STORAGE_KEY);
+    const emailList = existingEmails ? JSON.parse(existingEmails) : [];
+    
+    // Create a new array with the new email at the beginning and remove duplicates
+    const updatedEmails = [...new Set([emailToSave, ...emailList])].slice(0, 10); // Keep only last 10 unique emails
+    
+    // Save to global storage
+    localStorage.setItem(GLOBAL_EMAILS_STORAGE_KEY, JSON.stringify(updatedEmails));
+    
+    // Update state
     setPreviousEmails(updatedEmails);
   };
 
