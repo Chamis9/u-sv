@@ -11,11 +11,11 @@ export function Hero() {
       {/* Background overlay - made slightly lighter */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/20 z-0"></div>
       
-      {/* Background image - replaced with a lighter image */}
+      {/* Background image - updated to show a concert/theater event */}
       <div 
         className="absolute inset-0 z-[-1] bg-cover bg-center"
         style={{ 
-          backgroundImage: "url('https://images.unsplash.com/photo-1594213112891-a6c384a71d4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')" 
+          backgroundImage: "url('https://images.unsplash.com/photo-1605810230434-7631ac76ec81?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')" 
         }}
       ></div>
       
