@@ -1,4 +1,3 @@
-
 import { useState, useContext, createContext, ReactNode } from "react";
 import { 
   DropdownMenu,
@@ -83,7 +82,7 @@ const translationsData: Record<string, Translations> = {
     },
     footer: {
       allRightsReserved: "Visas tiesības aizsargātas.",
-      madeWith: "Veidots ar",
+      madeWith: "Radīts ar",
       location: "Latvijā",
       c2cExplanation: "",
     }
