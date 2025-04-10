@@ -1,101 +1,121 @@
 
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/components/LanguageSelector";
-import { Ticket, Calendar, MapPin, ArrowDown } from "lucide-react";
+import { Ticket, Calendar, MapPin, ArrowDown, CircleUser } from "lucide-react";
 
 export function Hero() {
   const { translations } = useLanguage();
   const { hero } = translations;
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden py-16 bg-black">
-      {/* Background overlay - darker for better contrast */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/90 to-black/80 z-0"></div>
-      
-      {/* Background image */}
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden py-16 bg-gradient-to-b from-black to-gray-900">
+      {/* Background texture */}
       <div 
-        className="absolute inset-0 z-[-1] bg-cover bg-center opacity-50"
+        className="absolute inset-0 z-[-1] opacity-20"
         style={{ 
-          backgroundImage: "url('https://images.unsplash.com/photo-1605810230434-7631ac76ec81?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')" 
+          backgroundImage: "url('https://www.transparenttextures.com/patterns/binding-dark.png')" 
         }}
       ></div>
       
       <div className="container mx-auto px-4 z-10">
-        {/* Ticket container with perforated edges */}
-        <div className="relative max-w-3xl mx-auto">
-          {/* Top ticket stub */}
-          <div 
-            className="bg-black border-2 border-orange-400 rounded-t-xl py-3 px-6 flex justify-between items-center"
-            style={{
-              borderBottom: "dashed 2px #fb923c",
-            }}
-          >
-            <div className="flex items-center">
-              <Ticket className="text-orange-400 mr-2" size={20} />
-              <span className="text-orange-400 font-bold tracking-wider">ADMIT ONE</span>
+        {/* Ticket container */}
+        <div className="max-w-2xl mx-auto">
+          {/* Main ticket body with typical ticket shape */}
+          <div className="relative bg-white rounded-lg p-1 shadow-2xl transform hover:scale-[1.01] transition-transform duration-300">
+            {/* Ticket edge pattern - top */}
+            <div className="absolute top-0 left-0 right-0 h-4 overflow-hidden">
+              <div className="flex">
+                {[...Array(40)].map((_, i) => (
+                  <div key={`top-${i}`} className="w-2 h-2 bg-orange-500 mx-1 rounded-full" />
+                ))}
+              </div>
             </div>
-            <div className="text-orange-400 text-sm font-bold">#C2C-2025</div>
+            
+            {/* Ticket edge pattern - bottom */}
+            <div className="absolute bottom-0 left-0 right-0 h-4 overflow-hidden">
+              <div className="flex">
+                {[...Array(40)].map((_, i) => (
+                  <div key={`bottom-${i}`} className="w-2 h-2 bg-orange-500 mx-1 rounded-full" />
+                ))}
+              </div>
+            </div>
+            
+            {/* Ticket Content */}
+            <div className="pt-6 pb-6 px-1">
+              {/* Ticket header */}
+              <div className="bg-orange-500 text-white font-bold text-center py-3 px-4 mb-4 flex justify-between items-center">
+                <div className="flex items-center">
+                  <Ticket className="mr-2" size={24} />
+                  <span className="text-xl tracking-wider">ADMIT ONE</span>
+                </div>
+                <div className="text-sm">#C2C-2025</div>
+              </div>
+              
+              {/* Event title in classic ticket style */}
+              <div className="text-center mb-6 px-4">
+                <h1 className="text-4xl md:text-5xl font-extrabold text-orange-500 mb-2">
+                  {hero.titleHighlight}
+                </h1>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-800">{hero.title}</h2>
+                <p className="mt-3 text-gray-600 italic">{hero.subtitle}</p>
+              </div>
+              
+              {/* Ticket perforation */}
+              <div className="relative my-4">
+                <div className="absolute left-0 right-0 border-t-2 border-dashed border-gray-300"></div>
+                <div className="absolute -left-1 top-[-10px] w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                  <div className="w-3 h-3 bg-white rounded-full"></div>
+                </div>
+                <div className="absolute -right-1 top-[-10px] w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+                  <div className="w-3 h-3 bg-white rounded-full"></div>
+                </div>
+              </div>
+              
+              {/* Event details in classic ticket format */}
+              <div className="grid grid-cols-2 gap-4 mb-6 px-8 py-4">
+                <div className="flex items-start">
+                  <MapPin className="text-orange-500 mt-1 mr-2" size={18} />
+                  <div>
+                    <div className="text-orange-500 text-xs font-semibold uppercase">LOCATION</div>
+                    <div className="text-gray-800 font-medium">{hero.comingSoon}</div>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <Calendar className="text-orange-500 mt-1 mr-2" size={18} />
+                  <div>
+                    <div className="text-orange-500 text-xs font-semibold uppercase">DATE & TIME</div>
+                    <div className="text-gray-800 font-medium">Coming Soon</div>
+                  </div>
+                </div>
+                <div className="flex items-start col-span-2">
+                  <CircleUser className="text-orange-500 mt-1 mr-2" size={18} />
+                  <div>
+                    <div className="text-orange-500 text-xs font-semibold uppercase">ATTENDEE</div>
+                    <div className="text-gray-800 font-medium">You</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Subscribe section */}
+              <div className="text-center mb-4 px-8">
+                <p className="text-gray-700 text-lg mb-4">{hero.subscribeText}</p>
+                <SubscribeForm />
+              </div>
+              
+              {/* Ticket footer */}
+              <div className="bg-gray-100 p-3 mt-6 text-center text-sm text-gray-500 rounded-b-lg">{hero.c2cExplanation}</div>
+            </div>
           </div>
           
-          {/* Main ticket body */}
-          <div 
-            className="bg-black border-2 border-orange-400 border-t-0 rounded-b-xl p-6 pb-10"
-            style={{
-              backgroundImage: "radial-gradient(circle at 50% 0%, rgba(251, 146, 60, 0.15), transparent 60%)"
-            }}
-          >
-            {/* Ticket holes */}
-            <div className="absolute -left-1 top-1/4 w-2 h-4 bg-black border-r-2 border-orange-400 rounded-l-full"></div>
-            <div className="absolute -right-1 top-1/4 w-2 h-4 bg-black border-l-2 border-orange-400 rounded-r-full"></div>
-            <div className="absolute -left-1 bottom-1/4 w-2 h-4 bg-black border-r-2 border-orange-400 rounded-l-full"></div>
-            <div className="absolute -right-1 bottom-1/4 w-2 h-4 bg-black border-l-2 border-orange-400 rounded-r-full"></div>
-            
-            {/* Event title */}
-            <div className="text-center mb-6">
-              <h1 className="text-4xl md:text-5xl font-bold mb-2">
-                <span className="bg-gradient-to-r from-orange-400 to-amber-500 bg-clip-text text-transparent">{hero.titleHighlight}</span>
-              </h1>
-              <h2 className="text-2xl md:text-3xl text-orange-400 font-bold">{hero.title}</h2>
-              <p className="mt-3 text-white/80 italic">{hero.subtitle}</p>
-            </div>
-            
-            {/* Event details */}
-            <div className="grid grid-cols-2 gap-4 mb-6 border-t border-b border-orange-400/30 py-4">
-              <div className="flex items-start">
-                <MapPin className="text-orange-400 mt-1 mr-2" size={16} />
-                <div>
-                  <div className="text-orange-400 text-xs font-semibold uppercase">LOCATION</div>
-                  <div className="text-white">{hero.comingSoon}</div>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <Calendar className="text-orange-400 mt-1 mr-2" size={16} />
-                <div>
-                  <div className="text-orange-400 text-xs font-semibold uppercase">DATE & TIME</div>
-                  <div className="text-white">Coming Soon</div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Subscribe section */}
-            <div className="text-center mb-4">
-              <p className="text-white text-lg mb-4">{hero.subscribeText}</p>
-              <SubscribeForm />
-            </div>
-            
-            {/* Bottom info */}
-            <div className="mt-6 text-center text-sm text-orange-400/70">{hero.c2cExplanation}</div>
-            
-            {/* Learn more button */}
-            <div className="absolute bottom-2 left-0 right-0 flex justify-center">
-              <a 
-                href="#how-it-works" 
-                className="flex flex-col items-center text-orange-400 hover:text-orange-300 transition-colors"
-              >
-                <span className="text-sm mb-1">{hero.learnMoreBtn}</span>
-                <ArrowDown size={16} />
-              </a>
-            </div>
+          {/* Learn more button */}
+          <div className="mt-8 text-center">
+            <a 
+              href="#how-it-works" 
+              className="inline-flex flex-col items-center text-white hover:text-orange-300 transition-colors"
+            >
+              <span className="text-sm mb-1">{hero.learnMoreBtn}</span>
+              <ArrowDown size={16} />
+            </a>
           </div>
         </div>
       </div>
