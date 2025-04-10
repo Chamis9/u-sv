@@ -34,7 +34,7 @@ export function Hero() {
             {hero.comingSoon}
           </div>
           
-          <div className="flex flex-col items-center space-y-4 mb-[-10px]"> {/* Adjusted margin */}
+          <div className="flex flex-col items-center space-y-6">
             <p className="text-white text-lg">
               {hero.subscribeText}
             </p>
