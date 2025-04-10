@@ -1,5 +1,5 @@
 
-import { SubscribeForm } from "@/components/SubscribeForm";
+import { TicketForm } from "@/components/TicketForm";
 import { useLanguage } from "@/components/LanguageSelector";
 
 export function Hero() {
@@ -39,7 +39,7 @@ export function Hero() {
               {hero.subscribeText}
             </p>
             <div className="w-full max-w-md mx-auto">
-              <SubscribeForm />
+              <TicketForm />
             </div>
           </div>
           
