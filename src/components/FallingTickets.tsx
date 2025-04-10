@@ -49,8 +49,14 @@ export function FallingTickets() {
             transform: `rotate(${ticket.rotation}deg)`,
           }}
         >
-          <div className="w-full h-full bg-orange-500/20 backdrop-blur-sm rounded border border-orange-300/30 flex items-center justify-center">
-            <div className="w-3/4 h-1/4 border-b border-dashed border-orange-400/50" />
+          {/* Enhanced ticket design with perforation and "Drīzumā" text */}
+          <div className="w-full h-full bg-orange-500/20 backdrop-blur-sm rounded-lg border border-orange-300/30 flex flex-col items-center justify-between p-1 overflow-hidden">
+            <div className="w-full text-center text-[6px] font-bold text-orange-600 font-playfair">Drīzumā</div>
+            <div className="w-3/4 h-[1px] border-b border-dashed border-orange-400/70" />
+            <div className="w-full flex justify-between items-center">
+              <div className="w-[4px] h-[4px] rounded-full bg-orange-300/60" />
+              <div className="w-[4px] h-[4px] rounded-full bg-orange-300/60" />
+            </div>
           </div>
         </div>
       ))}

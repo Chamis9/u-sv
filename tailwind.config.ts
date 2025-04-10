@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 import animatePlugin from "tailwindcss-animate";
 
@@ -64,7 +63,6 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom orange theme colors
 				orange: {
 					50: '#fff7ed',
 					100: '#ffedd5',
@@ -92,10 +90,16 @@ export default {
 					from: { height: 'var(--radix-accordion-content-height)' },
 					to: { height: '0' },
 				},
+				'fall': {
+					'0%': { transform: 'translateY(-10vh) rotate(0deg)', opacity: '0' },
+					'10%': { opacity: '1' },
+					'100%': { transform: 'translateY(100vh) rotate(360deg)', opacity: '0.2' }
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fall': 'fall 15s linear infinite',
 			},
 			backgroundImage: {
 				'gradient-orange': 'linear-gradient(90deg, hsla(24, 100%, 83%, 1) 0%, hsla(341, 91%, 68%, 1) 100%)',
