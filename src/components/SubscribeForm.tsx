@@ -85,9 +85,13 @@ export function SubscribeForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
-        className="flex-grow"
+        className="flex-grow h-12 text-base" // Increased height and text size
       />
-      <Button type="submit" disabled={isLoading} className="bg-orange-500 hover:bg-orange-600 text-white">
+      <Button 
+        type="submit" 
+        disabled={isLoading} 
+        className="bg-orange-500 hover:bg-orange-600 text-white h-12 text-base px-6" // Increased height, text size, and padding
+      >
         {isLoading ? texts.sending : texts.button}
       </Button>
     </form>
