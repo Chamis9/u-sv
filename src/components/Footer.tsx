@@ -17,7 +17,14 @@ export function Footer() {
           </div>
           <div className="flex items-center text-sm text-gray-600">
             <span className="flex items-center">
-              {footer.madeWith} <Heart className="h-4 w-4 mx-1 text-orange-500 fill-orange-500" />
+              {footer.madeWith} 
+              <Heart 
+                className="h-4 w-4 mx-1" 
+                strokeWidth={2} 
+                stroke="red" 
+                fill="white" 
+                fillRule="evenodd"
+              />
               {footer.location}
             </span>
           </div>
