@@ -14,6 +14,10 @@ export function Footer() {
     }
   };
 
+  const handlePrivacyPolicyClick = () => {
+    window.scrollTo(0, 0);
+  };
+
   return (
     <footer className="bg-gradient-to-b from-gray-900 to-black py-8 px-4 text-gray-300 border-t border-gray-800">
       <div className="container mx-auto">
@@ -39,7 +43,7 @@ export function Footer() {
               className="text-gray-400 hover:text-orange-500"
               asChild
             >
-              <Link to="/privacy-policy">
+              <Link to="/privacy-policy" onClick={handlePrivacyPolicyClick}>
                 <Shield className="h-4 w-4 mr-2" />
                 <span className="text-xs">{footer.privacyPolicy}</span>
               </Link>
