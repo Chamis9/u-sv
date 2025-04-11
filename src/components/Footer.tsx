@@ -30,7 +30,7 @@ export function Footer() {
               className="text-gray-600 hover:text-orange-500"
             >
               <Cookie className="h-4 w-4 mr-2" />
-              <span className="text-xs">Cookie Settings</span>
+              <span className="text-xs">{footer.cookieSettings}</span>
             </Button>
             <div className="flex items-center text-sm text-gray-600">
               <span className="flex items-center">

@@ -1,7 +1,6 @@
 
 import { Translations } from './types';
 
-// Define all translations
 const translationsData: Record<string, Translations> = {
   lv: {
     hero: {
@@ -56,6 +55,7 @@ const translationsData: Record<string, Translations> = {
       madeWith: "Radīts ar",
       location: "Latvijā",
       c2cExplanation: "",
+      cookieSettings: "Sīkdatņu iestatījumi", // Added Latvian translation
     }
   },
   en: {
@@ -111,6 +111,7 @@ const translationsData: Record<string, Translations> = {
       madeWith: "Made with",
       location: "in Latvia",
       c2cExplanation: "",
+      cookieSettings: "Cookie Settings", // Keep existing English translation
     }
   },
   ru: {
@@ -166,6 +167,7 @@ const translationsData: Record<string, Translations> = {
       madeWith: "Создано с",
       location: "Латвии",
       c2cExplanation: "",
+      cookieSettings: "Настройки файлов cookie", // Added Russian translation
     }
   }
 };
