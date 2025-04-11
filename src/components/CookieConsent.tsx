@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useLanguage } from '@/features/language';
 import { CookieBanner } from './cookies/CookieBanner';
 import { CookiePreferencesDialog } from './cookies/CookiePreferencesDialog';
+import { setCookiesByPreferences, clearAllCookies } from '@/utils/cookieManager';
 
 const COOKIE_CONSENT_KEY = 'cookie-consent-v2';
 
@@ -11,28 +12,6 @@ export interface CookiePreferences {
   analytics: boolean;
   marketing: boolean;
 }
-
-// Set actual cookies based on preferences
-export const setCookiesByPreferences = (preferences: CookiePreferences) => {
-  // Set essential cookies - these are always enabled
-  document.cookie = "essential_cookies=true; max-age=31536000; path=/; SameSite=Lax";
-  
-  // Set analytics cookies if allowed
-  if (preferences.analytics) {
-    document.cookie = "analytics_cookies=true; max-age=31536000; path=/; SameSite=Lax";
-  } else {
-    // Delete analytics cookies if they exist
-    document.cookie = "analytics_cookies=false; max-age=0; path=/; SameSite=Lax";
-  }
-  
-  // Set marketing cookies if allowed
-  if (preferences.marketing) {
-    document.cookie = "marketing_cookies=true; max-age=31536000; path=/; SameSite=Lax";
-  } else {
-    // Delete marketing cookies if they exist
-    document.cookie = "marketing_cookies=false; max-age=0; path=/; SameSite=Lax";
-  }
-};
 
 export function CookieConsent() {
   const [showBanner, setShowBanner] = useState(false);
@@ -107,11 +86,13 @@ export function CookieConsent() {
   useEffect(() => {
     window.openCookieSettings = handleOpenCookieSettings;
     window.manageCookieConsent = handleManageCookies;
+    window.clearAllCookiesOnLogout = clearAllCookies;
     
     // Cleanup
     return () => {
       delete window.openCookieSettings;
       delete window.manageCookieConsent;
+      delete window.clearAllCookiesOnLogout;
     }
   }, []);
 
@@ -146,5 +127,6 @@ declare global {
   interface Window {
     openCookieSettings?: () => void;
     manageCookieConsent?: () => void;
+    clearAllCookiesOnLogout?: () => void;
   }
 }

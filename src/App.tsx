@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,8 +8,29 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { LanguageProvider } from "./features/language";
 import { CookieConsent } from "./components/CookieConsent";
+import { clearAllCookies } from "./utils/cookieManager";
 
 const queryClient = new QueryClient();
+
+// Global logout function that also clears cookies
+const handleLogout = () => {
+  // Clear cookies first
+  clearAllCookies();
+  
+  // Then perform any other logout operations such as:
+  // - Clear local storage (except for language preference if needed)
+  // - Clear application state
+  // - Redirect to login page
+  // - etc.
+  
+  console.log("User logged out and cookies cleared");
+  
+  // Example: You might want to reload the page or redirect
+  // window.location.href = '/login';
+};
+
+// Make the logout function globally available
+window.logout = handleLogout;
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -32,5 +52,13 @@ const App = () => (
     </HelmetProvider>
   </QueryClientProvider>
 );
+
+// Update TypeScript declaration
+declare global {
+  interface Window {
+    logout?: () => void;
+    // Other global functions from before
+  }
+}
 
 export default App;
