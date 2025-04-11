@@ -15,7 +15,7 @@ export function LanguageSelector() {
   const isMobile = useIsMobile();
 
   return (
-    <div className={`language-selector ${isMobile ? 'pr-1' : ''}`}>
+    <div className={`language-selector ${isMobile ? 'pr-0' : ''}`}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button 
