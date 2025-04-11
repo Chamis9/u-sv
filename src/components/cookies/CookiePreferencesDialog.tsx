@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { CookiePreferences } from '../CookieConsent';
 import { useLanguage } from '@/features/language';
 import { Translations } from '@/features/language/types';
+import { Link } from 'react-router-dom';
 
 interface CookiePreferencesDialogProps {
   open: boolean;
@@ -100,7 +101,13 @@ export function CookiePreferencesDialog({
             {cookieConsent.marketingCookiesDescription || "These cookies are used to track users across websites and display advertisements that are relevant to the individual user."}
           </p>
           
-          <p className="mt-4 text-gray-400">{cookieConsent.privacyPolicy}</p>
+          <p className="mt-4 text-gray-400">
+            {cookieConsent.privacyPolicy.split("mūsu privātuma politikā").join("")}
+            <Link to="/privacy-policy" className="text-orange-500 hover:underline">
+              mūsu privātuma politikā
+            </Link>
+            {cookieConsent.privacyPolicy.includes("mūsu privātuma politikā") ? "." : ""}
+          </p>
 
           <div className="mt-4">
             <Button onClick={() => onSave(cookiePreferences)} className="bg-orange-500 hover:bg-orange-600 text-white">

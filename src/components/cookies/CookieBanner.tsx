@@ -5,7 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { CookiePreferences } from '../CookieConsent';
 import { Translations } from '@/features/language';
-import { useLanguage } from '@/features/language';
+import { Link } from 'react-router-dom';
 
 interface CookieBannerProps {
   cookieConsent: Translations['cookieConsent'];
@@ -41,12 +41,12 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-black text-white p-4">
+    <div className="fixed bottom-0 left-0 right-0 z-50">
       <div className="container mx-auto flex justify-center">
-        <div className="w-1/2 bg-black/80 rounded-lg p-6 border border-white/10">
+        <div className="bg-gradient-to-b from-black via-gray-900 to-gray-800 rounded-lg p-6 border border-white/10 max-w-xl w-full">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col items-center justify-between gap-4 text-center">
-              <p className="text-sm">
+              <p className="text-sm text-gray-300">
                 {cookieConsent.message}{' '}
                 <button 
                   onClick={onLearnMore} 
@@ -125,4 +125,3 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
     </div>
   );
 }
-
