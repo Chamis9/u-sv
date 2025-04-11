@@ -1,3 +1,4 @@
+
 export interface Translations {
   hero: {
     title: string;
@@ -42,6 +43,7 @@ export interface Translations {
     location: string;
     c2cExplanation: string;
     cookieSettings: string;
+    privacyPolicy: string;
   };
 }
 

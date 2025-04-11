@@ -1,5 +1,5 @@
 
-import { Heart, Cookie } from "lucide-react";
+import { Heart, Cookie, Shield } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "./ui/button";
 
@@ -31,6 +31,17 @@ export function Footer() {
             >
               <Cookie className="h-4 w-4 mr-2" />
               <span className="text-xs">{footer.cookieSettings}</span>
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="text-gray-600 hover:text-orange-500"
+              asChild
+            >
+              <a href="/privacy-policy">
+                <Shield className="h-4 w-4 mr-2" />
+                <span className="text-xs">{footer.privacyPolicy}</span>
+              </a>
             </Button>
             <div className="flex items-center text-sm text-gray-600">
               <span className="flex items-center">

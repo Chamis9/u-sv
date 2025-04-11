@@ -58,7 +58,8 @@ const translationsData: Record<string, Translations> = {
       madeWith: "Radīts ar",
       location: "Latvijā",
       c2cExplanation: "",
-      cookieSettings: "Sīkdatņu iestatījumi"
+      cookieSettings: "Sīkdatņu iestatījumi",
+      privacyPolicy: "Privātuma politika"
     }
   },
   en: {
@@ -118,7 +119,8 @@ const translationsData: Record<string, Translations> = {
       madeWith: "Made with",
       location: "in Latvia",
       c2cExplanation: "",
-      cookieSettings: "Cookie Settings"
+      cookieSettings: "Cookie Settings",
+      privacyPolicy: "Privacy Policy"
     }
   },
   ru: {
@@ -178,7 +180,8 @@ const translationsData: Record<string, Translations> = {
       madeWith: "Создано с",
       location: "Латвии",
       c2cExplanation: "",
-      cookieSettings: "Настройки файлов cookie"
+      cookieSettings: "Настройки файлов cookie",
+      privacyPolicy: "Политика конфиденциальности"
     }
   }
 };
