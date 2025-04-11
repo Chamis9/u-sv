@@ -8,12 +8,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "./LanguageContext";
 import { languages } from "./translations";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function LanguageSelector() {
   const { currentLanguage, setLanguage } = useLanguage();
+  const isMobile = useIsMobile();
 
   return (
-    <div className="language-selector">
+    <div className={`language-selector ${isMobile ? 'pr-1' : ''}`}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button 
