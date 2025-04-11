@@ -76,8 +76,8 @@ const privacyPolicyTranslations: Record<string, PrivacyPolicyContent> = {
       },
       {
         title: "Saziņa un jautājumi",
-        content: "Ja jums ir jautājumi par šo privātuma politiku vai vēlaties izmantot savas datu aizsardzības tiesības, lūdzu, sazinieties ar mums, izmantojot kontaktinformāciju, kas pieejama mūsu mājaslapā.",
-        additionalInfo: "<a href='/contact' className='text-orange-400 hover:text-orange-300 underline'>Kontakti</a>"
+        content: "Ja jums ir jautājumi par šo privātuma politiku vai vēlaties izmantot savas datu aizsardzības tiesības, lūdzu, sazinieties ar mums, izmantojot <a href='/contact' className='text-orange-500 hover:text-orange-400 underline'>kontaktinformāciju</a>, kas pieejama mūsu mājaslapā.",
+        additionalInfo: ""
       }
     ]
   },
@@ -123,7 +123,7 @@ const privacyPolicyTranslations: Record<string, PrivacyPolicyContent> = {
         list: [
           "Данные клиентских аккаунтов хранятся, пока аккаунт активен",
           "Данные о транзакциях хранятся в соответствии с требованиями законодательства (обычно 5-7 лет)",
-          "Данные о коммуникациях хранятся не более 2 лет после последней коммуникации"
+          "Данные о коммуникациих хранятся не более 2 лет после последней коммуникации"
         ],
         additionalInfo: "По истечении срока хранения данные ��адежно удаляются или анонимизируются."
       },
@@ -142,8 +142,8 @@ const privacyPolicyTranslations: Record<string, PrivacyPolicyContent> = {
       },
       {
         title: "Связь и вопросы",
-        content: "Если у вас есть вопросы об этой политике конфиденциальности или вы хотите воспользоваться своими правами на защиту данных, пожалуйста, свяжитесь с нами, используя контактную информацию, доступную на нашем сайте.",
-        additionalInfo: "<a href='/contact' className='text-orange-400 hover:text-orange-300 underline'>Контакты</a>"
+        content: "Если у вас есть вопросы об этой политике конфиденциальности или вы хотите воспользоваться своими правами на защиту данных, пожалуйста, свяжитесь с нами, используя <a href='/contact' className='text-orange-500 hover:text-orange-400 underline'>контактную информацию</a>, доступную на нашем сайте.",
+        additionalInfo: ""
       }
     ]
   },
@@ -208,8 +208,8 @@ const privacyPolicyTranslations: Record<string, PrivacyPolicyContent> = {
       },
       {
         title: "Contact and Questions",
-        content: "If you have questions about this Privacy Policy or wish to exercise your data protection rights, please contact us using the contact information available on our website.",
-        additionalInfo: "<a href='/contact' className='text-orange-400 hover:text-orange-300 underline'>Contact</a>"
+        content: "If you have questions about this Privacy Policy or wish to exercise your data protection rights, please contact us using the <a href='/contact' className='text-orange-500 hover:text-orange-400 underline'>contact information</a> available on our website.",
+        additionalInfo: ""
       }
     ]
   }
