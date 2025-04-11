@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 
 interface Ticket {
@@ -43,19 +42,15 @@ export function FallingTickets() {
           style={{
             left: `${ticket.left}%`,
             width: `${ticket.size}px`,
-            height: `${ticket.size * 1.6}px`, // Make tickets roughly rectangular
+            height: `${ticket.size * 1.6}px`, 
             opacity: ticket.opacity,
             animation: `fall ${ticket.animationDuration}s linear ${ticket.delay}s infinite`,
             transform: `rotate(${ticket.rotation}deg)`,
           }}
         >
-          {/* Enhanced ticket design with perforation and "Biļete" text */}
-          <div className="w-full h-full bg-orange-500/20 backdrop-blur-sm rounded-lg border border-orange-300/30 flex flex-col items-center justify-between p-1 overflow-hidden">
-            <div className="w-full text-center text-[6px] font-bold text-orange-600 font-playfair">Biļete</div>
-            <div className="w-3/4 h-[1px] border-b border-dashed border-orange-400/70" />
-            <div className="w-full flex justify-between items-center">
-              <div className="w-[4px] h-[4px] rounded-full bg-orange-300/60" />
-              <div className="w-[4px] h-[4px] rounded-full bg-orange-300/60" />
+          <div className="w-full h-full bg-orange-500/20 backdrop-blur-sm rounded-lg border border-orange-300/30 flex items-center justify-center overflow-hidden">
+            <div className="text-[10px] font-bold text-orange-600 font-playfair transform -rotate-12">
+              BIĻETE
             </div>
           </div>
         </div>
