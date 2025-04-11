@@ -21,7 +21,7 @@ export function Hero() {
   };
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section id="hero" className="relative h-[60vh] flex items-center justify-center overflow-hidden">
       {/* Structured data */}
       <Helmet>
         <script type="application/ld+json">
