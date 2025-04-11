@@ -5,7 +5,6 @@ export interface Translations {
     titleHighlight: string;
     subtitle: string;
     c2cExplanation: string;
-    comingSoon: string;
     subscribeText: string;
     learnMoreBtn: string;
   };
@@ -36,12 +35,12 @@ export interface Translations {
     savePreferences?: string;
     cookieSettings?: string;
     marketingCookies?: string;
+    marketingCookiesDescription?: string;
   };
   footer: {
     allRightsReserved: string;
     madeWith: string;
     location: string;
-    c2cExplanation: string;
     cookieSettings: string;
     privacyPolicy: string;
   };
