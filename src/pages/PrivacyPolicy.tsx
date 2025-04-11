@@ -136,12 +136,12 @@ const PrivacyPolicy = () => {
   const content = getContent();
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-orange-50 to-white">
       <SEO title={content.title} description={content.intro} />
       <Header />
       <main className="flex-grow pt-24 pb-16 px-4">
         <div className="container mx-auto max-w-4xl">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">{content.title}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 text-orange-500">{content.title}</h1>
           <p className="text-gray-500 text-sm mb-8">{content.lastUpdated}</p>
           
           <div className="prose prose-orange max-w-none">
@@ -149,8 +149,8 @@ const PrivacyPolicy = () => {
             
             {content.sections.map((section, index) => (
               <div key={index} className="mb-8">
-                <h2 className="text-xl md:text-2xl font-semibold mb-3">{section.title}</h2>
-                <p>{section.content}</p>
+                <h2 className="text-xl md:text-2xl font-semibold mb-3 text-gray-800">{section.title}</h2>
+                <p className="text-gray-700">{section.content}</p>
               </div>
             ))}
           </div>
