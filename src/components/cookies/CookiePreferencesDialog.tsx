@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import { CookiePreferences } from '../CookieConsent';
 import { useLanguage } from '@/features/language';
 import { Translations } from '@/features/language/types';
-import { Link } from 'react-router-dom';
 
 interface CookiePreferencesDialogProps {
   open: boolean;
@@ -32,6 +31,14 @@ export function CookiePreferencesDialog({
   onSave,
   cookieConsent
 }: CookiePreferencesDialogProps) {
+  const handlePrivacyPolicyClick = () => {
+    onOpenChange(false); // Close the dialog
+    setTimeout(() => {
+      window.location.href = '/privacy-policy';
+      window.scrollTo(0, 0);
+    }, 100);
+  };
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] bg-gradient-to-b from-black via-gray-900 to-gray-800 text-gray-300 border-gray-700">
@@ -103,9 +110,13 @@ export function CookiePreferencesDialog({
           
           <p className="mt-4 text-gray-400">
             {cookieConsent.privacyPolicy.split("mūsu privātuma politikā").join("")}
-            <Link to="/privacy-policy" className="text-orange-500 hover:underline">
+            <Button 
+              variant="link" 
+              className="p-0 h-auto text-orange-500 hover:underline font-normal"
+              onClick={handlePrivacyPolicyClick}
+            >
               mūsu privātuma politikā
-            </Link>
+            </Button>
             {cookieConsent.privacyPolicy.includes("mūsu privātuma politikā") ? "." : ""}
           </p>
 
