@@ -1,10 +1,16 @@
 
+# Global rules
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /internal/
+Disallow: /user/
 
+# Sitemap
 Sitemap: https://netieku.es/sitemap.xml
 
-# Bots
+# Specific bots with full access
 User-agent: Googlebot
 Allow: /
 
@@ -29,7 +35,7 @@ Allow: /
 User-agent: Exabot
 Allow: /
 
-# Social Media
+# Social Media bots
 User-agent: Twitterbot
 Allow: /
 
@@ -39,6 +45,6 @@ Allow: /
 User-agent: LinkedInBot
 Allow: /
 
-# Don't allow these
+# Rate limiting for crawlers
 User-agent: *
-Disallow: /api/
+Crawl-delay: 10
