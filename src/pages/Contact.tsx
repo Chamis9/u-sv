@@ -1,10 +1,9 @@
-
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { useLanguage } from "@/features/language";
-import { Mail, Phone, MapPin, Instagram, Facebook, Twitter, BrandTiktok } from "lucide-react";
+import { Mail, Phone, MapPin, Instagram, Facebook, Twitter, TikTok } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -193,7 +192,7 @@ const Contact = () => {
                       <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer"
                          className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
                          aria-label="TikTok">
-                        <BrandTiktok size={20} />
+                        <TikTok size={20} />
                       </a>
                     </div>
                   </div>
