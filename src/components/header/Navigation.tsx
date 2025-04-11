@@ -20,12 +20,17 @@ export function Navigation() {
 
   const t = translations[currentLanguage.code as keyof typeof translations] || translations.en;
 
+  const handleContactClick = () => {
+    window.scrollTo(0, 0);
+  };
+
   return (
     <nav className="relative z-10">
       <ul className="flex space-x-4 md:space-x-6 items-center">
         <li>
           <Link 
             to="/contact" 
+            onClick={handleContactClick}
             className="text-white hover:text-orange-400 transition-colors flex items-center gap-1.5 relative z-10 text-sm md:text-base"
           >
             <Mail size={16} />
