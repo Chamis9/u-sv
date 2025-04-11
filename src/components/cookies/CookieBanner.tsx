@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -58,7 +57,7 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
             </div>
           </div>
           
-          <div className="bg-gray-800/50 backdrop-blur-sm p-4 rounded-md border border-gray-700">
+          <div className="bg-gray-800/50 backdrop-blur-sm p-4 rounded-md">
             <div className="space-y-4 text-sm">
               <div className="flex items-center space-x-2">
                 <Checkbox 
@@ -128,4 +127,3 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
     </div>
   );
 }
-
