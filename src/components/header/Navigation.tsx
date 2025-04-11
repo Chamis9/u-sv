@@ -21,12 +21,12 @@ export function Navigation() {
   const t = translations[currentLanguage.code as keyof typeof translations] || translations.en;
 
   return (
-    <nav>
+    <nav className="relative z-10">
       <ul className="flex space-x-6 items-center">
         <li>
           <Link 
             to="/contact" 
-            className="text-white hover:text-orange-400 transition-colors flex items-center gap-1.5"
+            className="text-white hover:text-orange-400 transition-colors flex items-center gap-1.5 relative z-10"
           >
             <Mail size={16} />
             {t.contact}
