@@ -1,5 +1,5 @@
 
-import { LanguageSelector } from "@/components/LanguageSelector";
+import { LanguageSelector } from "@/features/language";
 
 export function Header() {
   return (

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { useLanguage } from "@/components/LanguageSelector";
+import { useLanguage } from "@/features/language";
 import { supabase } from "@/integrations/supabase/client";
 
 // Global storage key for all previously used emails across the app

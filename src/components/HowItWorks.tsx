@@ -1,6 +1,6 @@
 
 import { Check, TicketIcon, Users, RefreshCw } from "lucide-react";
-import { useLanguage } from "@/components/LanguageSelector";
+import { useLanguage } from "@/features/language";
 
 export function HowItWorks() {
   const { translations } = useLanguage();

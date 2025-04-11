@@ -1,6 +1,6 @@
 
 import { Heart } from "lucide-react";
-import { useLanguage } from "@/components/LanguageSelector";
+import { useLanguage } from "@/features/language";
 
 export function Footer() {
   const { translations } = useLanguage();

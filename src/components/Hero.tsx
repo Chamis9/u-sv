@@ -1,6 +1,6 @@
 
 import { SubscribeForm } from "@/components/SubscribeForm";
-import { useLanguage } from "@/components/LanguageSelector";
+import { useLanguage } from "@/features/language";
 import { FallingTickets } from "@/components/FallingTickets";
 import { Helmet } from "react-helmet-async";
 
