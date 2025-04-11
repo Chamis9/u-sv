@@ -22,7 +22,7 @@ export function Navigation() {
 
   return (
     <nav className="relative z-10">
-      <ul className="flex items-center justify-center">
+      <ul className="flex space-x-4 md:space-x-6 items-center">
         <li>
           <Link 
             to="/contact" 
