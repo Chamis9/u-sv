@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { LanguageSelector } from "@/features/language";
-import { Home, Phone } from "lucide-react";
+import { Home, Mail } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
 
@@ -38,7 +38,7 @@ export function Header() {
                   to="/contact" 
                   className="text-white hover:text-orange-400 transition-colors flex items-center gap-1.5"
                 >
-                  <Phone size={16} />
+                  <Mail size={16} />
                   {t.contact}
                 </Link>
               </li>

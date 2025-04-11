@@ -1,10 +1,10 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { useLanguage } from "@/features/language";
-import { Mail, Phone, MapPin, Instagram, Facebook } from "lucide-react";
+import { Mail, Phone, MapPin, Instagram, Facebook, Twitter, BrandTiktok } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,11 +12,13 @@ import { toast } from "sonner";
 
 const Contact = () => {
   const { currentLanguage } = useLanguage();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const translations = {
     lv: {
       title: "Kontaktinformācija",
       subtitle: "Sazinieties ar mums, ja jums ir jautājumi vai nepieciešama palīdzība",
+      companyName: "SIA \"Par to tiek domāts\"",
       addressTitle: "Mūsu birojs",
       address: "Rīga, Latvija",
       emailTitle: "E-pasts",
@@ -32,11 +34,13 @@ const Contact = () => {
       messageLabel: "Ziņojums",
       messagePlaceholder: "Jūsu ziņojums...",
       submitButton: "Nosūtīt ziņojumu",
-      successMessage: "Paldies! Jūsu ziņojums ir nosūtīts. Mēs ar jums sazināsimies tuvākajā laikā."
+      successMessage: "Paldies! Jūsu ziņojums ir nosūtīts. Mēs ar jums sazināsimies tuvākajā laikā.",
+      errorMessage: "Kļūda! Neizdevās nosūtīt ziņojumu. Lūdzu, mēģiniet vēlreiz."
     },
     en: {
       title: "Contact Information",
       subtitle: "Get in touch with us if you have any questions or need assistance",
+      companyName: "SIA \"Par to tiek domāts\"",
       addressTitle: "Our Office",
       address: "Riga, Latvia",
       emailTitle: "Email",
@@ -52,11 +56,13 @@ const Contact = () => {
       messageLabel: "Message",
       messagePlaceholder: "Your message...",
       submitButton: "Send Message",
-      successMessage: "Thank you! Your message has been sent. We will contact you soon."
+      successMessage: "Thank you! Your message has been sent. We will contact you soon.",
+      errorMessage: "Error! Failed to send message. Please try again."
     },
     ru: {
       title: "Контактная информация",
       subtitle: "Свяжитесь с нами, если у вас есть вопросы или нужна помощь",
+      companyName: "SIA \"Par to tiek domāts\"",
       addressTitle: "Наш офис",
       address: "Рига, Латвия",
       emailTitle: "Эл. почта",
@@ -72,18 +78,42 @@ const Contact = () => {
       messageLabel: "Сообщение",
       messagePlaceholder: "Ваше сообщение...",
       submitButton: "Отправить сообщение",
-      successMessage: "Спасибо! Ваше сообщение отправлено. Мы свяжемся с вами в ближайшее время."
+      successMessage: "Спасибо! Ваше сообщение отправлено. Мы свяжемся с вами в ближайшее время.",
+      errorMessage: "Ошибка! Не удалось отправить сообщение. Пожалуйста, попробуйте еще раз."
     }
   };
 
   const t = translations[currentLanguage.code as keyof typeof translations] || translations.en;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real application, this would connect to an API to send the message
-    toast.success(t.successMessage);
-    // Reset form
-    (e.target as HTMLFormElement).reset();
+    setIsSubmitting(true);
+
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const message = formData.get('message') as string;
+
+    try {
+      // Send email using the form data
+      // In a real application, this would connect to an API to send the email
+      // For now, we'll simulate sending an email to raivis.ogorodovs@gmail.com
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network request
+      
+      console.log('Sending email to: raivis.ogorodovs@gmail.com');
+      console.log('From:', name, email);
+      console.log('Message:', message);
+      
+      toast.success(t.successMessage);
+      // Reset form
+      form.reset();
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast.error(t.errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -106,6 +136,10 @@ const Contact = () => {
               <div className="grid md:grid-cols-2 gap-12">
                 {/* Contact Information */}
                 <div className="space-y-8">
+                  <div className="space-y-1">
+                    <h3 className="text-xl font-semibold text-orange-400">{t.companyName}</h3>
+                  </div>
+                
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
                       <MapPin className="text-orange-500" size={24} />
@@ -142,12 +176,24 @@ const Contact = () => {
                     <h3 className="text-xl font-semibold">{t.socialTitle}</h3>
                     <div className="flex space-x-4 pl-2">
                       <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" 
-                         className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors">
+                         className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors" 
+                         aria-label="Instagram">
                         <Instagram size={20} />
                       </a>
                       <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
-                         className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors">
+                         className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+                         aria-label="Facebook">
                         <Facebook size={20} />
+                      </a>
+                      <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
+                         className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+                         aria-label="X (Twitter)">
+                        <Twitter size={20} />
+                      </a>
+                      <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer"
+                         className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+                         aria-label="TikTok">
+                        <BrandTiktok size={20} />
                       </a>
                     </div>
                   </div>
@@ -163,6 +209,7 @@ const Contact = () => {
                       </label>
                       <Input 
                         id="name" 
+                        name="name"
                         placeholder={t.namePlaceholder} 
                         required 
                         className="bg-white/5 border-white/20 text-white placeholder:text-gray-400"
@@ -175,6 +222,7 @@ const Contact = () => {
                       </label>
                       <Input 
                         id="email" 
+                        name="email"
                         type="email" 
                         placeholder={t.emailPlaceholder} 
                         required 
@@ -188,6 +236,7 @@ const Contact = () => {
                       </label>
                       <Textarea 
                         id="message" 
+                        name="message"
                         placeholder={t.messagePlaceholder} 
                         rows={5} 
                         required 
@@ -198,8 +247,19 @@ const Contact = () => {
                     <Button 
                       type="submit" 
                       className="w-full bg-orange-500 hover:bg-orange-600 text-white border-none"
+                      disabled={isSubmitting}
                     >
-                      {t.submitButton}
+                      {isSubmitting ? (
+                        <span className="flex items-center justify-center">
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          {t.submitButton}
+                        </span>
+                      ) : (
+                        t.submitButton
+                      )}
                     </Button>
                   </form>
                 </div>
