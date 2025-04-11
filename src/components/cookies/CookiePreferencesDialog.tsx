@@ -58,7 +58,7 @@ export function CookiePreferencesDialog({
               htmlFor="essential-cookies"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              {cookieConsent.essentialCookiesTitle} ({currentLanguage.code === 'lv' ? 'Obligāti' : currentLanguage.code === 'ru' ? 'Обязательно' : 'Required'})
+              {cookieConsent.essentialCookiesTitle} ({cookieConsent.required || "Required"})
             </Label>
           </div>
           <p className="pl-6 text-xs">{cookieConsent.essentialCookiesDescription}</p>
@@ -111,7 +111,7 @@ export function CookiePreferencesDialog({
 
           <div className="mt-4">
             <Button onClick={() => onSave(cookiePreferences)} className="bg-orange-500 hover:bg-orange-600 text-white">
-              {cookieConsent.accept}
+              {cookieConsent.savePreferences || cookieConsent.accept}
             </Button>
           </div>
         </div>

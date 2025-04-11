@@ -1,4 +1,3 @@
-
 import { Translations } from './types';
 
 const translationsData: Record<string, Translations> = {
@@ -48,14 +47,17 @@ const translationsData: Record<string, Translations> = {
       essentialCookiesDescription: "Šīs sīkdatnes ir nepieciešamas vietnes pamatfunkciju darbībai. Tās ļauj jums pārvietoties pa vietni un izmantot tās funkcijas.",
       analyticsCookiesTitle: "Analītiskās sīkdatnes",
       analyticsCookiesDescription: "Šīs sīkdatnes palīdz mums saprast, kā lietotāji mijiedarbojas ar vietni, vācot un ziņojot informāciju anonīmi.",
-      privacyPolicy: "Plašāku informāciju par to, kā mēs izmantojam jūsu datus, varat skatīt mūsu privātuma politikā."
+      privacyPolicy: "Plašāku informāciju par to, kā mēs izmantojam jūsu datus, varat skatīt mūsu privātuma politikā.",
+      required: "Obligāti",
+      savePreferences: "Saglabāt iestatījumus",
+      cookieSettings: "Sīkdatņu iestatījumi"
     },
     footer: {
       allRightsReserved: "Visas tiesības aizsargātas.",
       madeWith: "Radīts ar",
       location: "Latvijā",
       c2cExplanation: "",
-      cookieSettings: "Sīkdatņu iestatījumi", // Added Latvian translation
+      cookieSettings: "Sīkdatņu iestatījumi"
     }
   },
   en: {
@@ -104,14 +106,17 @@ const translationsData: Record<string, Translations> = {
       essentialCookiesDescription: "These cookies are necessary for the basic functions of the website. They allow you to navigate around the site and use its features.",
       analyticsCookiesTitle: "Analytics Cookies",
       analyticsCookiesDescription: "These cookies help us understand how users interact with the website by collecting and reporting information anonymously.",
-      privacyPolicy: "For more information about how we use your data, please see our privacy policy."
+      privacyPolicy: "For more information about how we use your data, please see our privacy policy.",
+      required: "Required",
+      savePreferences: "Save preferences",
+      cookieSettings: "Cookie Settings"
     },
     footer: {
       allRightsReserved: "All rights reserved.",
       madeWith: "Made with",
       location: "in Latvia",
       c2cExplanation: "",
-      cookieSettings: "Cookie Settings", // Keep existing English translation
+      cookieSettings: "Cookie Settings"
     }
   },
   ru: {
@@ -160,14 +165,17 @@ const translationsData: Record<string, Translations> = {
       essentialCookiesDescription: "Эти файлы cookie необходимы для основных функций сайта. Они позволяют перемещаться по сайту и использовать его функции.",
       analyticsCookiesTitle: "Аналитические файлы cookie",
       analyticsCookiesDescription: "Эти файлы cookie помогают нам понять, как пользователи взаимодействуют с сайтом, собирая и сообщая информацию анонимно.",
-      privacyPolicy: "Для получения дополнительной информации о том, как мы используем ваши данные, пожалуйста, ознакомьтесь с нашей политикой конфиденциальности."
+      privacyPolicy: "Для получения дополнительной информации о том, как мы используем ваши данные, пожалуйста, ознакомьтесь с нашей политикой конфиденциальности.",
+      required: "Обязательно",
+      savePreferences: "Сохранить настройки",
+      cookieSettings: "Настройки файлов cookie"
     },
     footer: {
       allRightsReserved: "Все права защищены.",
       madeWith: "Создано с",
       location: "Латвии",
       c2cExplanation: "",
-      cookieSettings: "Настройки файлов cookie", // Added Russian translation
+      cookieSettings: "Настройки файлов cookie"
     }
   }
 };
