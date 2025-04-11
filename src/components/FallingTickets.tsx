@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import { useLanguage } from '@/features/language';
 
 interface Ticket {
   id: number;
@@ -14,6 +15,21 @@ interface Ticket {
 
 export function FallingTickets() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
+  const { currentLanguage } = useLanguage();
+
+  // Get the appropriate text based on the current language
+  const getTicketText = () => {
+    switch (currentLanguage.code) {
+      case 'lv':
+        return 'BIĻETE';
+      case 'en':
+        return 'TICKET';
+      case 'ru':
+        return 'БИЛЕТ';
+      default:
+        return 'BIĻETE';
+    }
+  };
 
   useEffect(() => {
     // Create tickets for animation
@@ -36,6 +52,8 @@ export function FallingTickets() {
     setTickets(newTickets);
   }, []);
 
+  const ticketText = getTicketText();
+
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden z-0 pointer-events-none">
       {tickets.map((ticket) => (
@@ -56,7 +74,7 @@ export function FallingTickets() {
               className="text-[10px] font-bold text-orange-600 font-playfair" 
               style={{ transform: `rotate(${ticket.textRotation}deg)` }}
             >
-              BIĻETE
+              {ticketText}
             </div>
           </div>
         </div>
