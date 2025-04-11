@@ -8,9 +8,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "./LanguageContext";
 import { languages } from "./translations";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function LanguageSelector() {
   const { currentLanguage, setLanguage } = useLanguage();
+  const isMobile = useIsMobile();
 
   return (
     <div className="language-selector">
@@ -20,7 +22,8 @@ export function LanguageSelector() {
             variant="outline" 
             className="rounded-full bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20"
           >
-            {currentLanguage.flag} <span className="ml-1">{currentLanguage.name}</span>
+            <span className="mr-1">{currentLanguage.flag}</span> 
+            <span>{currentLanguage.name}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="bg-white/90 backdrop-blur-sm border-white/20">
