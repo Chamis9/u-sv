@@ -1,4 +1,3 @@
-
 import { Language } from './types';
 
 export interface PrivacyPolicySection {
@@ -77,7 +76,7 @@ const privacyPolicyTranslations: Record<string, PrivacyPolicyContent> = {
       },
       {
         title: "Saziņa un jautājumi",
-        content: "Ja jums ir jautājumi par šo privātuma politiku vai vēlaties izmantot savas datu aizsardzības tiesības, lūdzu, sazinieties ar mums, izmantojot <a href='/contact' className='text-orange-500 hover:text-orange-400 underline'>kontaktinformāciju</a>, kas pieejama mūsu mājaslapā.",
+        content: 'Ja jums ir jautājumi par šo privātuma politiku vai vēlaties izmantot savas datu aizsardzības tiesības, lūdzu, sazinieties ar mums, izmantojot <a href="/contact" className="text-orange-500 hover:text-orange-400 underline"><span className="text-orange-500">kontaktinformāciju</span></a>, kas pieejama mūsu mājaslapā.',
         additionalInfo: ""
       }
     ]
@@ -126,7 +125,7 @@ const privacyPolicyTranslations: Record<string, PrivacyPolicyContent> = {
           "Данные о транзакциях хранятся в соответствии с требованиями законодательства (обычно 5-7 лет)",
           "Данные о коммуникациях хранятся не более 2 лет после последней коммуникации"
         ],
-        additionalInfo: "По истечении срока хранения данные надежно удаляются или анонимизируются."
+        additionalInfo: "По истечении срока хранения данные на��ежно удаляются или анонимизируются."
       },
       {
         title: "Ваши права",
@@ -143,7 +142,7 @@ const privacyPolicyTranslations: Record<string, PrivacyPolicyContent> = {
       },
       {
         title: "Связь и вопросы",
-        content: "Если у вас есть вопросы об этой политике конфиденциальности или вы хотите воспользоваться своими правами на защиту данных, пожалуйста, свяжитесь с нами, используя <a href='/contact' className='text-orange-500 hover:text-orange-400 underline'>контактную информацию</a>, доступную на нашем сайте.",
+        content: 'Если у вас есть вопросы об этой политике конфиденциальности или вы хотите воспользоваться своими правами на защиту данных, пожалуйста, свяжитесь с нами, используя <a href="/contact" className="text-orange-500 hover:text-orange-400 underline"><span className="text-orange-500">контактную информацию</span></a>, доступную на нашем сайте.',
         additionalInfo: ""
       }
     ]
@@ -209,7 +208,7 @@ const privacyPolicyTranslations: Record<string, PrivacyPolicyContent> = {
       },
       {
         title: "Contact and Questions",
-        content: "If you have questions about this Privacy Policy or wish to exercise your data protection rights, please contact us using the <a href='/contact' className='text-orange-500 hover:text-orange-400 underline'>contact information</a> available on our website.",
+        content: 'If you have questions about this Privacy Policy or wish to exercise your data protection rights, please contact us using the <a href="/contact" className="text-orange-500 hover:text-orange-400 underline"><span className="text-orange-500">contact information</span></a> available on our website.',
         additionalInfo: ""
       }
     ]
