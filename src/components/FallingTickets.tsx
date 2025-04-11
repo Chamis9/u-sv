@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 
 interface Ticket {
@@ -8,6 +9,7 @@ interface Ticket {
   animationDuration: number;
   delay: number;
   rotation: number;
+  textRotation: number;
 }
 
 export function FallingTickets() {
@@ -26,7 +28,8 @@ export function FallingTickets() {
         opacity: Math.random() * 0.5 + 0.3, // Random opacity
         animationDuration: Math.random() * 8 + 10, // Animation duration 10-18s
         delay: Math.random() * 15, // Random delay
-        rotation: Math.random() * 360, // Random rotation
+        rotation: Math.random() * 360, // Random ticket rotation
+        textRotation: Math.random() * 20 - 10 // Random text rotation between -10 and 10 degrees
       });
     }
 
@@ -49,7 +52,10 @@ export function FallingTickets() {
           }}
         >
           <div className="w-full h-full bg-orange-500/20 backdrop-blur-sm rounded-lg border border-orange-300/30 flex items-center justify-center overflow-hidden">
-            <div className="text-[10px] font-bold text-orange-600 font-playfair transform -rotate-12">
+            <div 
+              className="text-[10px] font-bold text-orange-600 font-playfair" 
+              style={{ transform: `rotate(${ticket.textRotation}deg)` }}
+            >
               BIĻETE
             </div>
           </div>
@@ -58,3 +64,4 @@ export function FallingTickets() {
     </div>
   );
 }
+
