@@ -1,3 +1,4 @@
+
 import { useLanguage } from "@/features/language";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -221,11 +222,13 @@ const PrivacyPolicy = () => {
                   <div key={index} className="mb-8">
                     <h2 className="text-xl md:text-2xl font-semibold mb-3 text-orange-500">{section.title}</h2>
                     <p className="text-gray-300 mb-3">{section.content}</p>
-                    <ul className="list-disc list-inside text-gray-300 space-y-2">
-                      {section.list.map((item, itemIndex) => (
-                        <li key={itemIndex}>{item}</li>
-                      ))}
-                    </ul>
+                    {section.list && section.list.length > 0 && (
+                      <ul className="list-disc list-inside text-gray-300 space-y-2">
+                        {section.list.map((item, itemIndex) => (
+                          <li key={itemIndex}>{item}</li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 ))}
               </div>
