@@ -98,10 +98,10 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
               
               <div className="flex flex-wrap gap-3 mt-4">
                 <Button
-                  variant="outline"
+                  variant="destructive"
                   size="sm"
                   onClick={handleDeclineAll}
-                  className="border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white"
+                  className="border-red-700 text-white bg-red-600 hover:bg-red-700"
                 >
                   {cookieConsent.decline}
                 </Button>
@@ -113,9 +113,10 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
                   {cookieConsent.savePreferences || "Save preferences"}
                 </Button>
                 <Button 
+                  variant="default"
                   size="sm" 
                   onClick={handleAcceptAll}
-                  className="bg-orange-500 hover:bg-orange-600 text-white"
+                  className="bg-green-600 hover:bg-green-700 text-white"
                 >
                   {cookieConsent.accept}
                 </Button>
@@ -127,3 +128,4 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
     </div>
   );
 }
+
