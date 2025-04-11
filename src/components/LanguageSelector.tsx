@@ -55,7 +55,7 @@ const translationsData: Record<string, Translations> = {
       subtitle: "Pirmā platforma biļešu apmaiņai Latvijā",
       c2cExplanation: "",
       comingSoon: "Drīzumā",
-      subscribeText: "Piesakieties, lai uzzinātu par platformas atklāšanu",
+      subscribeText: "Piesakieties, lai jau laicīgi uzzinātu",
       learnMoreBtn: "Uzzināt vairāk",
     },
     howItWorks: {
