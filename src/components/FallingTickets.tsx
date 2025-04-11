@@ -29,7 +29,7 @@ export function FallingTickets() {
         animationDuration: Math.random() * 8 + 10, // Animation duration 10-18s
         delay: Math.random() * 15, // Random delay
         rotation: Math.random() * 360, // Random ticket rotation
-        textRotation: Math.random() * 20 - 10 // Random text rotation between -10 and 10 degrees
+        textRotation: 90 // Fixed 90-degree rotation
       });
     }
 
@@ -64,4 +64,3 @@ export function FallingTickets() {
     </div>
   );
 }
-
