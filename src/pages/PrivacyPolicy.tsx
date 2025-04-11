@@ -1,4 +1,3 @@
-
 import { useLanguage } from "@/features/language";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -18,11 +17,32 @@ const PrivacyPolicy = () => {
           sections: [
             {
               title: "Kādu informāciju mēs vācam",
-              content: "Mēs varam vākt šādu personīgo informāciju: vārdu, e-pasta adresi, tālruņa numuru un citu kontaktinformāciju, ko jūs brīvprātīgi sniedzat, reģistrējoties vai izmantojot mūsu pakalpojumus."
+              content: "Mēs varam vākt šādu personīgo informāciju:",
+              list: [
+                "Vārds un uzvārds",
+                "E-pasta adrese",
+                "Tālruņa numurs",
+                "Kontaktinformācija",
+                "Lietotāja profila informācija",
+                "Ierīces un pārlūka informācija",
+                "IP adrese",
+                "Atrašanās vietas dati",
+                "Mijiedarbības žurnāli ar vietni"
+              ]
             },
             {
               title: "Kā mēs izmantojam jūsu informāciju",
-              content: "Jūsu personīgā informācija tiek izmantota, lai: nodrošinātu un uzlabotu mūsu pakalpojumus, sazinātos ar jums par jūsu kontiem vai darījumiem, nosūtītu jums svarīgus paziņojumus, kā arī mārketinga un reklāmas nolūkos, ja esat tam piekritis."
+              content: "Jūsu personīgā informācija tiek izmantota, lai:",
+              list: [
+                "Nodrošinātu un uzlabotu mūsu pakalpojumus",
+                "Sazinātos ar jums par jūsu kontiem vai darījumiem",
+                "Nosūtītu svarīgus paziņojumus",
+                "Personalizētu lietotāja pieredzi",
+                "Veiktu statistikas un analīzes",
+                "Nodrošinātu klientu atbalstu",
+                "Aizsargātu pret krāpniecību un drošības riskiem",
+                "Mārketinga un reklāmas nolūkos (ar jūsu piekrišanu)"
+              ]
             },
             {
               title: "Sīkdatnes un izsekošanas tehnoloģijas",
@@ -58,11 +78,32 @@ const PrivacyPolicy = () => {
           sections: [
             {
               title: "Какую информацию мы собираем",
-              content: "Мы можем собирать следующую личную информацию: имя, адрес электронной почты, номер телефона и другую контактную информацию, которую вы добровольно предоставляете при регистрации или использовании наших услуг."
+              content: "Мы можем собирать следующую личную информацию:",
+              list: [
+                "Имя и фамилия",
+                "Адрес электронной почты",
+                "Номер телефона",
+                "Контактная информация",
+                "Информация профиля пользователя",
+                "Данные об устройстве и браузере",
+                "IP-адрес",
+                "Данные о местоположении",
+                "Журналы взаимодействия с сайтом"
+              ]
             },
             {
               title: "Как мы используем вашу информацию",
-              content: "Ваша личная информация используется для: предоставления и улучшения наших услуг, общения с вами относительно ваших учетных записей или транзакций, отправки вам важных уведомлений, а также в маркетинговых и рекламных целях, если вы дали на это согласие."
+              content: "Ваша личная информация используется для:",
+              list: [
+                "Предоставления и улучшения наших услуг",
+                "Связи с вами о ваших аккаунтах или транзакциях",
+                "Отправки важных уведомлений",
+                "Персонализации пользовательского опыта",
+                "Проведения статистики и анализа",
+                "Обеспечения поддержки клиентов",
+                "Защиты от мошенничества и рисков безопасности",
+                "Маркетинга и рекламы (с вашего согласия)"
+              ]
             },
             {
               title: "Файлы cookie и технологии отслеживания",
@@ -98,11 +139,32 @@ const PrivacyPolicy = () => {
           sections: [
             {
               title: "Information We Collect",
-              content: "We may collect personal information such as your name, email address, phone number, and other contact information that you voluntarily provide when you register for or use our services."
+              content: "We may collect the following personal information:",
+              list: [
+                "Full name",
+                "Email address",
+                "Phone number", 
+                "Contact information",
+                "User profile information",
+                "Device and browser information",
+                "IP address",
+                "Location data",
+                "Site interaction logs"
+              ]
             },
             {
               title: "How We Use Your Information",
-              content: "Your personal information is used to: provide and improve our services, communicate with you about your accounts or transactions, send you important notifications, and for marketing and advertising purposes if you have consented to this."
+              content: "Your personal information is used to:",
+              list: [
+                "Provide and improve our services",
+                "Communicate with you about your accounts or transactions",
+                "Send important notifications",
+                "Personalize user experience",
+                "Conduct statistics and analysis",
+                "Provide customer support",
+                "Protect against fraud and security risks",
+                "Marketing and advertising purposes (with your consent)"
+              ]
             },
             {
               title: "Cookies and Tracking Technologies",
@@ -158,7 +220,12 @@ const PrivacyPolicy = () => {
                 {content.sections.map((section, index) => (
                   <div key={index} className="mb-8">
                     <h2 className="text-xl md:text-2xl font-semibold mb-3 text-orange-500">{section.title}</h2>
-                    <p className="text-gray-300">{section.content}</p>
+                    <p className="text-gray-300 mb-3">{section.content}</p>
+                    <ul className="list-disc list-inside text-gray-300 space-y-2">
+                      {section.list.map((item, itemIndex) => (
+                        <li key={itemIndex}>{item}</li>
+                      ))}
+                    </ul>
                   </div>
                 ))}
               </div>
