@@ -23,7 +23,7 @@ export const PolicySection: React.FC<PolicySectionProps> = ({ section }) => {
       )}
       
       {section.additionalInfo && (
-        <p className="text-gray-300 mt-3">{section.additionalInfo}</p>
+        <p className="text-gray-300 mt-3" dangerouslySetInnerHTML={{ __html: section.additionalInfo }} />
       )}
     </div>
   );
