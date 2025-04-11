@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useLanguage } from '@/features/language';
 import { CookieBanner } from './cookies/CookieBanner';

@@ -1,10 +1,17 @@
 
-import { Heart } from "lucide-react";
+import { Heart, Cookie } from "lucide-react";
 import { useLanguage } from "@/features/language";
+import { Button } from "./ui/button";
 
 export function Footer() {
   const { translations } = useLanguage();
   const { footer } = translations;
+
+  const handleOpenCookieSettings = () => {
+    if (window.openCookieSettings) {
+      window.openCookieSettings();
+    }
+  };
 
   return (
     <footer className="bg-gray-50 py-8 px-4">
@@ -15,19 +22,30 @@ export function Footer() {
               © {new Date().getFullYear()} netieku.es. {footer.allRightsReserved}
             </p>
           </div>
-          <div className="flex items-center text-sm text-gray-600">
-            <span className="flex items-center">
-              {footer.madeWith} 
-              <div className="relative mx-1">
-                {/* Fully filled orange heart */}
-                <Heart 
-                  className="h-4 w-4" 
-                  fill="#F97316" // Bright orange from tailwind color palette
-                  strokeWidth={0}
-                />
-              </div>
-              {footer.location}
-            </span>
+          <div className="flex items-center space-x-4">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleOpenCookieSettings}
+              className="text-gray-600 hover:text-orange-500"
+            >
+              <Cookie className="h-4 w-4 mr-2" />
+              <span className="text-xs">Cookie Settings</span>
+            </Button>
+            <div className="flex items-center text-sm text-gray-600">
+              <span className="flex items-center">
+                {footer.madeWith} 
+                <div className="relative mx-1">
+                  {/* Fully filled orange heart */}
+                  <Heart 
+                    className="h-4 w-4" 
+                    fill="#F97316" // Bright orange from tailwind color palette
+                    strokeWidth={0}
+                  />
+                </div>
+                {footer.location}
+              </span>
+            </div>
           </div>
         </div>
       </div>
