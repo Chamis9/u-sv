@@ -40,7 +40,7 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-b from-black via-gray-900 to-gray-800 border-t border-gray-700 shadow-lg p-4">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-b from-black via-gray-900 to-gray-800 p-4">
       <div className="container mx-auto">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -100,7 +100,7 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
                   variant="destructive"
                   size="sm"
                   onClick={handleDeclineAll}
-                  className="border-red-700 text-white bg-red-600 hover:bg-red-700"
+                  className="bg-red-700 text-white hover:bg-red-800"
                 >
                   {cookieConsent.decline}
                 </Button>
