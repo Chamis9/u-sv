@@ -109,15 +109,19 @@ export function CookiePreferencesDialog({
           </p>
           
           <p className="mt-4 text-gray-400">
-            {cookieConsent.privacyPolicy.split("mūsu privātuma politikā").join("")}
+            {cookieConsent.privacyPolicy.includes("mūsu privātuma politikā") 
+              ? "Plašāku informāciju par to, kā mēs izmantojam jūsu datus, varat skatīt " 
+              : "For more details on how we use your data, please see "}
             <Button 
               variant="link" 
               className="p-0 h-auto text-orange-500 hover:underline font-normal"
               onClick={handlePrivacyPolicyClick}
             >
-              mūsu privātuma politikā
+              {cookieConsent.privacyPolicy.includes("mūsu privātuma politikā") 
+                ? "mūsu privātuma politikā" 
+                : "our privacy policy"}
             </Button>
-            {cookieConsent.privacyPolicy.includes("mūsu privātuma politikā") ? "." : ""}
+            {cookieConsent.privacyPolicy.includes("mūsu privātuma politikā") ? "." : "."}
           </p>
 
           <div className="mt-4">
