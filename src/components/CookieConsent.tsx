@@ -183,7 +183,7 @@ export function CookieConsent() {
                 htmlFor="essential-cookies"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                {cookieConsent.essentialCookiesTitle} ({currentLanguage === 'lv' ? 'Obligāti' : currentLanguage === 'ru' ? 'Обязательно' : 'Required'})
+                {cookieConsent.essentialCookiesTitle} ({currentLanguage.code === 'lv' ? 'Obligāti' : currentLanguage.code === 'ru' ? 'Обязательно' : 'Required'})
               </Label>
             </div>
             <p className="pl-6 text-xs">{cookieConsent.essentialCookiesDescription}</p>
@@ -217,13 +217,17 @@ export function CookieConsent() {
                 htmlFor="marketing-cookies"
                 className="text-sm font-medium leading-none"
               >
-                {currentLanguage === 'lv' ? 'Mārketinga sīkdatnes' : currentLanguage === 'ru' ? 'Маркетинговые файлы cookie' : 'Marketing cookies'}
+                {currentLanguage.code === 'lv' 
+                  ? 'Mārketinga sīkdatnes' 
+                  : currentLanguage.code === 'ru' 
+                    ? 'Маркетинговые файлы cookie' 
+                    : 'Marketing cookies'}
               </Label>
             </div>
             <p className="pl-6 text-xs">
-              {currentLanguage === 'lv' 
+              {currentLanguage.code === 'lv' 
                 ? 'Šīs sīkdatnes tiek izmantotas, lai izsekotu lietotājus dažādās vietnēs un parādītu attiecīgas reklāmas, kas ir aktuālas un saistošas konkrētajam lietotājam.' 
-                : currentLanguage === 'ru'
+                : currentLanguage.code === 'ru'
                   ? 'Эти файлы cookie используются для отслеживания пользователей на разных веб-сайтах и отображения соответствующей рекламы, которая актуальна и привлекательна для конкретного пользователя.'
                   : 'These cookies are used to track users across websites and display relevant advertisements that are relevant and engaging to the individual user.'}
             </p>
