@@ -14,60 +14,62 @@ const PrivacyPolicy = () => {
         return {
           title: "Privātuma politika",
           lastUpdated: "Pēdējie atjauninājumi: 11.04.2025",
-          intro: "Šī privātuma politika apraksta, kā netieku.es vāc, izmanto un aizsargā jūsu personīgo informāciju, izmantojot mūsu tīmekļa vietni un pakalpojumus.",
+          intro: "Šī privātuma politika apraksta, kā vietne netieku.es ("vietne", "mēs", "mūsu") vāc, izmanto, glabā un aizsargā jūsu personīgo informāciju.",
           sections: [
             {
               title: "Kādu informāciju mēs vācam",
-              content: "Mēs varam vākt šādu personīgo informāciju:",
+              content: "Mēs varam vākt šādu informāciju:",
               list: [
                 "Vārds un uzvārds",
                 "E-pasta adrese",
                 "Tālruņa numurs",
-                "Kontaktinformācija",
+                "Kontaktinformācija (piemēram, adrese vai preferences)",
                 "Lietotāja profila informācija",
                 "Ierīces un pārlūka informācija",
                 "IP adrese",
                 "Atrašanās vietas dati",
-                "Mijiedarbības žurnāli ar vietni"
-              ]
+                "Mijiedarbības žurnāli ar vietni (piemēram, klikšķi, lapu skatījumi)"
+              ],
+              additionalInfo: "Šie dati tiek vākti tikai pamatojoties uz likumīgu pamatu: jūsu piekrišanu, līguma izpildi, juridisku pienākumu vai mūsu leģitīmu interešu nodrošināšanu."
             },
             {
               title: "Kā mēs izmantojam jūsu informāciju",
-              content: "Jūsu personīgā informācija tiek izmantota, lai:",
+              content: "Jūsu informācija tiek izmantota, lai:",
               list: [
-                "Nodrošinātu un uzlabotu mūsu pakalpojumus",
-                "Sazinātos ar jums par jūsu kontiem vai darījumiem",
-                "Nosūtītu svarīgus paziņojumus",
+                "Nodrošinātu un uzturētu vietnes darbību",
                 "Personalizētu lietotāja pieredzi",
-                "Veiktu statistikas un analīzes",
                 "Nodrošinātu klientu atbalstu",
+                "Sazinātos ar jums saistībā ar kontiem, pakalpojumiem vai paziņojumiem",
+                "Uzlabotu vietnes veiktspēju un analizētu lietošanas paradumus",
                 "Aizsargātu pret krāpniecību un drošības riskiem",
-                "Mārketinga un reklāmas nolūkos (ar jūsu piekrišanu)"
+                "Piedāvātu mārketinga un reklāmas saturu tikai ar jūsu piekrišanu"
               ]
             },
             {
-              title: "Sīkdatnes un izsekošanas tehnoloģijas",
-              content: "Mēs izmantojam sīkdatnes un līdzīgas izsekošanas tehnoloģijas, lai uzlabotu jūsu pieredzi mūsu vietnē, analizētu tendences un administrētu vietni. Jūs varat kontrolēt sīkdatņu izmantošanu savā pārlūkprogrammā."
-            },
-            {
-              title: "Informācijas kopīgošana",
-              content: "Mēs nepārdodam un neiznomājam jūsu personīgo informāciju trešajām personām. Tomēr mēs varam kopīgot jūsu informāciju ar uzticamiem pakalpojumu sniedzējiem, kas palīdz mums sniegt pakalpojumus."
-            },
-            {
-              title: "Datu drošība",
-              content: "Mēs ieviešam atbilstošus drošības pasākumus, lai aizsargātu jūsu personīgo informāciju no neatļautas piekļuves, izmaiņām, izpaušanas vai iznīcināšanas."
+              title: "Datu kopīgošana ar trešajām pusēm",
+              content: "Mēs nekopīgojam jūsu personīgo informāciju ar trešajām pusēm, izņemot šādos gadījumos:",
+              list: [
+                "Juridisku pienākumu gadījumā – ja to pieprasa likums, tiesībsargājošās iestādes vai tiesas",
+                "Ar jūsu piekrišanu – ja esat skaidri piekritis informācijas kopīgošanai"
+              ],
+              additionalInfo: "Visi dati tiek kopīgoti tikai minimālajā nepieciešamajā apjomā un saskaņā ar spēkā esošajiem datu aizsardzības likumiem (piemēram, GDPR, ja tas ir piemērojams)."
             },
             {
               title: "Jūsu tiesības",
-              content: "Jums ir tiesības piekļūt savai personīgajai informācijai, labot to, dzēst vai ierobežot tās apstrādi. Jūs varat arī atsaukt savu piekrišanu jebkurā laikā."
+              content: "Jums ir šādas tiesības attiecībā uz jūsu personīgo informāciju:",
+              list: [
+                "Tiesības piekļūt – iegūt informāciju par to, kādi dati par jums tiek glabāti",
+                "Tiesības labot – pieprasīt neprecīzu vai nepilnīgu datu labošanu",
+                "Tiesības dzēst ("tikt aizmirstam") – pieprasīt datu dzēšanu, ja tiem vairs nav juridiska pamata",
+                "Tiesības ierobežot apstrādi – noteiktos gadījumos ierobežot datu izmantošanu",
+                "Tiesības iebilst – pret datu apstrādi noteiktos nolūkos, piemēram, tiešajam mārketingam",
+                "Tiesības uz datu pārnesamību – saņemt savus datus strukturētā formātā"
+              ],
+              additionalInfo: "Lai īstenotu savas tiesības, lūdzu, sazinieties ar mums, izmantojot zemāk norādīto kontaktinformāciju."
             },
             {
-              title: "Izmaiņas šajā politikā",
-              content: "Mēs varam periodiski atjaunināt šo privātuma politiku. Mēs informēsim jūs par būtiskām izmaiņām, publicējot paziņojumu mūsu vietnē."
-            },
-            {
-              title: "Sazinieties ar mums",
-              content: "Ja jums ir jautājumi vai bažas par mūsu privātuma politiku, lūdzu, sazinieties ar mums, izmantojot kontaktinformāciju, kas norādīta mūsu vietnē."
+              title: "Saziņa un jautājumi",
+              content: "Ja jums ir jautājumi par šo privātuma politiku vai vēlaties izmantot savas datu aizsardzības tiesības, lūdzu, sazinieties ar mums:"
             }
           ]
         };
@@ -75,60 +77,62 @@ const PrivacyPolicy = () => {
         return {
           title: "Политика конфиденциальности",
           lastUpdated: "Последнее обновление: 11.04.2025",
-          intro: "Эта политика конфиденциальности описывает, как netieku.es собирает, использует и защищает вашу личную информацию при использовании нашего веб-сайта и услуг.",
+          intro: "Эта политика конфиденциальности описывает, как сайт netieku.es ("сайт", "мы", "наш") собирает, использует, хранит и защищает вашу личную информацию.",
           sections: [
             {
               title: "Какую информацию мы собираем",
-              content: "Мы можем собирать следующую личную информацию:",
+              content: "Мы можем собирать следующую информацию:",
               list: [
                 "Имя и фамилия",
                 "Адрес электронной почты",
                 "Номер телефона",
-                "Контактная информация",
+                "Контактная информация (например, адрес или предпочтения)",
                 "Информация профиля пользователя",
                 "Данные об устройстве и браузере",
                 "IP-адрес",
                 "Данные о местоположении",
-                "Журналы взаимодействия с сайтом"
-              ]
+                "Журналы взаимодействия с сайтом (например, клики, просмотры страниц)"
+              ],
+              additionalInfo: "Эти данные собираются только на законных основаниях: ваше согласие, исполнение договора, юридические обязательства или наши законные интересы."
             },
             {
               title: "Как мы используем вашу информацию",
-              content: "Ваша личная информация используется для:",
+              content: "Ваша информация используется для:",
               list: [
-                "Предоставления и улучшения наших услуг",
-                "Связи с вами о ваших аккаунтах или транзакциях",
-                "Отправки важных уведомлений",
+                "Обеспечения и поддержки работы сайта",
                 "Персонализации пользовательского опыта",
-                "Проведения статистики и анализа",
                 "Обеспечения поддержки клиентов",
+                "Связи с вами по поводу аккаунтов, услуг или уведомлений",
+                "Улучшения производительности сайта и анализа пользовательских привычек",
                 "Защиты от мошенничества и рисков безопасности",
-                "Маркетинга и рекламы (с вашего согласия)"
+                "Предложения маркетингового и рекламного контента только с вашего согласия"
               ]
             },
             {
-              title: "Файлы cookie и технологии отслеживания",
-              content: "Мы используем файлы cookie и аналогичные технологии отслеживания для улучшения вашего опыта на нашем сайте, анализа тенденций и администрирования сайта. Вы можете контролировать использование файлов cookie в своем браузере."
-            },
-            {
-              title: "Обмен информацией",
-              content: "Мы не продаем и не сдаем в аренду вашу личную информацию третьим лицам. Однако мы можем делиться вашей информацией с доверенными поставщиками услуг, которые помогают нам предоставлять услуги."
-            },
-            {
-              title: "Безопасность данных",
-              content: "Мы внедряем соответствующие меры безопасности для защиты вашей личной информации от несанкционированного доступа, изменений, раскрытия или уничтожения."
+              title: "Обмен данными с третьими сторонами",
+              content: "Мы не передаем вашу личную информацию третьим сторонам, за исключением следующих случаев:",
+              list: [
+                "В случае юридических обязательств – если это требуется по закону, правоохранительными органами или судами",
+                "С вашего согласия – если вы явно согласились на обмен информацией"
+              ],
+              additionalInfo: "Все данные передаются только в минимально необходимом объеме и в соответствии с действующими законами о защите данных (например, GDPR, если применимо)."
             },
             {
               title: "Ваши права",
-              content: "Вы имеете право доступа к своей личной информации, исправления, удаления или ограничения ее обработки. Вы также можете отозвать свое согласие в любое время."
+              content: "У вас есть следующие права в отношении вашей личной информации:",
+              list: [
+                "Право на доступ – получать информацию о том, какие данные о вас хранятся",
+                "Право на исправление – запрашивать исправление неточных или неполных данных",
+                "Право на удаление ("право быть забытым") – запрашивать удаление данных, если больше нет юридических оснований",
+                "Право ограничить обработку – в определенных случаях ограничивать использование данных",
+                "Право возражать – против обработки данных для определенных целей, например, прямого маркетинга",
+                "Право на переносимость данных – получать свои данные в структурированном формате"
+              ],
+              additionalInfo: "Для реализации своих прав, пожалуйста, свяжитесь с нами, используя контактную информацию, указанную ниже."
             },
             {
-              title: "Изменения в этой политике",
-              content: "Мы можем периодически обновлять эту политику конфиденциальности. Мы уведомим вас о существенных изменениях, разместив уведомление на нашем сайте."
-            },
-            {
-              title: "Связаться с нами",
-              content: "Если у вас есть вопросы или опасения относительно нашей политики конфиденциальности, пожалуйста, свяжитесь с нами, используя контактную информацию, указанную на нашем сайте."
+              title: "Связь и вопросы",
+              content: "Если у вас есть вопросы об этой политике конфиденциальности или вы хотите воспользоваться своими правами на защиту данных, пожалуйста, свяжитесь с нами:"
             }
           ]
         };
@@ -136,60 +140,62 @@ const PrivacyPolicy = () => {
         return {
           title: "Privacy Policy",
           lastUpdated: "Last updated: 04/11/2025",
-          intro: "This Privacy Policy describes how netieku.es collects, uses, and protects your personal information when you use our website and services.",
+          intro: "This Privacy Policy describes how netieku.es ('site', 'we', 'our') collects, uses, stores, and protects your personal information.",
           sections: [
             {
               title: "Information We Collect",
-              content: "We may collect the following personal information:",
+              content: "We may collect the following information:",
               list: [
                 "Full name",
                 "Email address",
-                "Phone number", 
-                "Contact information",
+                "Phone number",
+                "Contact information (e.g., address or preferences)",
                 "User profile information",
                 "Device and browser information",
                 "IP address",
                 "Location data",
-                "Site interaction logs"
-              ]
+                "Site interaction logs (e.g., clicks, page views)"
+              ],
+              additionalInfo: "This data is only collected based on lawful grounds: your consent, fulfillment of a contract, legal obligation, or our legitimate interests."
             },
             {
               title: "How We Use Your Information",
-              content: "Your personal information is used to:",
+              content: "Your information is used to:",
               list: [
-                "Provide and improve our services",
-                "Communicate with you about your accounts or transactions",
-                "Send important notifications",
+                "Provide and maintain website operation",
                 "Personalize user experience",
-                "Conduct statistics and analysis",
                 "Provide customer support",
+                "Communicate with you regarding accounts, services, or notifications",
+                "Improve website performance and analyze usage patterns",
                 "Protect against fraud and security risks",
-                "Marketing and advertising purposes (with your consent)"
+                "Offer marketing and advertising content only with your consent"
               ]
             },
             {
-              title: "Cookies and Tracking Technologies",
-              content: "We use cookies and similar tracking technologies to enhance your experience on our site, analyze trends, and administer the website. You can control the use of cookies in your browser."
-            },
-            {
-              title: "Information Sharing",
-              content: "We do not sell or rent your personal information to third parties. However, we may share your information with trusted service providers who help us deliver our services."
-            },
-            {
-              title: "Data Security",
-              content: "We implement appropriate security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction."
+              title: "Data Sharing with Third Parties",
+              content: "We do not share your personal information with third parties except in the following cases:",
+              list: [
+                "In case of legal obligations – if required by law, law enforcement agencies, or courts",
+                "With your consent – if you have explicitly agreed to information sharing"
+              ],
+              additionalInfo: "All data is shared only to the minimum extent necessary and in accordance with applicable data protection laws (e.g., GDPR, if applicable)."
             },
             {
               title: "Your Rights",
-              content: "You have the right to access, correct, delete, or restrict the processing of your personal information. You can also withdraw your consent at any time."
+              content: "You have the following rights regarding your personal information:",
+              list: [
+                "Right to access – obtain information about what data about you is stored",
+                "Right to rectify – request correction of inaccurate or incomplete data",
+                "Right to erasure ('right to be forgotten') – request deletion of data if there is no longer a legal basis",
+                "Right to restrict processing – in certain cases limit the use of data",
+                "Right to object – to data processing for certain purposes, such as direct marketing",
+                "Right to data portability – receive your data in a structured format"
+              ],
+              additionalInfo: "To exercise your rights, please contact us using the contact information provided below."
             },
             {
-              title: "Changes to This Policy",
-              content: "We may update this Privacy Policy periodically. We will notify you of significant changes by posting a notice on our website."
-            },
-            {
-              title: "Contact Us",
-              content: "If you have questions or concerns about our Privacy Policy, please contact us using the contact information provided on our website."
+              title: "Contact and Questions",
+              content: "If you have questions about this Privacy Policy or wish to exercise your data protection rights, please contact us:"
             }
           ]
         };
@@ -228,6 +234,9 @@ const PrivacyPolicy = () => {
                           <li key={itemIndex}>{item}</li>
                         ))}
                       </ul>
+                    )}
+                    {section.additionalInfo && (
+                      <p className="text-gray-300 mt-3">{section.additionalInfo}</p>
                     )}
                   </div>
                 ))}
