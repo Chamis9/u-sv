@@ -21,7 +21,10 @@ export function Hero() {
   };
 
   return (
-    <section id="hero" className="relative h-[70vh] flex items-center justify-center overflow-hidden">
+    <section 
+      id="hero" 
+      className="relative h-[60vh] flex items-center justify-center overflow-hidden"
+    >
       {/* Structured data */}
       <Helmet>
         <script type="application/ld+json">
@@ -29,8 +32,8 @@ export function Hero() {
         </script>
       </Helmet>
       
-      {/* Background overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40 z-0"></div>
+      {/* Background overlay with orange gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-orange-500/60 via-orange-300/40 to-black/40 z-0"></div>
       
       {/* Falling tickets animation */}
       <FallingTickets />
