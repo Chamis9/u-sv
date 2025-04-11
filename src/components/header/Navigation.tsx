@@ -2,11 +2,9 @@
 import { Link } from "react-router-dom";
 import { Mail } from "lucide-react";
 import { useLanguage } from "@/features/language";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export function Navigation() {
   const { currentLanguage } = useLanguage();
-  const isMobile = useIsMobile();
   
   const translations = {
     lv: {
@@ -24,7 +22,7 @@ export function Navigation() {
 
   return (
     <nav className="relative z-10">
-      <ul className={isMobile ? "flex items-center justify-center" : "flex items-center md:space-x-6"}>
+      <ul className="flex items-center justify-center">
         <li>
           <Link 
             to="/contact" 
