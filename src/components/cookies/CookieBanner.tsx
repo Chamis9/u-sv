@@ -20,8 +20,6 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
     marketing: false  // Default unchecked
   });
 
-  const { currentLanguage } = useLanguage();
-
   const handleToggleAnalytics = (checked: boolean) => {
     setPreferences(prev => ({ ...prev, analytics: checked }));
   };

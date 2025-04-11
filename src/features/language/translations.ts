@@ -1,3 +1,4 @@
+
 import { Translations } from './types';
 
 const translationsData: Record<string, Translations> = {
@@ -6,8 +7,7 @@ const translationsData: Record<string, Translations> = {
       title: "Pārdodiet un pērciet biļetes",
       titleHighlight: "vienkārši un droši",
       subtitle: "Pirmā platforma biļešu apmaiņai Latvijā",
-      c2cExplanation: "",
-      comingSoon: "Drīzumā",
+      c2cExplanation: "C2C - Consumer-to-Consumer platformā individuālie lietotāji var apmainīties ar biļetēm",
       subscribeText: "Piesakies, lai jau laicīgi uzzinātu par platformas atklāšanu!",
       learnMoreBtn: "Uzzināt vairāk",
     },
@@ -51,13 +51,13 @@ const translationsData: Record<string, Translations> = {
       required: "Obligāti",
       savePreferences: "Saglabāt iestatījumus",
       cookieSettings: "Sīkdatņu iestatījumi",
-      marketingCookies: "Mārketinga sīkdatnes"
+      marketingCookies: "Mārketinga sīkdatnes",
+      marketingCookiesDescription: "Šīs sīkdatnes tiek izmantotas, lai izsekotu lietotājus dažādās vietnēs un parādītu attiecīgas reklāmas, kas ir aktuālas un saistošas konkrētajam lietotājam."
     },
     footer: {
       allRightsReserved: "Visas tiesības aizsargātas.",
       madeWith: "Radīts ar",
       location: "Latvijā",
-      c2cExplanation: "",
       cookieSettings: "Sīkdatņu iestatījumi",
       privacyPolicy: "Privātuma politika"
     }
@@ -67,8 +67,7 @@ const translationsData: Record<string, Translations> = {
       title: "Buy and sell tickets",
       titleHighlight: "simply and securely",
       subtitle: "The first platform for ticket exchange in Latvia",
-      c2cExplanation: "",
-      comingSoon: "Coming soon",
+      c2cExplanation: "C2C - In a Consumer-to-Consumer platform, individual users can exchange tickets with each other",
       subscribeText: "Subscribe to learn about platform launch",
       learnMoreBtn: "Learn more",
     },
@@ -112,13 +111,13 @@ const translationsData: Record<string, Translations> = {
       required: "Required",
       savePreferences: "Save preferences",
       cookieSettings: "Cookie Settings",
-      marketingCookies: "Marketing cookies"
+      marketingCookies: "Marketing cookies",
+      marketingCookiesDescription: "These cookies are used to track users across websites and display relevant advertisements that are relevant and engaging to the individual user."
     },
     footer: {
       allRightsReserved: "All rights reserved.",
       madeWith: "Made with",
       location: "in Latvia",
-      c2cExplanation: "",
       cookieSettings: "Cookie Settings",
       privacyPolicy: "Privacy Policy"
     }
@@ -128,8 +127,7 @@ const translationsData: Record<string, Translations> = {
       title: "Продавайте и покупайте билеты",
       titleHighlight: "просто и безопасно",
       subtitle: "Первая платформа для обмена билетами в Латвии",
-      c2cExplanation: "",
-      comingSoon: "Скоро",
+      c2cExplanation: "C2C - На платформе Consumer-to-Consumer индивидуальные пользователи могут обмениваться билетами между собой",
       subscribeText: "Подпишитесь, чтобы узнать о запуске платформы",
       learnMoreBtn: "Узнать больше",
     },
@@ -173,13 +171,13 @@ const translationsData: Record<string, Translations> = {
       required: "Обязательно",
       savePreferences: "Сохранить настройки",
       cookieSettings: "Настройки файлов cookie",
-      marketingCookies: "Маркетинговые файлы cookie"
+      marketingCookies: "Маркетинговые файлы cookie",
+      marketingCookiesDescription: "Эти файлы cookie используются для отслеживания пользователей на разных веб-сайтах и отображения соответствующей рекламы, которая актуальна и привлекательна для конкретного пользователя."
     },
     footer: {
       allRightsReserved: "Все права защищены.",
       madeWith: "Создано с",
-      location: "Латвии",
-      c2cExplanation: "",
+      location: "в Латвии",
       cookieSettings: "Настройки файлов cookie",
       privacyPolicy: "Политика конфиденциальности"
     }

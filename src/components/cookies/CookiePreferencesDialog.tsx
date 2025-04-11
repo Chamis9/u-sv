@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { CookiePreferences } from '../CookieConsent';
 import { useLanguage } from '@/features/language';
-import { Translations } from '@/features/language';
+import { Translations } from '@/features/language/types';
 
 interface CookiePreferencesDialogProps {
   open: boolean;
@@ -31,8 +31,6 @@ export function CookiePreferencesDialog({
   onSave,
   cookieConsent
 }: CookiePreferencesDialogProps) {
-  const { currentLanguage } = useLanguage();
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] bg-gradient-to-b from-black via-gray-900 to-gray-800 text-gray-300 border-gray-700">
@@ -99,11 +97,7 @@ export function CookiePreferencesDialog({
             </Label>
           </div>
           <p className="pl-6 text-xs text-gray-400">
-            {currentLanguage.code === 'lv' 
-              ? 'Šīs sīkdatnes tiek izmantotas, lai izsekotu lietotājus dažādās vietnēs un parādītu attiecīgas reklāmas, kas ir aktuālas un saistošas konkrētajam lietotājam.' 
-              : currentLanguage.code === 'ru'
-                ? 'Эти файлы cookie используются для отслеживания пользователей на разных веб-сайтах и отображения соответствующей рекламы, которая актуальна и привлекательна для конкретного пользователя.'
-                : 'These cookies are used to track users across websites and display relevant advertisements that are relevant and engaging to the individual user.'}
+            {cookieConsent.marketingCookiesDescription || "These cookies are used to track users across websites and display advertisements that are relevant to the individual user."}
           </p>
           
           <p className="mt-4 text-gray-400">{cookieConsent.privacyPolicy}</p>

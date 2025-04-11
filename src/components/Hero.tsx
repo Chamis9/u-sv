@@ -77,9 +77,11 @@ export function Hero() {
             </a>
           </div>
           
-          <div className="mt-4 text-white/70 text-sm">
-            {hero.c2cExplanation}
-          </div>
+          {hero.c2cExplanation && (
+            <div className="mt-4 text-white/70 text-sm">
+              {hero.c2cExplanation}
+            </div>
+          )}
         </div>
       </div>
     </section>

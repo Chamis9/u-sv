@@ -23,7 +23,7 @@ export function Footer() {
               © {new Date().getFullYear()} netieku.es. {footer.allRightsReserved}
             </p>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-wrap items-center gap-4">
             <Button 
               variant="ghost" 
               size="sm" 
@@ -47,14 +47,11 @@ export function Footer() {
             <div className="flex items-center text-sm text-gray-400">
               <span className="flex items-center">
                 {footer.madeWith} 
-                <div className="relative mx-1">
-                  {/* Fully filled orange heart */}
-                  <Heart 
-                    className="h-4 w-4" 
-                    fill="#F97316" // Bright orange from tailwind color palette
-                    strokeWidth={0}
-                  />
-                </div>
+                <Heart 
+                  className="mx-1 h-4 w-4" 
+                  fill="#F97316" 
+                  strokeWidth={0}
+                />
                 {footer.location}
               </span>
             </div>

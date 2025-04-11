@@ -16,56 +16,44 @@ import { clearAllCookies } from "./utils/cookieManager";
 
 const queryClient = new QueryClient();
 
-// Global logout function that also clears cookies
+// Global logout function
 const handleLogout = () => {
-  // Clear cookies first
   clearAllCookies();
-  
-  // Then perform any other logout operations such as:
-  // - Clear local storage (except for language preference if needed)
-  // - Clear application state
-  // - Redirect to login page
-  // - etc.
-  
   console.log("User logged out and cookies cleared");
-  
-  // Example: You might want to reload the page or redirect
-  // window.location.href = '/login';
 };
 
 // Make the logout function globally available
 window.logout = handleLogout;
 
 const App = () => (
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <HelmetProvider>
-        <TooltipProvider>
-          <LanguageProvider>
-            <Toaster />
-            <Sonner />
-            <CookieConsent />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/contact" element={<Contact />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </LanguageProvider>
-        </TooltipProvider>
-      </HelmetProvider>
-    </QueryClientProvider>
-  </React.StrictMode>
+  <QueryClientProvider client={queryClient}>
+    <HelmetProvider>
+      <TooltipProvider>
+        <LanguageProvider>
+          <Toaster />
+          <Sonner />
+          <CookieConsent />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </LanguageProvider>
+      </TooltipProvider>
+    </HelmetProvider>
+  </QueryClientProvider>
 );
 
 // Update TypeScript declaration
 declare global {
   interface Window {
     logout?: () => void;
-    // Other global functions from before
+    openCookieSettings?: () => void;
+    manageCookieConsent?: () => void;
+    clearAllCookiesOnLogout?: () => void;
   }
 }
 

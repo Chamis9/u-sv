@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useLanguage } from '@/features/language';
 import { CookieBanner } from './cookies/CookieBanner';
@@ -42,7 +43,6 @@ export function CookieConsent() {
     }
   }, []);
 
-  // Function to handle consent recording
   const handleAccept = (preferences?: Partial<CookiePreferences>) => {
     const finalPreferences = {
       ...cookiePreferences,
@@ -59,32 +59,16 @@ export function CookieConsent() {
     setCookiePreferences(finalPreferences);
     setShowBanner(false);
     setShowDialog(false);
-
-    // Implement actual cookie management based on preferences
-    if (finalPreferences.analytics) {
-      // Initialize analytics tracking
-      console.log('Analytics cookies enabled');
-    }
   };
 
   const handleLearnMore = () => {
     setShowDialog(true);
   };
 
-  // Function to manage cookie preferences through settings
-  const handleOpenCookieSettings = () => {
-    setShowDialog(true);
-  };
-
-  // Function to get cookie consent at any time
-  const handleManageCookies = () => {
-    setShowBanner(true);
-  };
-
-  // Expose these functions globally for other components to use
+  // Expose functions globally for other components to use
   useEffect(() => {
-    window.openCookieSettings = handleOpenCookieSettings;
-    window.manageCookieConsent = handleManageCookies;
+    window.openCookieSettings = () => setShowDialog(true);
+    window.manageCookieConsent = () => setShowBanner(true);
     window.clearAllCookiesOnLogout = clearAllCookies;
     
     // Cleanup
