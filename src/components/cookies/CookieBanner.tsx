@@ -43,11 +43,11 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg p-4">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-b from-black via-gray-900 to-gray-800 border-t border-gray-700 shadow-lg p-4">
       <div className="container mx-auto">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex-1 text-sm text-gray-700">
+            <div className="flex-1 text-sm text-gray-300">
               <p>
                 {cookieConsent.message}{' '}
                 <button 
@@ -60,15 +60,16 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
             </div>
           </div>
           
-          <div className="bg-gray-50 p-4 rounded-md border">
+          <div className="bg-gray-800/50 backdrop-blur-sm p-4 rounded-md border border-gray-700">
             <div className="space-y-4 text-sm">
               <div className="flex items-center space-x-2">
                 <Checkbox 
                   id="essential-cookies-banner" 
                   checked={preferences.essential} 
                   disabled
+                  className="border-gray-600 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                 />
-                <Label htmlFor="essential-cookies-banner">
+                <Label htmlFor="essential-cookies-banner" className="text-gray-300">
                   {cookieConsent.essentialCookiesTitle} ({cookieConsent.required || "Required"})
                 </Label>
               </div>
@@ -78,8 +79,9 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
                   id="analytics-cookies-banner"
                   checked={preferences.analytics}
                   onCheckedChange={handleToggleAnalytics}
+                  className="border-gray-600 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                 />
-                <Label htmlFor="analytics-cookies-banner">
+                <Label htmlFor="analytics-cookies-banner" className="text-gray-300">
                   {cookieConsent.analyticsCookiesTitle}
                 </Label>
               </div>
@@ -89,8 +91,9 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
                   id="marketing-cookies-banner"
                   checked={preferences.marketing}
                   onCheckedChange={handleToggleMarketing}
+                  className="border-gray-600 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                 />
-                <Label htmlFor="marketing-cookies-banner">
+                <Label htmlFor="marketing-cookies-banner" className="text-gray-300">
                   {cookieConsent.marketingCookies || "Marketing cookies"}
                 </Label>
               </div>
@@ -100,7 +103,7 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
                   variant="outline"
                   size="sm"
                   onClick={handleDeclineAll}
-                  className="border-gray-300"
+                  className="border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white"
                 >
                   {cookieConsent.decline}
                 </Button>

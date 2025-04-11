@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Dialog, 
@@ -34,17 +35,17 @@ export function CookiePreferencesDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] bg-gradient-to-b from-black via-gray-900 to-gray-800 text-gray-300 border-gray-700">
         <DialogHeader>
-          <DialogTitle>{cookieConsent.dialogTitle}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-orange-500">{cookieConsent.dialogTitle}</DialogTitle>
+          <DialogDescription className="text-gray-400">
             {cookieConsent.dialogDescription}
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 py-4 text-sm text-gray-700">
+        <div className="space-y-4 py-4 text-sm text-gray-300">
           <p>{cookieConsent.whatAreCookies}</p>
           <p>{cookieConsent.whyWeUseCookies}</p>
-          <p className="font-medium">{cookieConsent.typesOfCookies}</p>
+          <p className="font-medium text-orange-500">{cookieConsent.typesOfCookies}</p>
           
           <div className="flex items-center space-x-2">
             <Checkbox 
@@ -52,6 +53,7 @@ export function CookiePreferencesDialog({
               checked={cookiePreferences.essential} 
               onCheckedChange={() => {}} 
               disabled 
+              className="border-gray-600 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
             />
             <Label 
               htmlFor="essential-cookies"
@@ -60,7 +62,7 @@ export function CookiePreferencesDialog({
               {cookieConsent.essentialCookiesTitle} ({cookieConsent.required || "Required"})
             </Label>
           </div>
-          <p className="pl-6 text-xs">{cookieConsent.essentialCookiesDescription}</p>
+          <p className="pl-6 text-xs text-gray-400">{cookieConsent.essentialCookiesDescription}</p>
 
           <div className="flex items-center space-x-2 mt-4">
             <Checkbox 
@@ -69,6 +71,7 @@ export function CookiePreferencesDialog({
               onCheckedChange={(checked) => 
                 setCookiePreferences(prev => ({ ...prev, analytics: !!checked }))
               }
+              className="border-gray-600 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
             />
             <Label 
               htmlFor="analytics-cookies"
@@ -77,7 +80,7 @@ export function CookiePreferencesDialog({
               {cookieConsent.analyticsCookiesTitle}
             </Label>
           </div>
-          <p className="pl-6 text-xs">{cookieConsent.analyticsCookiesDescription}</p>
+          <p className="pl-6 text-xs text-gray-400">{cookieConsent.analyticsCookiesDescription}</p>
           
           <div className="flex items-center space-x-2 mt-4">
             <Checkbox 
@@ -86,6 +89,7 @@ export function CookiePreferencesDialog({
               onCheckedChange={(checked) => 
                 setCookiePreferences(prev => ({ ...prev, marketing: !!checked }))
               }
+              className="border-gray-600 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
             />
             <Label 
               htmlFor="marketing-cookies"
@@ -94,7 +98,7 @@ export function CookiePreferencesDialog({
               {cookieConsent.marketingCookies || "Marketing cookies"}
             </Label>
           </div>
-          <p className="pl-6 text-xs">
+          <p className="pl-6 text-xs text-gray-400">
             {currentLanguage.code === 'lv' 
               ? 'Šīs sīkdatnes tiek izmantotas, lai izsekotu lietotājus dažādās vietnēs un parādītu attiecīgas reklāmas, kas ir aktuālas un saistošas konkrētajam lietotājam.' 
               : currentLanguage.code === 'ru'
@@ -102,7 +106,7 @@ export function CookiePreferencesDialog({
                 : 'These cookies are used to track users across websites and display relevant advertisements that are relevant and engaging to the individual user.'}
           </p>
           
-          <p className="mt-4">{cookieConsent.privacyPolicy}</p>
+          <p className="mt-4 text-gray-400">{cookieConsent.privacyPolicy}</p>
 
           <div className="mt-4">
             <Button onClick={() => onSave(cookiePreferences)} className="bg-orange-500 hover:bg-orange-600 text-white">
