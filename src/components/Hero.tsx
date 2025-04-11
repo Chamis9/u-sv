@@ -32,6 +32,9 @@ export function Hero() {
         </script>
       </Helmet>
       
+      {/* Background overlay with orange gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-orange-500/60 via-orange-300/40 to-black/40 z-0"></div>
+      
       {/* Falling tickets animation */}
       <FallingTickets />
       
@@ -81,4 +84,3 @@ export function Hero() {
     </section>
   );
 }
-
