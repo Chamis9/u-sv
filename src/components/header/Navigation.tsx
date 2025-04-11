@@ -22,11 +22,11 @@ export function Navigation() {
 
   return (
     <nav className="relative z-10">
-      <ul className="flex space-x-6 items-center">
+      <ul className="flex space-x-4 md:space-x-6 items-center">
         <li>
           <Link 
             to="/contact" 
-            className="text-white hover:text-orange-400 transition-colors flex items-center gap-1.5 relative z-10"
+            className="text-white hover:text-orange-400 transition-colors flex items-center gap-1.5 relative z-10 text-sm md:text-base"
           >
             <Mail size={16} />
             {t.contact}
