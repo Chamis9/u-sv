@@ -2,6 +2,7 @@
 import { Heart, Cookie, Shield } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
 
 export function Footer() {
   const { translations } = useLanguage();
@@ -38,10 +39,10 @@ export function Footer() {
               className="text-gray-600 hover:text-orange-500"
               asChild
             >
-              <a href="/privacy-policy">
+              <Link to="/privacy-policy">
                 <Shield className="h-4 w-4 mr-2" />
                 <span className="text-xs">{footer.privacyPolicy}</span>
-              </a>
+              </Link>
             </Button>
             <div className="flex items-center text-sm text-gray-600">
               <span className="flex items-center">
