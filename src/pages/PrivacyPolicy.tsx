@@ -14,7 +14,7 @@ const PrivacyPolicy = () => {
         return {
           title: "Privātuma politika",
           lastUpdated: "Pēdējie atjauninājumi: 11.04.2025",
-          intro: "Šī privātuma politika apraksta, kā vietne netieku.es ("vietne", "mēs", "mūsu") vāc, izmanto, glabā un aizsargā jūsu personīgo informāciju.",
+          intro: "Šī privātuma politika apraksta, kā vietne netieku.es (\"vietne\", \"mēs\", \"mūsu\") vāc, izmanto, glabā un aizsargā jūsu personīgo informāciju.",
           sections: [
             {
               title: "Kādu informāciju mēs vācam",
@@ -60,7 +60,7 @@ const PrivacyPolicy = () => {
               list: [
                 "Tiesības piekļūt – iegūt informāciju par to, kādi dati par jums tiek glabāti",
                 "Tiesības labot – pieprasīt neprecīzu vai nepilnīgu datu labošanu",
-                "Tiesības dzēst ("tikt aizmirstam") – pieprasīt datu dzēšanu, ja tiem vairs nav juridiska pamata",
+                "Tiesības dzēst (\"tikt aizmirstam\") – pieprasīt datu dzēšanu, ja tiem vairs nav juridiska pamata",
                 "Tiesības ierobežot apstrādi – noteiktos gadījumos ierobežot datu izmantošanu",
                 "Tiesības iebilst – pret datu apstrādi noteiktos nolūkos, piemēram, tiešajam mārketingam",
                 "Tiesības uz datu pārnesamību – saņemt savus datus strukturētā formātā"
@@ -77,7 +77,7 @@ const PrivacyPolicy = () => {
         return {
           title: "Политика конфиденциальности",
           lastUpdated: "Последнее обновление: 11.04.2025",
-          intro: "Эта политика конфиденциальности описывает, как сайт netieku.es ("сайт", "мы", "наш") собирает, использует, хранит и защищает вашу личную информацию.",
+          intro: "Эта политика конфиденциальности описывает, как сайт netieku.es (\"сайт\", \"мы\", \"наш\") собирает, использует, хранит и защищает вашу личную информацию.",
           sections: [
             {
               title: "Какую информацию мы собираем",
@@ -123,7 +123,7 @@ const PrivacyPolicy = () => {
               list: [
                 "Право на доступ – получать информацию о том, какие данные о вас хранятся",
                 "Право на исправление – запрашивать исправление неточных или неполных данных",
-                "Право на удаление ("право быть забытым") – запрашивать удаление данных, если больше нет юридических оснований",
+                "Право на удаление (\"право быть забытым\") – запрашивать удаление данных, если больше нет юридических оснований",
                 "Право ограничить обработку – в определенных случаях ограничивать использование данных",
                 "Право возражать – против обработки данных для определенных целей, например, прямого маркетинга",
                 "Право на переносимость данных – получать свои данные в структурированном формате"
