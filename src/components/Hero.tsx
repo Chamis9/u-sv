@@ -51,13 +51,9 @@ export function Hero() {
             {hero.title} <span className="text-gradient">{hero.titleHighlight}</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-white/90 mb-4">
+          <p className="text-xl md:text-2xl text-white/90 mb-8">
             {hero.subtitle}
           </p>
-          
-          <div className="bg-orange-500 text-white text-lg md:text-xl font-semibold py-2 px-6 rounded-full inline-block mb-8">
-            {hero.comingSoon}
-          </div>
           
           <div className="flex flex-col items-center space-y-6">
             <p className="text-white text-lg">
