@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -7,6 +6,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { CookiePreferences } from '../CookieConsent';
 import { Translations } from '@/features/language';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useLanguage } from '@/features/language';
 
 interface CookieBannerProps {
   cookieConsent: Translations['cookieConsent'];
@@ -21,6 +21,8 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
     analytics: true,  // Default checked
     marketing: false  // Default unchecked
   });
+
+  const { currentLanguage } = useLanguage();
 
   const handleToggleAnalytics = (checked: boolean) => {
     setPreferences(prev => ({ ...prev, analytics: checked }));
@@ -117,7 +119,7 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
                     onCheckedChange={handleToggleMarketing}
                   />
                   <Label htmlFor="marketing-cookies-banner">
-                    {preferences.marketing ? "Marketing cookies" : "Marketing cookies"}
+                    {cookieConsent.marketingCookies || "Marketing cookies"}
                   </Label>
                 </div>
                 

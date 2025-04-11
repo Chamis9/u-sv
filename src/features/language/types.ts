@@ -1,4 +1,3 @@
-
 export interface Translations {
   hero: {
     title: string;
@@ -35,6 +34,7 @@ export interface Translations {
     required?: string;
     savePreferences?: string;
     cookieSettings?: string;
+    marketingCookies?: string;
   };
   footer: {
     allRightsReserved: string;

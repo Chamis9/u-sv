@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Dialog, 
@@ -92,11 +91,7 @@ export function CookiePreferencesDialog({
               htmlFor="marketing-cookies"
               className="text-sm font-medium leading-none"
             >
-              {currentLanguage.code === 'lv' 
-                ? 'Mārketinga sīkdatnes' 
-                : currentLanguage.code === 'ru' 
-                  ? 'Маркетинговые файлы cookie' 
-                  : 'Marketing cookies'}
+              {cookieConsent.marketingCookies || "Marketing cookies"}
             </Label>
           </div>
           <p className="pl-6 text-xs">

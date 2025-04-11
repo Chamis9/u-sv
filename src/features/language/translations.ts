@@ -50,7 +50,8 @@ const translationsData: Record<string, Translations> = {
       privacyPolicy: "Plašāku informāciju par to, kā mēs izmantojam jūsu datus, varat skatīt mūsu privātuma politikā.",
       required: "Obligāti",
       savePreferences: "Saglabāt iestatījumus",
-      cookieSettings: "Sīkdatņu iestatījumi"
+      cookieSettings: "Sīkdatņu iestatījumi",
+      marketingCookies: "Mārketinga sīkdatnes"
     },
     footer: {
       allRightsReserved: "Visas tiesības aizsargātas.",
@@ -109,7 +110,8 @@ const translationsData: Record<string, Translations> = {
       privacyPolicy: "For more information about how we use your data, please see our privacy policy.",
       required: "Required",
       savePreferences: "Save preferences",
-      cookieSettings: "Cookie Settings"
+      cookieSettings: "Cookie Settings",
+      marketingCookies: "Marketing cookies"
     },
     footer: {
       allRightsReserved: "All rights reserved.",
@@ -168,7 +170,8 @@ const translationsData: Record<string, Translations> = {
       privacyPolicy: "Для получения дополнительной информации о том, как мы используем ваши данные, пожалуйста, ознакомьтесь с нашей политикой конфиденциальности.",
       required: "Обязательно",
       savePreferences: "Сохранить настройки",
-      cookieSettings: "Настройки файлов cookie"
+      cookieSettings: "Настройки файлов cookie",
+      marketingCookies: "Маркетинговые файлы cookie"
     },
     footer: {
       allRightsReserved: "Все права защищены.",
