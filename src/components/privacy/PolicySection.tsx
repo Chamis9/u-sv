@@ -12,7 +12,7 @@ export const PolicySection: React.FC<PolicySectionProps> = ({ section }) => {
       <h2 className="text-xl md:text-2xl font-semibold mb-3 text-orange-500">
         {section.title}
       </h2>
-      <p className="text-gray-300 mb-3">{section.content}</p>
+      <p className="text-gray-300 mb-3" dangerouslySetInnerHTML={{ __html: section.content }} />
       
       {section.list && section.list.length > 0 && (
         <ul className="list-disc list-inside text-gray-300 space-y-2">
