@@ -136,28 +136,39 @@ const PrivacyPolicy = () => {
   const content = getContent();
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-orange-50 to-white">
-      <SEO title={content.title} description={content.intro} />
-      <Header />
-      <main className="flex-grow pt-24 pb-16 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4 text-orange-500">{content.title}</h1>
-          <p className="text-gray-500 text-sm mb-8">{content.lastUpdated}</p>
-          
-          <div className="prose prose-orange max-w-none">
-            <p className="text-lg mb-8">{content.intro}</p>
-            
-            {content.sections.map((section, index) => (
-              <div key={index} className="mb-8">
-                <h2 className="text-xl md:text-2xl font-semibold mb-3 text-gray-800">{section.title}</h2>
-                <p className="text-gray-700">{section.content}</p>
+    <>
+      <SEO 
+        title={`${content.title} | netieku.es`}
+        description={content.intro}
+      />
+      <div className="min-h-screen flex flex-col bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white">
+        <Header />
+        
+        <main className="flex-grow pt-24 pb-12">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="max-w-4xl mx-auto">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">
+                <span className="text-orange-500">{content.title}</span>
+              </h1>
+              <p className="text-gray-300 text-sm mb-8">{content.lastUpdated}</p>
+
+              <div className="prose prose-invert max-w-none">
+                <p className="text-lg mb-8 text-gray-300">{content.intro}</p>
+                
+                {content.sections.map((section, index) => (
+                  <div key={index} className="mb-8">
+                    <h2 className="text-xl md:text-2xl font-semibold mb-3 text-orange-500">{section.title}</h2>
+                    <p className="text-gray-300">{section.content}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
+        </main>
+        
+        <Footer />
+      </div>
+    </>
   );
 };
 
