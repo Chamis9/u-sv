@@ -1,85 +1,46 @@
 
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Search, 
-  UserPlus, 
-  Filter, 
-  Edit, 
-  Trash, 
-  MoreHorizontal, 
-  CheckCircle,
-  XCircle
-} from "lucide-react";
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
+import React, { useEffect } from "react";
+import { useUsers } from "@/hooks/useUsers";
 import { useLanguage } from "@/features/language";
-
-// Sample user data
-const USERS = [
-  { 
-    id: 1, 
-    name: "Jānis Bērziņš", 
-    email: "janis.berzins@example.com", 
-    role: "admin", 
-    status: "active",
-    joinDate: "2023-05-12" 
-  },
-  { 
-    id: 2, 
-    name: "Anna Liepiņa", 
-    email: "anna.liepina@example.com", 
-    role: "user", 
-    status: "active",
-    joinDate: "2023-08-22" 
-  },
-  { 
-    id: 3, 
-    name: "Pēteris Ozols", 
-    email: "peteris.ozols@example.com", 
-    role: "user", 
-    status: "inactive",
-    joinDate: "2023-09-05" 
-  },
-];
+import { UserListHeader } from "@/components/admin/users/UserListHeader";
+import { UserListTable } from "@/components/admin/users/UserListTable";
+import { EmptyOrErrorState } from "@/components/admin/users/EmptyOrErrorState";
+import { Button } from "@/components/ui/button";
+import { AlertCircle, RefreshCw } from "lucide-react";
 
 export function AdminUsers() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState(USERS);
+  const { 
+    users, 
+    searchTerm, 
+    isLoading, 
+    error, 
+    isAuth,
+    handleSearch, 
+    handleDownloadCSV,
+    refreshUsers,
+    totalUsers
+  } = useUsers();
+  
   const { currentLanguage } = useLanguage();
   
-  // Translation helper
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value;
-    setSearchTerm(term);
-    
-    if (term.trim() === "") {
-      setFilteredUsers(USERS);
-    } else {
-      const filtered = USERS.filter(user => 
-        user.name.toLowerCase().includes(term.toLowerCase()) || 
-        user.email.toLowerCase().includes(term.toLowerCase())
-      );
-      setFilteredUsers(filtered);
-    }
+  // We'll intentionally not auto-refresh on mount
+  // The user will need to click the refresh button
+
+  const handleRetry = () => {
+    console.log("Manual refresh triggered");
+    refreshUsers();
   };
+
+  // Share the total users count with the parent component
+  useEffect(() => {
+    // Using CustomEvent to pass data to parent component
+    const event = new CustomEvent('userCountUpdated', { 
+      detail: { count: totalUsers } 
+    });
+    window.dispatchEvent(event);
+  }, [totalUsers]);
 
   return (
     <div className="space-y-6">
@@ -88,117 +49,87 @@ export function AdminUsers() {
         <p className="text-muted-foreground">{t('Pārvaldiet platformas lietotājus un to lomas', 'Manage platform users and their roles')}</p>
       </div>
       
-      <div className="flex flex-col sm:flex-row gap-4 items-end sm:items-center justify-between">
-        <div className="relative w-full sm:max-w-xs">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder={t('Meklēt lietotājus...', 'Search users...')}
-            className="w-full pl-8"
-            value={searchTerm}
-            onChange={handleSearch}
-          />
-        </div>
-        
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4 mr-2" />
-            {t('Filtrēt', 'Filter')}
-          </Button>
-          
-          <Button size="sm">
-            <UserPlus className="h-4 w-4 mr-2" />
-            {t('Pievienot lietotāju', 'Add User')}
-          </Button>
-        </div>
+      <div className="flex justify-end">
+        <Button 
+          onClick={handleRetry}
+          variant="outline"
+          disabled={isLoading}
+          className="flex items-center"
+        >
+          <RefreshCw className="h-4 w-4 mr-2" />
+          {t('Atjaunot datus no datubāzes', 'Refresh Data from Database')}
+        </Button>
       </div>
       
-      <div className="rounded-md border shadow-sm overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('Vārds', 'Name')}</TableHead>
-              <TableHead>{t('E-pasts', 'Email')}</TableHead>
-              <TableHead>{t('Loma', 'Role')}</TableHead>
-              <TableHead>{t('Statuss', 'Status')}</TableHead>
-              <TableHead>{t('Pievienošanās datums', 'Join Date')}</TableHead>
-              <TableHead className="text-right">{t('Darbības', 'Actions')}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map(user => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>
-                    {user.role === "admin" ? (
-                      <Badge variant="default">{t('Administrators', 'Administrator')}</Badge>
-                    ) : (
-                      <Badge variant="outline">{t('Lietotājs', 'User')}</Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {user.status === "active" ? (
-                      <div className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
-                        <span className="text-sm text-green-500">{t('Aktīvs', 'Active')}</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center">
-                        <XCircle className="h-4 w-4 text-gray-400 mr-1" />
-                        <span className="text-sm text-gray-400">{t('Neaktīvs', 'Inactive')}</span>
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell>{new Date(user.joinDate).toLocaleDateString(currentLanguage.code === 'lv' ? "lv-LV" : "en-US")}</TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">{t('Izvēlne', 'Menu')}</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Edit className="h-4 w-4 mr-2" />
-                          {t('Rediģēt', 'Edit')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          {user.status === "active" ? (
-                            <>
-                              <XCircle className="h-4 w-4 mr-2" />
-                              {t('Deaktivizēt', 'Deactivate')}
-                            </>
-                          ) : (
-                            <>
-                              <CheckCircle className="h-4 w-4 mr-2" />
-                              {t('Aktivizēt', 'Activate')}
-                            </>
-                          )}
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-500 focus:text-red-500">
-                          <Trash className="h-4 w-4 mr-2" />
-                          {t('Dzēst', 'Delete')}
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-6">
-                  {t('Nav atrasts neviens lietotājs, kas atbilst meklēšanas kritērijiem.', 
-                    'No users found matching search criteria.')}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      {!isAuth && (
+        <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-md text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200">
+          <div className="flex items-center">
+            <AlertCircle className="h-5 w-5 mr-2" />
+            <h3 className="font-medium">{t('Autentifikācijas kļūda', 'Authentication Error')}</h3>
+          </div>
+          <p className="mt-2 text-sm">
+            {t('Jums jāpieslēdzas ar administratora kontu, lai piekļūtu lietotājiem.', 
+              'You need to sign in with an administrator account to access users.')}
+          </p>
+        </div>
+      )}
+      
+      {isAuth && (
+        <>
+          <UserListHeader 
+            searchTerm={searchTerm}
+            onSearchChange={handleSearch}
+            onDownloadCSV={handleDownloadCSV}
+          />
+          
+          {isLoading ? (
+            <EmptyOrErrorState 
+              isLoading={true} 
+              error=""
+            />
+          ) : error ? (
+            <div className="bg-red-50 border border-red-200 p-4 rounded-md text-red-800 dark:bg-red-900/20 dark:text-red-200">
+              <div className="flex items-center">
+                <AlertCircle className="h-5 w-5 mr-2" />
+                <h3 className="font-medium">{t('Datu ielādes kļūda', 'Data Loading Error')}</h3>
+              </div>
+              <p className="mt-2 text-sm">{error}</p>
+              <div className="mt-3">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleRetry}
+                  className="flex items-center"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  {t('Mēģināt vēlreiz', 'Try Again')}
+                </Button>
+              </div>
+            </div>
+          ) : users.length === 0 && searchTerm ? (
+            <EmptyOrErrorState 
+              isLoading={false} 
+              error=""
+              searchTerm={searchTerm} 
+            />
+          ) : users.length === 0 ? (
+            <div className="flex justify-center items-center h-64 text-center">
+              <div>
+                <p className="text-muted-foreground">
+                  {t('Nav neviena lietotāja. Pievienojiet pirmo lietotāju, izmantojot reģistrācijas formu vai manuāli izveidojiet ierakstu Supabase.', 
+                    'No users yet. Add your first user using the registration form or manually create a record in Supabase.')}
+                </p>
+                <Button className="mt-4" variant="outline" onClick={handleRetry}>
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  {t('Atsvaidzināt datus', 'Refresh Data')}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <UserListTable users={users} />
+          )}
+        </>
+      )}
     </div>
   );
 }
