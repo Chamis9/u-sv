@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { useSubscribers } from "@/hooks/useSubscribers";
 import { useLanguage } from "@/features/language";
@@ -6,7 +7,6 @@ import { SubscriberListTable } from "@/components/admin/subscribers/SubscriberLi
 import { EmptyOrErrorState } from "@/components/admin/subscribers/EmptyOrErrorState";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 
 export function AdminSubscribers() {
   const { 
@@ -16,7 +16,8 @@ export function AdminSubscribers() {
     error, 
     isAuth,
     handleSearch, 
-    handleDeleteSubscriber, 
+    handleDeleteSubscriber,
+    handleUpdateSubscriber,
     handleDownloadCSV,
     refreshSubscribers
   } = useSubscribers();
@@ -110,7 +111,8 @@ export function AdminSubscribers() {
           ) : (
             <SubscriberListTable 
               subscribers={subscribers} 
-              onDelete={handleDeleteSubscriber} 
+              onDelete={handleDeleteSubscriber}
+              onUpdate={handleUpdateSubscriber}
             />
           )}
         </>

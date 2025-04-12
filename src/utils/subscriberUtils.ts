@@ -70,6 +70,30 @@ export async function deleteSubscriber(id: number): Promise<{ success: boolean; 
 }
 
 /**
+ * Updates a subscriber's email in the database
+ */
+export async function updateSubscriber(id: number, email: string): Promise<{ success: boolean; error: Error | null }> {
+  try {
+    console.log("Updating subscriber with ID:", id, "New email:", email);
+    const { error } = await supabase
+      .from('newsletter_subscribers')
+      .update({ email })
+      .eq('id', id);
+    
+    if (error) {
+      console.error("Error updating subscriber:", error);
+      return { success: false, error };
+    }
+    
+    console.log("Subscriber updated successfully");
+    return { success: true, error: null };
+  } catch (err) {
+    console.error('Error updating subscriber:', err);
+    return { success: false, error: err instanceof Error ? err : new Error('Unknown error') };
+  }
+}
+
+/**
  * Filters subscribers based on search term
  */
 export function filterSubscribers(subscribers: Subscriber[], term: string): Subscriber[] {

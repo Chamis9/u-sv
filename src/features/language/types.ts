@@ -72,6 +72,24 @@ export interface Translations {
         comingSoon?: string;
       };
     };
+    subscribers?: {
+      title?: string;
+      subtitle?: string;
+      edit?: string;
+      save?: string;
+      cancel?: string;
+      delete?: string;
+      email?: string;
+      search?: string;
+      actions?: string;
+      noSubscribers?: string;
+      updateSuccess?: string;
+      updateError?: string;
+      deleteSuccess?: string;
+      deleteError?: string;
+      exportCsv?: string;
+      sendMessage?: string;
+    };
   };
 }
 

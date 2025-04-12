@@ -3,7 +3,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/features/language';
 import { 
   fetchSubscribers, 
-  deleteSubscriber, 
+  deleteSubscriber,
+  updateSubscriber,
   filterSubscribers, 
   generateSubscribersCSV, 
   downloadCSV 
@@ -145,6 +146,40 @@ export function useSubscribers() {
     }
   };
 
+  // Handle update subscriber
+  const handleUpdateSubscriber = async (id: number, email: string) => {
+    try {
+      const { success, error } = await updateSubscriber(id, email);
+      
+      if (success) {
+        // Update the local state
+        const updatedSubscribers = subscribers.map(sub => 
+          sub.id === id ? { ...sub, email } : sub
+        );
+        setSubscribers(updatedSubscribers);
+        setFilteredSubscribers(filterSubscribers(updatedSubscribers, searchTerm));
+        
+        toast({
+          description: t("Abonents veiksmīgi atjaunināts", "Subscriber successfully updated"),
+        });
+      } else {
+        console.error("Error updating subscriber:", error);
+        toast({
+          variant: "destructive",
+          description: t("Neizdevās atjaunināt abonentu. Lūdzu, mēģiniet vēlreiz.",
+                         "Failed to update subscriber. Please try again."),
+        });
+      }
+    } catch (err) {
+      console.error("Unexpected error in handleUpdateSubscriber:", err);
+      toast({
+        variant: "destructive",
+        description: t("Neizdevās atjaunināt abonentu. Lūdzu, mēģiniet vēlreiz.",
+                       "Failed to update subscriber. Please try again."),
+      });
+    }
+  };
+
   // Handle download CSV
   const handleDownloadCSV = () => {
     try {
@@ -186,6 +221,7 @@ export function useSubscribers() {
     isAuth,
     handleSearch,
     handleDeleteSubscriber,
+    handleUpdateSubscriber,
     handleDownloadCSV,
     refreshSubscribers: getSubscribers // Expose refresh function
   };
