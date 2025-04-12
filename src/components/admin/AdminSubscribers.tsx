@@ -33,35 +33,20 @@ export function AdminSubscribers() {
       try {
         console.log("Testing Supabase connection...");
         
-        // First test if we can connect at all
-        const { data: healthData, error: healthError } = await supabase.from('newsletter_subscribers').select('count(*)');
+        // First test if the table exists 
+        const { data, error } = await supabase
+          .from('newsletter_subscribers')
+          .select('*')
+          .limit(1);
         
-        if (healthError) {
-          console.error("❌ Supabase connection error:", healthError);
+        console.log("Direct Supabase query result:", { data, error });
+        
+        if (error) {
+          console.error("❌ Data fetching error:", error);
           setDbStatus({ 
             checked: true, 
             connected: false, 
-            error: healthError.message 
-          });
-          return;
-        }
-        
-        console.log("✅ Supabase connection successful");
-        
-        // Now try to get actual data
-        const { data, error: dataError } = await supabase
-          .from('newsletter_subscribers')
-          .select('*')
-          .limit(10);
-        
-        console.log("Direct Supabase query result:", { data, error: dataError });
-        
-        if (dataError) {
-          console.error("❌ Data fetching error:", dataError);
-          setDbStatus({ 
-            checked: true, 
-            connected: true, 
-            error: dataError.message 
+            error: error.message 
           });
         } else {
           setDbStatus({ 

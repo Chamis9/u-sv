@@ -8,20 +8,21 @@ import { Subscriber } from '@/hooks/useSubscribers';
 export async function fetchSubscribers(): Promise<{ data: Subscriber[] | null; error: Error | null }> {
   try {
     console.log("Fetching subscribers from Supabase...");
-    console.log("Using Supabase project:", supabase.getUrl());
+    console.log("Using Supabase project URL:", supabase.getUrl ? supabase.getUrl() : supabase.supabaseUrl);
     
-    // Test if there are any rows in the table first
-    const countResponse = await supabase
+    // Check connection directly by selecting the table without count
+    const tableCheck = await supabase
       .from('newsletter_subscribers')
-      .select('count', { count: 'exact', head: true });
+      .select('*')
+      .limit(1);
     
-    console.log("Count response:", countResponse);
+    console.log("Table check response:", tableCheck);
     
-    if (countResponse.error) {
-      console.error("Error checking subscribers count:", countResponse.error);
+    if (tableCheck.error) {
+      console.error("Error checking subscribers table:", tableCheck.error);
       return { 
         data: null, 
-        error: new Error(`Database access error: ${countResponse.error.message}`) 
+        error: new Error(`Database access error: ${tableCheck.error.message}`) 
       };
     }
     

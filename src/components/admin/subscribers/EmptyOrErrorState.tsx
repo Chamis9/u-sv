@@ -20,7 +20,10 @@ export function EmptyOrErrorState({ isLoading, error, searchTerm, onRetry }: Emp
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <Loader className="h-8 w-8 animate-spin text-muted-foreground" />
+        <div className="text-center">
+          <Loader className="h-8 w-8 animate-spin text-muted-foreground mx-auto mb-2" />
+          <p className="text-muted-foreground">{t('Ielādē...', 'Loading...')}</p>
+        </div>
       </div>
     );
   }
