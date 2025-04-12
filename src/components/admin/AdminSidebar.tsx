@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { LogoutButton } from "./sidebar/LogoutButton";
 import { Navigation } from "./sidebar/Navigation";
 import { useSubscriberCount } from "./sidebar/useSubscriberCount";
+import { useUserCount } from "@/hooks/useUserCount";
 
 interface AdminSidebarProps {
   activeTab: string;
@@ -16,12 +17,13 @@ interface AdminSidebarProps {
 export const AdminSidebar = memo(function AdminSidebar({ 
   activeTab, 
   onTabChange, 
-  userCount = 0, 
+  userCount: initialUserCount = 0, 
   subscriberCount: initialSubscriberCount = 0 
 }: AdminSidebarProps) {
   const { translations } = useLanguage();
   const { logout } = useAuth();
   const subscriberCount = useSubscriberCount(initialSubscriberCount);
+  const userCount = useUserCount();
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm">
