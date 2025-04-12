@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -7,12 +7,65 @@ import {
   TrendingUp, AlertCircle, CheckCircle, Clock 
 } from "lucide-react";
 import { useLanguage } from "@/features/language";
+import { useSubscribers } from "@/hooks/useSubscribers";
+import { formatDistanceToNow } from "date-fns";
+import { lv, enUS, ru } from "date-fns/locale";
 
 export function AdminDashboard() {
-  const { currentLanguage } = useLanguage();
+  const { currentLanguage, translations } = useLanguage();
+  const { subscribers, refreshSubscribers, isLoading, totalSubscribers } = useSubscribers();
+  const [latestSubscriber, setLatestSubscriber] = useState<{ email: string, time: string } | null>(null);
   
   // Translation helper function
-  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lvText: string, enText: string, ruText?: string) => {
+    if (currentLanguage.code === 'lv') return lvText;
+    if (currentLanguage.code === 'ru') return ruText || enText;
+    return enText;
+  };
+
+  // Get date-fns locale based on current language
+  const getLocale = () => {
+    switch (currentLanguage.code) {
+      case 'lv': return lv;
+      case 'ru': return ru;
+      default: return enUS;
+    }
+  };
+
+  // Format relative time with proper localization
+  const formatRelativeTime = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return formatDistanceToNow(date, { 
+        addSuffix: true,
+        locale: getLocale()
+      });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return t('Pirms brīža', 'Recently', 'Недавно');
+    }
+  };
+  
+  // Load subscribers data when component mounts
+  useEffect(() => {
+    refreshSubscribers();
+  }, [refreshSubscribers]);
+  
+  // Set the latest subscriber whenever the subscribers list updates
+  useEffect(() => {
+    if (subscribers.length > 0) {
+      // Sort subscribers by creation date (newest first)
+      const sorted = [...subscribers].sort((a, b) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+      
+      const newest = sorted[0];
+      setLatestSubscriber({
+        email: newest.email || t('Nezināms', 'Unknown', 'Неизвестно'),
+        time: formatRelativeTime(newest.created_at)
+      });
+    }
+  }, [subscribers, currentLanguage.code]);
   
   return (
     <div className="space-y-6">
@@ -42,7 +95,7 @@ export function AdminDashboard() {
             <Mail className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">5</div>
+            <div className="text-2xl font-bold">{isLoading ? '...' : totalSubscribers}</div>
             <div className="text-xs text-muted-foreground flex items-center">
               <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
               <span className="text-green-500">+12%</span> {t('kopš pagājušās nedēļas', 'since last week')}
@@ -83,6 +136,31 @@ export function AdminDashboard() {
             <CardDescription>{t('Pēdējās lietotāju darbības platformā', 'Recent user actions on the platform')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {latestSubscriber ? (
+              <div className="flex items-center gap-4 rounded-lg border p-3">
+                <div className="rounded-full bg-green-100 p-2 dark:bg-green-900">
+                  <Mail className="h-4 w-4 text-green-600 dark:text-green-400" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">
+                    {t('Jauns e-pasta abonents', 'New email subscriber')}:&nbsp;
+                    <span className="text-sm font-medium text-muted-foreground">{latestSubscriber.email}</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground">{latestSubscriber.time}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-4 rounded-lg border p-3">
+                <div className="rounded-full bg-green-100 p-2 dark:bg-green-900">
+                  <Mail className="h-4 w-4 text-green-600 dark:text-green-400" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{t('Jauns e-pasta abonents', 'New email subscriber')}</p>
+                  <p className="text-xs text-muted-foreground">{isLoading ? t('Ielādē...', 'Loading...', 'Загрузка...') : t('Nav abonentu', 'No subscribers', 'Нет подписчиков')}</p>
+                </div>
+              </div>
+            )}
+            
             <div className="flex items-center gap-4 rounded-lg border p-3">
               <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-900">
                 <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
@@ -90,16 +168,6 @@ export function AdminDashboard() {
               <div className="flex-1">
                 <p className="text-sm font-medium">{t('Jauns lietotājs reģistrējies', 'New user registered')}</p>
                 <p className="text-xs text-muted-foreground">{t('Pirms 2 stundām', '2 hours ago')}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-4 rounded-lg border p-3">
-              <div className="rounded-full bg-green-100 p-2 dark:bg-green-900">
-                <Mail className="h-4 w-4 text-green-600 dark:text-green-400" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">{t('Jauns e-pasta abonents', 'New email subscriber')}</p>
-                <p className="text-xs text-muted-foreground">{t('Pirms 5 stundām', '5 hours ago')}</p>
               </div>
             </div>
           </CardContent>
