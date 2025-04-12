@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Contact from "./pages/Contact";
+import Admin from "./pages/Admin";
 import { LanguageProvider } from "./features/language";
 import { CookieConsent } from "./components/CookieConsent";
 import { clearAllCookies } from "./utils/cookieManager";
@@ -38,6 +39,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
