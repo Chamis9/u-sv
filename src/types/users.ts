@@ -7,5 +7,5 @@ export interface User {
   updated_at: string | null;
   role?: string;
   status?: 'active' | 'inactive';
-  banned?: boolean;
+  banned?: boolean;  // Add the banned property
 }
