@@ -1,9 +1,10 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useSubscribeForm } from "@/hooks/useSubscribeForm";
 import { EmailInput } from "@/components/subscribe/EmailInput";
 import { EmailDropdown } from "@/components/subscribe/EmailDropdown";
+import { Loader2 } from "lucide-react";
 
 export function SubscribeForm() {
   const {
@@ -49,7 +50,12 @@ export function SubscribeForm() {
         className="bg-orange-500 hover:bg-orange-600 text-white h-12 text-lg px-6 font-semibold font-playfair" 
         aria-busy={isLoading}
       >
-        {isLoading ? texts.sending : texts.button}
+        {isLoading ? (
+          <span className="flex items-center">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            {texts.sending}
+          </span>
+        ) : texts.button}
       </Button>
     </form>
   );

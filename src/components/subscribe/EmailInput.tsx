@@ -32,11 +32,11 @@ export function EmailInput({
         onBlur={onBlur}
         required={required}
         aria-invalid={error ? "true" : "false"}
-        className="flex-grow h-12 text-base font-playfair placeholder-orange-500/70 bg-white border-orange-300/50" 
+        className={`flex-grow h-12 text-base font-playfair placeholder-orange-500/70 bg-white border-orange-300/50 ${error ? 'border-red-500' : ''}`}
       />
       
       {error && (
-        <div className="text-red-500 text-sm mt-1">{error}</div>
+        <div className="text-red-500 text-sm mt-1 font-medium">{error}</div>
       )}
     </div>
   );
