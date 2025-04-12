@@ -81,7 +81,7 @@ export default function Admin() {
 
       <AdminHeader />
       
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden pt-16"> {/* Added pt-16 to create space below header */}
         {/* Sānu josla */}
         <aside className="hidden md:flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm">
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
