@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Loader } from "lucide-react";
+import { AlertCircle, Loader, Search } from "lucide-react";
 import { useLanguage } from "@/features/language";
 
 interface EmptyOrErrorStateProps {
@@ -41,10 +41,13 @@ export function EmptyOrErrorState({ isLoading, error, searchTerm }: EmptyOrError
   if (searchTerm) {
     return (
       <div className="flex justify-center items-center h-64 text-center">
-        <p className="text-muted-foreground">
-          {t('Nav atrasts neviens abonents, kas atbilst meklēšanas kritērijiem.', 
-            'No subscribers found matching your search criteria.')}
-        </p>
+        <div>
+          <Search className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+          <p className="text-muted-foreground">
+            {t('Nav atrasts neviens abonents, kas atbilst meklēšanas kritērijiem.', 
+              'No subscribers found matching your search criteria.')}
+          </p>
+        </div>
       </div>
     );
   }

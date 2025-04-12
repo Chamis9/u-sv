@@ -1,8 +1,14 @@
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/features/language';
+import { 
+  fetchSubscribers, 
+  deleteSubscriber, 
+  filterSubscribers, 
+  generateSubscribersCSV, 
+  downloadCSV 
+} from '@/utils/subscriberUtils';
 
 export interface Subscriber {
   id: number;
@@ -24,33 +30,23 @@ export function useSubscribers() {
 
   // Fetch subscribers
   useEffect(() => {
-    const fetchSubscribers = async () => {
-      try {
-        setIsLoading(true);
-        console.log("Fetching subscribers from Supabase...");
-        const { data, error } = await supabase
-          .from('newsletter_subscribers')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (error) {
-          console.error("Supabase error:", error);
-          throw error;
-        }
-        
-        console.log("Subscribers data received:", data);
-        setSubscribers(data || []);
-        setFilteredSubscribers(data || []);
-      } catch (err) {
-        console.error('Error fetching subscribers:', err);
+    const getSubscribers = async () => {
+      setIsLoading(true);
+      
+      const { data, error } = await fetchSubscribers();
+      
+      if (error) {
         setError(t('Neizdevās ielādēt abonentus. Lūdzu, mēģiniet vēlreiz.', 
                    'Failed to load subscribers. Please try again.'));
-      } finally {
-        setIsLoading(false);
+      } else if (data) {
+        setSubscribers(data);
+        setFilteredSubscribers(data);
       }
+      
+      setIsLoading(false);
     };
     
-    fetchSubscribers();
+    getSubscribers();
   }, [currentLanguage.code, t]);
 
   // Handle search
@@ -58,36 +54,23 @@ export function useSubscribers() {
     const term = e.target.value;
     setSearchTerm(term);
     
-    if (term.trim() === "") {
-      setFilteredSubscribers(subscribers);
-    } else {
-      const filtered = subscribers.filter(subscriber => 
-        subscriber.email.toLowerCase().includes(term.toLowerCase())
-      );
-      setFilteredSubscribers(filtered);
-    }
+    const filtered = filterSubscribers(subscribers, term);
+    setFilteredSubscribers(filtered);
   };
 
   // Handle delete subscriber
   const handleDeleteSubscriber = async (id: number) => {
-    try {
-      const { error } = await supabase
-        .from('newsletter_subscribers')
-        .delete()
-        .eq('id', id);
-      
-      if (error) {
-        throw error;
-      }
-      
-      setSubscribers(subscribers.filter(sub => sub.id !== id));
-      setFilteredSubscribers(filteredSubscribers.filter(sub => sub.id !== id));
+    const { success, error } = await deleteSubscriber(id);
+    
+    if (success) {
+      const updatedSubscribers = subscribers.filter(sub => sub.id !== id);
+      setSubscribers(updatedSubscribers);
+      setFilteredSubscribers(filterSubscribers(updatedSubscribers, searchTerm));
       
       toast({
         description: t("Abonents veiksmīgi dzēsts", "Subscriber successfully deleted"),
       });
-    } catch (err) {
-      console.error('Error deleting subscriber:', err);
+    } else {
       toast({
         variant: "destructive",
         description: t("Neizdevās dzēst abonentu. Lūdzu, mēģiniet vēlreiz.",
@@ -98,32 +81,23 @@ export function useSubscribers() {
 
   // Handle download CSV
   const handleDownloadCSV = () => {
-    // Create CSV content
-    const csvContent = [
-      [
-        t('ID', 'ID'), 
-        t('E-pasts', 'Email'), 
-        t('Pievienošanās datums', 'Join Date')
-      ],
-      ...subscribers.map(sub => [
-        sub.id, 
-        sub.email, 
-        new Date(sub.created_at).toLocaleDateString(currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')
-      ])
-    ]
-    .map(row => row.join(','))
-    .join('\n');
+    // Headers for CSV
+    const headers = [
+      t('ID', 'ID'), 
+      t('E-pasts', 'Email'), 
+      t('Pievienošanās datums', 'Join Date')
+    ];
     
-    // Create download link
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', `${t('abonenti', 'subscribers')}_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Generate CSV content
+    const csvContent = generateSubscribersCSV(
+      subscribers, 
+      headers, 
+      currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US'
+    );
+    
+    // Download the CSV file
+    const filename = `${t('abonenti', 'subscribers')}_${new Date().toISOString().split('T')[0]}.csv`;
+    downloadCSV(csvContent, filename);
     
     toast({
       description: t("Abonentu saraksts lejupielādēts", "Subscribers list downloaded"),
