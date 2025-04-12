@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { useSubscribeForm } from "@/hooks/useSubscribeForm";
 import { EmailInput } from "@/components/subscribe/EmailInput";
