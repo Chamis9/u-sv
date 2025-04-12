@@ -1,4 +1,3 @@
-
 import { Translations } from './types';
 
 const translationsData: Record<string, Translations> = {
@@ -12,7 +11,7 @@ const translationsData: Record<string, Translations> = {
     },
     howItWorks: {
       title: "Kā tas strādā",
-      subtitle: "Vienkāršs un drošs veids, kā pārdot vai iegādāties biļetes uz pasākumiem",
+      subtitle: "Vienkāršs un drošs veids, kā pārdot vai iegādāties biļeti uz pasākumiem",
       steps: [
         {
           title: "Ievieto biļeti",
@@ -54,7 +53,7 @@ const translationsData: Record<string, Translations> = {
       marketingCookiesDescription: "Šīs sīkdatnes tiek izmantotas, lai izsekotu lietotājus dažādās vietnēs un parādītu attiecīgas reklāmas, kas ir aktuālas un saistošas konkrētajam lietotājam."
     },
     footer: {
-      allRightsReserved: "Visas tiesības aizsargātas.",
+      allRightsReserved: "© 2025 netieku.es",
       madeWith: "Radīts ar",
       location: "Latvijā",
       cookieSettings: "Sīkdatņu iestatījumi",
