@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/features/language";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
-import { checkAdminCredentials } from "@/utils/authHelpers";
+import { checkAdminCredentials, setupAdminAccount } from "@/utils/authHelpers";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -46,12 +46,29 @@ export function AdminLogin({ isOpen, onClose, onLoginSuccess }: AdminLoginProps)
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [setupComplete, setSetupComplete] = useState(false);
   const { currentLanguage } = useLanguage();
+
+  // Mēģinam uzstādīt admin kontu, ja tas neeksistē
+  useEffect(() => {
+    const setupAdmin = async () => {
+      const success = await setupAdminAccount();
+      setSetupComplete(success);
+      
+      if (success) {
+        console.log("Administratora konts pieejams lietošanai");
+      } else {
+        console.error("Neizdevās uzstādīt administratora kontu");
+      }
+    };
+    
+    setupAdmin();
+  }, []);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      email: "admin@netieku.es",
       password: "",
     },
   });
@@ -98,6 +115,12 @@ export function AdminLogin({ isOpen, onClose, onLoginSuccess }: AdminLoginProps)
           <DialogTitle>{t('Administratora pieslēgšanās', 'Administrator Login')}</DialogTitle>
           <DialogDescription>
             {t('Lūdzu, ievadiet savus administratora pieslēgšanās datus.', 'Please enter your administrator credentials.')}
+            {!setupComplete && (
+              <div className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded-md text-sm">
+                {t('Administrators vēl nav izveidots. Pievienojiet administratoru vai izmantojiet demo kontu.', 
+                   'Admin account is not set up yet. Please add admin or use the demo account.')}
+              </div>
+            )}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -159,6 +182,9 @@ export function AdminLogin({ isOpen, onClose, onLoginSuccess }: AdminLoginProps)
                 </FormItem>
               )}
             />
+            <div className="mt-2 text-sm text-muted-foreground">
+              {t('Demo konts: admin@netieku.es ar paroli "raivis2025!"', 'Demo account: admin@netieku.es with password "raivis2025!"')}
+            </div>
             <div className="flex justify-end pt-4">
               <Button 
                 type="submit" 

@@ -53,19 +53,63 @@ export const checkAdminCredentials = async (email: string, password: string) => 
 // Izveidot administratora lietotāju (tikai demo vajadzībām)
 export const createAdminUser = async () => {
   try {
-    const { data, error } = await supabase.auth.signUp({
+    // Vispirms mēģinām reģistrēt lietotāju Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email: 'admin@netieku.es',
       password: 'raivis2025!',
     });
 
-    if (error) {
-      console.error('Kļūda veidojot administratora kontu:', error);
+    if (authError) {
+      console.error('Kļūda veidojot administratora kontu Auth:', authError);
       return false;
+    }
+
+    // Pēc veiksmīgas reģistrācijas pievienojam ierakstu admin_user tabulā
+    if (authData.user) {
+      const { error: insertError } = await supabase
+        .from('admin_user')
+        .insert({
+          email: 'admin@netieku.es'
+        });
+
+      if (insertError) {
+        console.error('Kļūda pievienojot administratoru admin_user tabulā:', insertError);
+        return false;
+      }
     }
 
     return true;
   } catch (error) {
     console.error('Kļūda createAdminUser:', error);
+    return false;
+  }
+};
+
+// Pievienot funkciju, kas ļauj viegli izveidot administratora kontu
+export const setupAdminAccount = async () => {
+  try {
+    // Vispirms pārbaudām, vai administrators jau eksistē
+    const { data: existingAdmin, error: checkError } = await supabase
+      .from('admin_user')
+      .select('*')
+      .eq('email', 'admin@netieku.es')
+      .maybeSingle();
+
+    if (checkError) {
+      console.error('Kļūda pārbaudot administratora kontu:', checkError);
+      return false;
+    }
+
+    // Ja administrators jau eksistē, atgriežam true
+    if (existingAdmin) {
+      console.log('Administrators jau eksistē!');
+      return true;
+    }
+
+    // Ja administrators neeksistē, izveidojam jaunu
+    return await createAdminUser();
+  } catch (error) {
+    console.error('Kļūda setupAdminAccount:', error);
     return false;
   }
 };
