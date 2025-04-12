@@ -53,7 +53,7 @@ const translationsData: Record<string, Translations> = {
       marketingCookiesDescription: "Šīs sīkdatnes tiek izmantotas, lai izsekotu lietotājus dažādās vietnēs un parādītu attiecīgas reklāmas, kas ir aktuālas un saistošas konkrētajam lietotājam."
     },
     footer: {
-      allRightsReserved: "© 2025 netieku.es",
+      allRightsReserved: "Visas tiesības aizsargātas",
       madeWith: "Radīts ar",
       location: "Latvijā",
       cookieSettings: "Sīkdatņu iestatījumi",
