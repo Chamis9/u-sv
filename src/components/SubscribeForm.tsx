@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/features/language";
 import { supabase } from "@/integrations/supabase/client";
+import { addSubscriber } from "@/utils/subscriberUtils";
 
 // Global storage key for all previously used emails across the app
 const GLOBAL_EMAILS_STORAGE_KEY = 'globalPreviousEmails';
