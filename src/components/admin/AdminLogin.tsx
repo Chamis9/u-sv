@@ -70,24 +70,13 @@ export function AdminLogin({ isOpen, onClose, onLoginSuccess }: AdminLoginProps)
       }
 
       // Check if the user is an admin (in a real app, you would check against a roles table)
-      const isAdmin = true; // For demo purposes, assume all authenticated users are admins
-
-      if (isAdmin) {
-        toast({
-          description: currentLanguage.code === 'lv' 
-            ? "Veiksmīgi pieslēdzies administratora panelim." 
-            : "Successfully logged into the admin panel.",
-        });
-        onLoginSuccess();
-      } else {
-        await supabase.auth.signOut();
-        toast({
-          variant: "destructive",
-          description: currentLanguage.code === 'lv' 
-            ? "Jums nav administratora tiesību." 
-            : "You don't have administrator privileges.",
-        });
-      }
+      // For demo purposes, assume all authenticated users are admins
+      toast({
+        description: currentLanguage.code === 'lv' 
+          ? "Veiksmīgi pieslēdzies administratora panelim." 
+          : "Successfully logged into the admin panel.",
+      });
+      onLoginSuccess();
     } catch (error: any) {
       console.error("Login error:", error);
       toast({
@@ -125,7 +114,7 @@ export function AdminLogin({ isOpen, onClose, onLoginSuccess }: AdminLoginProps)
                     <div className="relative">
                       <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input 
-                        placeholder={t('admin@example.com', 'admin@example.com')} 
+                        placeholder="admin@netieku.es" 
                         className="pl-10" 
                         {...field} 
                       />
