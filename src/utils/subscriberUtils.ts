@@ -5,7 +5,7 @@ import { logActivity } from '@/utils/activityLogger';
 
 export const addSubscriber = async (email: string) => {
   try {
-    // Set the auth header to ensure anonymous access is properly handled
+    // Use proper anonymous access with the anon key
     const { data, error } = await supabase
       .from('newsletter_subscribers')
       .insert({ email })
@@ -16,7 +16,7 @@ export const addSubscriber = async (email: string) => {
       if (error.code === '23505') {
         return { success: false, error: 'Email already subscribed', data: null };
       }
-      console.error('Error subscribing:', error.message);
+      console.error('Error subscribing:', error.message, error.details, error.hint);
       return { success: false, error: error.message, data: null };
     }
     
@@ -34,7 +34,7 @@ export const addSubscriber = async (email: string) => {
     
     return { success: true, error: null, data };
   } catch (error: any) {
-    console.error('Subscription error:', error.message);
+    console.error('Subscription error:', error.message, error);
     return { success: false, error: error.message || 'Error adding subscriber', data: null };
   }
 };
