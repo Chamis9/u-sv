@@ -43,6 +43,7 @@ export const checkAdminCredentials = async (email: string, password: string) => 
 
     // Ja viss kārtībā, saglabājam informāciju par administratora pieslēgšanos
     localStorage.setItem('admin_authenticated', 'true');
+    localStorage.setItem('admin_email', email);
     return true;
   } catch (error) {
     console.error('Kļūda checkAdminCredentials:', error);
