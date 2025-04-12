@@ -8,6 +8,24 @@ import { Subscriber } from '@/hooks/useSubscribers';
 export async function fetchSubscribers(): Promise<{ data: Subscriber[] | null; error: Error | null }> {
   try {
     console.log("Fetching subscribers from Supabase...");
+    console.log("Supabase URL:", supabase.supabaseUrl);
+    
+    // Test if there are any rows in the table first
+    const countResponse = await supabase
+      .from('newsletter_subscribers')
+      .select('count', { count: 'exact', head: true });
+    
+    console.log("Count response:", countResponse);
+    
+    if (countResponse.error) {
+      console.error("Error checking subscribers count:", countResponse.error);
+      return { 
+        data: null, 
+        error: new Error(`Database access error: ${countResponse.error.message}`) 
+      };
+    }
+    
+    // Fetch the actual data
     const { data, error } = await supabase
       .from('newsletter_subscribers')
       .select('*')
@@ -20,10 +38,15 @@ export async function fetchSubscribers(): Promise<{ data: Subscriber[] | null; e
       return { data: null, error };
     }
     
-    console.log("Subscribers data received:", data);
+    if (!data || data.length === 0) {
+      console.log("No subscribers found in the database");
+      return { data: [], error: null };
+    }
+    
+    console.log(`Retrieved ${data.length} subscribers successfully`);
     return { data, error: null };
   } catch (err) {
-    console.error('Error fetching subscribers:', err);
+    console.error('Unexpected error fetching subscribers:', err);
     return { data: null, error: err instanceof Error ? err : new Error('Unknown error') };
   }
 }

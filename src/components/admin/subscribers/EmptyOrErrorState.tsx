@@ -8,9 +8,10 @@ interface EmptyOrErrorStateProps {
   isLoading: boolean;
   error: string;
   searchTerm?: string;
+  onRetry?: () => void;
 }
 
-export function EmptyOrErrorState({ isLoading, error, searchTerm }: EmptyOrErrorStateProps) {
+export function EmptyOrErrorState({ isLoading, error, searchTerm, onRetry }: EmptyOrErrorStateProps) {
   const { currentLanguage } = useLanguage();
   
   // Translation helper
@@ -30,7 +31,11 @@ export function EmptyOrErrorState({ isLoading, error, searchTerm }: EmptyOrError
         <div>
           <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-2" />
           <p className="text-muted-foreground">{error}</p>
-          <Button className="mt-4" variant="outline" onClick={() => window.location.reload()}>
+          <Button 
+            className="mt-4" 
+            variant="outline" 
+            onClick={onRetry || (() => window.location.reload())}
+          >
             {t('Mēģināt vēlreiz', 'Try Again')}
           </Button>
         </div>

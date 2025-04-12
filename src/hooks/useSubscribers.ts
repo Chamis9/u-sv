@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/features/language';
 import { 
@@ -28,43 +28,50 @@ export function useSubscribers() {
   // Helper function for translation
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  // Fetch subscribers
-  useEffect(() => {
-    const getSubscribers = async () => {
-      setIsLoading(true);
-      setError("");
+  // Fetch subscribers (as a callback so we can call it from outside)
+  const getSubscribers = useCallback(async () => {
+    console.log("Starting to fetch subscribers...");
+    setIsLoading(true);
+    setError("");
+    
+    try {
+      const { data, error } = await fetchSubscribers();
       
-      try {
-        console.log("Fetching subscribers...");
-        const { data, error } = await fetchSubscribers();
-        
-        if (error) {
-          console.error("Error fetching subscribers:", error);
-          setError(t('Neizdevās ielādēt abonentus. Lūdzu, mēģiniet vēlreiz.', 
-                     'Failed to load subscribers. Please try again.'));
-        } else {
-          console.log("Received subscriber data:", data);
-          if (data) {
-            setSubscribers(data);
-            setFilteredSubscribers(data);
-          } else {
-            // Handle the case where data is null but no error
-            setSubscribers([]);
-            setFilteredSubscribers([]);
-            console.warn("No data returned from fetchSubscribers but no error thrown");
-          }
-        }
-      } catch (err) {
-        console.error("Unexpected error in getSubscribers:", err);
+      if (error) {
+        console.error("Error fetching subscribers:", error);
         setError(t('Neizdevās ielādēt abonentus. Lūdzu, mēģiniet vēlreiz.', 
                    'Failed to load subscribers. Please try again.'));
-      } finally {
-        setIsLoading(false);
+        // Clear subscriber lists on error
+        setSubscribers([]);
+        setFilteredSubscribers([]);
+      } else {
+        console.log("Received subscriber data:", data);
+        if (data) {
+          setSubscribers(data);
+          setFilteredSubscribers(data);
+        } else {
+          // Handle the case where data is null but no error
+          setSubscribers([]);
+          setFilteredSubscribers([]);
+          console.warn("No data returned from fetchSubscribers but no error thrown");
+        }
       }
-    };
-    
-    getSubscribers();
+    } catch (err) {
+      console.error("Unexpected error in getSubscribers:", err);
+      setError(t('Neizdevās ielādēt abonentus. Lūdzu, mēģiniet vēlreiz.', 
+                 'Failed to load subscribers. Please try again.'));
+      // Clear subscriber lists on error
+      setSubscribers([]);
+      setFilteredSubscribers([]);
+    } finally {
+      setIsLoading(false);
+    }
   }, [currentLanguage.code, t]);
+
+  // Initial fetch
+  useEffect(() => {
+    getSubscribers();
+  }, [getSubscribers]);
 
   // Handle search
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,6 +153,7 @@ export function useSubscribers() {
     error,
     handleSearch,
     handleDeleteSubscriber,
-    handleDownloadCSV
+    handleDownloadCSV,
+    refreshSubscribers: getSubscribers // Expose refresh function
   };
 }
