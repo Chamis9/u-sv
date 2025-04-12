@@ -1,5 +1,6 @@
 
-import { Subscriber } from '@/types/subscribers';
+import { Subscriber, SubscriberFetchResult } from '@/types/subscribers';
+import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Filter subscribers based on a search term
@@ -12,6 +13,31 @@ export function filterSubscribers(subscribers: Subscriber[], searchTerm: string)
   return subscribers.filter(subscriber => 
     subscriber.email?.toLowerCase().includes(lowerCaseSearchTerm)
   );
+}
+
+/**
+ * Fetch subscribers from the database
+ */
+export async function fetchSubscribers(): Promise<SubscriberFetchResult> {
+  try {
+    const { data, error } = await supabase
+      .from('newsletter_subscribers')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error("Error fetching subscribers:", error);
+      return { data: null, error };
+    }
+
+    return { data: data as Subscriber[], error: null };
+  } catch (error) {
+    console.error("Unexpected error in fetchSubscribers:", error);
+    return { 
+      data: null, 
+      error: error instanceof Error ? error : new Error('Unknown error occurred') 
+    };
+  }
 }
 
 /**
