@@ -1,5 +1,5 @@
 
-import React, { memo } from "react";
+import React, { memo, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -19,10 +19,28 @@ export const AdminSidebar = memo(function AdminSidebar({
   activeTab, 
   onTabChange, 
   userCount = 0, 
-  subscriberCount = 0 
+  subscriberCount: initialSubscriberCount = 0 
 }: AdminSidebarProps) {
   const { translations } = useLanguage();
   const { logout } = useAuth();
+  const [subscriberCount, setSubscriberCount] = useState(initialSubscriberCount);
+  
+  useEffect(() => {
+    const handleSubscriberCountUpdate = (event: CustomEvent) => {
+      setSubscriberCount(event.detail.count);
+    };
+
+    // Cast the event listener to match CustomEvent type
+    const eventListener = ((e: Event) => {
+      handleSubscriberCountUpdate(e as CustomEvent);
+    }) as EventListener;
+
+    window.addEventListener('subscriberCountUpdated', eventListener);
+    
+    return () => {
+      window.removeEventListener('subscriberCountUpdated', eventListener);
+    };
+  }, []);
   
   const navItems = [
     {
