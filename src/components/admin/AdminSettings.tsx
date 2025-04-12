@@ -53,6 +53,9 @@ export function AdminSettings() {
   const { currentLanguage, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
   
+  // Translation helper
+  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
+  
   // Appearance settings form
   const appearanceForm = useForm<z.infer<typeof appearanceFormSchema>>({
     resolver: zodResolver(appearanceFormSchema),
@@ -81,38 +84,38 @@ export function AdminSettings() {
       setLanguage(newLanguage);
     }
     toast({
-      description: "Izskats un valodas iestatījumi ir veiksmīgi saglabāti",
+      description: t("Izskats un valodas iestatījumi ir veiksmīgi saglabāti", "Appearance and language settings saved successfully"),
     });
   };
   
   const onNotificationSubmit = (values: z.infer<typeof notificationFormSchema>) => {
     console.log(values);
     toast({
-      description: "Paziņojumu iestatījumi ir veiksmīgi saglabāti",
+      description: t("Paziņojumu iestatījumi ir veiksmīgi saglabāti", "Notification settings saved successfully"),
     });
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Platformas iestatījumi</h1>
-        <p className="text-muted-foreground">Pārvaldiet platformas globālos iestatījumus</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t("Platformas iestatījumi", "Platform Settings")}</h1>
+        <p className="text-muted-foreground">{t("Pārvaldiet platformas globālos iestatījumus", "Manage platform global settings")}</p>
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6">
-          <TabsTrigger value="appearance">Izskats un valoda</TabsTrigger>
-          <TabsTrigger value="notifications">Paziņojumi</TabsTrigger>
-          <TabsTrigger value="security">Drošība</TabsTrigger>
-          <TabsTrigger value="integrations">Integrācijas</TabsTrigger>
+          <TabsTrigger value="appearance">{t("Izskats un valoda", "Appearance and Language")}</TabsTrigger>
+          <TabsTrigger value="notifications">{t("Paziņojumi", "Notifications")}</TabsTrigger>
+          <TabsTrigger value="security">{t("Drošība", "Security")}</TabsTrigger>
+          <TabsTrigger value="integrations">{t("Integrācijas", "Integrations")}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="appearance">
           <Card>
             <CardHeader>
-              <CardTitle>Izskats un valoda</CardTitle>
+              <CardTitle>{t("Izskats un valoda", "Appearance and Language")}</CardTitle>
               <CardDescription>
-                Pārvaldiet lietotāja saskarnes izskatu un valodu
+                {t("Pārvaldiet lietotāja saskarnes izskatu un valodu", "Manage the user interface appearance and language")}
               </CardDescription>
             </CardHeader>
             <Form {...appearanceForm}>
@@ -123,7 +126,7 @@ export function AdminSettings() {
                     name="theme"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Tēma</FormLabel>
+                        <FormLabel>{t("Tēma", "Theme")}</FormLabel>
                         <div className="flex items-center gap-4">
                           <FormControl>
                             <Select 
@@ -131,24 +134,24 @@ export function AdminSettings() {
                               defaultValue={field.value}
                             >
                               <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Izvēlēties tēmu" />
+                                <SelectValue placeholder={t("Izvēlēties tēmu", "Select theme")} />
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="light">
                                   <div className="flex items-center gap-2">
                                     <Sun className="h-4 w-4" />
-                                    <span>Gaišā</span>
+                                    <span>{t("Gaišā", "Light")}</span>
                                   </div>
                                 </SelectItem>
                                 <SelectItem value="dark">
                                   <div className="flex items-center gap-2">
                                     <Moon className="h-4 w-4" />
-                                    <span>Tumšā</span>
+                                    <span>{t("Tumšā", "Dark")}</span>
                                   </div>
                                 </SelectItem>
                                 <SelectItem value="system">
                                   <div className="flex items-center gap-2">
-                                    <span>Sistēmas</span>
+                                    <span>{t("Sistēmas", "System")}</span>
                                   </div>
                                 </SelectItem>
                               </SelectContent>
@@ -156,7 +159,7 @@ export function AdminSettings() {
                           </FormControl>
                         </div>
                         <FormDescription>
-                          Izvēlieties vietnes tēmu
+                          {t("Izvēlieties vietnes tēmu", "Choose the site theme")}
                         </FormDescription>
                       </FormItem>
                     )}
@@ -167,7 +170,7 @@ export function AdminSettings() {
                     name="language"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Valoda</FormLabel>
+                        <FormLabel>{t("Valoda", "Language")}</FormLabel>
                         <div className="flex items-center gap-4">
                           <FormControl>
                             <Select 
@@ -175,7 +178,7 @@ export function AdminSettings() {
                               defaultValue={field.value}
                             >
                               <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Izvēlēties valodu" />
+                                <SelectValue placeholder={t("Izvēlēties valodu", "Select language")} />
                               </SelectTrigger>
                               <SelectContent>
                                 {languages
@@ -193,7 +196,7 @@ export function AdminSettings() {
                           </FormControl>
                         </div>
                         <FormDescription>
-                          Izvēlieties administrācijas paneļa valodu
+                          {t("Izvēlieties administrācijas paneļa valodu", "Choose the admin panel language")}
                         </FormDescription>
                       </FormItem>
                     )}
@@ -206,11 +209,11 @@ export function AdminSettings() {
                     onClick={() => appearanceForm.reset()}
                   >
                     <RefreshCw className="mr-2 h-4 w-4" />
-                    Atiestatīt
+                    {t("Atiestatīt", "Reset")}
                   </Button>
                   <Button type="submit">
                     <Save className="mr-2 h-4 w-4" />
-                    Saglabāt izmaiņas
+                    {t("Saglabāt izmaiņas", "Save changes")}
                   </Button>
                 </CardFooter>
               </form>
@@ -221,9 +224,9 @@ export function AdminSettings() {
         <TabsContent value="notifications">
           <Card>
             <CardHeader>
-              <CardTitle>Paziņojumu iestatījumi</CardTitle>
+              <CardTitle>{t("Paziņojumu iestatījumi", "Notification Settings")}</CardTitle>
               <CardDescription>
-                Pārvaldiet, kādus paziņojumus saņemat
+                {t("Pārvaldiet, kādus paziņojumus saņemat", "Manage what notifications you receive")}
               </CardDescription>
             </CardHeader>
             <Form {...notificationForm}>
@@ -235,9 +238,9 @@ export function AdminSettings() {
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
-                          <FormLabel className="text-base">E-pasta paziņojumi</FormLabel>
+                          <FormLabel className="text-base">{t("E-pasta paziņojumi", "Email Notifications")}</FormLabel>
                           <FormDescription>
-                            Ieslēgt vai izslēgt visus e-pasta paziņojumus.
+                            {t("Ieslēgt vai izslēgt visus e-pasta paziņojumus.", "Enable or disable all email notifications.")}
                           </FormDescription>
                         </div>
                         <FormControl>
@@ -256,9 +259,9 @@ export function AdminSettings() {
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
-                          <FormLabel className="text-base">Administratora paziņojumi</FormLabel>
+                          <FormLabel className="text-base">{t("Administratora paziņojumi", "Administrator Notifications")}</FormLabel>
                           <FormDescription>
-                            Saņemt paziņojumus par administratora darbībām.
+                            {t("Saņemt paziņojumus par administratora darbībām.", "Receive notifications about administrator actions.")}
                           </FormDescription>
                         </div>
                         <FormControl>
@@ -278,9 +281,9 @@ export function AdminSettings() {
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
-                          <FormLabel className="text-base">Lietotāju reģistrācijas</FormLabel>
+                          <FormLabel className="text-base">{t("Lietotāju reģistrācijas", "User Registrations")}</FormLabel>
                           <FormDescription>
-                            Saņemt paziņojumus, kad reģistrējas jauni lietotāji.
+                            {t("Saņemt paziņojumus, kad reģistrējas jauni lietotāji.", "Receive notifications when new users register.")}
                           </FormDescription>
                         </div>
                         <FormControl>
@@ -300,9 +303,9 @@ export function AdminSettings() {
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
-                          <FormLabel className="text-base">Jaunumu abonementi</FormLabel>
+                          <FormLabel className="text-base">{t("Jaunumu abonementi", "Newsletter Subscriptions")}</FormLabel>
                           <FormDescription>
-                            Saņemt paziņojumus par jauniem jaunumu abonentiem.
+                            {t("Saņemt paziņojumus par jauniem jaunumu abonentiem.", "Receive notifications about new newsletter subscribers.")}
                           </FormDescription>
                         </div>
                         <FormControl>
@@ -323,11 +326,11 @@ export function AdminSettings() {
                     onClick={() => notificationForm.reset()}
                   >
                     <RefreshCw className="mr-2 h-4 w-4" />
-                    Atiestatīt
+                    {t("Atiestatīt", "Reset")}
                   </Button>
                   <Button type="submit">
                     <Save className="mr-2 h-4 w-4" />
-                    Saglabāt izmaiņas
+                    {t("Saglabāt izmaiņas", "Save changes")}
                   </Button>
                 </CardFooter>
               </form>
@@ -338,14 +341,14 @@ export function AdminSettings() {
         <TabsContent value="security">
           <Card>
             <CardHeader>
-              <CardTitle>Drošības iestatījumi</CardTitle>
+              <CardTitle>{t("Drošības iestatījumi", "Security Settings")}</CardTitle>
               <CardDescription>
-                Pārvaldiet platformas drošības iestatījumus
+                {t("Pārvaldiet platformas drošības iestatījumus", "Manage platform security settings")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Drošības iestatījumi tiks pievienoti drīzumā...
+                {t("Drošības iestatījumi tiks pievienoti drīzumā...", "Security settings will be added soon...")}
               </p>
             </CardContent>
           </Card>
@@ -354,14 +357,14 @@ export function AdminSettings() {
         <TabsContent value="integrations">
           <Card>
             <CardHeader>
-              <CardTitle>Integrācijas</CardTitle>
+              <CardTitle>{t("Integrācijas", "Integrations")}</CardTitle>
               <CardDescription>
-                Pārvaldiet trešo pušu integrācijas
+                {t("Pārvaldiet trešo pušu integrācijas", "Manage third-party integrations")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-muted-foreground">
-                Integrāciju iestatījumi tiks pievienoti drīzumā...
+                {t("Integrāciju iestatījumi tiks pievienoti drīzumā...", "Integration settings will be added soon...")}
               </p>
             </CardContent>
           </Card>
@@ -370,3 +373,4 @@ export function AdminSettings() {
     </div>
   );
 }
+
