@@ -20,10 +20,10 @@ import { useLanguage } from "@/features/language";
 
 const formSchema = z.object({
   email: z.string().email({
-    message: "Lūdzu, ievadiet derīgu e-pasta adresi.",
+    message: "Please enter a valid email address.",
   }),
   password: z.string().min(6, {
-    message: "Parolei jābūt vismaz 6 simbolus garai.",
+    message: "Password must be at least 6 characters long.",
   }),
 });
 
@@ -42,7 +42,7 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "admin@netieku.es",
+      email: "",
       password: "",
     },
   });
@@ -62,7 +62,7 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
           : "Successfully logged into the admin panel.",
       });
       
-      // Atjauninam lapu, lai atjauninātu autentifikācijas statusu
+      // Reload the page to update authentication status
       window.location.reload();
       onLoginSuccess();
     } catch (error: any) {
@@ -142,7 +142,8 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
           )}
         />
         <div className="mt-2 text-sm text-muted-foreground">
-          {t('Demo konts: admin@netieku.es ar paroli "raivis2025!"', 'Demo account: admin@netieku.es with password "raivis2025!"')}
+          {t('Administratoru konti: admin@netieku.es, ieva@netieku.es, gunta@netieku.es', 
+             'Admin accounts: admin@netieku.es, ieva@netieku.es, gunta@netieku.es')}
         </div>
         <div className="flex justify-end pt-4">
           <Button 

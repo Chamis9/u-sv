@@ -1,28 +1,28 @@
 
 import { supabase } from "@/integrations/supabase/client";
 
-// Pārbauda, vai lietotāja dati atbilst administratora datiem
+// Check if the user is an admin by querying the admin_user table
 export const checkAdminCredentials = async (email: string, password: string) => {
   try {
-    console.log("Pārbauda administratora pieteikšanās datus:", email);
+    console.log("Checking admin credentials for:", email);
     
-    // Mēģinām pieslēgties ar e-pastu un paroli
+    // Attempt to sign in with Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password
     });
 
     if (authError) {
-      console.error('Autentifikācijas kļūda:', authError);
+      console.error('Authentication error:', authError);
       return false;
     }
 
     if (!authData.user) {
-      console.error('Netika atrasts lietotājs');
+      console.error('No user found');
       return false;
     }
 
-    // Pārbaudām, vai lietotājs ir administrators mūsu admin_user tabulā
+    // Check if the user is in the admin_user table
     const { data: adminData, error: adminError } = await supabase
       .from('admin_user')
       .select('*')
@@ -30,98 +30,51 @@ export const checkAdminCredentials = async (email: string, password: string) => 
       .maybeSingle();
 
     if (adminError) {
-      console.error('Kļūda pārbaudot administratora statusu:', adminError);
-      await supabase.auth.signOut(); // Atslēdzam, ja nav administratora tiesību
+      console.error('Error checking admin status:', adminError);
+      await supabase.auth.signOut();
       return false;
     }
 
     if (!adminData) {
-      console.error('Lietotājs nav administrators');
-      await supabase.auth.signOut(); // Atslēdzam, ja nav administratora tiesību
+      console.error('User is not an admin');
+      await supabase.auth.signOut();
       return false;
     }
 
-    // Ja viss kārtībā, saglabājam informāciju par administratora pieslēgšanos
+    // If we get here, the user is authenticated and is an admin
     localStorage.setItem('admin_authenticated', 'true');
     localStorage.setItem('admin_email', email);
     return true;
   } catch (error) {
-    console.error('Kļūda checkAdminCredentials:', error);
+    console.error('Error in checkAdminCredentials:', error);
     return false;
   }
 };
 
-// Izveidot administratora lietotāju (tikai demo vajadzībām)
+// This function is no longer needed since we're only using Supabase Auth
 export const createAdminUser = async () => {
-  try {
-    // Mēģinām reģistrēt lietotāju Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: 'admin@netieku.es',
-      password: 'raivis2025!',
-    });
-
-    // Ja ir kļūda, bet tā ir par to, ka lietotājs jau eksistē, mēs varam turpināt
-    if (authError && !authError.message.includes('already registered')) {
-      console.error('Kļūda veidojot administratora kontu Auth:', authError);
-      return false;
-    }
-
-    // Pārbaudām, vai lietotājs jau eksistē admin_user tabulā
-    const { data: existingUser, error: checkError } = await supabase
-      .from('admin_user')
-      .select('*')
-      .eq('email', 'admin@netieku.es')
-      .maybeSingle();
-
-    // Ja jau eksistē, tad nav jāieliek vēlreiz
-    if (existingUser) {
-      return true;
-    }
-
-    // Pievienojam ierakstu admin_user tabulā
-    const { error: insertError } = await supabase
-      .from('admin_user')
-      .insert({
-        email: 'admin@netieku.es'
-      });
-
-    if (insertError) {
-      console.error('Kļūda pievienojot administratoru admin_user tabulā:', insertError);
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error('Kļūda createAdminUser:', error);
-    return false;
-  }
+  console.log("Creating admin users is handled through Supabase Auth directly");
+  return true;
 };
 
-// Pievienot funkciju, kas ļauj viegli izveidot administratora kontu
+// Check if admin setup is complete by checking if any admin users exist
 export const setupAdminAccount = async () => {
   try {
-    // Vispirms pārbaudām, vai administrators jau eksistē
-    const { data: existingAdmin, error: checkError } = await supabase
+    // Check if any admin users exist in the admin_user table
+    const { data: adminUsers, error: checkError } = await supabase
       .from('admin_user')
       .select('*')
-      .eq('email', 'admin@netieku.es')
-      .maybeSingle();
+      .limit(1);
 
     if (checkError) {
-      console.error('Kļūda pārbaudot administratora kontu:', checkError);
+      console.error('Error checking for admin users:', checkError);
       return false;
     }
 
-    // Ja administrators jau eksistē, atgriežam true
-    if (existingAdmin) {
-      console.log('Administrators jau eksistē!');
-      return true;
-    }
-
-    // Ja administrators neeksistē, izveidojam jaunu
-    return await createAdminUser();
+    // If we have any admin users, setup is complete
+    return adminUsers && adminUsers.length > 0;
   } catch (error) {
-    console.error('Kļūda setupAdminAccount:', error);
+    console.error('Error in setupAdminAccount:', error);
     return false;
   }
 };

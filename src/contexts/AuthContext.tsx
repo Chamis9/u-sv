@@ -26,33 +26,50 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
 
   useEffect(() => {
-    // Pārbaudam autentifikācijas statusu
+    // Check authentication status
     const checkAuthStatus = async () => {
       try {
-        // Pārbaudam lokālās glabātuves vērtību
-        const isAuth = localStorage.getItem('admin_authenticated') === 'true';
+        // Check if we have an active Supabase session
+        const { data } = await supabase.auth.getSession();
         
-        if (isAuth) {
-          // Pārbaudam vai ir aktīva Supabase sesija
-          const { data } = await supabase.auth.getSession();
-          if (!data.session) {
-            // Ja nav aktīvas sesijas, notīrām iestatījumus
-            localStorage.removeItem('admin_authenticated');
-            localStorage.removeItem('admin_email');
+        if (data.session) {
+          // We have an active session, now check if the user is in the admin_user table
+          const email = data.session.user?.email;
+          
+          if (email) {
+            const { data: adminData, error: adminError } = await supabase
+              .from('admin_user')
+              .select('*')
+              .eq('email', email)
+              .maybeSingle();
+
+            if (adminError) {
+              console.error('Error checking admin status:', adminError);
+              setIsAuthenticated(false);
+              setUserEmail(null);
+            } else if (adminData) {
+              // User is authenticated and is an admin
+              setIsAuthenticated(true);
+              setUserEmail(email);
+              localStorage.setItem('admin_authenticated', 'true');
+              localStorage.setItem('admin_email', email);
+            } else {
+              // User is authenticated but not an admin
+              console.error('User is not an admin');
+              await supabase.auth.signOut();
+              setIsAuthenticated(false);
+              setUserEmail(null);
+            }
+          } else {
             setIsAuthenticated(false);
             setUserEmail(null);
-          } else {
-            // Saglabājam e-pastu
-            const email = data.session.user?.email;
-            if (email) {
-              localStorage.setItem('admin_email', email);
-              setUserEmail(email);
-            }
-            setIsAuthenticated(true);
           }
         } else {
+          // No active session
           setIsAuthenticated(false);
           setUserEmail(null);
+          localStorage.removeItem('admin_authenticated');
+          localStorage.removeItem('admin_email');
         }
       } catch (error) {
         console.error('Auth status check error:', error);
@@ -65,7 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     checkAuthStatus();
 
-    // Pievienojam sesijas statusu maiņas notikumu klausītāju
+    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === 'SIGNED_OUT') {
@@ -74,13 +91,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setIsAuthenticated(false);
           setUserEmail(null);
         } else if (event === 'SIGNED_IN' && session) {
-          localStorage.setItem('admin_authenticated', 'true');
+          // When signed in, check if the user is an admin
           const email = session.user?.email;
           if (email) {
-            localStorage.setItem('admin_email', email);
-            setUserEmail(email);
+            // Use setTimeout to avoid nested Supabase calls
+            setTimeout(async () => {
+              const { data: adminData, error: adminError } = await supabase
+                .from('admin_user')
+                .select('*')
+                .eq('email', email)
+                .maybeSingle();
+
+              if (!adminError && adminData) {
+                localStorage.setItem('admin_authenticated', 'true');
+                localStorage.setItem('admin_email', email);
+                setIsAuthenticated(true);
+                setUserEmail(email);
+              } else {
+                // Not an admin, sign out
+                await supabase.auth.signOut();
+                setIsAuthenticated(false);
+                setUserEmail(null);
+              }
+            }, 0);
           }
-          setIsAuthenticated(true);
         }
       }
     );
@@ -92,27 +126,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      // Izrakstāmies no Supabase
+      // Sign out from Supabase
       await supabase.auth.signOut();
       
-      // Notīrām lokālos autorizācijas datus
+      // Clear local auth data
       localStorage.removeItem('admin_authenticated');
       localStorage.removeItem('admin_email');
       setIsAuthenticated(false);
       setUserEmail(null);
       
       toast({
-        description: "Jūs esat veiksmīgi izrakstījies",
+        description: "You have been successfully logged out",
       });
       
-      // Izmantojam globālo logout funkciju, ja tāda ir definēta
+      // Use global logout function if defined
       if (window.logout) {
         window.logout();
       }
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Neizdevās izrakstīties. Lūdzu, mēģiniet vēlreiz.",
+        description: "Failed to log out. Please try again.",
       });
     }
   };
