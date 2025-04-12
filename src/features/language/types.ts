@@ -1,3 +1,4 @@
+
 export interface Translations {
   hero: {
     title: string;
@@ -98,4 +99,5 @@ export interface Language {
   flag: string;
 }
 
+// Add the export for TranslationObject as an alias of Translations
 export type TranslationObject = Translations;
