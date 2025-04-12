@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { Json } from "@/integrations/supabase/types";
 
 export type ActivityType = 'subscriber' | 'user' | 'ticket' | 'system' | 'login' | 'logout' | 'settings';
 
@@ -8,7 +9,7 @@ export interface LogActivityParams {
   description: string;
   userId?: string;
   email?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, any> | null;
 }
 
 /**
@@ -29,7 +30,7 @@ export async function logActivity({
         description,
         user_id: userId,
         email,
-        metadata
+        metadata: metadata as Json
       });
     
     if (error) {

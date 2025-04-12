@@ -12,7 +12,6 @@ export function useSubscriberActions() {
   const [isUpdating, setIsUpdating] = useState(false);
   const { currentLanguage } = useLanguage();
 
-  // Translation helper
   const t = (lvText: string, enText: string) => {
     return currentLanguage.code === 'lv' ? lvText : enText;
   };
@@ -27,11 +26,9 @@ export function useSubscriberActions() {
     setIsDeleting(true);
 
     try {
-      // Find the subscriber email before deletion
       const subscriber = subscribers.find(sub => sub.id === id);
       const subscriberEmail = subscriber?.email;
 
-      // Delete subscriber from Supabase
       const { error } = await supabase
         .from('newsletter_subscribers')
         .delete()
@@ -41,11 +38,9 @@ export function useSubscriberActions() {
         throw error;
       }
       
-      // Success - update client-side data
       const newSubscribers = subscribers.filter(sub => sub.id !== id);
       updateCache(newSubscribers);
       
-      // Update filtered list if search term exists
       if (searchTerm) {
         const newFilteredSubscribers = filterSubscribers(newSubscribers, searchTerm);
         setFilteredSubscribers(newFilteredSubscribers);
@@ -53,7 +48,6 @@ export function useSubscriberActions() {
         setFilteredSubscribers(newSubscribers);
       }
       
-      // Log the activity
       if (subscriberEmail) {
         logActivity({
           activityType: 'subscriber',
@@ -62,7 +56,6 @@ export function useSubscriberActions() {
         });
       }
       
-      // Show success notification
       toast({
         description: t('Abonents veiksmīgi dzēsts', 'Subscriber deleted successfully')
       });
@@ -89,11 +82,9 @@ export function useSubscriberActions() {
     setIsUpdating(true);
     
     try {
-      // Find the old email before update
       const oldSubscriber = subscribers.find(sub => sub.id === id);
       const oldEmail = oldSubscriber?.email;
       
-      // Update subscriber in Supabase
       const { data, error } = await supabase
         .from('newsletter_subscribers')
         .update({ email })
@@ -105,13 +96,11 @@ export function useSubscriberActions() {
         throw error;
       }
       
-      // Success - update client-side data
       const newSubscribers = subscribers.map(sub => 
         sub.id === id ? { ...sub, email } : sub
       );
       updateCache(newSubscribers);
       
-      // Update filtered list if search term exists
       if (searchTerm) {
         const newFilteredSubscribers = filterSubscribers(newSubscribers, searchTerm);
         setFilteredSubscribers(newFilteredSubscribers);
@@ -119,7 +108,6 @@ export function useSubscriberActions() {
         setFilteredSubscribers(newSubscribers);
       }
       
-      // Log the activity
       logActivity({
         activityType: 'subscriber',
         description: `Subscriber email updated`,
@@ -127,7 +115,6 @@ export function useSubscriberActions() {
         metadata: { oldEmail }
       });
       
-      // Show success notification
       toast({
         description: t('Abonents veiksmīgi atjaunināts', 'Subscriber updated successfully')
       });
@@ -162,20 +149,23 @@ export function useSubscriberActions() {
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
 
-    if (navigator.msSaveBlob) { // IE 10+
-      navigator.msSaveBlob(blob, filename);
+    const link = document.createElement("a");
+    
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     } else {
-      const link = document.createElement("a");
-      if (link.download !== undefined) { // Browsers that support HTML5 download attribute
-        const url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", filename);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      URL.revokeObjectURL(url);
     }
+    
     toast({
       description: t('CSV fails veiksmīgi lejupielādēts', 'CSV file downloaded successfully'),
     });

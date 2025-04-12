@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/features/language";
 import { formatDistanceToNow } from "date-fns";
@@ -29,6 +28,7 @@ import {
 import { Mail, Users, Ticket, AlertCircle, Settings, LogIn, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ActivityType } from "@/utils/activityLogger";
+import { Json } from "@/integrations/supabase/types";
 
 export type Activity = {
   id: string;
@@ -36,7 +36,8 @@ export type Activity = {
   description: string;
   email?: string | null;
   created_at: string;
-  metadata?: Record<string, any> | null;
+  metadata?: Json | null; // Changed from Record<string, any> to Json to match Supabase type
+  user_id?: string | null; // Added user_id to match the database schema
 };
 
 type ActivityLogModalProps = {
@@ -53,14 +54,12 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
   const [totalCount, setTotalCount] = useState(0);
   const itemsPerPage = 10;
   
-  // Translation helper
   const t = (lvText: string, enText: string, ruText?: string) => {
     if (currentLanguage.code === 'lv') return lvText;
     if (currentLanguage.code === 'ru') return ruText || enText;
     return enText;
   };
   
-  // Get date-fns locale based on current language
   const getLocale = () => {
     switch (currentLanguage.code) {
       case 'lv': return lv;
@@ -69,7 +68,6 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
     }
   };
   
-  // Format relative time with proper localization
   const formatRelativeTime = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -83,13 +81,11 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
     }
   };
   
-  // Fetch activities from the database
   const fetchActivities = async () => {
     setIsLoading(true);
     setError(null);
     
     try {
-      // Get total count for pagination
       const { count, error: countError } = await supabase
         .from('activity_log')
         .select('*', { count: 'exact', head: true });
@@ -102,7 +98,6 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
         setTotalCount(count);
       }
       
-      // Get activities for current page
       const from = (currentPage - 1) * itemsPerPage;
       const to = from + itemsPerPage - 1;
       
@@ -116,7 +111,7 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
         throw error;
       }
       
-      setActivities(data || []);
+      setActivities(data as Activity[] || []);
     } catch (err) {
       console.error('Error fetching activities:', err);
       setError(t(
@@ -129,22 +124,18 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
     }
   };
   
-  // Fetch activities when modal opens or page changes
   useEffect(() => {
     if (open) {
       fetchActivities();
     }
   }, [open, currentPage]);
   
-  // Calculate pagination
   const totalPages = Math.ceil(totalCount / itemsPerPage);
   
-  // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
   
-  // Render activity icon based on type
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'subscriber':
@@ -166,7 +157,6 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
     }
   };
   
-  // Translate activity type
   const translateActivityType = (type: string) => {
     switch (type) {
       case 'subscriber':
@@ -191,7 +181,6 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
   const renderPaginationLinks = () => {
     const links = [];
     
-    // Add previous page link
     links.push(
       <PaginationItem key="prev">
         <PaginationPrevious 
@@ -201,7 +190,6 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
       </PaginationItem>
     );
     
-    // Add page number links
     for (let i = 1; i <= totalPages; i++) {
       if (
         i === 1 || 
@@ -233,7 +221,6 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
       }
     }
     
-    // Add next page link
     links.push(
       <PaginationItem key="next">
         <PaginationNext 
