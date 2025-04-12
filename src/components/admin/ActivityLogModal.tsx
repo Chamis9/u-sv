@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/features/language";
 import { formatDistanceToNow } from "date-fns";
 import { lv, enUS, ru } from "date-fns/locale";
@@ -26,57 +26,18 @@ import {
   PaginationNext, 
   PaginationPrevious 
 } from "@/components/ui/pagination";
-import { Mail, Users, Ticket, AlertCircle } from "lucide-react";
+import { Mail, Users, Ticket, AlertCircle, Settings, LogIn, LogOut } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { ActivityType } from "@/utils/activityLogger";
 
-// Mock data for activities - in a real application, this would come from an API
 export type Activity = {
   id: string;
-  type: 'subscriber' | 'user' | 'ticket' | 'system';
-  message: string;
-  email?: string;
-  timestamp: string;
+  activity_type: ActivityType;
+  description: string;
+  email?: string | null;
+  created_at: string;
+  metadata?: Record<string, any> | null;
 };
-
-// Generate mock data
-const generateMockActivities = (count: number): Activity[] => {
-  const activities: Activity[] = [];
-  const now = new Date();
-  
-  for (let i = 0; i < count; i++) {
-    const activityType = ['subscriber', 'user', 'ticket', 'system'][Math.floor(Math.random() * 4)] as Activity['type'];
-    const timestamp = new Date(now.getTime() - i * 3600000 * (Math.random() * 24 + 1)).toISOString();
-    
-    let activity: Activity = {
-      id: `activity-${i}`,
-      type: activityType,
-      message: '',
-      timestamp
-    };
-    
-    switch (activityType) {
-      case 'subscriber':
-        activity.message = 'New email subscriber';
-        activity.email = `user${i}@example.com`;
-        break;
-      case 'user':
-        activity.message = 'New user registered';
-        break;
-      case 'ticket':
-        activity.message = 'New support ticket created';
-        break;
-      case 'system':
-        activity.message = 'System update completed';
-        break;
-    }
-    
-    activities.push(activity);
-  }
-  
-  return activities;
-};
-
-// Mock activities data - 30 items
-const mockActivities = generateMockActivities(30);
 
 type ActivityLogModalProps = {
   open: boolean;
@@ -86,6 +47,10 @@ type ActivityLogModalProps = {
 export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) {
   const { currentLanguage, translations } = useLanguage();
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
   const itemsPerPage = 10;
   
   // Translation helper
@@ -118,14 +83,69 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
     }
   };
   
+  // Fetch activities from the database
+  const fetchActivities = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Get total count for pagination
+      const { count, error: countError } = await supabase
+        .from('activity_log')
+        .select('*', { count: 'exact', head: true });
+      
+      if (countError) {
+        throw countError;
+      }
+      
+      if (count !== null) {
+        setTotalCount(count);
+      }
+      
+      // Get activities for current page
+      const from = (currentPage - 1) * itemsPerPage;
+      const to = from + itemsPerPage - 1;
+      
+      const { data, error } = await supabase
+        .from('activity_log')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .range(from, to);
+      
+      if (error) {
+        throw error;
+      }
+      
+      setActivities(data || []);
+    } catch (err) {
+      console.error('Error fetching activities:', err);
+      setError(t(
+        'Neizdevās ielādēt aktivitātes. Lūdzu, mēģiniet vēlreiz.', 
+        'Failed to load activities. Please try again.',
+        'Не удалось загрузить действия. Пожалуйста, попробуйте еще раз.'
+      ));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Fetch activities when modal opens or page changes
+  useEffect(() => {
+    if (open) {
+      fetchActivities();
+    }
+  }, [open, currentPage]);
+  
   // Calculate pagination
-  const totalPages = Math.ceil(mockActivities.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentActivities = mockActivities.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
+  
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
   
   // Render activity icon based on type
-  const getActivityIcon = (type: Activity['type']) => {
+  const getActivityIcon = (type: ActivityType) => {
     switch (type) {
       case 'subscriber':
         return <Mail className="h-4 w-4 text-green-600 dark:text-green-400" />;
@@ -135,12 +155,39 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
         return <Ticket className="h-4 w-4 text-purple-600 dark:text-purple-400" />;
       case 'system':
         return <AlertCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />;
+      case 'login':
+        return <LogIn className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
+      case 'logout':
+        return <LogOut className="h-4 w-4 text-red-600 dark:text-red-400" />;
+      case 'settings':
+        return <Settings className="h-4 w-4 text-gray-600 dark:text-gray-400" />;
+      default:
+        return <AlertCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />;
     }
   };
   
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+  // Translate activity type
+  const translateActivityType = (type: ActivityType) => {
+    const activityLog = translations.admin?.activityLog;
+    
+    switch (type) {
+      case 'subscriber':
+        return activityLog?.newSubscriber || t('Jauns e-pasta abonents', 'New email subscriber');
+      case 'user':
+        return activityLog?.newUser || t('Jauns lietotājs', 'New user registered');
+      case 'ticket':
+        return activityLog?.newTicket || t('Jauna biļete', 'New support ticket created');
+      case 'system':
+        return activityLog?.systemUpdate || t('Sistēmas atjauninājums', 'System update completed');
+      case 'login':
+        return t('Pieteikšanās', 'Login', 'Вход в систему');
+      case 'logout':
+        return t('Izrakstīšanās', 'Logout', 'Выход из системы');
+      case 'settings':
+        return t('Iestatījumu izmaiņas', 'Settings changed', 'Изменение настроек');
+      default:
+        return type;
+    }
   };
   
   const renderPaginationLinks = () => {
@@ -205,61 +252,79 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
         <DialogHeader>
-          <DialogTitle>{t('Aktivitāšu žurnāls', 'Activity Log', 'Журнал активности')}</DialogTitle>
+          <DialogTitle>
+            {translations.admin?.activityLog?.title || t('Aktivitāšu žurnāls', 'Activity Log', 'Журнал активности')}
+          </DialogTitle>
           <DialogDescription>
-            {t('Platformas lietotāju aktivitātes', 'User activities on the platform', 'Действия пользователей на платформе')}
+            {translations.admin?.activityLog?.description || t('Platformas lietotāju aktivitātes', 'User activities on the platform', 'Действия пользователей на платформе')}
           </DialogDescription>
         </DialogHeader>
         
         <div className="overflow-auto flex-grow">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-12"></TableHead>
-                <TableHead>{t('Darbība', 'Activity', 'Действие')}</TableHead>
-                <TableHead>{t('Detaļas', 'Details', 'Детали')}</TableHead>
-                <TableHead>{t('Laiks', 'Time', 'Время')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {currentActivities.map((activity) => (
-                <TableRow key={activity.id}>
-                  <TableCell>
-                    <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-800">
-                      {getActivityIcon(activity.type)}
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {t(
-                      activity.type === 'subscriber' ? 'Jauns e-pasta abonents' : 
-                      activity.type === 'user' ? 'Jauns lietotājs' :
-                      activity.type === 'ticket' ? 'Jauna biļete' : 'Sistēmas atjauninājums',
-                      activity.message
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {activity.email && (
-                      <span className="text-sm text-muted-foreground">{activity.email}</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-sm text-muted-foreground">
-                      {formatRelativeTime(activity.timestamp)}
-                    </span>
-                  </TableCell>
+          {isLoading ? (
+            <div className="flex justify-center items-center h-40">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+          ) : error ? (
+            <div className="text-center text-red-500 p-4">{error}</div>
+          ) : activities.length === 0 ? (
+            <div className="text-center text-muted-foreground p-4">
+              {translations.admin?.activityLog?.noActivities || t('Nav aktivitāšu', 'No activities', 'Нет активностей')}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-12"></TableHead>
+                  <TableHead>
+                    {translations.admin?.activityLog?.activity || t('Darbība', 'Activity', 'Действие')}
+                  </TableHead>
+                  <TableHead>
+                    {translations.admin?.activityLog?.details || t('Detaļas', 'Details', 'Детали')}
+                  </TableHead>
+                  <TableHead>
+                    {translations.admin?.activityLog?.time || t('Laiks', 'Time', 'Время')}
+                  </TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {activities.map((activity) => (
+                  <TableRow key={activity.id}>
+                    <TableCell>
+                      <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-800">
+                        {getActivityIcon(activity.activity_type)}
+                      </div>
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {translateActivityType(activity.activity_type)}
+                    </TableCell>
+                    <TableCell>
+                      {activity.description}
+                      {activity.email && (
+                        <div className="text-sm text-muted-foreground">{activity.email}</div>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-muted-foreground">
+                        {formatRelativeTime(activity.created_at)}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
         
-        <div className="mt-4">
-          <Pagination>
-            <PaginationContent>
-              {renderPaginationLinks()}
-            </PaginationContent>
-          </Pagination>
-        </div>
+        {totalPages > 1 && (
+          <div className="mt-4">
+            <Pagination>
+              <PaginationContent>
+                {renderPaginationLinks()}
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

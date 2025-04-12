@@ -1,156 +1,65 @@
-
 import { supabase } from '@/integrations/supabase/client';
-import { 
-  Subscriber, 
-  SubscriberFetchResult, 
-  SubscriberDeleteResult, 
-  SubscriberUpdateResult 
-} from '@/types/subscribers';
+import type { Subscriber } from '@/types/subscribers';
+import { logActivity } from '@/utils/activityLogger';
 
-/**
- * Fetches all subscribers from the database
- */
-export async function fetchSubscribers(): Promise<SubscriberFetchResult> {
+export const addSubscriber = async (email: string) => {
   try {
-    console.log("Fetching subscribers from Supabase...");
+    const { data, error } = await supabase
+      .from('newsletter_subscribers')
+      .insert({ email })
+      .select()
+      .single();
     
-    // Get the current session to check authentication
-    const { data: sessionData } = await supabase.auth.getSession();
-    
-    if (!sessionData.session) {
-      console.error("No active session found. User might not be authenticated.");
-      return { 
-        data: null, 
-        error: new Error("Authentication required to access subscriber data") 
-      };
+    if (error) {
+      if (error.code === '23505') {
+        return { success: false, error: 'Email already subscribed', data: null };
+      }
+      return { success: false, error: error.message, data: null };
     }
     
-    // Fetch the subscribers data - adding nocache to ensure fresh data
+    if (data) {
+      // Log the activity
+      await logActivity({
+        activityType: 'subscriber',
+        description: 'New subscriber added',
+        email
+      });
+    }
+    
+    return { success: true, error: null, data };
+  } catch (error: any) {
+    return { success: false, error: error.message || 'Error adding subscriber', data: null };
+  }
+};
+
+export const filterSubscribers = (subscribers: Subscriber[], searchTerm: string) => {
+  if (!searchTerm) {
+    return subscribers;
+  }
+  
+  const lowerCaseSearchTerm = searchTerm.toLowerCase();
+  
+  return subscribers.filter(subscriber => {
+    const emailMatch = subscriber.email?.toLowerCase().includes(lowerCaseSearchTerm);
+    return emailMatch;
+  });
+};
+
+export const fetchSubscribers = async (): Promise<{ data: Subscriber[] | null; error: any }> => {
+  try {
     const { data, error } = await supabase
       .from('newsletter_subscribers')
       .select('*')
       .order('created_at', { ascending: false });
     
-    console.log("Supabase response:", { data, error });
-    
     if (error) {
-      console.error("Supabase error:", error);
+      console.error("Error fetching subscribers:", error);
       return { data: null, error };
     }
     
-    if (!data || data.length === 0) {
-      console.log("No subscribers found in the database");
-      return { data: [], error: null };
-    }
-    
-    console.log(`Retrieved ${data.length} subscribers successfully`);
     return { data, error: null };
-  } catch (err) {
-    console.error('Unexpected error fetching subscribers:', err);
-    return { data: null, error: err instanceof Error ? err : new Error('Unknown error') };
+  } catch (error: any) {
+    console.error("Unexpected error fetching subscribers:", error);
+    return { data: null, error };
   }
-}
-
-/**
- * Deletes a subscriber from the database
- */
-export async function deleteSubscriber(id: number): Promise<SubscriberDeleteResult> {
-  try {
-    console.log("Deleting subscriber with ID:", id);
-    const { error } = await supabase
-      .from('newsletter_subscribers')
-      .delete()
-      .eq('id', id);
-    
-    if (error) {
-      console.error("Error deleting subscriber:", error);
-      return { success: false, error };
-    }
-    
-    console.log("Subscriber deleted successfully");
-    return { success: true, error: null };
-  } catch (err) {
-    console.error('Error deleting subscriber:', err);
-    return { success: false, error: err instanceof Error ? err : new Error('Unknown error') };
-  }
-}
-
-/**
- * Updates a subscriber's email in the database
- */
-export async function updateSubscriber(id: number, email: string): Promise<SubscriberUpdateResult> {
-  try {
-    console.log("Updating subscriber with ID:", id, "New email:", email);
-    const { error } = await supabase
-      .from('newsletter_subscribers')
-      .update({ email })
-      .eq('id', id);
-    
-    if (error) {
-      console.error("Error updating subscriber:", error);
-      return { success: false, error };
-    }
-    
-    console.log("Subscriber updated successfully");
-    return { success: true, error: null };
-  } catch (err) {
-    console.error('Error updating subscriber:', err);
-    return { success: false, error: err instanceof Error ? err : new Error('Unknown error') };
-  }
-}
-
-/**
- * Filters subscribers based on search term
- */
-export function filterSubscribers(subscribers: Subscriber[], term: string): Subscriber[] {
-  if (!term || term.trim() === "") {
-    return subscribers;
-  }
-  
-  const normalizedTerm = term.toLowerCase().trim();
-  return subscribers.filter(subscriber => 
-    subscriber.email && subscriber.email.toLowerCase().includes(normalizedTerm)
-  );
-}
-
-/**
- * Generates CSV content from subscribers data
- */
-export function generateSubscribersCSV(
-  subscribers: Subscriber[], 
-  headers: string[], 
-  locale: string = 'en-US'
-): string {
-  if (!subscribers || subscribers.length === 0) {
-    // Return just headers if no subscribers
-    return headers.join(',');
-  }
-  
-  const csvContent = [
-    headers,
-    ...subscribers.map(sub => [
-      sub.id, 
-      sub.email || '', 
-      sub.created_at ? new Date(sub.created_at).toLocaleDateString(locale) : ''
-    ])
-  ]
-  .map(row => row.join(','))
-  .join('\n');
-  
-  return csvContent;
-}
-
-/**
- * Creates and triggers download of CSV file
- */
-export function downloadCSV(csvContent: string, filename: string): void {
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', filename);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
+};

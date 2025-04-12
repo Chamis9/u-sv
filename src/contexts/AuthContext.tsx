@@ -1,7 +1,7 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { logActivity } from "@/utils/activityLogger";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -53,6 +53,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               setUserEmail(email);
               localStorage.setItem('admin_authenticated', 'true');
               localStorage.setItem('admin_email', email);
+              
+              // Log login activity
+              logActivity({
+                activityType: 'login',
+                description: `Admin user logged in`,
+                email: email,
+              });
             } else {
               // User is authenticated but not an admin
               console.error('User is not an admin');
@@ -86,6 +93,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === 'SIGNED_OUT') {
+          const email = localStorage.getItem('admin_email');
+          if (email) {
+            // Log logout activity
+            logActivity({
+              activityType: 'logout',
+              description: `Admin user logged out`,
+              email: email,
+            });
+          }
+          
           localStorage.removeItem('admin_authenticated');
           localStorage.removeItem('admin_email');
           setIsAuthenticated(false);
@@ -107,6 +124,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 localStorage.setItem('admin_email', email);
                 setIsAuthenticated(true);
                 setUserEmail(email);
+                
+                // Log login activity
+                logActivity({
+                  activityType: 'login',
+                  description: `Admin user logged in`,
+                  email: email,
+                });
               } else {
                 // Not an admin, sign out
                 await supabase.auth.signOut();
@@ -126,6 +150,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
+      const email = userEmail;
+      
       // Sign out from Supabase
       await supabase.auth.signOut();
       
@@ -134,6 +160,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.removeItem('admin_email');
       setIsAuthenticated(false);
       setUserEmail(null);
+      
+      // Log logout activity
+      if (email) {
+        logActivity({
+          activityType: 'logout',
+          description: `Admin user logged out`,
+          email: email,
+        });
+      }
       
       toast({
         description: "You have been successfully logged out",

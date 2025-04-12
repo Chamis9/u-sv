@@ -1,147 +1,191 @@
-
+import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import type { Subscriber } from '@/types/subscribers';
 import { useLanguage } from '@/features/language';
-import { 
-  deleteSubscriber as apiDeleteSubscriber, 
-  updateSubscriber as apiUpdateSubscriber,
-  generateSubscribersCSV,
-  downloadCSV,
-  filterSubscribers
-} from '@/utils/subscriberUtils';
-import { Subscriber } from '@/types/subscribers';
+import { filterSubscribers } from '@/utils/subscriberUtils';
+import { logActivity } from '@/utils/activityLogger';
 
 export function useSubscriberActions() {
   const { toast } = useToast();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const { currentLanguage } = useLanguage();
-  
-  // Helper function for translation
-  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  // Handle search
-  const handleSearch = (
-    term: string, 
-    subscribers: Subscriber[], 
-    setFilteredSubscribers: (filtered: Subscriber[]) => void
-  ) => {
-    const filtered = filterSubscribers(subscribers, term);
-    setFilteredSubscribers(filtered);
+  // Translation helper
+  const t = (lvText: string, enText: string) => {
+    return currentLanguage.code === 'lv' ? lvText : enText;
   };
 
-  // Handle delete subscriber
   const handleDeleteSubscriber = async (
     id: number,
     subscribers: Subscriber[],
     searchTerm: string,
-    setSubscribers: (subs: Subscriber[]) => void,
-    setFilteredSubscribers: (filtered: Subscriber[]) => void
+    updateCache: (newSubscribers: Subscriber[]) => void,
+    setFilteredSubscribers: (newFilteredSubscribers: Subscriber[]) => void
   ) => {
+    setIsDeleting(true);
+
     try {
-      const { success, error } = await apiDeleteSubscriber(id);
+      // Find the subscriber email before deletion
+      const subscriber = subscribers.find(sub => sub.id === id);
+      const subscriberEmail = subscriber?.email;
+
+      // Delete subscriber from Supabase
+      const { error } = await supabase
+        .from('newsletter_subscribers')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        throw error;
+      }
       
-      if (success) {
-        const updatedSubscribers = subscribers.filter(sub => sub.id !== id);
-        setSubscribers(updatedSubscribers);
-        setFilteredSubscribers(filterSubscribers(updatedSubscribers, searchTerm));
-        
-        toast({
-          description: t("Abonents veiksmīgi dzēsts", "Subscriber successfully deleted"),
-        });
+      // Success - update client-side data
+      const newSubscribers = subscribers.filter(sub => sub.id !== id);
+      updateCache(newSubscribers);
+      
+      // Update filtered list if search term exists
+      if (searchTerm) {
+        const newFilteredSubscribers = filterSubscribers(newSubscribers, searchTerm);
+        setFilteredSubscribers(newFilteredSubscribers);
       } else {
-        console.error("Error deleting subscriber:", error);
-        toast({
-          variant: "destructive",
-          description: t("Neizdevās dzēst abonentu. Lūdzu, mēģiniet vēlreiz.",
-                         "Failed to delete subscriber. Please try again."),
+        setFilteredSubscribers(newSubscribers);
+      }
+      
+      // Log the activity
+      if (subscriberEmail) {
+        logActivity({
+          activityType: 'subscriber',
+          description: `Subscriber deleted`,
+          email: subscriberEmail
         });
       }
-    } catch (err) {
-      console.error("Unexpected error in handleDeleteSubscriber:", err);
+      
+      // Show success notification
       toast({
-        variant: "destructive",
-        description: t("Neizdevās dzēst abonentu. Lūdzu, mēģiniet vēlreiz.",
-                       "Failed to delete subscriber. Please try again."),
+        description: t('Abonents veiksmīgi dzēsts', 'Subscriber deleted successfully')
       });
+    } catch (err) {
+      console.error('Error deleting subscriber:', err);
+      toast({
+        variant: 'destructive',
+        description: t('Kļūda dzēšot abonentu. Lūdzu, mēģiniet vēlreiz.', 
+                      'Error deleting subscriber. Please try again.')
+      });
+    } finally {
+      setIsDeleting(false);
     }
   };
-
-  // Handle update subscriber
+  
   const handleUpdateSubscriber = async (
-    id: number, 
+    id: number,
     email: string,
     subscribers: Subscriber[],
     searchTerm: string,
-    setSubscribers: (subs: Subscriber[]) => void,
-    setFilteredSubscribers: (filtered: Subscriber[]) => void
+    updateCache: (newSubscribers: Subscriber[]) => void,
+    setFilteredSubscribers: (newFilteredSubscribers: Subscriber[]) => void
   ) => {
+    setIsUpdating(true);
+    
     try {
-      const { success, error } = await apiUpdateSubscriber(id, email);
+      // Find the old email before update
+      const oldSubscriber = subscribers.find(sub => sub.id === id);
+      const oldEmail = oldSubscriber?.email;
       
-      if (success) {
-        // Update the local state
-        const updatedSubscribers = subscribers.map(sub => 
-          sub.id === id ? { ...sub, email } : sub
-        );
-        setSubscribers(updatedSubscribers);
-        setFilteredSubscribers(filterSubscribers(updatedSubscribers, searchTerm));
+      // Update subscriber in Supabase
+      const { data, error } = await supabase
+        .from('newsletter_subscribers')
+        .update({ email })
+        .eq('id', id)
+        .select()
+        .single();
         
-        toast({
-          description: t("Abonents veiksmīgi atjaunināts", "Subscriber successfully updated"),
-        });
-      } else {
-        console.error("Error updating subscriber:", error);
-        toast({
-          variant: "destructive",
-          description: t("Neizdevās atjaunināt abonentu. Lūdzu, mēģiniet vēlreiz.",
-                         "Failed to update subscriber. Please try again."),
-        });
+      if (error) {
+        throw error;
       }
-    } catch (err) {
-      console.error("Unexpected error in handleUpdateSubscriber:", err);
-      toast({
-        variant: "destructive",
-        description: t("Neizdevās atjaunināt abonentu. Lūdzu, mēģiniet vēlreiz.",
-                       "Failed to update subscriber. Please try again."),
-      });
-    }
-  };
-
-  // Handle download CSV
-  const handleDownloadCSV = (subscribers: Subscriber[], currentLanguage: { code: string }) => {
-    try {
-      // Headers for CSV
-      const headers = [
-        t('ID', 'ID'), 
-        t('E-pasts', 'Email'), 
-        t('Pievienošanās datums', 'Join Date')
-      ];
       
-      // Generate CSV content
-      const csvContent = generateSubscribersCSV(
-        subscribers, 
-        headers, 
-        currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US'
+      // Success - update client-side data
+      const newSubscribers = subscribers.map(sub => 
+        sub.id === id ? { ...sub, email } : sub
       );
+      updateCache(newSubscribers);
       
-      // Download the CSV file
-      const filename = `${t('abonenti', 'subscribers')}_${new Date().toISOString().split('T')[0]}.csv`;
-      downloadCSV(csvContent, filename);
+      // Update filtered list if search term exists
+      if (searchTerm) {
+        const newFilteredSubscribers = filterSubscribers(newSubscribers, searchTerm);
+        setFilteredSubscribers(newFilteredSubscribers);
+      } else {
+        setFilteredSubscribers(newSubscribers);
+      }
       
+      // Log the activity
+      logActivity({
+        activityType: 'subscriber',
+        description: `Subscriber email updated`,
+        email: email,
+        metadata: { oldEmail }
+      });
+      
+      // Show success notification
       toast({
-        description: t("Abonentu saraksts lejupielādēts", "Subscribers list downloaded"),
+        description: t('Abonents veiksmīgi atjaunināts', 'Subscriber updated successfully')
       });
     } catch (err) {
-      console.error("Error generating/downloading CSV:", err);
+      console.error('Error updating subscriber:', err);
       toast({
-        variant: "destructive",
-        description: t("Neizdevās lejupielādēt abonentu sarakstu", "Failed to download subscribers list"),
+        variant: 'destructive',
+        description: t('Kļūda atjauninot abonentu. Lūdzu, mēģiniet vēlreiz.', 
+                      'Error updating subscriber. Please try again.')
       });
+    } finally {
+      setIsUpdating(false);
     }
   };
 
-  return {
-    handleSearch,
-    handleDeleteSubscriber,
-    handleUpdateSubscriber,
-    handleDownloadCSV
+  const handleDownloadCSV = (subscribers: Subscriber[], currentLanguage: { code: string }) => {
+    if (!subscribers || subscribers.length === 0) {
+      toast({
+        description: t('Nav abonentu, ko lejupielādēt', 'No subscribers to download'),
+      });
+      return;
+    }
+
+    const filename = 'newsletter_subscribers.csv';
+    const csvHeader = 'ID,Email,Created At\n';
+    let csvContent = csvHeader;
+
+    subscribers.forEach((subscriber) => {
+      const row = `${subscriber.id},${subscriber.email},${subscriber.created_at}\n`;
+      csvContent += row;
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+    if (navigator.msSaveBlob) { // IE 10+
+      navigator.msSaveBlob(blob, filename);
+    } else {
+      const link = document.createElement("a");
+      if (link.download !== undefined) { // Browsers that support HTML5 download attribute
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+    toast({
+      description: t('CSV fails veiksmīgi lejupielādēts', 'CSV file downloaded successfully'),
+    });
+  };
+  
+  return { 
+    handleDeleteSubscriber, 
+    handleUpdateSubscriber, 
+    handleDownloadCSV,
+    isDeleting,
+    isUpdating
   };
 }

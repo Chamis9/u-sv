@@ -10,21 +10,23 @@ import { useSubscribers } from "@/hooks/useSubscribers";
 import { formatDistanceToNow } from "date-fns";
 import { lv, enUS, ru } from "date-fns/locale";
 import { ActivityLogModal } from "./ActivityLogModal";
+import { supabase } from "@/integrations/supabase/client";
+import { Activity } from "./ActivityLogModal";
 
 export function AdminDashboard() {
   const { currentLanguage, translations } = useLanguage();
   const { subscribers, refreshSubscribers, isLoading, totalSubscribers } = useSubscribers();
   const [latestSubscriber, setLatestSubscriber] = useState<{ email: string, time: string } | null>(null);
   const [showActivityModal, setShowActivityModal] = useState(false);
+  const [recentActivities, setRecentActivities] = useState<Activity[]>([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(false);
   
-  // Translation helper function
   const t = (lvText: string, enText: string, ruText?: string) => {
     if (currentLanguage.code === 'lv') return lvText;
     if (currentLanguage.code === 'ru') return ruText || enText;
     return enText;
   };
 
-  // Get date-fns locale based on current language
   const getLocale = () => {
     switch (currentLanguage.code) {
       case 'lv': return lv;
@@ -33,7 +35,6 @@ export function AdminDashboard() {
     }
   };
 
-  // Format relative time with proper localization
   const formatRelativeTime = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -47,15 +48,12 @@ export function AdminDashboard() {
     }
   };
   
-  // Load subscribers data when component mounts
   useEffect(() => {
     refreshSubscribers();
   }, [refreshSubscribers]);
   
-  // Set the latest subscriber whenever the subscribers list updates
   useEffect(() => {
     if (subscribers.length > 0) {
-      // Sort subscribers by creation date (newest first)
       const sorted = [...subscribers].sort((a, b) => 
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
@@ -67,6 +65,48 @@ export function AdminDashboard() {
       });
     }
   }, [subscribers, currentLanguage.code]);
+  
+  useEffect(() => {
+    const fetchRecentActivities = async () => {
+      setActivitiesLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('activity_log')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(2);
+        
+        if (error) {
+          throw error;
+        }
+        
+        setRecentActivities(data || []);
+      } catch (err) {
+        console.error('Error fetching recent activities:', err);
+      } finally {
+        setActivitiesLoading(false);
+      }
+    };
+    
+    fetchRecentActivities();
+  }, []);
+  
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case 'subscriber':
+        return <Mail className="h-4 w-4 text-green-600 dark:text-green-400" />;
+      case 'user':
+        return <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
+      case 'login':
+        return <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
+      case 'logout':
+        return <Users className="h-4 w-4 text-red-600 dark:text-red-400" />;
+      case 'ticket':
+        return <Ticket className="h-4 w-4 text-purple-600 dark:text-purple-400" />;
+      default:
+        return <AlertCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />;
+    }
+  };
   
   return (
     <div className="space-y-6">
@@ -137,7 +177,32 @@ export function AdminDashboard() {
             <CardDescription>{t('Pēdējās lietotāju darbības platformā', 'Recent user actions on the platform')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {latestSubscriber ? (
+            {activitiesLoading ? (
+              <div className="flex items-center justify-center h-24">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+              </div>
+            ) : recentActivities.length > 0 ? (
+              recentActivities.map(activity => (
+                <div className="flex items-center gap-4 rounded-lg border p-3" key={activity.id}>
+                  <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-800">
+                    {getActivityIcon(activity.activity_type)}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">
+                      {activity.description}
+                      {activity.email && (
+                        <span className="text-sm font-medium text-muted-foreground ml-1">
+                          {activity.email}
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatRelativeTime(activity.created_at)}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : latestSubscriber ? (
               <div className="flex items-center gap-4 rounded-lg border p-3">
                 <div className="rounded-full bg-green-100 p-2 dark:bg-green-900">
                   <Mail className="h-4 w-4 text-green-600 dark:text-green-400" />
@@ -161,16 +226,6 @@ export function AdminDashboard() {
                 </div>
               </div>
             )}
-            
-            <div className="flex items-center gap-4 rounded-lg border p-3">
-              <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-900">
-                <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">{t('Jauns lietotājs reģistrējies', 'New user registered')}</p>
-                <p className="text-xs text-muted-foreground">{t('Pirms 2 stundām', '2 hours ago')}</p>
-              </div>
-            </div>
           </CardContent>
           <CardFooter>
             <Button variant="outline" className="w-full" size="sm" onClick={() => setShowActivityModal(true)}>
