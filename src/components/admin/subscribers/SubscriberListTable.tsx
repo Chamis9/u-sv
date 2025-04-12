@@ -1,8 +1,38 @@
 
 import React, { useState } from "react";
-import { SubscriberTable } from "./SubscriberTable";
-import { EditSubscriberDialog } from "./EditSubscriberDialog";
-import { DeleteSubscriberDialog } from "./DeleteSubscriberDialog";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose
+} from "@/components/ui/dialog";
+import { 
+  MoreHorizontal, 
+  Mail, 
+  Trash, 
+  Edit,
+  Save
+} from "lucide-react";
+import { useLanguage } from "@/features/language";
 import { Subscriber } from "@/hooks/useSubscribers";
 
 interface SubscriberListTableProps {
@@ -15,10 +45,13 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
   const [editingSubscriber, setEditingSubscriber] = useState<Subscriber | null>(null);
   const [editedEmail, setEditedEmail] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [subscriberToDelete, setSubscriberToDelete] = useState<Subscriber | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   
+  const { currentLanguage } = useLanguage();
+  
+  // Translation helper
+  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
+
   const handleEditClick = (subscriber: Subscriber) => {
     setEditingSubscriber(subscriber);
     setEditedEmail(subscriber.email || "");
@@ -38,50 +71,122 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
     }
   };
 
-  const handleDeleteClick = (subscriber: Subscriber) => {
-    setSubscriberToDelete(subscriber);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (subscriberToDelete) {
+  const handleDelete = async (id: number) => {
+    if (confirm(t('Vai tiešām vēlaties dzēst šo abonentu?', 'Are you sure you want to delete this subscriber?'))) {
       setIsProcessing(true);
       try {
-        await onDelete(subscriberToDelete.id);
-        setDeleteDialogOpen(false);
+        await onDelete(id);
       } finally {
         setIsProcessing(false);
-        setSubscriberToDelete(null);
       }
     }
   };
 
   return (
     <>
-      <SubscriberTable 
-        subscribers={subscribers}
-        onEditClick={handleEditClick}
-        onDeleteClick={handleDeleteClick}
-        isProcessing={isProcessing}
-      />
+      <div className="rounded-md border shadow-sm overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>{t('E-pasts', 'Email')}</TableHead>
+              <TableHead>{t('Pievienošanās datums', 'Join Date')}</TableHead>
+              <TableHead className="text-right">{t('Darbības', 'Actions')}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {subscribers.length > 0 ? (
+              subscribers.map(subscriber => (
+                <TableRow key={subscriber.id}>
+                  <TableCell>{subscriber.id}</TableCell>
+                  <TableCell className="font-medium">{subscriber.email}</TableCell>
+                  <TableCell>
+                    {new Date(subscriber.created_at).toLocaleDateString(currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" disabled={isProcessing}>
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">{t('Izvēlne', 'Menu')}</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleEditClick(subscriber)}>
+                          <Edit className="h-4 w-4 mr-2" />
+                          {t('Rediģēt', 'Edit')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Mail className="h-4 w-4 mr-2" />
+                          {t('Sūtīt e-pastu', 'Send Email')}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          className="text-red-500 focus:text-red-500"
+                          onClick={() => handleDelete(subscriber.id)}
+                        >
+                          <Trash className="h-4 w-4 mr-2" />
+                          {t('Dzēst', 'Delete')}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center py-6">
+                  {t('Nav atrasts neviens abonents.', 'No subscribers found.')}
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
-      <EditSubscriberDialog 
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        subscriber={editingSubscriber}
-        email={editedEmail}
-        onEmailChange={setEditedEmail}
-        onSave={handleSaveEdit}
-        isProcessing={isProcessing}
-      />
-
-      <DeleteSubscriberDialog 
-        open={deleteDialogOpen}
-        onOpenChange={setDeleteDialogOpen}
-        subscriber={subscriberToDelete}
-        onConfirm={handleDeleteConfirm}
-        isProcessing={isProcessing}
-      />
+      {/* Edit Subscriber Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('Rediģēt abonentu', 'Edit Subscriber')}</DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <label htmlFor="email" className="text-sm font-medium mb-2 block">
+              {t('E-pasta adrese', 'Email Address')}
+            </label>
+            <Input
+              id="email"
+              value={editedEmail}
+              onChange={(e) => setEditedEmail(e.target.value)}
+              placeholder="example@example.com"
+              disabled={isProcessing}
+            />
+          </div>
+          
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline" disabled={isProcessing}>{t('Atcelt', 'Cancel')}</Button>
+            </DialogClose>
+            <Button onClick={handleSaveEdit} disabled={isProcessing}>
+              {isProcessing ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {t('Saglabā...', 'Saving...')}
+                </span>
+              ) : (
+                <>
+                  <Save className="h-4 w-4 mr-2" />
+                  {t('Saglabāt', 'Save')}
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
