@@ -44,6 +44,35 @@ export interface Translations {
     cookieSettings: string;
     privacyPolicy: string;
   };
+  admin?: {
+    title?: string;
+    defaultUser?: string;
+    logout?: string;
+    returnToHome?: string;
+    logoutSuccess?: string;
+    logoutError?: string;
+    tabs?: {
+      dashboard?: string;
+      users?: string;
+      subscribers?: string;
+      settings?: string;
+    };
+    auth?: {
+      supabaseAuthAvailable?: string;
+    };
+    settings?: {
+      security?: {
+        title?: string;
+        description?: string;
+        comingSoon?: string;
+      };
+      integrations?: {
+        title?: string;
+        description?: string;
+        comingSoon?: string;
+      };
+    };
+  };
 }
 
 export interface Language {
