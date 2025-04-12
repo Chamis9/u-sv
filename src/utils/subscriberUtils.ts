@@ -8,7 +8,7 @@ import { Subscriber } from '@/hooks/useSubscribers';
 export async function fetchSubscribers(): Promise<{ data: Subscriber[] | null; error: Error | null }> {
   try {
     console.log("Fetching subscribers from Supabase...");
-    console.log("Supabase URL:", supabase.supabaseUrl);
+    console.log("Using Supabase project:", supabase.getUrl());
     
     // Test if there are any rows in the table first
     const countResponse = await supabase
