@@ -9,8 +9,10 @@ import { useLanguage } from "@/features/language";
 import { useSubscribers } from "@/hooks/useSubscribers";
 import { formatDistanceToNow } from "date-fns";
 import { lv, enUS, ru } from "date-fns/locale";
-import { ActivityLogModal, Activity } from "./ActivityLogModal";
+import { ActivityLogModal } from "./activity";
+import { Activity } from "./activity/types";
 import { supabase } from "@/integrations/supabase/client";
+import { ActivityIcon } from "./activity/ActivityIcon";
 
 export function AdminDashboard() {
   const { currentLanguage, translations } = useLanguage();
@@ -90,23 +92,6 @@ export function AdminDashboard() {
     fetchRecentActivities();
   }, []);
   
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'subscriber':
-        return <Mail className="h-4 w-4 text-green-600 dark:text-green-400" />;
-      case 'user':
-        return <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
-      case 'login':
-        return <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
-      case 'logout':
-        return <Users className="h-4 w-4 text-red-600 dark:text-red-400" />;
-      case 'ticket':
-        return <Ticket className="h-4 w-4 text-purple-600 dark:text-purple-400" />;
-      default:
-        return <AlertCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />;
-    }
-  };
-  
   return (
     <div className="space-y-6">
       <div>
@@ -184,7 +169,7 @@ export function AdminDashboard() {
               recentActivities.map(activity => (
                 <div className="flex items-center gap-4 rounded-lg border p-3" key={activity.id}>
                   <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-800">
-                    {getActivityIcon(activity.activity_type)}
+                    <ActivityIcon type={activity.activity_type} />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-medium">

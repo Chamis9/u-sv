@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import type { Subscriber } from '@/types/subscribers';
 import { useLanguage } from '@/features/language';
-import { filterSubscribers } from '@/utils/subscriberUtils';
+import { filterSubscribers, createDownloadableCSV, downloadBlob } from '@/utils/subscriberUtils';
 import { logActivity } from '@/utils/activityLogger';
 
 export function useSubscriberActions() {
@@ -138,37 +138,20 @@ export function useSubscriberActions() {
       return;
     }
 
-    const filename = 'newsletter_subscribers.csv';
-    const csvHeader = 'ID,Email,Created At\n';
-    let csvContent = csvHeader;
-
-    subscribers.forEach((subscriber) => {
-      const row = `${subscriber.id},${subscriber.email},${subscriber.created_at}\n`;
-      csvContent += row;
-    });
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-
-    const link = document.createElement("a");
-    
-    if (link.download !== undefined) {
-      const url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute("download", filename);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    } else {
-      const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
-      URL.revokeObjectURL(url);
+    try {
+      const { blob, filename } = createDownloadableCSV(subscribers);
+      downloadBlob(blob, filename);
+      
+      toast({
+        description: t('CSV fails veiksmīgi lejupielādēts', 'CSV file downloaded successfully'),
+      });
+    } catch (error) {
+      console.error("Error downloading CSV:", error);
+      toast({
+        variant: "destructive",
+        description: t('Kļūda lejupielādējot failu', 'Error downloading file'),
+      });
     }
-    
-    toast({
-      description: t('CSV fails veiksmīgi lejupielādēts', 'CSV file downloaded successfully'),
-    });
   };
   
   return { 
