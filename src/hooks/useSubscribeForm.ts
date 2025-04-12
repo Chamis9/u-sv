@@ -157,6 +157,7 @@ export function useSubscribeForm() {
       const { success, error } = await addSubscriber(email.toLowerCase().trim());
       
       if (!success) {
+        console.error("Subscription failed with error:", error);
         throw new Error(error || 'Failed to subscribe');
       }
       
@@ -168,8 +169,11 @@ export function useSubscribeForm() {
         title: texts.successTitle,
         description: texts.successMessage,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to subscribe:", error);
+      // Set the form error so it shows directly on the form
+      setFormError(texts.errorMessage);
+      
       toast({
         title: texts.errorTitle,
         description: texts.errorMessage,

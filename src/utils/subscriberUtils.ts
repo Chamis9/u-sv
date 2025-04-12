@@ -7,7 +7,7 @@ export const addSubscriber = async (email: string) => {
   try {
     console.log('Attempting to add subscriber with email:', email);
     
-    // Use proper anonymous access with the anon key
+    // Explicitly use the anon key for newsletter subscriptions
     const { data, error } = await supabase
       .from('newsletter_subscribers')
       .insert({ email })
