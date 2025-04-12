@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -163,22 +162,20 @@ export function useSubscriberActions() {
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
 
-    // Use a more browser-compatible approach for downloading
-    const link = document.createElement("a");
-    if (link.download !== undefined) { // Feature detection for HTML5 download attribute
-      const url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute("download", filename);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    if (navigator.msSaveBlob) { // IE 10+
+      navigator.msSaveBlob(blob, filename);
     } else {
-      // Fallback for older browsers
-      const csv = csvContent;
-      window.open('data:text/csv;charset=utf-8,' + encodeURIComponent(csv));
+      const link = document.createElement("a");
+      if (link.download !== undefined) { // Browsers that support HTML5 download attribute
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     }
-    
     toast({
       description: t('CSV fails veiksmīgi lejupielādēts', 'CSV file downloaded successfully'),
     });
