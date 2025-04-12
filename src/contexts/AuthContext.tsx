@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -22,12 +23,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if the user is already authenticated
+    // Pārbaudam autentifikācijas statusu
     const checkAuthStatus = async () => {
       try {
-        // Check local storage for authentication status
+        // Pārbaudam lokālās glabātuves vērtību
         const isAuth = localStorage.getItem('admin_authenticated') === 'true';
-        setIsAuthenticated(isAuth);
+        
+        if (isAuth) {
+          // Pārbaudam vai ir aktīva Supabase sesija
+          const { data } = await supabase.auth.getSession();
+          if (!data.session) {
+            // Ja nav aktīvas sesijas, notīrām iestatījumus
+            localStorage.removeItem('admin_authenticated');
+            setIsAuthenticated(false);
+          } else {
+            setIsAuthenticated(true);
+          }
+        } else {
+          setIsAuthenticated(false);
+        }
       } catch (error) {
         console.error('Auth status check error:', error);
         setIsAuthenticated(false);
@@ -37,26 +51,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     checkAuthStatus();
+
+    // Pievienojam sesijas statusu maiņas notikumu klausītāju
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === 'SIGNED_OUT') {
+          localStorage.removeItem('admin_authenticated');
+          setIsAuthenticated(false);
+        }
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const logout = async () => {
     try {
-      // Simply remove the auth flag from localStorage
+      // Izrakstāmies no Supabase
+      await supabase.auth.signOut();
+      
+      // Notīrām lokālos autorizācijas datus
       localStorage.removeItem('admin_authenticated');
       setIsAuthenticated(false);
       
       toast({
-        description: "You have successfully logged out",
+        description: "Jūs esat veiksmīgi izrakstījies",
       });
       
-      // Use window.logout which is defined in App.tsx
+      // Izmantojam globālo logout funkciju, ja tāda ir definēta
       if (window.logout) {
         window.logout();
       }
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to log out. Please try again.",
+        description: "Neizdevās izrakstīties. Lūdzu, mēģiniet vēlreiz.",
       });
     }
   };

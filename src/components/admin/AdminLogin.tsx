@@ -59,7 +59,7 @@ export function AdminLogin({ isOpen, onClose, onLoginSuccess }: AdminLoginProps)
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      // Use the local authentication method
+      // Izmantojam atjaunināto autentifikācijas metodi
       const isAdmin = await checkAdminCredentials(data.email, data.password);
 
       if (!isAdmin) {
@@ -72,7 +72,7 @@ export function AdminLogin({ isOpen, onClose, onLoginSuccess }: AdminLoginProps)
           : "Successfully logged into the admin panel.",
       });
       
-      // Force a page reload to ensure all components recognize the new auth state
+      // Atjauninam lapu, lai atjauninātu autentifikācijas statusu
       window.location.reload();
       onLoginSuccess();
     } catch (error: any) {
