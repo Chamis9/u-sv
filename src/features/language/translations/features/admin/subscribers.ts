@@ -21,6 +21,12 @@ export type AdminSubscribersTranslations = {
   noData?: string;
   confirmDelete?: string;
   saving?: string;
+  joinDate?: string;
+  menu?: string;
+  emailAddress?: string;
+  editTitle?: string;
+  confirmDeleteTitle?: string;
+  deleting?: string;
 };
 
 export const adminSubscribersTranslations = {
@@ -45,7 +51,13 @@ export const adminSubscribersTranslations = {
     unknown: "Nezināms",
     loading: "Ielādē...",
     noData: "Nav abonentu",
-    confirmDelete: "Vai tiešām vēlaties dzēst šo abonentu?"
+    confirmDelete: "Vai tiešām vēlaties dzēst šo abonentu?",
+    joinDate: "Pievienošanās datums",
+    menu: "Izvēlne",
+    emailAddress: "E-pasta adrese",
+    editTitle: "Rediģēt abonentu",
+    confirmDeleteTitle: "Apstiprināt dzēšanu",
+    deleting: "Dzēš..."
   },
   en: {
     title: "Subscribers",
@@ -68,7 +80,13 @@ export const adminSubscribersTranslations = {
     unknown: "Unknown",
     loading: "Loading...",
     noData: "No subscribers",
-    confirmDelete: "Are you sure you want to delete this subscriber?"
+    confirmDelete: "Are you sure you want to delete this subscriber?",
+    joinDate: "Join Date",
+    menu: "Menu",
+    emailAddress: "Email Address",
+    editTitle: "Edit Subscriber",
+    confirmDeleteTitle: "Confirm Deletion",
+    deleting: "Deleting..."
   },
   ru: {
     title: "Подписчики",
@@ -91,6 +109,12 @@ export const adminSubscribersTranslations = {
     unknown: "Неизвестно",
     loading: "Загрузка...",
     noData: "Нет подписчиков",
-    confirmDelete: "Вы уверены, что хотите удалить этого подписчика?"
+    confirmDelete: "Вы уверены, что хотите удалить этого подписчика?",
+    joinDate: "Дата регистрации",
+    menu: "Меню",
+    emailAddress: "Адрес электронной почты",
+    editTitle: "Редактировать подписчика",
+    confirmDeleteTitle: "Подтвердите удаление",
+    deleting: "Удаление..."
   }
 };

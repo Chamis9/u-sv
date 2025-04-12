@@ -11,11 +11,8 @@ export function useSubscriberActions() {
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const { currentLanguage } = useLanguage();
-
-  const t = (lvText: string, enText: string) => {
-    return currentLanguage.code === 'lv' ? lvText : enText;
-  };
+  const { currentLanguage, translations } = useLanguage();
+  const t = translations.admin?.subscribers || {};
 
   const handleDeleteSubscriber = async (
     id: number,
@@ -30,12 +27,15 @@ export function useSubscriberActions() {
       const subscriber = subscribers.find(sub => sub.id === id);
       const subscriberEmail = subscriber?.email;
 
+      console.log(`Attempting to delete subscriber with ID: ${id}`);
+
       const { error } = await supabase
         .from('newsletter_subscribers')
         .delete()
         .eq('id', id);
 
       if (error) {
+        console.error('Error from Supabase deleting subscriber:', error);
         throw error;
       }
       
@@ -52,14 +52,13 @@ export function useSubscriberActions() {
       }
       
       toast({
-        description: t('Abonents veiksmīgi dzēsts', 'Subscriber deleted successfully')
+        description: t.deleteSuccess || 'Subscriber deleted successfully'
       });
     } catch (err) {
       console.error('Error deleting subscriber:', err);
       toast({
         variant: 'destructive',
-        description: t('Kļūda dzēšot abonentu. Lūdzu, mēģiniet vēlreiz.', 
-                      'Error deleting subscriber. Please try again.')
+        description: t.deleteError || 'Error deleting subscriber. Please try again.'
       });
     } finally {
       setIsDeleting(false);
@@ -80,6 +79,8 @@ export function useSubscriberActions() {
       const oldSubscriber = subscribers.find(sub => sub.id === id);
       const oldEmail = oldSubscriber?.email;
       
+      console.log(`Attempting to update subscriber with ID: ${id}, new email: ${email}`);
+      
       const { data, error } = await supabase
         .from('newsletter_subscribers')
         .update({ email })
@@ -88,6 +89,7 @@ export function useSubscriberActions() {
         .single();
         
       if (error) {
+        console.error('Error from Supabase updating subscriber:', error);
         throw error;
       }
       
@@ -105,14 +107,13 @@ export function useSubscriberActions() {
       });
       
       toast({
-        description: t('Abonents veiksmīgi atjaunināts', 'Subscriber updated successfully')
+        description: t.updateSuccess || 'Subscriber updated successfully'
       });
     } catch (err) {
       console.error('Error updating subscriber:', err);
       toast({
         variant: 'destructive',
-        description: t('Kļūda atjauninot abonentu. Lūdzu, mēģiniet vēlreiz.', 
-                      'Error updating subscriber. Please try again.')
+        description: t.updateError || 'Error updating subscriber. Please try again.'
       });
     } finally {
       setIsUpdating(false);

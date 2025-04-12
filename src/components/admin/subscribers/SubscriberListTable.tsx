@@ -15,6 +15,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
@@ -30,7 +40,8 @@ import {
   Mail, 
   Trash, 
   Edit,
-  Save
+  Save,
+  Loader2
 } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Subscriber } from "@/hooks/useSubscribers";
@@ -45,13 +56,13 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
   const [editingSubscriber, setEditingSubscriber] = useState<Subscriber | null>(null);
   const [editedEmail, setEditedEmail] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [subscriberToDelete, setSubscriberToDelete] = useState<Subscriber | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   
-  const { currentLanguage } = useLanguage();
+  const { currentLanguage, translations } = useLanguage();
+  const t = translations.admin?.subscribers || {};
   
-  // Translation helper
-  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
-
   const handleEditClick = (subscriber: Subscriber) => {
     setEditingSubscriber(subscriber);
     setEditedEmail(subscriber.email || "");
@@ -71,13 +82,20 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (confirm(t('Vai tiešām vēlaties dzēst šo abonentu?', 'Are you sure you want to delete this subscriber?'))) {
+  const handleDeleteClick = (subscriber: Subscriber) => {
+    setSubscriberToDelete(subscriber);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (subscriberToDelete) {
       setIsProcessing(true);
       try {
-        await onDelete(id);
+        await onDelete(subscriberToDelete.id);
+        setDeleteDialogOpen(false);
       } finally {
         setIsProcessing(false);
+        setSubscriberToDelete(null);
       }
     }
   };
@@ -89,9 +107,9 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
           <TableHeader>
             <TableRow>
               <TableHead>ID</TableHead>
-              <TableHead>{t('E-pasts', 'Email')}</TableHead>
-              <TableHead>{t('Pievienošanās datums', 'Join Date')}</TableHead>
-              <TableHead className="text-right">{t('Darbības', 'Actions')}</TableHead>
+              <TableHead>{t.email || 'Email'}</TableHead>
+              <TableHead>{t.joinDate || 'Join Date'}</TableHead>
+              <TableHead className="text-right">{t.actions || 'Actions'}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -108,25 +126,25 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon" disabled={isProcessing}>
                           <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">{t('Izvēlne', 'Menu')}</span>
+                          <span className="sr-only">{t.menu || 'Menu'}</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleEditClick(subscriber)}>
                           <Edit className="h-4 w-4 mr-2" />
-                          {t('Rediģēt', 'Edit')}
+                          {t.edit || 'Edit'}
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Mail className="h-4 w-4 mr-2" />
-                          {t('Sūtīt e-pastu', 'Send Email')}
+                          {t.sendMessage || 'Send Email'}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
                           className="text-red-500 focus:text-red-500"
-                          onClick={() => handleDelete(subscriber.id)}
+                          onClick={() => handleDeleteClick(subscriber)}
                         >
                           <Trash className="h-4 w-4 mr-2" />
-                          {t('Dzēst', 'Delete')}
+                          {t.delete || 'Delete'}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -136,7 +154,7 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
             ) : (
               <TableRow>
                 <TableCell colSpan={4} className="text-center py-6">
-                  {t('Nav atrasts neviens abonents.', 'No subscribers found.')}
+                  {t.noData || 'No subscribers found.'}
                 </TableCell>
               </TableRow>
             )}
@@ -148,12 +166,12 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('Rediģēt abonentu', 'Edit Subscriber')}</DialogTitle>
+            <DialogTitle>{t.editTitle || 'Edit Subscriber'}</DialogTitle>
           </DialogHeader>
           
           <div className="py-4">
             <label htmlFor="email" className="text-sm font-medium mb-2 block">
-              {t('E-pasta adrese', 'Email Address')}
+              {t.emailAddress || 'Email Address'}
             </label>
             <Input
               id="email"
@@ -166,27 +184,60 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
           
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline" disabled={isProcessing}>{t('Atcelt', 'Cancel')}</Button>
+              <Button variant="outline" disabled={isProcessing}>{t.cancel || 'Cancel'}</Button>
             </DialogClose>
             <Button onClick={handleSaveEdit} disabled={isProcessing}>
               {isProcessing ? (
                 <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  {t('Saglabā...', 'Saving...')}
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t.saving || 'Saving...'}
                 </span>
               ) : (
                 <>
                   <Save className="h-4 w-4 mr-2" />
-                  {t('Saglabāt', 'Save')}
+                  {t.save || 'Save'}
                 </>
               )}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t.confirmDeleteTitle || 'Confirm Deletion'}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.confirmDelete || 'Are you sure you want to delete this subscriber?'} 
+              {subscriberToDelete && (
+                <span className="font-medium block mt-2">
+                  {subscriberToDelete.email}
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isProcessing}>
+              {t.cancel || 'Cancel'}
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteConfirm}
+              disabled={isProcessing}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              {isProcessing ? (
+                <span className="flex items-center">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t.deleting || 'Deleting...'}
+                </span>
+              ) : (
+                t.delete || 'Delete'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
