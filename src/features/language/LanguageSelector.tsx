@@ -1,4 +1,5 @@
 
+import { memo } from "react";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +11,7 @@ import { useLanguage } from "./LanguageContext";
 import { languages } from "./translations";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-export function LanguageSelector() {
+export const LanguageSelector = memo(function LanguageSelector() {
   const { currentLanguage, setLanguage } = useLanguage();
   const isMobile = useIsMobile();
 
@@ -41,4 +42,4 @@ export function LanguageSelector() {
       </DropdownMenu>
     </div>
   );
-}
+});

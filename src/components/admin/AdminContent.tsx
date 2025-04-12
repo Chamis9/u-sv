@@ -1,25 +1,35 @@
 
-import React from "react";
+import React, { memo, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home } from "lucide-react";
 import { useLanguage } from "@/features/language";
-import { AdminDashboard } from "@/components/admin/AdminDashboard";
-import { AdminUsers } from "@/components/admin/AdminUsers";
-import { AdminSubscribers } from "@/components/admin/AdminSubscribers";
-import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AdminMobileNav } from "@/components/admin/AdminMobileNav";
+
+// Lazy load admin components for better performance
+const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard").then(module => ({ default: module.AdminDashboard })));
+const AdminUsers = lazy(() => import("@/components/admin/AdminUsers").then(module => ({ default: module.AdminUsers })));
+const AdminSubscribers = lazy(() => import("@/components/admin/AdminSubscribers").then(module => ({ default: module.AdminSubscribers })));
+const AdminSettings = lazy(() => import("@/components/admin/AdminSettings").then(module => ({ default: module.AdminSettings })));
 
 interface AdminContentProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
 }
 
-export function AdminContent({ activeTab, onTabChange }: AdminContentProps) {
-  const { currentLanguage } = useLanguage();
-  
-  // Translation helper
-  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
+export const AdminContent = memo(function AdminContent({ activeTab, onTabChange }: AdminContentProps) {
+  const { translations } = useLanguage();
+
+  const renderContent = () => {
+    return (
+      <Suspense fallback={<div className="animate-pulse p-4 rounded-md bg-gray-100 dark:bg-gray-800 h-64"></div>}>
+        {activeTab === "dashboard" && <AdminDashboard />}
+        {activeTab === "users" && <AdminUsers />}
+        {activeTab === "subscribers" && <AdminSubscribers />}
+        {activeTab === "settings" && <AdminSettings />}
+      </Suspense>
+    );
+  };
 
   return (
     <main className="flex-1 overflow-auto p-4 md:p-6">
@@ -28,20 +38,18 @@ export function AdminContent({ activeTab, onTabChange }: AdminContentProps) {
         <AdminMobileNav activeTab={activeTab} onTabChange={onTabChange} />
         
         {/* Dynamic content */}
-        {activeTab === "dashboard" && <AdminDashboard />}
-        {activeTab === "users" && <AdminUsers />}
-        {activeTab === "subscribers" && <AdminSubscribers />}
-        {activeTab === "settings" && <AdminSettings />}
+        {renderContent()}
         
         {/* Navigation back to home page */}
         <div className="mt-8 flex justify-end">
           <Button variant="outline" asChild>
             <Link to="/">
-              <Home className="mr-2 h-4 w-4" /> {t('Atgriezties uz mājas lapu', 'Return to Home Page')}
+              <Home className="mr-2 h-4 w-4" /> 
+              {translations.admin?.returnToHome || 'Return to Home Page'}
             </Link>
           </Button>
         </div>
       </div>
     </main>
   );
-}
+});

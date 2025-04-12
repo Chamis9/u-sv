@@ -1,10 +1,11 @@
 
+import { memo } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
 import { FallingTickets } from "@/components/FallingTickets";
 import { Helmet } from "react-helmet-async";
 
-export function Hero() {
+export const Hero = memo(function Hero() {
   const { translations } = useLanguage();
   const { hero } = translations;
 
@@ -35,9 +36,9 @@ export function Hero() {
       {/* Falling tickets animation */}
       <FallingTickets />
       
-      {/* Background image */}
+      {/* Background image with optimization for better performance */}
       <div 
-        className="absolute inset-0 z-[-1] bg-cover bg-center"
+        className="absolute inset-0 z-[-1] bg-cover bg-center will-change-transform"
         style={{ 
           backgroundImage: "url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80')" 
         }}
@@ -80,4 +81,4 @@ export function Hero() {
       </div>
     </section>
   );
-}
+});

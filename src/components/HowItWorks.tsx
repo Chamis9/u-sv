@@ -1,8 +1,9 @@
 
+import { memo } from "react";
 import { Check, TicketIcon, Users, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/features/language";
 
-export function HowItWorks() {
+export const HowItWorks = memo(function HowItWorks() {
   const { translations } = useLanguage();
   const { howItWorks } = translations;
 
@@ -40,4 +41,4 @@ export function HowItWorks() {
       </div>
     </section>
   );
-}
+});

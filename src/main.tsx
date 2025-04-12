@@ -4,8 +4,15 @@ import React from 'react'
 import App from './App.tsx'
 import './index.css'
 
-createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+const root = createRoot(document.getElementById("root")!);
+
+// Use StrictMode only in development
+if (import.meta.env.DEV) {
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
+} else {
+  root.render(<App />);
+}

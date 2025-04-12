@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { memo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Home, Users, Mail, Settings } from "lucide-react";
 import { useLanguage } from "@/features/language";
@@ -9,30 +9,34 @@ interface AdminMobileNavProps {
   onTabChange: (tab: string) => void;
 }
 
-export function AdminMobileNav({ activeTab, onTabChange }: AdminMobileNavProps) {
-  const { currentLanguage } = useLanguage();
+export const AdminMobileNav = memo(function AdminMobileNav({ activeTab, onTabChange }: AdminMobileNavProps) {
+  const { translations } = useLanguage();
   
-  // Translation helper
-  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
+  const icons = {
+    dashboard: <Home className="h-5 w-5" />,
+    users: <Users className="h-5 w-5" />,
+    subscribers: <Mail className="h-5 w-5" />,
+    settings: <Settings className="h-5 w-5" />
+  };
+  
+  const titles = {
+    dashboard: translations.admin?.tabs?.dashboard || 'Dashboard',
+    users: translations.admin?.tabs?.users || 'Users',
+    subscribers: translations.admin?.tabs?.subscribers || 'Subscribers',
+    settings: translations.admin?.tabs?.settings || 'Settings'
+  };
   
   return (
     <div className="md:hidden mb-6">
       <Tabs value={activeTab} onValueChange={onTabChange}>
         <TabsList className="w-full grid grid-cols-4">
-          <TabsTrigger value="dashboard" title={t('Pārskats', 'Dashboard')}>
-            <Home className="h-5 w-5" />
-          </TabsTrigger>
-          <TabsTrigger value="users" title={t('Lietotāji', 'Users')}>
-            <Users className="h-5 w-5" />
-          </TabsTrigger>
-          <TabsTrigger value="subscribers" title={t('Abonenti', 'Subscribers')}>
-            <Mail className="h-5 w-5" />
-          </TabsTrigger>
-          <TabsTrigger value="settings" title={t('Iestatījumi', 'Settings')}>
-            <Settings className="h-5 w-5" />
-          </TabsTrigger>
+          {Object.entries(icons).map(([key, icon]) => (
+            <TabsTrigger key={key} value={key} title={titles[key as keyof typeof titles]}>
+              {icon}
+            </TabsTrigger>
+          ))}
         </TabsList>
       </Tabs>
     </div>
   );
-}
+});
