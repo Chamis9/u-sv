@@ -3,13 +3,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Bell, Menu, UserCircle } from "lucide-react";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import { useLanguage } from "@/features/language";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { LanguageSelector } from "@/features/language";
 
 export function AdminHeader() {
-  const { translations } = useLanguage();
   const isMobile = useIsMobile();
   
   return (
@@ -33,7 +29,6 @@ export function AdminHeader() {
               <Button variant="ghost" size="icon">
                 <Bell className="h-5 w-5 text-white" />
               </Button>
-              <LanguageSelector />
             </div>
           </>
         ) : (
@@ -53,8 +48,6 @@ export function AdminHeader() {
               <Button variant="ghost" size="icon">
                 <Bell className="h-5 w-5 text-white" />
               </Button>
-              <LanguageSelector />
-              <ThemeToggle />
               <Button variant="ghost" size="icon">
                 <UserCircle className="h-6 w-6 text-white" />
               </Button>

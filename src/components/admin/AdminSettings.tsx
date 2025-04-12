@@ -1,16 +1,13 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { 
   Form, 
   FormControl, 
   FormDescription, 
   FormField, 
   FormItem, 
-  FormLabel, 
-  FormMessage 
+  FormLabel 
 } from "@/components/ui/form";
 import { 
   Card, 
@@ -26,18 +23,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
-import { Save, RefreshCw } from "lucide-react";
+import { Save, RefreshCw, Moon, Sun, Languages } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useLanguage } from "@/features/language";
+import { languages } from "@/features/language";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
-const generalFormSchema = z.object({
-  siteName: z.string().min(2, {
-    message: "Vietnes nosaukumam jābūt vismaz 2 simboliem.",
-  }),
-  siteDescription: z.string().min(10, {
-    message: "Vietnes aprakstam jābūt vismaz 10 simboliem.",
-  }),
-  contactEmail: z.string().email({
-    message: "Lūdzu, ievadiet derīgu e-pasta adresi.",
-  }),
+const appearanceFormSchema = z.object({
+  theme: z.enum(["light", "dark", "system"]),
+  language: z.string()
 });
 
 const notificationFormSchema = z.object({
@@ -49,15 +49,16 @@ const notificationFormSchema = z.object({
 
 export function AdminSettings() {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("general");
+  const [activeTab, setActiveTab] = useState("appearance");
+  const { currentLanguage, setLanguage } = useLanguage();
+  const { theme, setTheme } = useTheme();
   
-  // General settings form
-  const generalForm = useForm<z.infer<typeof generalFormSchema>>({
-    resolver: zodResolver(generalFormSchema),
+  // Appearance settings form
+  const appearanceForm = useForm<z.infer<typeof appearanceFormSchema>>({
+    resolver: zodResolver(appearanceFormSchema),
     defaultValues: {
-      siteName: "netieku.es",
-      siteDescription: "Platforma biļešu pārdošanai un pasākumu organizēšanai",
-      contactEmail: "info@netieku.es",
+      theme: theme as "light" | "dark" | "system",
+      language: currentLanguage.code
     },
   });
   
@@ -72,10 +73,15 @@ export function AdminSettings() {
     },
   });
   
-  const onGeneralSubmit = (values: z.infer<typeof generalFormSchema>) => {
+  const onAppearanceSubmit = (values: z.infer<typeof appearanceFormSchema>) => {
     console.log(values);
+    setTheme(values.theme);
+    const newLanguage = languages.find(lang => lang.code === values.language);
+    if (newLanguage) {
+      setLanguage(newLanguage);
+    }
     toast({
-      description: "Vispārīgie iestatījumi ir veiksmīgi saglabāti",
+      description: "Izskats un valodas iestatījumi ir veiksmīgi saglabāti",
     });
   };
   
@@ -95,70 +101,100 @@ export function AdminSettings() {
       
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6">
-          <TabsTrigger value="general">Vispārīgi</TabsTrigger>
+          <TabsTrigger value="appearance">Izskats un valoda</TabsTrigger>
           <TabsTrigger value="notifications">Paziņojumi</TabsTrigger>
           <TabsTrigger value="security">Drošība</TabsTrigger>
           <TabsTrigger value="integrations">Integrācijas</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="general">
+        <TabsContent value="appearance">
           <Card>
             <CardHeader>
-              <CardTitle>Vispārīgie iestatījumi</CardTitle>
+              <CardTitle>Izskats un valoda</CardTitle>
               <CardDescription>
-                Pārvaldiet platformas pamatiestatījumus
+                Pārvaldiet lietotāja saskarnes izskatu un valodu
               </CardDescription>
             </CardHeader>
-            <Form {...generalForm}>
-              <form onSubmit={generalForm.handleSubmit(onGeneralSubmit)}>
+            <Form {...appearanceForm}>
+              <form onSubmit={appearanceForm.handleSubmit(onAppearanceSubmit)}>
                 <CardContent className="space-y-6">
                   <FormField
-                    control={generalForm.control}
-                    name="siteName"
+                    control={appearanceForm.control}
+                    name="theme"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Vietnes nosaukums</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
+                        <FormLabel>Tēma</FormLabel>
+                        <div className="flex items-center gap-4">
+                          <FormControl>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              defaultValue={field.value}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Izvēlēties tēmu" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="light">
+                                  <div className="flex items-center gap-2">
+                                    <Sun className="h-4 w-4" />
+                                    <span>Gaišā</span>
+                                  </div>
+                                </SelectItem>
+                                <SelectItem value="dark">
+                                  <div className="flex items-center gap-2">
+                                    <Moon className="h-4 w-4" />
+                                    <span>Tumšā</span>
+                                  </div>
+                                </SelectItem>
+                                <SelectItem value="system">
+                                  <div className="flex items-center gap-2">
+                                    <span>Sistēmas</span>
+                                  </div>
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                        </div>
                         <FormDescription>
-                          Šis ir jūsu vietnes publiskais nosaukums.
+                          Izvēlieties vietnes tēmu
                         </FormDescription>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
                   
                   <FormField
-                    control={generalForm.control}
-                    name="siteDescription"
+                    control={appearanceForm.control}
+                    name="language"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Vietnes apraksts</FormLabel>
-                        <FormControl>
-                          <Textarea rows={3} {...field} />
-                        </FormControl>
+                        <FormLabel>Valoda</FormLabel>
+                        <div className="flex items-center gap-4">
+                          <FormControl>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              defaultValue={field.value}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Izvēlēties valodu" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {languages
+                                  .filter(lang => ['lv', 'en'].includes(lang.code))
+                                  .map(language => (
+                                    <SelectItem key={language.code} value={language.code}>
+                                      <div className="flex items-center gap-2">
+                                        <span>{language.flag}</span>
+                                        <span>{language.name}</span>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                        </div>
                         <FormDescription>
-                          Īss vietnes apraksts, kas tiek izmantots meklēšanas rezultātos.
+                          Izvēlieties administrācijas paneļa valodu
                         </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={generalForm.control}
-                    name="contactEmail"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Kontakta e-pasts</FormLabel>
-                        <FormControl>
-                          <Input type="email" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Šis e-pasts tiks izmantots platformas paziņojumiem.
-                        </FormDescription>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -167,7 +203,7 @@ export function AdminSettings() {
                   <Button 
                     type="button" 
                     variant="outline"
-                    onClick={() => generalForm.reset()}
+                    onClick={() => appearanceForm.reset()}
                   >
                     <RefreshCw className="mr-2 h-4 w-4" />
                     Atiestatīt

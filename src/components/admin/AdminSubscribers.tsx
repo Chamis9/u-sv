@@ -48,6 +48,7 @@ export function AdminSubscribers() {
     const fetchSubscribers = async () => {
       try {
         setIsLoading(true);
+        // Šeit izmantojam newsletter_subscribers tabulu, kas ir definēta Supabase
         const { data, error } = await supabase
           .from('newsletter_subscribers')
           .select('*')

@@ -14,6 +14,7 @@ import Admin from "./pages/Admin";
 import { LanguageProvider } from "./features/language";
 import { CookieConsent } from "./components/CookieConsent";
 import { clearAllCookies } from "./utils/cookieManager";
+import { ThemeProvider } from "./components/theme/ThemeProvider";
 
 const queryClient = new QueryClient();
 
@@ -29,22 +30,24 @@ window.logout = handleLogout;
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <HelmetProvider>
-      <TooltipProvider>
-        <LanguageProvider>
-          <Toaster />
-          <Sonner />
-          <CookieConsent />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </LanguageProvider>
-      </TooltipProvider>
+      <ThemeProvider defaultTheme="light">
+        <TooltipProvider>
+          <LanguageProvider>
+            <Toaster />
+            <Sonner />
+            <CookieConsent />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </LanguageProvider>
+        </TooltipProvider>
+      </ThemeProvider>
     </HelmetProvider>
   </QueryClientProvider>
 );
