@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,11 +9,13 @@ import { useLanguage } from "@/features/language";
 import { useSubscribers } from "@/hooks/useSubscribers";
 import { formatDistanceToNow } from "date-fns";
 import { lv, enUS, ru } from "date-fns/locale";
+import { ActivityLogModal } from "./ActivityLogModal";
 
 export function AdminDashboard() {
   const { currentLanguage, translations } = useLanguage();
   const { subscribers, refreshSubscribers, isLoading, totalSubscribers } = useSubscribers();
   const [latestSubscriber, setLatestSubscriber] = useState<{ email: string, time: string } | null>(null);
+  const [showActivityModal, setShowActivityModal] = useState(false);
   
   // Translation helper function
   const t = (lvText: string, enText: string, ruText?: string) => {
@@ -172,7 +173,7 @@ export function AdminDashboard() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button variant="outline" className="w-full" size="sm">
+            <Button variant="outline" className="w-full" size="sm" onClick={() => setShowActivityModal(true)}>
               {t('Skatīt visas aktivitātes', 'View all activities')}
               <ArrowUpRight className="ml-2 h-4 w-4" />
             </Button>
@@ -246,6 +247,11 @@ export function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <ActivityLogModal 
+        open={showActivityModal} 
+        onOpenChange={setShowActivityModal} 
+      />
     </div>
   );
 }
