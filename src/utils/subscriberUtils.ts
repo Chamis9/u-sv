@@ -3,6 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Subscriber } from '@/types/subscribers';
 import { logActivity } from '@/utils/activityLogger';
 
+/**
+ * Adds a new subscriber to the newsletter
+ */
 export const addSubscriber = async (email: string) => {
   try {
     console.log('Attempting to add subscriber with email:', email);
@@ -43,6 +46,9 @@ export const addSubscriber = async (email: string) => {
   }
 };
 
+/**
+ * Filters subscribers based on search term
+ */
 export const filterSubscribers = (subscribers: Subscriber[], searchTerm: string) => {
   if (!searchTerm) {
     return subscribers;
@@ -56,6 +62,9 @@ export const filterSubscribers = (subscribers: Subscriber[], searchTerm: string)
   });
 };
 
+/**
+ * Fetches all subscribers from the database
+ */
 export const fetchSubscribers = async (): Promise<{ data: Subscriber[] | null; error: any }> => {
   try {
     const { data, error } = await supabase
