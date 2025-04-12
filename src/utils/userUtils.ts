@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { User } from '@/types/users';
 
@@ -39,15 +40,25 @@ export const fetchUsers = async () => {
     const users = authData?.users || [];
     
     return { 
-      data: users.map(user => ({
-        id: user.id,
-        email: user.email,
-        created_at: user.created_at,
-        last_sign_in_at: user.last_sign_in_at,
-        updated_at: user.updated_at,
-        role: 'user',
-        status: user.banned === true ? 'inactive' : 'active'
-      })), 
+      data: users.map(user => {
+        // Check if user is banned or has a banned property in the metadata
+        const isBanned = 
+          // @ts-ignore - We're checking if the property exists before using it
+          typeof user.banned === 'boolean' ? user.banned : 
+          // @ts-ignore - Check for metadata.banned as well
+          (user.user_metadata && typeof user.user_metadata.banned === 'boolean') ? 
+            user.user_metadata.banned : false;
+            
+        return {
+          id: user.id,
+          email: user.email,
+          created_at: user.created_at,
+          last_sign_in_at: user.last_sign_in_at,
+          updated_at: user.updated_at,
+          role: 'user',
+          status: isBanned ? 'inactive' : 'active'
+        };
+      }), 
       error: null 
     };
   } catch (err) {
