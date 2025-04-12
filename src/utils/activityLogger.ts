@@ -22,7 +22,9 @@ export async function logActivity({
   metadata
 }: LogActivityParams) {
   try {
-    const { error } = await supabase
+    console.log('Logging activity:', { activityType, description, email });
+    
+    const { data, error } = await supabase
       .from('activity_log')
       .insert({
         activity_type: activityType,
@@ -34,8 +36,13 @@ export async function logActivity({
     
     if (error) {
       console.error('Error logging activity:', error);
+      return false;
     }
+    
+    console.log('Activity logged successfully:', data);
+    return true;
   } catch (error) {
     console.error('Error in logActivity:', error);
+    return false;
   }
 }

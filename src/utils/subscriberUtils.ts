@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import type { Subscriber } from '@/types/subscribers';
 import { logActivity } from '@/utils/activityLogger';
@@ -17,13 +18,16 @@ export const addSubscriber = async (email: string) => {
       return { success: false, error: error.message, data: null };
     }
     
-    if (data) {
-      // Log the activity
+    // Log the activity - ensure this runs, even if there's an issue with data
+    try {
       await logActivity({
         activityType: 'subscriber',
         description: 'New subscriber added',
         email
       });
+      console.log('Activity logged for new subscriber:', email);
+    } catch (logError) {
+      console.error('Failed to log activity for subscriber:', logError);
     }
     
     return { success: true, error: null, data };

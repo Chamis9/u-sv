@@ -140,14 +140,11 @@ export function SubscribeForm() {
     setIsLoading(true);
     
     try {
-      // Save email to Supabase with error handling
-      const { error } = await supabase
-        .from('newsletter_subscribers')
-        .insert([{ email: email.toLowerCase().trim() }]);
+      // Use the subscriberUtils method instead of direct Supabase call
+      const { success, error } = await addSubscriber(email.toLowerCase().trim());
       
-      if (error) {
-        console.error("Error saving email:", error);
-        throw error;
+      if (!success) {
+        throw new Error(error || 'Failed to subscribe');
       }
       
       // Save email to localStorage for future autocomplete
