@@ -31,7 +31,7 @@ export const fetchUsers = async () => {
           updated_at: null,
           role: 'admin',
           status: 'active',
-          banned: false  // Add a default value
+          banned: false  // Ensure this property is always set
         })) || [], 
         error: null 
       };
