@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useSubscribers } from "@/hooks/useSubscribers";
 import { useLanguage } from "@/features/language";
@@ -6,7 +5,7 @@ import { SubscriberListHeader } from "@/components/admin/subscribers/SubscriberL
 import { SubscriberListTable } from "@/components/admin/subscribers/SubscriberListTable";
 import { EmptyOrErrorState } from "@/components/admin/subscribers/EmptyOrErrorState";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Refresh } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export function AdminSubscribers() {
@@ -24,10 +23,8 @@ export function AdminSubscribers() {
   
   const { currentLanguage } = useLanguage();
   
-  // Translation helper
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  // Reset data and refresh on mount
   useEffect(() => {
     if (isAuth) {
       refreshSubscribers();
@@ -46,7 +43,6 @@ export function AdminSubscribers() {
         <p className="text-muted-foreground">{t('Pārvaldiet jūsu jaunumu abonentu sarakstu', 'Manage your newsletter subscriber list')}</p>
       </div>
       
-      {/* Authentication error */}
       {!isAuth && (
         <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-md text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200">
           <div className="flex items-center">
@@ -87,7 +83,7 @@ export function AdminSubscribers() {
                   onClick={handleRetry}
                   className="flex items-center"
                 >
-                  <Refresh className="h-4 w-4 mr-2" />
+                  <RefreshCw className="h-4 w-4 mr-2" />
                   {t('Mēģināt vēlreiz', 'Try Again')}
                 </Button>
               </div>
@@ -106,7 +102,7 @@ export function AdminSubscribers() {
                     'No subscribers yet. Add your first subscriber using the newsletter signup form or manually create a record in Supabase.')}
                 </p>
                 <Button className="mt-4" variant="outline" onClick={handleRetry}>
-                  <Refresh className="h-4 w-4 mr-2" />
+                  <RefreshCw className="h-4 w-4 mr-2" />
                   {t('Atsvaidzināt datus', 'Refresh Data')}
                 </Button>
               </div>
