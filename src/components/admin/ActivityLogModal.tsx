@@ -32,7 +32,7 @@ import { ActivityType } from "@/utils/activityLogger";
 
 export type Activity = {
   id: string;
-  activity_type: ActivityType;
+  activity_type: string; // Changed from ActivityType to string to match database type
   description: string;
   email?: string | null;
   created_at: string;
@@ -145,7 +145,7 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
   };
   
   // Render activity icon based on type
-  const getActivityIcon = (type: ActivityType) => {
+  const getActivityIcon = (type: string) => {
     switch (type) {
       case 'subscriber':
         return <Mail className="h-4 w-4 text-green-600 dark:text-green-400" />;
@@ -167,18 +167,16 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
   };
   
   // Translate activity type
-  const translateActivityType = (type: ActivityType) => {
-    const activityLog = translations.admin?.activityLog;
-    
+  const translateActivityType = (type: string) => {
     switch (type) {
       case 'subscriber':
-        return activityLog?.newSubscriber || t('Jauns e-pasta abonents', 'New email subscriber');
+        return t('Jauns e-pasta abonents', 'New email subscriber');
       case 'user':
-        return activityLog?.newUser || t('Jauns lietotājs', 'New user registered');
+        return t('Jauns lietotājs', 'New user registered');
       case 'ticket':
-        return activityLog?.newTicket || t('Jauna biļete', 'New support ticket created');
+        return t('Jauna biļete', 'New support ticket created');
       case 'system':
-        return activityLog?.systemUpdate || t('Sistēmas atjauninājums', 'System update completed');
+        return t('Sistēmas atjauninājums', 'System update completed');
       case 'login':
         return t('Pieteikšanās', 'Login', 'Вход в систему');
       case 'logout':
@@ -253,10 +251,10 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle>
-            {translations.admin?.activityLog?.title || t('Aktivitāšu žurnāls', 'Activity Log', 'Журнал активности')}
+            {t('Aktivitāšu žurnāls', 'Activity Log', 'Журнал активности')}
           </DialogTitle>
           <DialogDescription>
-            {translations.admin?.activityLog?.description || t('Platformas lietotāju aktivitātes', 'User activities on the platform', 'Действия пользователей на платформе')}
+            {t('Platformas lietotāju aktivitātes', 'User activities on the platform', 'Действия пользователей на платформе')}
           </DialogDescription>
         </DialogHeader>
         
@@ -269,7 +267,7 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
             <div className="text-center text-red-500 p-4">{error}</div>
           ) : activities.length === 0 ? (
             <div className="text-center text-muted-foreground p-4">
-              {translations.admin?.activityLog?.noActivities || t('Nav aktivitāšu', 'No activities', 'Нет активностей')}
+              {t('Nav aktivitāšu', 'No activities', 'Нет активностей')}
             </div>
           ) : (
             <Table>
@@ -277,13 +275,13 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
                 <TableRow>
                   <TableHead className="w-12"></TableHead>
                   <TableHead>
-                    {translations.admin?.activityLog?.activity || t('Darbība', 'Activity', 'Действие')}
+                    {t('Darbība', 'Activity', 'Действие')}
                   </TableHead>
                   <TableHead>
-                    {translations.admin?.activityLog?.details || t('Detaļas', 'Details', 'Детали')}
+                    {t('Detaļas', 'Details', 'Детали')}
                   </TableHead>
                   <TableHead>
-                    {translations.admin?.activityLog?.time || t('Laiks', 'Time', 'Время')}
+                    {t('Laiks', 'Time', 'Время')}
                   </TableHead>
                 </TableRow>
               </TableHeader>
