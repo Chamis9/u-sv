@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/features/language';
@@ -51,6 +52,21 @@ export function useSubscribers() {
     checkAuth();
   }, []);
 
+  // Load cached subscribers on mount
+  useEffect(() => {
+    try {
+      const cachedSubscribersStr = localStorage.getItem('cachedSubscribers');
+      if (cachedSubscribersStr) {
+        const cachedSubscribers = JSON.parse(cachedSubscribersStr);
+        setSubscribers(cachedSubscribers);
+        setFilteredSubscribers(cachedSubscribers);
+      }
+    } catch (err) {
+      console.error("Error loading cached subscribers:", err);
+      // If loading fails, we'll just start with an empty array
+    }
+  }, []);
+
   // Fetch subscribers (as a callback so we can call it from outside)
   const getSubscribers = useCallback(async () => {
     console.log("Starting to fetch subscribers...");
@@ -80,6 +96,13 @@ export function useSubscribers() {
         if (data) {
           setSubscribers(data);
           setFilteredSubscribers(data);
+          
+          // Cache the subscribers in localStorage
+          try {
+            localStorage.setItem('cachedSubscribers', JSON.stringify(data));
+          } catch (err) {
+            console.error("Error caching subscribers:", err);
+          }
         } else {
           // Handle the case where data is null but no error
           setSubscribers([]);
@@ -216,6 +239,7 @@ export function useSubscribers() {
     handleDeleteSubscriber,
     handleUpdateSubscriber,
     handleDownloadCSV,
-    refreshSubscribers: getSubscribers // Expose refresh function
+    refreshSubscribers: getSubscribers, // Expose refresh function
+    totalSubscribers: subscribers.length // Add total count for the sidebar
   };
 }

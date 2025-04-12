@@ -19,7 +19,8 @@ export function AdminSubscribers() {
     handleDeleteSubscriber,
     handleUpdateSubscriber,
     handleDownloadCSV,
-    refreshSubscribers
+    refreshSubscribers,
+    totalSubscribers
   } = useSubscribers();
   
   const { currentLanguage } = useLanguage();
@@ -33,6 +34,15 @@ export function AdminSubscribers() {
     console.log("Manual refresh triggered");
     refreshSubscribers();
   };
+
+  // Share the total subscribers count with the parent component
+  useEffect(() => {
+    // Using CustomEvent to pass data to parent component
+    const event = new CustomEvent('subscriberCountUpdated', { 
+      detail: { count: totalSubscribers } 
+    });
+    window.dispatchEvent(event);
+  }, [totalSubscribers]);
 
   return (
     <div className="space-y-6">
