@@ -24,12 +24,21 @@ export const createAdminUser = async () => {
 
 export const checkAdminCredentials = async (email: string, password: string) => {
   try {
-    // For a demo, we'll just check if the credentials match our hardcoded admin
-    if (email === 'admin@netieku.es' && password === 'raivis2025!') {
-      return true;
+    // For a demo, we'll authenticate the user with Supabase
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+    
+    if (error) {
+      console.error('Authentication error:', error);
+      return false;
     }
     
-    return false;
+    // In a real app, you would check if the authenticated user has admin role
+    // For this demo, we consider any successful authentication as admin access
+    // if the email matches our admin email
+    return email === 'admin@netieku.es';
   } catch (error) {
     console.error('Error in checkAdminCredentials:', error);
     return false;

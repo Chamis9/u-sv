@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -55,26 +54,13 @@ export default function Admin() {
 
     // Initialize admin account if it doesn't exist
     const createAdminAccount = async () => {
-      // Check if admin exists
-      const { data: existingUser, error: checkError } = await supabase.auth.admin.getUserByEmail('admin@netieku.es');
-      
-      if (checkError || !existingUser) {
-        // Create admin user if doesn't exist
-        const { data, error } = await supabase.auth.admin.createUser({
-          email: 'admin@netieku.es',
-          password: 'raivis2025!',
-          email_confirm: true,
-        });
-        
-        if (error) {
-          console.error('Error creating admin account:', error);
-        } else {
-          console.log('Admin account created successfully');
-        }
-      }
+      // Note: This function would require Supabase admin privileges
+      // In a real application, admin account creation would be handled 
+      // through a secure setup process or backend service
+      console.log('Admin account initialization would happen here in a real app');
     };
     
-    // In a real app, this would be done through a secure setup process, not client-side
+    // This is just for demonstration purposes
     // createAdminAccount();
 
     return () => {

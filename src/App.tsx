@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -33,24 +32,17 @@ window.logout = handleLogout;
 // Create admin account for demonstration purposes
 // In a real application, this would be done through a secure setup process
 const setupAdmin = async () => {
-  const { data: { session }, error } = await supabase.auth.getSession();
-  if (!session) {
-    try {
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (!session) {
       // Try to sign up the admin user - this is just for demo purposes
-      // In a real app, user creation would be handled through a secure admin panel or backend
-      const { data, error } = await supabase.auth.signUp({
-        email: 'admin@netieku.es',
-        password: 'raivis2025!',
-      });
-      
-      if (error) {
-        console.error("Admin setup error:", error);
-      } else {
+      const success = await createAdminUser();
+      if (success) {
         console.log("Admin account created or already exists");
       }
-    } catch (err) {
-      console.error("Setup admin error:", err);
     }
+  } catch (err) {
+    console.error("Setup admin error:", err);
   }
 };
 
