@@ -116,7 +116,8 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
         throw error;
       }
       
-      setActivities(data || []);
+      // Type assertion to ensure data conforms to Activity type
+      setActivities(data as unknown as Activity[]);
     } catch (err) {
       console.error('Error fetching activities:', err);
       setError(t(
@@ -168,17 +169,15 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
   
   // Translate activity type
   const translateActivityType = (type: ActivityType) => {
-    const activityLog = translations.admin?.activityLog;
-    
     switch (type) {
       case 'subscriber':
-        return activityLog?.newSubscriber || t('Jauns e-pasta abonents', 'New email subscriber');
+        return t('Jauns e-pasta abonents', 'New email subscriber');
       case 'user':
-        return activityLog?.newUser || t('Jauns lietotājs', 'New user registered');
+        return t('Jauns lietotājs', 'New user registered');
       case 'ticket':
-        return activityLog?.newTicket || t('Jauna biļete', 'New support ticket created');
+        return t('Jauna biļete', 'New support ticket created');
       case 'system':
-        return activityLog?.systemUpdate || t('Sistēmas atjauninājums', 'System update completed');
+        return t('Sistēmas atjauninājums', 'System update completed');
       case 'login':
         return t('Pieteikšanās', 'Login', 'Вход в систему');
       case 'logout':
@@ -253,10 +252,10 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle>
-            {translations.admin?.activityLog?.title || t('Aktivitāšu žurnāls', 'Activity Log', 'Журнал активности')}
+            {t('Aktivitāšu žurnāls', 'Activity Log', 'Журнал активности')}
           </DialogTitle>
           <DialogDescription>
-            {translations.admin?.activityLog?.description || t('Platformas lietotāju aktivitātes', 'User activities on the platform', 'Действия пользователей на платформе')}
+            {t('Platformas lietotāju aktivitātes', 'User activities on the platform', 'Действия пользователей на платформе')}
           </DialogDescription>
         </DialogHeader>
         
@@ -269,7 +268,7 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
             <div className="text-center text-red-500 p-4">{error}</div>
           ) : activities.length === 0 ? (
             <div className="text-center text-muted-foreground p-4">
-              {translations.admin?.activityLog?.noActivities || t('Nav aktivitāšu', 'No activities', 'Нет активностей')}
+              {t('Nav aktivitāšu', 'No activities', 'Нет активностей')}
             </div>
           ) : (
             <Table>
@@ -277,13 +276,13 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
                 <TableRow>
                   <TableHead className="w-12"></TableHead>
                   <TableHead>
-                    {translations.admin?.activityLog?.activity || t('Darbība', 'Activity', 'Действие')}
+                    {t('Darbība', 'Activity', 'Действие')}
                   </TableHead>
                   <TableHead>
-                    {translations.admin?.activityLog?.details || t('Detaļas', 'Details', 'Детали')}
+                    {t('Detaļas', 'Details', 'Детали')}
                   </TableHead>
                   <TableHead>
-                    {translations.admin?.activityLog?.time || t('Laiks', 'Time', 'Время')}
+                    {t('Laiks', 'Time', 'Время')}
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -292,11 +291,11 @@ export function ActivityLogModal({ open, onOpenChange }: ActivityLogModalProps) 
                   <TableRow key={activity.id}>
                     <TableCell>
                       <div className="rounded-full bg-gray-100 p-2 dark:bg-gray-800">
-                        {getActivityIcon(activity.activity_type)}
+                        {getActivityIcon(activity.activity_type as ActivityType)}
                       </div>
                     </TableCell>
                     <TableCell className="font-medium">
-                      {translateActivityType(activity.activity_type)}
+                      {translateActivityType(activity.activity_type as ActivityType)}
                     </TableCell>
                     <TableCell>
                       {activity.description}

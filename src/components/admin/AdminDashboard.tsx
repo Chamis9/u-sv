@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,9 +10,8 @@ import { useLanguage } from "@/features/language";
 import { useSubscribers } from "@/hooks/useSubscribers";
 import { formatDistanceToNow } from "date-fns";
 import { lv, enUS, ru } from "date-fns/locale";
-import { ActivityLogModal } from "./ActivityLogModal";
+import { ActivityLogModal, Activity } from "./ActivityLogModal";
 import { supabase } from "@/integrations/supabase/client";
-import { Activity } from "./ActivityLogModal";
 
 export function AdminDashboard() {
   const { currentLanguage, translations } = useLanguage();
@@ -80,7 +80,7 @@ export function AdminDashboard() {
           throw error;
         }
         
-        setRecentActivities(data || []);
+        setRecentActivities(data as unknown as Activity[]);
       } catch (err) {
         console.error('Error fetching recent activities:', err);
       } finally {
