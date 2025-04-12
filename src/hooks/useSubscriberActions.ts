@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -21,7 +22,7 @@ export function useSubscriberActions() {
     subscribers: Subscriber[],
     searchTerm: string,
     updateCache: (newSubscribers: Subscriber[]) => void,
-    setFilteredSubscribers: (newFilteredSubscribers: Subscriber[]) => void
+    updateFilteredSubscribers: (newSubscribers: Subscriber[]) => void
   ) => {
     setIsDeleting(true);
 
@@ -40,13 +41,7 @@ export function useSubscriberActions() {
       
       const newSubscribers = subscribers.filter(sub => sub.id !== id);
       updateCache(newSubscribers);
-      
-      if (searchTerm) {
-        const newFilteredSubscribers = filterSubscribers(newSubscribers, searchTerm);
-        setFilteredSubscribers(newFilteredSubscribers);
-      } else {
-        setFilteredSubscribers(newSubscribers);
-      }
+      updateFilteredSubscribers(newSubscribers);
       
       if (subscriberEmail) {
         logActivity({
@@ -77,7 +72,7 @@ export function useSubscriberActions() {
     subscribers: Subscriber[],
     searchTerm: string,
     updateCache: (newSubscribers: Subscriber[]) => void,
-    setFilteredSubscribers: (newFilteredSubscribers: Subscriber[]) => void
+    updateFilteredSubscribers: (newSubscribers: Subscriber[]) => void
   ) => {
     setIsUpdating(true);
     
@@ -100,13 +95,7 @@ export function useSubscriberActions() {
         sub.id === id ? { ...sub, email } : sub
       );
       updateCache(newSubscribers);
-      
-      if (searchTerm) {
-        const newFilteredSubscribers = filterSubscribers(newSubscribers, searchTerm);
-        setFilteredSubscribers(newFilteredSubscribers);
-      } else {
-        setFilteredSubscribers(newSubscribers);
-      }
+      updateFilteredSubscribers(newSubscribers);
       
       logActivity({
         activityType: 'subscriber',
