@@ -1,13 +1,12 @@
-
 import { useState, useCallback } from 'react';
 import { useSubscriberCache } from '@/hooks/useSubscriberCache';
 import { useSubscriberAuth } from '@/hooks/useSubscriberAuth';
 import { useSubscriberActions } from '@/hooks/useSubscriberActions';
 import { fetchSubscribers, filterSubscribers } from '@/utils/subscriberUtils';
 import { useLanguage } from '@/features/language';
-import { Subscriber } from '@/types/subscribers';
+import type { Subscriber } from '@/types/subscribers';
 
-export { Subscriber } from '@/types/subscribers';
+export type { Subscriber };
 
 export function useSubscribers() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,10 +18,8 @@ export function useSubscribers() {
   const { handleDeleteSubscriber, handleUpdateSubscriber, handleDownloadCSV } = useSubscriberActions();
   const { currentLanguage } = useLanguage();
   
-  // Helper function for translation
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  // Fetch subscribers (as a callback so we can call it from outside)
   const getSubscribers = useCallback(async () => {
     console.log("Starting to fetch subscribers...");
     if (!isAuth) {
@@ -43,14 +40,12 @@ export function useSubscribers() {
         console.error("Error fetching subscribers:", error);
         setError(t('Neizdevās ielādēt abonentus. Lūdzu, mēģiniet vēlreiz.', 
                    'Failed to load subscribers. Please try again.'));
-        // Clear subscriber lists on error
         updateCache([]);
       } else {
         console.log("Received subscriber data:", data);
         if (data) {
           updateCache(data);
         } else {
-          // Handle the case where data is null but no error
           updateCache([]);
           console.warn("No data returned from fetchSubscribers but no error thrown");
         }
@@ -59,14 +54,12 @@ export function useSubscribers() {
       console.error("Unexpected error in getSubscribers:", err);
       setError(t('Neizdevās ielādēt abonentus. Lūdzu, mēģiniet vēlreiz.', 
                  'Failed to load subscribers. Please try again.'));
-      // Clear subscriber lists on error
       updateCache([]);
     } finally {
       setIsLoading(false);
     }
   }, [currentLanguage.code, t, isAuth, updateCache]);
 
-  // Handle search
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);
@@ -75,7 +68,6 @@ export function useSubscribers() {
     setFilteredSubscribers(filtered);
   };
 
-  // Wrap action handlers to provide the needed state
   const wrappedHandleDeleteSubscriber = async (id: number) => {
     await handleDeleteSubscriber(
       id, 
@@ -111,7 +103,7 @@ export function useSubscribers() {
     handleDeleteSubscriber: wrappedHandleDeleteSubscriber,
     handleUpdateSubscriber: wrappedHandleUpdateSubscriber,
     handleDownloadCSV: wrappedHandleDownloadCSV,
-    refreshSubscribers: getSubscribers, // Expose refresh function
-    totalSubscribers: subscribers.length // Add total count for the sidebar
+    refreshSubscribers: getSubscribers,
+    totalSubscribers: subscribers.length
   };
 }
