@@ -45,6 +45,7 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
   const [editingSubscriber, setEditingSubscriber] = useState<Subscriber | null>(null);
   const [editedEmail, setEditedEmail] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const { currentLanguage } = useLanguage();
   
@@ -53,15 +54,31 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
 
   const handleEditClick = (subscriber: Subscriber) => {
     setEditingSubscriber(subscriber);
-    setEditedEmail(subscriber.email);
+    setEditedEmail(subscriber.email || "");
     setDialogOpen(true);
   };
 
   const handleSaveEdit = async () => {
     if (editingSubscriber && editedEmail.trim() !== "") {
-      await onUpdate(editingSubscriber.id, editedEmail);
-      setDialogOpen(false);
-      setEditingSubscriber(null);
+      setIsProcessing(true);
+      try {
+        await onUpdate(editingSubscriber.id, editedEmail);
+        setDialogOpen(false);
+      } finally {
+        setIsProcessing(false);
+        setEditingSubscriber(null);
+      }
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (confirm(t('Vai tiešām vēlaties dzēst šo abonentu?', 'Are you sure you want to delete this subscriber?'))) {
+      setIsProcessing(true);
+      try {
+        await onDelete(id);
+      } finally {
+        setIsProcessing(false);
+      }
     }
   };
 
@@ -89,7 +106,7 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" disabled={isProcessing}>
                           <MoreHorizontal className="h-4 w-4" />
                           <span className="sr-only">{t('Izvēlne', 'Menu')}</span>
                         </Button>
@@ -106,7 +123,7 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
                           className="text-red-500 focus:text-red-500"
-                          onClick={() => onDelete(subscriber.id)}
+                          onClick={() => handleDelete(subscriber.id)}
                         >
                           <Trash className="h-4 w-4 mr-2" />
                           {t('Dzēst', 'Delete')}
@@ -143,16 +160,29 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
               value={editedEmail}
               onChange={(e) => setEditedEmail(e.target.value)}
               placeholder="example@example.com"
+              disabled={isProcessing}
             />
           </div>
           
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">{t('Atcelt', 'Cancel')}</Button>
+              <Button variant="outline" disabled={isProcessing}>{t('Atcelt', 'Cancel')}</Button>
             </DialogClose>
-            <Button onClick={handleSaveEdit}>
-              <Save className="h-4 w-4 mr-2" />
-              {t('Saglabāt', 'Save')}
+            <Button onClick={handleSaveEdit} disabled={isProcessing}>
+              {isProcessing ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {t('Saglabā...', 'Saving...')}
+                </span>
+              ) : (
+                <>
+                  <Save className="h-4 w-4 mr-2" />
+                  {t('Saglabāt', 'Save')}
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -19,6 +19,8 @@ export type AdminSubscribersTranslations = {
   unknown?: string;
   loading?: string;
   noData?: string;
+  confirmDelete?: string;
+  saving?: string;
 };
 
 export const adminSubscribersTranslations = {
@@ -27,6 +29,7 @@ export const adminSubscribersTranslations = {
     subtitle: "Pārvaldiet e-pasta jaunumu abonentus",
     edit: "Rediģēt",
     save: "Saglabāt",
+    saving: "Saglabā...",
     cancel: "Atcelt",
     delete: "Dzēst",
     email: "E-pasts",
@@ -41,13 +44,15 @@ export const adminSubscribersTranslations = {
     sendMessage: "Sūtīt ziņojumu",
     unknown: "Nezināms",
     loading: "Ielādē...",
-    noData: "Nav abonentu"
+    noData: "Nav abonentu",
+    confirmDelete: "Vai tiešām vēlaties dzēst šo abonentu?"
   },
   en: {
     title: "Subscribers",
     subtitle: "Manage newsletter subscribers",
     edit: "Edit",
     save: "Save",
+    saving: "Saving...",
     cancel: "Cancel",
     delete: "Delete",
     email: "Email",
@@ -62,13 +67,15 @@ export const adminSubscribersTranslations = {
     sendMessage: "Send Message",
     unknown: "Unknown",
     loading: "Loading...",
-    noData: "No subscribers"
+    noData: "No subscribers",
+    confirmDelete: "Are you sure you want to delete this subscriber?"
   },
   ru: {
     title: "Подписчики",
     subtitle: "Управление подписчиками на новостную рассылку",
     edit: "Редактировать",
     save: "Сохранить",
+    saving: "Сохранение...",
     cancel: "Отменить",
     delete: "Удалить",
     email: "Эл. почта",
@@ -83,6 +90,7 @@ export const adminSubscribersTranslations = {
     sendMessage: "Отправить сообщение",
     unknown: "Неизвестно",
     loading: "Загрузка...",
-    noData: "Нет подписчиков"
+    noData: "Нет подписчиков",
+    confirmDelete: "Вы уверены, что хотите удалить этого подписчика?"
   }
 };
