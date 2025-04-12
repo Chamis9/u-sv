@@ -37,10 +37,13 @@ export const checkAdminCredentials = async (email: string, password: string) => 
     
     // Check if this user is in the admin_users table
     if (data.user) {
+      // Convert user.id to string explicitly to ensure type safety
+      const userId = data.user.id.toString(); 
+      
       const { data: adminData, error: adminError } = await supabase
         .from('admin_users')
         .select()
-        .eq('id', data.user.id)
+        .eq('id', userId) // Using string version of the ID
         .single();
       
       if (adminError || !adminData) {
