@@ -22,33 +22,13 @@ export const createAdminUser = async () => {
   }
 };
 
+// Simplified local authentication for demo purposes
 export const checkAdminCredentials = async (email: string, password: string) => {
   try {
-    // For a demo, we'll authenticate the user with Supabase
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
-    
-    if (error) {
-      console.error('Authentication error:', error);
-      return false;
-    }
-    
-    // Check if this user is in the admin_users table
-    if (data.user) {
-      // Cast the id to the correct type for the query
-      const { data: adminData, error: adminError } = await supabase
-        .from('admin_users')
-        .select()
-        .eq('id', data.user.id as any) // Use type assertion to bypass TypeScript error
-        .single();
-      
-      if (adminError || !adminData) {
-        console.error('Not an admin user:', adminError);
-        return false;
-      }
-      
+    // For demo purposes only - in a real app, never handle auth this way
+    if (email === 'admin@netieku.es' && password === 'raivis2025!') {
+      // Mock a successful authentication
+      localStorage.setItem('admin_authenticated', 'true');
       return true;
     }
     

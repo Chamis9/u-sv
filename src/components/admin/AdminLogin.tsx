@@ -21,7 +21,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/features/language";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
 import { checkAdminCredentials } from "@/utils/authHelpers";
@@ -60,7 +59,7 @@ export function AdminLogin({ isOpen, onClose, onLoginSuccess }: AdminLoginProps)
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      // Check if this is an admin user
+      // Use the local authentication method
       const isAdmin = await checkAdminCredentials(data.email, data.password);
 
       if (!isAdmin) {
@@ -72,6 +71,9 @@ export function AdminLogin({ isOpen, onClose, onLoginSuccess }: AdminLoginProps)
           ? "Veiksmīgi pieslēdzies administratora panelim." 
           : "Successfully logged into the admin panel.",
       });
+      
+      // Force a page reload to ensure all components recognize the new auth state
+      window.location.reload();
       onLoginSuccess();
     } catch (error: any) {
       console.error("Login error:", error);

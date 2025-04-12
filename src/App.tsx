@@ -16,48 +16,27 @@ import { CookieConsent } from "./components/CookieConsent";
 import { clearAllCookies } from "./utils/cookieManager";
 import { ThemeProvider } from "./components/theme/ThemeProvider";
 import { supabase } from "./integrations/supabase/client";
-import { createAdminUser } from "./utils/authHelpers";
 
 const queryClient = new QueryClient();
 
-// Global logout function
+// Global logout function - updated for local auth
 const handleLogout = () => {
   clearAllCookies();
-  supabase.auth.signOut();
+  localStorage.removeItem('admin_authenticated');
   console.log("User logged out and cookies cleared");
 };
 
 // Make the logout function globally available
 window.logout = handleLogout;
 
-// Create admin account for demonstration purposes
-// In a real application, this would be done through a secure setup process
-const setupAdmin = async () => {
-  try {
-    const { data: { session }, error } = await supabase.auth.getSession();
-    if (!session) {
-      // Try to sign up the admin user - this is just for demo purposes
-      const success = await createAdminUser();
-      if (success) {
-        console.log("Admin account created or already exists");
-      }
-    }
-  } catch (err) {
-    console.error("Setup admin error:", err);
-  }
-};
-
 const App = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   
   useEffect(() => {
-    const init = async () => {
-      // Try to setup admin account (only for demo)
-      await setupAdmin();
+    // Simplified initialization
+    setTimeout(() => {
       setIsInitializing(false);
-    };
-    
-    init();
+    }, 500);
   }, []);
 
   if (isInitializing) {
