@@ -1,11 +1,16 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { Subscriber } from '@/hooks/useSubscribers';
+import { 
+  Subscriber, 
+  SubscriberFetchResult, 
+  SubscriberDeleteResult, 
+  SubscriberUpdateResult 
+} from '@/types/subscribers';
 
 /**
  * Fetches all subscribers from the database
  */
-export async function fetchSubscribers(): Promise<{ data: Subscriber[] | null; error: Error | null }> {
+export async function fetchSubscribers(): Promise<SubscriberFetchResult> {
   try {
     console.log("Fetching subscribers from Supabase...");
     
@@ -49,7 +54,7 @@ export async function fetchSubscribers(): Promise<{ data: Subscriber[] | null; e
 /**
  * Deletes a subscriber from the database
  */
-export async function deleteSubscriber(id: number): Promise<{ success: boolean; error: Error | null }> {
+export async function deleteSubscriber(id: number): Promise<SubscriberDeleteResult> {
   try {
     console.log("Deleting subscriber with ID:", id);
     const { error } = await supabase
@@ -73,7 +78,7 @@ export async function deleteSubscriber(id: number): Promise<{ success: boolean; 
 /**
  * Updates a subscriber's email in the database
  */
-export async function updateSubscriber(id: number, email: string): Promise<{ success: boolean; error: Error | null }> {
+export async function updateSubscriber(id: number, email: string): Promise<SubscriberUpdateResult> {
   try {
     console.log("Updating subscriber with ID:", id, "New email:", email);
     const { error } = await supabase
