@@ -117,7 +117,7 @@ export function useSubscriberActions() {
         const newFilteredSubscribers = filterSubscribers(newSubscribers, searchTerm);
         setFilteredSubscribers(newFilteredSubscribers);
       } else {
-        setFilteredSubscribers(newFilteredSubscribers);
+        setFilteredSubscribers(newSubscribers);
       }
       
       // Log the activity
