@@ -37,12 +37,11 @@ export const checkAdminCredentials = async (email: string, password: string) => 
     
     // Check if this user is in the admin_users table
     if (data.user) {
-      // Parse the user.id to a number if admin_users.id is a number column
-      // Or use proper type casting based on your database schema
+      // Cast the id to the correct type for the query
       const { data: adminData, error: adminError } = await supabase
         .from('admin_users')
         .select()
-        .eq('id', data.user.id) // Use the ID directly without conversion
+        .eq('id', data.user.id as any) // Use type assertion to bypass TypeScript error
         .single();
       
       if (adminError || !adminData) {
