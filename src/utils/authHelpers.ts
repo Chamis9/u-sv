@@ -6,6 +6,9 @@ export const checkAdminCredentials = async (email: string, password: string) => 
   try {
     console.log("Checking admin credentials for:", email);
     
+    // Clear any previous sessions to prevent conflicts
+    await supabase.auth.signOut();
+    
     // Attempt to sign in with Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email,
@@ -31,12 +34,12 @@ export const checkAdminCredentials = async (email: string, password: string) => 
 
     if (adminError) {
       console.error('Error checking admin status:', adminError);
-      await supabase.auth.signOut();
       return false;
     }
 
     if (!adminData) {
       console.error('User is not an admin');
+      // Sign out if not an admin
       await supabase.auth.signOut();
       return false;
     }

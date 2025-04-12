@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Home } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Helmet } from "react-helmet-async";
+import { Progress } from "@/components/ui/progress";
 
 interface AdminLoginSectionProps {
   onLoginClick: () => void;
@@ -12,9 +13,19 @@ interface AdminLoginSectionProps {
 
 export function AdminLoginSection({ onLoginClick }: AdminLoginSectionProps) {
   const { currentLanguage } = useLanguage();
+  const [isLoading, setIsLoading] = React.useState(false);
   
   // Translation helper
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
+
+  const handleLoginClick = () => {
+    setIsLoading(true);
+    // Small delay for better user experience
+    setTimeout(() => {
+      onLoginClick();
+      setIsLoading(false);
+    }, 300);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -28,8 +39,18 @@ export function AdminLoginSection({ onLoginClick }: AdminLoginSectionProps) {
           <p className="text-muted-foreground">
             {t('Lai piekļūtu administratora panelim, jums ir jāpierakstās.', 'To access the administrator panel, you need to log in.')}
           </p>
-          <Button onClick={onLoginClick} className="w-full">
-            {t('Pieslēgties', 'Login')}
+          <Button 
+            onClick={handleLoginClick} 
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                {t('Ielādē...', 'Loading...')}
+              </>
+            ) : (
+              t('Pieslēgties', 'Login')
+            )}
           </Button>
           <div className="pt-4">
             <Button variant="outline" asChild className="w-full">

@@ -17,6 +17,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
 import { checkAdminCredentials } from "@/utils/authHelpers";
 import { useLanguage } from "@/features/language";
+import { logActivity } from "@/utils/activityLogger";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -48,13 +49,30 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
   });
 
   const onSubmit = async (data: FormData) => {
+    if (isLoading) return; // Prevent multiple simultaneous attempts
+    
     setIsLoading(true);
+    
     try {
-      const isAdmin = await checkAdminCredentials(data.email, data.password);
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("Login request timed out")), 10000);
+      });
+      
+      const loginPromise = checkAdminCredentials(data.email, data.password);
+      
+      // Race the login against the timeout
+      const isAdmin = await Promise.race([loginPromise, timeoutPromise]) as boolean;
 
       if (!isAdmin) {
         throw new Error("Not authorized as admin");
       }
+
+      // Log successful login
+      logActivity({
+        activityType: 'login',
+        description: `User logged in successfully`,
+        email: data.email
+      });
 
       toast({
         description: currentLanguage.code === 'lv' 
@@ -62,19 +80,28 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
           : "Successfully logged into the admin panel.",
       });
       
-      // Reload the page to update authentication status
-      window.location.reload();
+      // Set auth state in localStorage (we'll reload after this anyway)
+      localStorage.setItem('admin_authenticated', 'true');
+      localStorage.setItem('admin_email', data.email);
+      
+      // Call success handler first to ensure UI updates properly
       onLoginSuccess();
+      
+      // Short delay before reload to ensure local states are updated
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+      
     } catch (error: any) {
       console.error("Login error:", error);
+      setIsLoading(false); // Important: reset loading state on error
+      
       toast({
         variant: "destructive",
         description: currentLanguage.code === 'lv' 
           ? "Neizdevās pieslēgties. Pārbaudiet savus pieslēgšanās datus." 
           : "Failed to log in. Please check your credentials.",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -97,6 +124,7 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
                     placeholder="admin@netieku.es" 
                     className="pl-10" 
                     {...field} 
+                    disabled={isLoading}
                   />
                 </div>
               </FormControl>
@@ -117,7 +145,8 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
                     type={showPassword ? "text" : "password"} 
                     placeholder="••••••••" 
                     className="pl-10 pr-10" 
-                    {...field} 
+                    {...field}
+                    disabled={isLoading}
                   />
                   <Button
                     type="button"
@@ -125,6 +154,7 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
                     size="icon"
                     className="absolute right-0 top-0 h-full px-3"
                     onClick={() => setShowPassword(!showPassword)}
+                    disabled={isLoading}
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4 text-muted-foreground" />
