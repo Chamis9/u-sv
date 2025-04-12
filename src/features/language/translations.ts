@@ -53,7 +53,7 @@ const translationsData: Record<string, Translations> = {
       marketingCookiesDescription: "Šīs sīkdatnes tiek izmantotas, lai izsekotu lietotājus dažādās vietnēs un parādītu attiecīgas reklāmas, kas ir aktuālas un saistošas konkrētajam lietotājam."
     },
     footer: {
-      allRightsReserved: "Visas tiesības aizsargātas",
+      allRightsReserved: "© 2025 netieku.es",
       madeWith: "Radīts ar",
       location: "Latvijā",
       cookieSettings: "Sīkdatņu iestatījumi",
@@ -154,7 +154,7 @@ const translationsData: Record<string, Translations> = {
       learnMore: "Узнать больше",
       accept: "Принять",
       decline: "Отклонить",
-      dialogTitle: "Политика использования файлов cookie",
+      dialogTitle: "Политика использования файл��в cookie",
       dialogDescription: "Информация о файлах cookie и их использовании на нашей платформе.",
       whatAreCookies: "Файлы cookie — это небольшие текстовые файлы, которые сохраняются на вашем устройстве при посещении нашего сайта. Они помогают нам обеспечить вам лучший пользовательский опыт.",
       whyWeUseCookies: "Мы используем файлы cookie для улучшения функциональности сайта, анализа пользовательского трафика и персонализации вашего опыта.",
