@@ -1,8 +1,5 @@
 
-import React, { useState, useEffect } from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,31 +7,10 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/features/language";
-import { Eye, EyeOff, Lock, User } from "lucide-react";
-import { checkAdminCredentials, setupAdminAccount } from "@/utils/authHelpers";
-
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Lūdzu, ievadiet derīgu e-pasta adresi.",
-  }),
-  password: z.string().min(6, {
-    message: "Parolei jābūt vismaz 6 simbolus garai.",
-  }),
-});
-
-type FormData = z.infer<typeof formSchema>;
+import { LoginForm } from "@/components/admin/auth/LoginForm";
+import { AdminLoginStatus } from "@/components/admin/auth/AdminLoginStatus";
+import { useAdminSetup } from "@/components/admin/auth/useAdminSetup";
 
 interface AdminLoginProps {
   isOpen: boolean;
@@ -43,68 +19,9 @@ interface AdminLoginProps {
 }
 
 export function AdminLogin({ isOpen, onClose, onLoginSuccess }: AdminLoginProps) {
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [setupComplete, setSetupComplete] = useState(false);
   const { currentLanguage } = useLanguage();
-
-  // Mēģinam uzstādīt admin kontu, ja tas neeksistē
-  useEffect(() => {
-    const setupAdmin = async () => {
-      const success = await setupAdminAccount();
-      setSetupComplete(success);
-      
-      if (success) {
-        console.log("Administratora konts pieejams lietošanai");
-      } else {
-        console.error("Neizdevās uzstādīt administratora kontu");
-      }
-    };
-    
-    setupAdmin();
-  }, []);
-
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "admin@netieku.es",
-      password: "",
-    },
-  });
-
-  const onSubmit = async (data: FormData) => {
-    setIsLoading(true);
-    try {
-      // Izmantojam atjaunināto autentifikācijas metodi
-      const isAdmin = await checkAdminCredentials(data.email, data.password);
-
-      if (!isAdmin) {
-        throw new Error("Not authorized as admin");
-      }
-
-      toast({
-        description: currentLanguage.code === 'lv' 
-          ? "Veiksmīgi pieslēdzies administratora panelim." 
-          : "Successfully logged into the admin panel.",
-      });
-      
-      // Atjauninam lapu, lai atjauninātu autentifikācijas statusu
-      window.location.reload();
-      onLoginSuccess();
-    } catch (error: any) {
-      console.error("Login error:", error);
-      toast({
-        variant: "destructive",
-        description: currentLanguage.code === 'lv' 
-          ? "Neizdevās pieslēgties. Pārbaudiet savus pieslēgšanās datus." 
-          : "Failed to log in. Please check your credentials.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  const { setupComplete } = useAdminSetup();
+  
   // Translation helper function
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
@@ -115,89 +32,10 @@ export function AdminLogin({ isOpen, onClose, onLoginSuccess }: AdminLoginProps)
           <DialogTitle>{t('Administratora pieslēgšanās', 'Administrator Login')}</DialogTitle>
           <DialogDescription>
             {t('Lūdzu, ievadiet savus administratora pieslēgšanās datus.', 'Please enter your administrator credentials.')}
-            {!setupComplete && (
-              <div className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded-md text-sm">
-                {t('Administrators vēl nav izveidots. Pievienojiet administratoru vai izmantojiet demo kontu.', 
-                   'Admin account is not set up yet. Please add admin or use the demo account.')}
-              </div>
-            )}
+            <AdminLoginStatus setupComplete={setupComplete} />
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('E-pasta adrese', 'Email Address')}</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input 
-                        placeholder="admin@netieku.es" 
-                        className="pl-10" 
-                        {...field} 
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('Parole', 'Password')}</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input 
-                        type={showPassword ? "text" : "password"} 
-                        placeholder="••••••••" 
-                        className="pl-10 pr-10" 
-                        {...field} 
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-0 top-0 h-full px-3"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? (
-                          <EyeOff className="h-4 w-4 text-muted-foreground" />
-                        ) : (
-                          <Eye className="h-4 w-4 text-muted-foreground" />
-                        )}
-                        <span className="sr-only">
-                          {showPassword ? t('Slēpt paroli', 'Hide password') : t('Rādīt paroli', 'Show password')}
-                        </span>
-                      </Button>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="mt-2 text-sm text-muted-foreground">
-              {t('Demo konts: admin@netieku.es ar paroli "raivis2025!"', 'Demo account: admin@netieku.es with password "raivis2025!"')}
-            </div>
-            <div className="flex justify-end pt-4">
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isLoading}
-              >
-                {isLoading 
-                  ? t('Pieslēdzas...', 'Logging in...') 
-                  : t('Pieslēgties', 'Login')}
-              </Button>
-            </div>
-          </form>
-        </Form>
+        <LoginForm onLoginSuccess={onLoginSuccess} />
       </DialogContent>
     </Dialog>
   );
