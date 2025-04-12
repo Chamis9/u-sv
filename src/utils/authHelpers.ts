@@ -35,10 +35,23 @@ export const checkAdminCredentials = async (email: string, password: string) => 
       return false;
     }
     
-    // In a real app, you would check if the authenticated user has admin role
-    // For this demo, we consider any successful authentication as admin access
-    // if the email matches our admin email
-    return email === 'admin@netieku.es';
+    // Check if this user is in the admin_users table
+    if (data.user) {
+      const { data: adminData, error: adminError } = await supabase
+        .from('admin_users')
+        .select()
+        .eq('id', data.user.id)
+        .single();
+      
+      if (adminError || !adminData) {
+        console.error('Not an admin user:', adminError);
+        return false;
+      }
+      
+      return true;
+    }
+    
+    return false;
   } catch (error) {
     console.error('Error in checkAdminCredentials:', error);
     return false;

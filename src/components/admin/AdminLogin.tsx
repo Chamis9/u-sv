@@ -24,6 +24,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/features/language";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
+import { checkAdminCredentials } from "@/utils/authHelpers";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -59,18 +60,13 @@ export function AdminLogin({ isOpen, onClose, onLoginSuccess }: AdminLoginProps)
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      // Attempt to sign in with Supabase
-      const { data: authData, error } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password,
-      });
+      // Check if this is an admin user
+      const isAdmin = await checkAdminCredentials(data.email, data.password);
 
-      if (error) {
-        throw error;
+      if (!isAdmin) {
+        throw new Error("Not authorized as admin");
       }
 
-      // Check if the user is an admin (in a real app, you would check against a roles table)
-      // For demo purposes, assume all authenticated users are admins
       toast({
         description: currentLanguage.code === 'lv' 
           ? "Veiksmīgi pieslēdzies administratora panelim." 
