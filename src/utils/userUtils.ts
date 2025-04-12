@@ -30,7 +30,8 @@ export const fetchUsers = async () => {
           last_sign_in_at: null,
           updated_at: null,
           role: 'admin',
-          status: 'active'
+          status: 'active',
+          banned: false  // Add a default value
         })) || [], 
         error: null 
       };
@@ -47,7 +48,8 @@ export const fetchUsers = async () => {
         last_sign_in_at: user.last_sign_in_at,
         updated_at: user.updated_at,
         role: 'user',
-        status: user.banned === true ? 'inactive' : 'active'
+        status: user.banned === true ? 'inactive' : 'active',
+        banned: user.banned || false  // Ensure banned is always a boolean
       })), 
       error: null 
     };
