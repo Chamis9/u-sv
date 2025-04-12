@@ -53,29 +53,40 @@ export const checkAdminCredentials = async (email: string, password: string) => 
 // Izveidot administratora lietotāju (tikai demo vajadzībām)
 export const createAdminUser = async () => {
   try {
-    // Vispirms mēģinām reģistrēt lietotāju Supabase Auth
+    // Mēģinām reģistrēt lietotāju Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: 'admin@netieku.es',
       password: 'raivis2025!',
     });
 
-    if (authError) {
+    // Ja ir kļūda, bet tā ir par to, ka lietotājs jau eksistē, mēs varam turpināt
+    if (authError && !authError.message.includes('already registered')) {
       console.error('Kļūda veidojot administratora kontu Auth:', authError);
       return false;
     }
 
-    // Pēc veiksmīgas reģistrācijas pievienojam ierakstu admin_user tabulā
-    if (authData.user) {
-      const { error: insertError } = await supabase
-        .from('admin_user')
-        .insert({
-          email: 'admin@netieku.es'
-        });
+    // Pārbaudām, vai lietotājs jau eksistē admin_user tabulā
+    const { data: existingUser, error: checkError } = await supabase
+      .from('admin_user')
+      .select('*')
+      .eq('email', 'admin@netieku.es')
+      .maybeSingle();
 
-      if (insertError) {
-        console.error('Kļūda pievienojot administratoru admin_user tabulā:', insertError);
-        return false;
-      }
+    // Ja jau eksistē, tad nav jāieliek vēlreiz
+    if (existingUser) {
+      return true;
+    }
+
+    // Pievienojam ierakstu admin_user tabulā
+    const { error: insertError } = await supabase
+      .from('admin_user')
+      .insert({
+        email: 'admin@netieku.es'
+      });
+
+    if (insertError) {
+      console.error('Kļūda pievienojot administratoru admin_user tabulā:', insertError);
+      return false;
     }
 
     return true;
