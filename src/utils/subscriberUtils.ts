@@ -8,7 +8,7 @@ import { Subscriber } from '@/hooks/useSubscribers';
 export async function fetchSubscribers(): Promise<{ data: Subscriber[] | null; error: Error | null }> {
   try {
     console.log("Fetching subscribers from Supabase...");
-    console.log("Using Supabase project URL:", supabase.getUrl ? supabase.getUrl() : supabase.supabaseUrl);
+    console.log("Using Supabase project URL:", process.env.SUPABASE_URL || 'URL not available');
     
     // Check connection directly by selecting the table without count
     const tableCheck = await supabase
