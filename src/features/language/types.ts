@@ -1,4 +1,3 @@
-
 export interface Translations {
   hero: {
     title: string;
@@ -98,3 +97,5 @@ export interface Language {
   name: string;
   flag: string;
 }
+
+export type TranslationObject = Translations;
