@@ -123,7 +123,9 @@ export function useSubscriberActions() {
   const handleDownloadCSV = (subscribers: Subscriber[], currentLanguage: { code: string }) => {
     if (!subscribers || subscribers.length === 0) {
       toast({
-        description: t('Nav abonentu, ko lejupielādēt', 'No subscribers to download'),
+        description: currentLanguage.code === 'lv' ? 
+          'Nav abonentu, ko lejupielādēt' : 
+          'No subscribers to download',
       });
       return;
     }
@@ -133,13 +135,17 @@ export function useSubscriberActions() {
       downloadBlob(blob, filename);
       
       toast({
-        description: t('CSV fails veiksmīgi lejupielādēts', 'CSV file downloaded successfully'),
+        description: currentLanguage.code === 'lv' ? 
+          'CSV fails veiksmīgi lejupielādēts' : 
+          'CSV file downloaded successfully',
       });
     } catch (error) {
       console.error("Error downloading CSV:", error);
       toast({
         variant: "destructive",
-        description: t('Kļūda lejupielādējot failu', 'Error downloading file'),
+        description: currentLanguage.code === 'lv' ? 
+          'Kļūda lejupielādējot failu' : 
+          'Error downloading file',
       });
     }
   };
