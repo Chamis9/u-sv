@@ -29,6 +29,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { useLanguage } from "@/features/language";
 
 interface Subscriber {
   id: number;
@@ -43,33 +44,38 @@ export function AdminSubscribers() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const { toast } = useToast();
+  const { translations, currentLanguage } = useLanguage();
 
   useEffect(() => {
     const fetchSubscribers = async () => {
       try {
         setIsLoading(true);
-        // Šeit izmantojam newsletter_subscribers tabulu, kas ir definēta Supabase
+        console.log("Fetching subscribers from Supabase...");
         const { data, error } = await supabase
           .from('newsletter_subscribers')
           .select('*')
           .order('created_at', { ascending: false });
         
         if (error) {
+          console.error("Supabase error:", error);
           throw error;
         }
         
+        console.log("Subscribers data received:", data);
         setSubscribers(data || []);
         setFilteredSubscribers(data || []);
       } catch (err) {
         console.error('Error fetching subscribers:', err);
-        setError('Neizdevās ielādēt abonentus. Lūdzu, mēģiniet vēlreiz.');
+        setError(currentLanguage.code === 'lv' 
+          ? 'Neizdevās ielādēt abonentus. Lūdzu, mēģiniet vēlreiz.' 
+          : 'Failed to load subscribers. Please try again.');
       } finally {
         setIsLoading(false);
       }
     };
     
     fetchSubscribers();
-  }, []);
+  }, [currentLanguage.code]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
@@ -100,51 +106,64 @@ export function AdminSubscribers() {
       setFilteredSubscribers(filteredSubscribers.filter(sub => sub.id !== id));
       
       toast({
-        description: "Abonents veiksmīgi dzēsts",
+        description: currentLanguage.code === 'lv' 
+          ? "Abonents veiksmīgi dzēsts" 
+          : "Subscriber successfully deleted",
       });
     } catch (err) {
       console.error('Error deleting subscriber:', err);
       toast({
         variant: "destructive",
-        description: "Neizdevās dzēst abonentu. Lūdzu, mēģiniet vēlreiz.",
+        description: currentLanguage.code === 'lv'
+          ? "Neizdevās dzēst abonentu. Lūdzu, mēģiniet vēlreiz."
+          : "Failed to delete subscriber. Please try again.",
       });
     }
   };
 
   const handleDownloadCSV = () => {
-    // Izveidojam CSV saturu
+    // Create CSV content
     const csvContent = [
-      ['ID', 'E-pasts', 'Pievienošanās datums'],
+      [
+        currentLanguage.code === 'lv' ? 'ID' : 'ID', 
+        currentLanguage.code === 'lv' ? 'E-pasts' : 'Email', 
+        currentLanguage.code === 'lv' ? 'Pievienošanās datums' : 'Join Date'
+      ],
       ...subscribers.map(sub => [
         sub.id, 
         sub.email, 
-        new Date(sub.created_at).toLocaleDateString('lv-LV')
+        new Date(sub.created_at).toLocaleDateString(currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')
       ])
     ]
     .map(row => row.join(','))
     .join('\n');
     
-    // Izveidojam lejupielādes saiti
+    // Create download link
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `abonenti_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+    link.setAttribute('download', `${currentLanguage.code === 'lv' ? 'abonenti' : 'subscribers'}_${format(new Date(), 'yyyy-MM-dd')}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     
     toast({
-      description: "Abonentu saraksts lejupielādēts",
+      description: currentLanguage.code === 'lv'
+        ? "Abonentu saraksts lejupielādēts"
+        : "Subscribers list downloaded",
     });
   };
+
+  // Translation helper function
+  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">E-pasta abonenti</h1>
-        <p className="text-muted-foreground">Pārvaldiet jūsu jaunumu abonentu sarakstu</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('E-pasta abonenti', 'Email Subscribers')}</h1>
+        <p className="text-muted-foreground">{t('Pārvaldiet jūsu jaunumu abonentu sarakstu', 'Manage your newsletter subscriber list')}</p>
       </div>
       
       <div className="flex flex-col sm:flex-row gap-4 items-end sm:items-center justify-between">
@@ -152,7 +171,7 @@ export function AdminSubscribers() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Meklēt e-pasta adreses..."
+            placeholder={t('Meklēt e-pasta adreses...', 'Search email addresses...')}
             className="w-full pl-8"
             value={searchTerm}
             onChange={handleSearch}
@@ -162,12 +181,12 @@ export function AdminSubscribers() {
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={handleDownloadCSV}>
             <Download className="h-4 w-4 mr-2" />
-            Eksportēt CSV
+            {t('Eksportēt CSV', 'Export CSV')}
           </Button>
           
           <Button size="sm">
             <Mail className="h-4 w-4 mr-2" />
-            Sūtīt ziņojumu
+            {t('Sūtīt ziņojumu', 'Send Message')}
           </Button>
         </div>
       </div>
@@ -182,7 +201,7 @@ export function AdminSubscribers() {
             <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-2" />
             <p className="text-muted-foreground">{error}</p>
             <Button className="mt-4" variant="outline" onClick={() => window.location.reload()}>
-              Mēģināt vēlreiz
+              {t('Mēģināt vēlreiz', 'Try Again')}
             </Button>
           </div>
         </div>
@@ -192,9 +211,9 @@ export function AdminSubscribers() {
             <TableHeader>
               <TableRow>
                 <TableHead>ID</TableHead>
-                <TableHead>E-pasts</TableHead>
-                <TableHead>Pievienošanās datums</TableHead>
-                <TableHead className="text-right">Darbības</TableHead>
+                <TableHead>{t('E-pasts', 'Email')}</TableHead>
+                <TableHead>{t('Pievienošanās datums', 'Join Date')}</TableHead>
+                <TableHead className="text-right">{t('Darbības', 'Actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -204,20 +223,20 @@ export function AdminSubscribers() {
                     <TableCell>{subscriber.id}</TableCell>
                     <TableCell className="font-medium">{subscriber.email}</TableCell>
                     <TableCell>
-                      {new Date(subscriber.created_at).toLocaleDateString("lv-LV")}
+                      {new Date(subscriber.created_at).toLocaleDateString(currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
                     </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon">
                             <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Izvēlne</span>
+                            <span className="sr-only">{t('Izvēlne', 'Menu')}</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem>
                             <Mail className="h-4 w-4 mr-2" />
-                            Sūtīt e-pastu
+                            {t('Sūtīt e-pastu', 'Send Email')}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 
@@ -225,7 +244,7 @@ export function AdminSubscribers() {
                             onClick={() => handleDeleteSubscriber(subscriber.id)}
                           >
                             <Trash className="h-4 w-4 mr-2" />
-                            Dzēst
+                            {t('Dzēst', 'Delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -236,8 +255,8 @@ export function AdminSubscribers() {
                 <TableRow>
                   <TableCell colSpan={4} className="text-center py-6">
                     {searchTerm ? 
-                      "Nav atrasts neviens abonents, kas atbilst meklēšanas kritērijiem." : 
-                      "Nav atrasts neviens abonents."}
+                      t('Nav atrasts neviens abonents, kas atbilst meklēšanas kritērijiem.', 'No subscribers found matching your search criteria.') : 
+                      t('Nav atrasts neviens abonents.', 'No subscribers found.')}
                   </TableCell>
                 </TableRow>
               )}
