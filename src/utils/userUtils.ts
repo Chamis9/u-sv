@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import type { User } from '@/types/users';
 
@@ -30,8 +29,7 @@ export const fetchUsers = async () => {
           last_sign_in_at: null,
           updated_at: null,
           role: 'admin',
-          status: 'active',
-          banned: false  // Ensure this property is always set
+          status: 'active'
         })) || [], 
         error: null 
       };
@@ -48,8 +46,7 @@ export const fetchUsers = async () => {
         last_sign_in_at: user.last_sign_in_at,
         updated_at: user.updated_at,
         role: 'user',
-        status: user.banned === true ? 'inactive' : 'active',
-        banned: user.banned || false  // Ensure banned is always a boolean
+        status: user.banned === true ? 'inactive' : 'active'
       })), 
       error: null 
     };
