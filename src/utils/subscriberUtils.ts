@@ -13,9 +13,11 @@ export async function fetchSubscribers(): Promise<{ data: Subscriber[] | null; e
       .select('*')
       .order('created_at', { ascending: false });
     
+    console.log("Raw Supabase response:", { data, error });
+    
     if (error) {
       console.error("Supabase error:", error);
-      throw error;
+      return { data: null, error };
     }
     
     console.log("Subscribers data received:", data);
@@ -31,15 +33,18 @@ export async function fetchSubscribers(): Promise<{ data: Subscriber[] | null; e
  */
 export async function deleteSubscriber(id: number): Promise<{ success: boolean; error: Error | null }> {
   try {
+    console.log("Deleting subscriber with ID:", id);
     const { error } = await supabase
       .from('newsletter_subscribers')
       .delete()
       .eq('id', id);
     
     if (error) {
-      throw error;
+      console.error("Error deleting subscriber:", error);
+      return { success: false, error };
     }
     
+    console.log("Subscriber deleted successfully");
     return { success: true, error: null };
   } catch (err) {
     console.error('Error deleting subscriber:', err);
@@ -51,12 +56,13 @@ export async function deleteSubscriber(id: number): Promise<{ success: boolean; 
  * Filters subscribers based on search term
  */
 export function filterSubscribers(subscribers: Subscriber[], term: string): Subscriber[] {
-  if (term.trim() === "") {
+  if (!term || term.trim() === "") {
     return subscribers;
   }
   
+  const normalizedTerm = term.toLowerCase().trim();
   return subscribers.filter(subscriber => 
-    subscriber.email.toLowerCase().includes(term.toLowerCase())
+    subscriber.email && subscriber.email.toLowerCase().includes(normalizedTerm)
   );
 }
 
@@ -68,12 +74,17 @@ export function generateSubscribersCSV(
   headers: string[], 
   locale: string = 'en-US'
 ): string {
+  if (!subscribers || subscribers.length === 0) {
+    // Return just headers if no subscribers
+    return headers.join(',');
+  }
+  
   const csvContent = [
     headers,
     ...subscribers.map(sub => [
       sub.id, 
-      sub.email, 
-      new Date(sub.created_at).toLocaleDateString(locale)
+      sub.email || '', 
+      sub.created_at ? new Date(sub.created_at).toLocaleDateString(locale) : ''
     ])
   ]
   .map(row => row.join(','))

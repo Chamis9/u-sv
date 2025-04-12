@@ -1,10 +1,11 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSubscribers } from "@/hooks/useSubscribers";
 import { useLanguage } from "@/features/language";
 import { SubscriberListHeader } from "@/components/admin/subscribers/SubscriberListHeader";
 import { SubscriberListTable } from "@/components/admin/subscribers/SubscriberListTable";
 import { EmptyOrErrorState } from "@/components/admin/subscribers/EmptyOrErrorState";
+import { supabase } from "@/integrations/supabase/client";
 
 export function AdminSubscribers() {
   const { 
@@ -22,6 +23,27 @@ export function AdminSubscribers() {
   // Translation helper
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
+  // Debug: Log the current subscribers data
+  useEffect(() => {
+    console.log("Current subscribers in component:", subscribers);
+    
+    // Debug: Direct query to verify data
+    const checkDatabase = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('newsletter_subscribers')
+          .select('*')
+          .limit(10);
+        
+        console.log("Direct Supabase query result:", { data, error });
+      } catch (err) {
+        console.error("Error in direct query:", err);
+      }
+    };
+    
+    checkDatabase();
+  }, [subscribers]);
+
   return (
     <div className="space-y-6">
       <div>
@@ -35,12 +57,31 @@ export function AdminSubscribers() {
         onDownloadCSV={handleDownloadCSV}
       />
       
-      {isLoading || error || (searchTerm && subscribers.length === 0) ? (
+      {isLoading ? (
         <EmptyOrErrorState 
-          isLoading={isLoading} 
-          error={error}
-          searchTerm={searchTerm && subscribers.length === 0 ? searchTerm : undefined} 
+          isLoading={true} 
+          error=""
         />
+      ) : error ? (
+        <EmptyOrErrorState 
+          isLoading={false} 
+          error={error}
+        />
+      ) : subscribers.length === 0 && searchTerm ? (
+        <EmptyOrErrorState 
+          isLoading={false} 
+          error=""
+          searchTerm={searchTerm} 
+        />
+      ) : subscribers.length === 0 ? (
+        <div className="flex justify-center items-center h-64 text-center">
+          <div>
+            <p className="text-muted-foreground">
+              {t('Nav neviena abonenta. Pievienojiet pirmo abonentu, izmantojot jaunumu pietiekšanās formu.', 
+                'No subscribers yet. Add your first subscriber using the newsletter signup form.')}
+            </p>
+          </div>
+        </div>
       ) : (
         <SubscriberListTable 
           subscribers={subscribers} 

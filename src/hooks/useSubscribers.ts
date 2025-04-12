@@ -32,18 +32,35 @@ export function useSubscribers() {
   useEffect(() => {
     const getSubscribers = async () => {
       setIsLoading(true);
+      setError("");
       
-      const { data, error } = await fetchSubscribers();
-      
-      if (error) {
+      try {
+        console.log("Fetching subscribers...");
+        const { data, error } = await fetchSubscribers();
+        
+        if (error) {
+          console.error("Error fetching subscribers:", error);
+          setError(t('Neizdevās ielādēt abonentus. Lūdzu, mēģiniet vēlreiz.', 
+                     'Failed to load subscribers. Please try again.'));
+        } else {
+          console.log("Received subscriber data:", data);
+          if (data) {
+            setSubscribers(data);
+            setFilteredSubscribers(data);
+          } else {
+            // Handle the case where data is null but no error
+            setSubscribers([]);
+            setFilteredSubscribers([]);
+            console.warn("No data returned from fetchSubscribers but no error thrown");
+          }
+        }
+      } catch (err) {
+        console.error("Unexpected error in getSubscribers:", err);
         setError(t('Neizdevās ielādēt abonentus. Lūdzu, mēģiniet vēlreiz.', 
                    'Failed to load subscribers. Please try again.'));
-      } else if (data) {
-        setSubscribers(data);
-        setFilteredSubscribers(data);
+      } finally {
+        setIsLoading(false);
       }
-      
-      setIsLoading(false);
     };
     
     getSubscribers();
@@ -60,17 +77,27 @@ export function useSubscribers() {
 
   // Handle delete subscriber
   const handleDeleteSubscriber = async (id: number) => {
-    const { success, error } = await deleteSubscriber(id);
-    
-    if (success) {
-      const updatedSubscribers = subscribers.filter(sub => sub.id !== id);
-      setSubscribers(updatedSubscribers);
-      setFilteredSubscribers(filterSubscribers(updatedSubscribers, searchTerm));
+    try {
+      const { success, error } = await deleteSubscriber(id);
       
-      toast({
-        description: t("Abonents veiksmīgi dzēsts", "Subscriber successfully deleted"),
-      });
-    } else {
+      if (success) {
+        const updatedSubscribers = subscribers.filter(sub => sub.id !== id);
+        setSubscribers(updatedSubscribers);
+        setFilteredSubscribers(filterSubscribers(updatedSubscribers, searchTerm));
+        
+        toast({
+          description: t("Abonents veiksmīgi dzēsts", "Subscriber successfully deleted"),
+        });
+      } else {
+        console.error("Error deleting subscriber:", error);
+        toast({
+          variant: "destructive",
+          description: t("Neizdevās dzēst abonentu. Lūdzu, mēģiniet vēlreiz.",
+                         "Failed to delete subscriber. Please try again."),
+        });
+      }
+    } catch (err) {
+      console.error("Unexpected error in handleDeleteSubscriber:", err);
       toast({
         variant: "destructive",
         description: t("Neizdevās dzēst abonentu. Lūdzu, mēģiniet vēlreiz.",
@@ -81,27 +108,35 @@ export function useSubscribers() {
 
   // Handle download CSV
   const handleDownloadCSV = () => {
-    // Headers for CSV
-    const headers = [
-      t('ID', 'ID'), 
-      t('E-pasts', 'Email'), 
-      t('Pievienošanās datums', 'Join Date')
-    ];
-    
-    // Generate CSV content
-    const csvContent = generateSubscribersCSV(
-      subscribers, 
-      headers, 
-      currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US'
-    );
-    
-    // Download the CSV file
-    const filename = `${t('abonenti', 'subscribers')}_${new Date().toISOString().split('T')[0]}.csv`;
-    downloadCSV(csvContent, filename);
-    
-    toast({
-      description: t("Abonentu saraksts lejupielādēts", "Subscribers list downloaded"),
-    });
+    try {
+      // Headers for CSV
+      const headers = [
+        t('ID', 'ID'), 
+        t('E-pasts', 'Email'), 
+        t('Pievienošanās datums', 'Join Date')
+      ];
+      
+      // Generate CSV content
+      const csvContent = generateSubscribersCSV(
+        subscribers, 
+        headers, 
+        currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US'
+      );
+      
+      // Download the CSV file
+      const filename = `${t('abonenti', 'subscribers')}_${new Date().toISOString().split('T')[0]}.csv`;
+      downloadCSV(csvContent, filename);
+      
+      toast({
+        description: t("Abonentu saraksts lejupielādēts", "Subscribers list downloaded"),
+      });
+    } catch (err) {
+      console.error("Error generating/downloading CSV:", err);
+      toast({
+        variant: "destructive",
+        description: t("Neizdevās lejupielādēt abonentu sarakstu", "Failed to download subscribers list"),
+      });
+    }
   };
 
   return {
