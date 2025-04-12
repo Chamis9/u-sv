@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { useLanguage } from '@/features/language';
@@ -9,6 +8,7 @@ import {
   generateSubscribersCSV, 
   downloadCSV 
 } from '@/utils/subscriberUtils';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface Subscriber {
   id: number;
@@ -22,15 +22,45 @@ export function useSubscribers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isAuth, setIsAuth] = useState(false);
   const { toast } = useToast();
   const { currentLanguage } = useLanguage();
   
   // Helper function for translation
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
+  // Check for authentication on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data } = await supabase.auth.getSession();
+      setIsAuth(!!data.session);
+      
+      // Set up auth state listener
+      const { data: authListener } = supabase.auth.onAuthStateChange(
+        (event, session) => {
+          setIsAuth(!!session);
+        }
+      );
+      
+      return () => {
+        authListener.subscription.unsubscribe();
+      };
+    };
+    
+    checkAuth();
+  }, []);
+
   // Fetch subscribers (as a callback so we can call it from outside)
   const getSubscribers = useCallback(async () => {
     console.log("Starting to fetch subscribers...");
+    if (!isAuth) {
+      console.log("Not authenticated, skipping fetch");
+      setError(t('Nepieciešama autorizācija, lai piekļūtu abonentiem.', 
+                 'Authentication required to access subscribers.'));
+      setIsLoading(false);
+      return;
+    }
+    
     setIsLoading(true);
     setError("");
     
@@ -66,12 +96,14 @@ export function useSubscribers() {
     } finally {
       setIsLoading(false);
     }
-  }, [currentLanguage.code, t]);
+  }, [currentLanguage.code, t, isAuth]);
 
   // Initial fetch
   useEffect(() => {
-    getSubscribers();
-  }, [getSubscribers]);
+    if (isAuth) {
+      getSubscribers();
+    }
+  }, [getSubscribers, isAuth]);
 
   // Handle search
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,6 +183,7 @@ export function useSubscribers() {
     searchTerm,
     isLoading,
     error,
+    isAuth,
     handleSearch,
     handleDeleteSubscriber,
     handleDownloadCSV,

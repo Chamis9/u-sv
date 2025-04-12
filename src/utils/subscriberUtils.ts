@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Subscriber } from '@/hooks/useSubscribers';
 
@@ -8,31 +7,25 @@ import { Subscriber } from '@/hooks/useSubscribers';
 export async function fetchSubscribers(): Promise<{ data: Subscriber[] | null; error: Error | null }> {
   try {
     console.log("Fetching subscribers from Supabase...");
-    console.log("Using Supabase project URL:", process.env.SUPABASE_URL || 'URL not available');
     
-    // Check connection directly by selecting the table without count
-    const tableCheck = await supabase
-      .from('newsletter_subscribers')
-      .select('*')
-      .limit(1);
+    // Get the current session to check authentication
+    const { data: sessionData } = await supabase.auth.getSession();
     
-    console.log("Table check response:", tableCheck);
-    
-    if (tableCheck.error) {
-      console.error("Error checking subscribers table:", tableCheck.error);
+    if (!sessionData.session) {
+      console.error("No active session found. User might not be authenticated.");
       return { 
         data: null, 
-        error: new Error(`Database access error: ${tableCheck.error.message}`) 
+        error: new Error("Authentication required to access subscriber data") 
       };
     }
     
-    // Fetch the actual data
+    // Fetch the subscribers data
     const { data, error } = await supabase
       .from('newsletter_subscribers')
       .select('*')
       .order('created_at', { ascending: false });
     
-    console.log("Raw Supabase response:", { data, error });
+    console.log("Supabase response:", { data, error });
     
     if (error) {
       console.error("Supabase error:", error);
