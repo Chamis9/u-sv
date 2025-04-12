@@ -1,91 +1,17 @@
 
 import { Translations } from '../types';
+import { 
+  heroTranslations, 
+  howItWorksTranslations, 
+  footerTranslations, 
+  cookieConsentTranslations,
+  adminTranslations
+} from './features';
 
 export const ruTranslations: Translations = {
-  hero: {
-    title: "Продавайте и покупайте билеты",
-    titleHighlight: "просто и безопасно",
-    subtitle: "Первая платформа для обмена билетами в Латвии",
-    subscribeText: "Подпишитесь, чтобы узнать о запуске платформы",
-    learnMoreBtn: "Узнать больше",
-  },
-  howItWorks: {
-    title: "Как это работает",
-    subtitle: "Простой и безопасный способ продать или купить билеты на мероприятия",
-    steps: [
-      {
-        title: "Разместите билет",
-        description: "Разместите билет на мероприятие на платформе быстро и легко"
-      },
-      {
-        title: "Свяжитесь с покупателем",
-        description: "Используйте возможности общения платформы"
-      },
-      {
-        title: "Безопасный обмен",
-        description: "Простой и безопасный процесс обмена"
-      },
-      {
-        title: "Посетите мероприятие",
-        description: "Посещение мероприятия и эмоции гарантированы"
-      }
-    ]
-  },
-  cookieConsent: {
-    message: "Мы используем файлы cookie. Продолжая использовать этот сайт, вы соглашаетесь с нашей политикой в отношении файлов cookie.",
-    learnMore: "Узнать больше",
-    accept: "Принять",
-    decline: "Отклонить",
-    dialogTitle: "Политика использования файлов cookie",
-    dialogDescription: "Информация о файлах cookie и их использовании на нашей платформе.",
-    whatAreCookies: "Файлы cookie — это небольшие текстовые файлы, которые сохраняются на вашем устройстве при посещении нашего сайта. Они помогают нам обеспечить вам лучший пользовательский опыт.",
-    whyWeUseCookies: "Мы используем файлы cookie для улучшения функциональности сайта, анализа пользовательского трафика и персонализации вашего опыта.",
-    typesOfCookies: "Мы используем следующие типы файлов cookie:",
-    essentialCookiesTitle: "Необходимые файлы cookie",
-    essentialCookiesDescription: "Эти файлы cookie необходимы для основных функций сайта. Они позволяют перемещаться по сайту и использовать его функции.",
-    analyticsCookiesTitle: "Аналитические файлы cookie",
-    analyticsCookiesDescription: "Эти файлы cookie помогают нам понять, как пользователи взаимодействуют с сайтом, собирая и сообщая информацию анонимно.",
-    privacyPolicy: "Для получения дополнительной информации о том, как мы используем ваши данные, пожалуйста, ознакомьтесь с нашей политикой конфиденциальности.",
-    required: "Обязательно",
-    savePreferences: "Сохранить настройки",
-    cookieSettings: "Настройки файлов cookie",
-    marketingCookies: "Маркетинговые файлы cookie",
-    marketingCookiesDescription: "Эти файлы cookie используются для отслеживания пользователей на разных веб-сайтах и отображения соответствующей рекламы, которая актуальна и привлекательна для конкретного пользователя."
-  },
-  footer: {
-    allRightsReserved: "Все права защищены.",
-    madeWith: "Создано с",
-    location: "в Латвии",
-    cookieSettings: "Настройки файлов cookie",
-    privacyPolicy: "Политика конфиденциальности"
-  },
-  admin: {
-    title: "Панель администратора",
-    defaultUser: "Администратор",
-    logout: "Выйти",
-    returnToHome: "Вернуться на главную страницу",
-    logoutSuccess: "Вы успешно вышли из системы",
-    logoutError: "Ошибка при выходе из системы",
-    tabs: {
-      dashboard: "Панель управления",
-      users: "Пользователи",
-      subscribers: "Подписчики",
-      settings: "Настройки"
-    },
-    auth: {
-      supabaseAuthAvailable: "Аутентификация Supabase доступна. Пожалуйста, используйте учетную запись администратора для входа."
-    },
-    settings: {
-      security: {
-        title: "Настройки безопасности",
-        description: "Управление настройками безопасности платформы",
-        comingSoon: "Настройки безопасности будут добавлены в ближайшее время..."
-      },
-      integrations: {
-        title: "Интеграции",
-        description: "Управление интеграциями с третьими сторонами",
-        comingSoon: "Настройки интеграции будут добавлены в ближайшее время..."
-      }
-    }
-  }
+  hero: heroTranslations.ru,
+  howItWorks: howItWorksTranslations.ru,
+  cookieConsent: cookieConsentTranslations.ru,
+  footer: footerTranslations.ru,
+  admin: adminTranslations.ru
 };
