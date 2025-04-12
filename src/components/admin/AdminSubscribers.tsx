@@ -26,11 +26,8 @@ export function AdminSubscribers() {
   
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  useEffect(() => {
-    if (isAuth) {
-      refreshSubscribers();
-    }
-  }, [isAuth, refreshSubscribers]);
+  // We'll intentionally not auto-refresh on mount
+  // The user will need to click the refresh button
 
   const handleRetry = () => {
     console.log("Manual refresh triggered");
@@ -42,6 +39,18 @@ export function AdminSubscribers() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">{t('E-pasta abonenti', 'Email Subscribers')}</h1>
         <p className="text-muted-foreground">{t('Pārvaldiet jūsu jaunumu abonentu sarakstu', 'Manage your newsletter subscriber list')}</p>
+      </div>
+      
+      <div className="flex justify-end">
+        <Button 
+          onClick={handleRetry}
+          variant="outline"
+          disabled={isLoading}
+          className="flex items-center"
+        >
+          <RefreshCw className="h-4 w-4 mr-2" />
+          {t('Atjaunot datus no datubāzes', 'Refresh Data from Database')}
+        </Button>
       </div>
       
       {!isAuth && (

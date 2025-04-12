@@ -21,7 +21,7 @@ export function useSubscribers() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [filteredSubscribers, setFilteredSubscribers] = useState<Subscriber[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [isAuth, setIsAuth] = useState(false);
   const { toast } = useToast();
@@ -98,13 +98,6 @@ export function useSubscribers() {
       setIsLoading(false);
     }
   }, [currentLanguage.code, t, isAuth]);
-
-  // Initial fetch
-  useEffect(() => {
-    if (isAuth) {
-      getSubscribers();
-    }
-  }, [getSubscribers, isAuth]);
 
   // Handle search
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {

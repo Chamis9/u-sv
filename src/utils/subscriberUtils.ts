@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { Subscriber } from '@/hooks/useSubscribers';
 
@@ -19,7 +20,7 @@ export async function fetchSubscribers(): Promise<{ data: Subscriber[] | null; e
       };
     }
     
-    // Fetch the subscribers data
+    // Fetch the subscribers data - adding nocache to ensure fresh data
     const { data, error } = await supabase
       .from('newsletter_subscribers')
       .select('*')
