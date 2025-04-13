@@ -9,14 +9,14 @@ import { supabase } from "@/integrations/supabase/client";
 export const Hero = memo(function Hero() {
   const { translations } = useLanguage();
   const { hero } = translations;
-  const [backgroundImage, setBackgroundImage] = useState('https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/backgrounds//netieku_bilesu_pardosana_fons_1.jpeg');
+  const [backgroundImage, setBackgroundImage] = useState('https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/backgrounds/netieku_bilesu_pardosana_fons_1.jpeg');
 
   useEffect(() => {
     const fetchBackgroundImage = async () => {
       try {
         const { data } = await supabase.storage
           .from('backgrounds')
-          .getPublicUrl('netieku_bilesu_pardosana_fons_1');
+          .getPublicUrl('netieku_bilesu_pardosana_fons_1.jpeg');
 
         if (data?.publicUrl) {
           setBackgroundImage(data.publicUrl);
