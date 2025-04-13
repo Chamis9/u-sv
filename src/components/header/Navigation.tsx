@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Mail, User } from "lucide-react";
+import { Mail } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -10,16 +10,13 @@ export function Navigation() {
   
   const translations = {
     lv: {
-      contact: "Kontakti",
-      profile: "Mans profils"
+      contact: "Kontakti"
     },
     en: {
-      contact: "Contact",
-      profile: "My Profile"
+      contact: "Contact"
     },
     ru: {
-      contact: "Контакты",
-      profile: "Мой профиль"
+      contact: "Контакты"
     }
   };
 
@@ -42,19 +39,6 @@ export function Navigation() {
             {t.contact}
           </Link>
         </li>
-        
-        {isAuthenticated && (
-          <li>
-            <Link 
-              to="/profile" 
-              onClick={handleLinkClick}
-              className="text-white hover:text-orange-400 transition-colors flex items-center gap-1.5 relative z-10 text-sm md:text-base"
-            >
-              <User size={16} />
-              {t.profile}
-            </Link>
-          </li>
-        )}
       </ul>
     </nav>
   );
