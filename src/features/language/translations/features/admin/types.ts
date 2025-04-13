@@ -15,6 +15,7 @@ export type AdminTranslations = {
   tabs?: {
     dashboard?: string;
     users?: string;
+    admins?: string; // Added the admins property
     subscribers?: string;
     settings?: string;
   };

@@ -54,6 +54,7 @@ export interface Translations {
     tabs?: {
       dashboard?: string;
       users?: string;
+      admins?: string; // Added this property
       subscribers?: string;
       settings?: string;
     };
