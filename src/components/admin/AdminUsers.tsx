@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { useUsers } from "@/hooks/useUsers";
+import { useAdminUsers } from "@/hooks/useAdminUsers";
 import { useLanguage } from "@/features/language";
 import { UserListHeader } from "@/components/admin/users/UserListHeader";
 import { UserListTable } from "@/components/admin/users/UserListTable";
@@ -9,6 +9,9 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { User } from "@/types/users";
 import { Pagination } from "@/components/ui/pagination";
+import { updateUser, deleteUser } from "@/utils/admin/adminOperations";
+import { useToast } from "@/hooks/use-toast";
+import { downloadUsersCSV, downloadBlob } from "@/utils/user";
 
 export function AdminUsers() {
   const { 
@@ -17,16 +20,14 @@ export function AdminUsers() {
     isLoading, 
     error, 
     isAuth,
+    fetchAdminUsers,
     handleSearch, 
-    handleDownloadCSV,
-    refreshUsers,
-    totalUsers,
-    updateUser,
-    deleteUser,
-    toggleUserStatus
-  } = useUsers();
+    handleUserUpdated,
+    handleUserDeleted
+  } = useAdminUsers();
   
   const { currentLanguage } = useLanguage();
+  const { toast } = useToast();
   
   // Pagination state
   const [page, setPage] = useState(1);
@@ -38,34 +39,109 @@ export function AdminUsers() {
   
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
+  const handleDownloadCSV = () => {
+    if (!users || users.length === 0) {
+      toast({
+        description: t('Nav administratoru, ko lejupielādēt', 'No administrators to download'),
+      });
+      return;
+    }
+
+    try {
+      const { blob, filename } = downloadUsersCSV(users, currentLanguage);
+      downloadBlob(blob, filename);
+      
+      toast({
+        description: t('CSV fails veiksmīgi lejupielādēts', 'CSV file downloaded successfully'),
+      });
+    } catch (error) {
+      console.error("Error downloading CSV:", error);
+      toast({
+        variant: "destructive",
+        description: t('Kļūda lejupielādējot failu', 'Error downloading file'),
+      });
+    }
+  };
+
   // Refresh count with parent component
   useEffect(() => {
     const event = new CustomEvent('adminCountUpdated', { 
-      detail: { count: totalUsers } 
+      detail: { count: users.length } 
     });
     window.dispatchEvent(event);
-  }, [totalUsers]);
+  }, [users.length]);
   
   // Reset to first page when search changes
   useEffect(() => {
     setPage(1);
   }, [searchTerm]);
 
-  const handleUserUpdated = async (updatedUser: User) => {
-    await updateUser(updatedUser);
+  // Initial data fetch
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchAdminUsers();
+    }, 100); // Small delay to allow UI to render first
+    
+    return () => clearTimeout(timer);
+  }, [fetchAdminUsers]);
+
+  const handleUserEditedUpdate = async (updatedUser: User) => {
+    try {
+      const { success, error } = await updateUser(updatedUser);
+      
+      if (success) {
+        handleUserUpdated(updatedUser);
+        toast({
+          description: t('Administrators veiksmīgi atjaunināts', 'Administrator successfully updated')
+        });
+      } else {
+        console.error("Error updating user:", error);
+        toast({
+          variant: "destructive",
+          title: t('Kļūda', 'Error'),
+          description: error || t('Neizdevās atjaunināt administratoru', 'Failed to update administrator')
+        });
+      }
+    } catch (err) {
+      console.error("Unexpected error updating user:", err);
+      toast({
+        variant: "destructive",
+        title: t('Kļūda', 'Error'),
+        description: t('Neizdevās atjaunināt administratoru', 'Failed to update administrator')
+      });
+    }
   };
 
-  const handleUserDeleted = async (userId: string) => {
-    await deleteUser(userId);
-  };
-
-  const handleToggleStatus = async (user: User) => {
-    await toggleUserStatus(user);
+  const handleUserDeletedAction = async (userId: string) => {
+    try {
+      const { success, error } = await deleteUser(userId);
+      
+      if (success) {
+        handleUserDeleted(userId);
+        toast({
+          description: t('Administrators veiksmīgi dzēsts', 'Administrator successfully deleted')
+        });
+      } else {
+        console.error("Error deleting user:", error);
+        toast({
+          variant: "destructive",
+          title: t('Kļūda', 'Error'),
+          description: error || t('Neizdevās dzēst administratoru', 'Failed to delete administrator')
+        });
+      }
+    } catch (err) {
+      console.error("Unexpected error deleting user:", err);
+      toast({
+        variant: "destructive",
+        title: t('Kļūda', 'Error'),
+        description: t('Neizdevās dzēst administratoru', 'Failed to delete administrator')
+      });
+    }
   };
 
   const handleRetry = () => {
     console.log("Manual refresh triggered");
-    refreshUsers();
+    fetchAdminUsers();
   };
 
   return (
@@ -155,9 +231,9 @@ export function AdminUsers() {
             <>
               <UserListTable 
                 users={currentUsers} 
-                onUserUpdated={handleUserUpdated}
-                onUserDeleted={handleUserDeleted}
-                onToggleStatus={handleToggleStatus}
+                onUserUpdated={handleUserEditedUpdate}
+                onUserDeleted={handleUserDeletedAction}
+                onToggleStatus={() => {}} // Not applicable for admins
               />
               
               {totalPages > 1 && (
