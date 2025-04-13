@@ -7,11 +7,11 @@ import { useLanguage } from "@/features/language";
 import { AdminMobileNav } from "@/components/admin/AdminMobileNav";
 
 // Lazy load admin components for better performance
-const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard").then(module => ({ default: module.AdminDashboard })));
-const AdminUsers = lazy(() => import("@/components/admin/AdminUsers").then(module => ({ default: module.AdminUsers })));
-const RegisteredUsers = lazy(() => import("@/components/admin/RegisteredUsers").then(module => ({ default: module.RegisteredUsers })));
-const AdminSubscribers = lazy(() => import("@/components/admin/AdminSubscribers").then(module => ({ default: module.AdminSubscribers })));
-const AdminSettings = lazy(() => import("@/components/admin/AdminSettings").then(module => ({ default: module.AdminSettings })));
+const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard"));
+const AdminUsers = lazy(() => import("@/components/admin/AdminUsers"));
+const RegisteredUsers = lazy(() => import("@/components/admin/RegisteredUsers"));
+const AdminSubscribers = lazy(() => import("@/components/admin/AdminSubscribers"));
+const AdminSettings = lazy(() => import("@/components/admin/AdminSettings"));
 
 interface AdminContentProps {
   activeTab: string;

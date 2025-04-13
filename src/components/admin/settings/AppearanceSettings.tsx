@@ -13,7 +13,6 @@ import {
   Card, 
   CardContent, 
   CardDescription, 
-  CardFooter, 
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
@@ -129,41 +128,39 @@ export function AppearanceSettings() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("Valoda", "Language", "Язык")}</FormLabel>
-                  <div className="flex items-center gap-4">
-                    <FormControl>
-                      <Select 
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                          const newLanguage = languages.find(lang => lang.code === value);
-                          if (newLanguage) {
-                            setLanguage(newLanguage);
-                            toast({
-                              description: t(
-                                `Valoda nomainīta uz: ${newLanguage.name}`, 
-                                `Language changed to: ${newLanguage.name}`,
-                                `Язык изменен на: ${newLanguage.name}`
-                              ),
-                            });
-                          }
-                        }} 
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder={t("Izvēlēties valodu", "Select language", "Выбрать язык")} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {languages.map(language => (
-                            <SelectItem key={language.code} value={language.code}>
-                              <div className="flex items-center gap-2">
-                                <span>{language.flag}</span>
-                                <span>{language.name}</span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </div>
+                  <FormControl>
+                    <Select 
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        const newLanguage = languages.find(lang => lang.code === value);
+                        if (newLanguage) {
+                          setLanguage(newLanguage);
+                          toast({
+                            description: t(
+                              `Valoda nomainīta uz: ${newLanguage.name}`, 
+                              `Language changed to: ${newLanguage.name}`,
+                              `Язык изменен на: ${newLanguage.name}`
+                            ),
+                          });
+                        }
+                      }} 
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder={t("Izvēlēties valodu", "Select language", "Выбрать язык")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {languages.map(language => (
+                          <SelectItem key={language.code} value={language.code}>
+                            <div className="flex items-center gap-2">
+                              <span>{language.flag}</span>
+                              <span>{language.name}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
                   <FormDescription>
                     {t(
                       "Izvēlieties administrācijas paneļa valodu", 
