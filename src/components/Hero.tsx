@@ -1,4 +1,3 @@
-
 import { memo, useState, useEffect } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
@@ -14,14 +13,9 @@ export const Hero = memo(function Hero() {
   useEffect(() => {
     const fetchBackgroundImage = async () => {
       try {
-        const { data, error } = await supabase.storage
+        const { data } = await supabase.storage
           .from('backgrounds')
-          .getPublicUrl('hero-background.jpg');
-
-        if (error) {
-          console.warn('Error fetching background image:', error);
-          return;
-        }
+          .getPublicUrl('netieku_bilesu_pardosana_fons_1');
 
         if (data?.publicUrl) {
           setBackgroundImage(data.publicUrl);
