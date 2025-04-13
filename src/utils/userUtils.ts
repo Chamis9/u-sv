@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import type { User } from '@/types/users';
 
@@ -49,9 +48,8 @@ export const fetchUsers = async () => {
         // Check if user is banned or has a banned property in the metadata
         const isBanned = 
           authUser && 
-          (typeof authUser.banned === 'boolean' ? authUser.banned : 
-           (authUser.user_metadata && typeof authUser.user_metadata.banned === 'boolean') ? 
-             authUser.user_metadata.banned : false);
+          ((authUser.user_metadata && typeof authUser.user_metadata.banned === 'boolean') ? 
+            authUser.user_metadata.banned : false);
             
         return {
           id: registeredUser.id,
