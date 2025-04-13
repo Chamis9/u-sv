@@ -20,6 +20,7 @@ export const Hero = memo(function Hero() {
 
         if (data?.publicUrl) {
           setBackgroundImage(data.publicUrl);
+          console.log('Background image URL:', data.publicUrl);
         }
       } catch (err) {
         console.error('Unexpected error fetching background image:', err);
@@ -51,14 +52,14 @@ export const Hero = memo(function Hero() {
       </Helmet>
       
       {/* Background overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40 z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40 z-10"></div>
       
       {/* Falling tickets animation */}
       <FallingTickets />
       
       {/* Background image with optimization for better performance */}
       <div 
-        className="absolute inset-0 z-[-1] bg-cover bg-center will-change-transform"
+        className="absolute inset-0 z-0 bg-cover bg-center"
         style={{ 
           backgroundImage: `url('${backgroundImage}')` 
         }}
@@ -66,7 +67,7 @@ export const Hero = memo(function Hero() {
       ></div>
       
       {/* Hero content */}
-      <div className="container mx-auto px-4 z-10 text-center py-20">
+      <div className="container mx-auto px-4 z-20 text-center py-20">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
             {hero.title} <span className="text-gradient">{hero.titleHighlight}</span>
