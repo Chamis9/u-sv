@@ -103,7 +103,7 @@ const FormLabel = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 >(({ className, ...props }, ref) => {
   const field = useFormField()
-  // Use optional chaining to safely access the error property
+  // Safely check if field has an error property and it exists
   const hasError = field && 'error' in field && !!field.error
 
   return (
@@ -122,7 +122,7 @@ const FormControl = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof Slot>
 >(({ ...props }, ref) => {
   const field = useFormField()
-  // Use optional chaining to safely access the error property
+  // Safely check if field has an error property and it exists
   const hasError = field && 'error' in field && !!field.error
 
   return (
@@ -163,7 +163,7 @@ const FormMessage = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
   const field = useFormField()
-  // Safely check if the field has an error property
+  // Safely check if field has an error property
   const errorMessage = field && 'error' in field ? field.error?.message : undefined
   const body = errorMessage ? String(errorMessage) : children
 
