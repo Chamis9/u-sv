@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { ProfileInfo } from "@/components/profile/ProfileInfo";
-import { ProfileEditForm } from "@/components/profile/ProfileEditForm";
 import { useAuth } from "@/contexts/AuthContext";
 import { User } from "@/types/users";
 import { useNavigate } from "react-router-dom";
@@ -11,12 +9,16 @@ import { useLanguage } from "@/features/language";
 import { SEO } from "@/components/SEO";
 import { updateUser } from "@/utils/user/userOperations";
 import { supabase } from "@/integrations/supabase/client";
+import { ProfileSidebar } from "@/components/profile/ProfileSidebar";
+import { ProfileContent } from "@/components/profile/ProfileContent";
+import { ProfileHeader } from "@/components/profile/ProfileHeader";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 const Profile = () => {
   const { isAuthenticated, isAuthLoading, userEmail } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
+  const [activeTab, setActiveTab] = useState("account"); // Default tab is account
   const navigate = useNavigate();
   const { currentLanguage } = useLanguage();
   
@@ -96,78 +98,51 @@ const Profile = () => {
     };
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-  };
-
-  const handleSave = async (updatedUser: User) => {
-    try {
-      // For mock demo, just update the state without API calls
-      if (!isAuthenticated) {
-        setUser(updatedUser);
-        setIsEditing(false);
-        return true;
-      }
-      
-      // Real update logic for authenticated users
-      const result = await updateUser(updatedUser);
-      
-      if (result.success) {
-        setUser(updatedUser);
-        setIsEditing(false);
-        return true;
-      } else {
-        console.error("Failed to update user:", result.error);
-        return false;
-      }
-    } catch (error) {
-      console.error("Error saving profile:", error);
-      return false;
-    }
-  };
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <SEO 
-        title={t("Mans profils - netieku.es", "My Profile - netieku.es")} 
-        description={t("Pārvaldiet savu lietotāja profilu", "Manage your user profile")}
-      />
-      <Header />
-      
-      <main className="flex-grow pt-24 pb-12 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <h1 className="text-3xl font-bold mb-6">{t("Mans profils", "My Profile")}</h1>
+    <ThemeProvider>
+      <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+        <SEO 
+          title={t("Mans profils - netieku.es", "My Profile - netieku.es")} 
+          description={t("Pārvaldiet savu lietotāja profilu", "Manage your user profile")}
+        />
+        <Header />
+        
+        <div className="flex flex-1 overflow-hidden pt-16">
+          {/* Sidebar - līdzīgi kā AdminSidebar */}
+          <ProfileSidebar 
+            activeTab={activeTab} 
+            onTabChange={setActiveTab}
+            user={user}
+          />
           
-          {isLoading ? (
-            <div className="flex justify-center p-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-            </div>
-          ) : user ? (
-            isEditing ? (
-              <ProfileEditForm 
+          {/* Main content */}
+          <main className="flex-1 overflow-y-auto p-6">
+            <ProfileHeader activeTab={activeTab} user={user} />
+            
+            {isLoading ? (
+              <div className="flex justify-center p-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+              </div>
+            ) : user ? (
+              <ProfileContent 
+                activeTab={activeTab} 
                 user={user} 
-                onCancel={handleCancel}
-                onSave={handleSave}
+                onUserUpdate={(updatedUser) => setUser(updatedUser)}
+                isLoading={isLoading}
               />
             ) : (
-              <ProfileInfo user={user} onEdit={handleEdit} />
-            )
-          ) : (
-            <div className="text-center p-12 bg-slate-50 rounded-lg">
-              <p className="text-lg text-muted-foreground">
-                {t("Lietotāja dati nav pieejami", "User data is not available")}
-              </p>
-            </div>
-          )}
+              <div className="text-center p-12 bg-slate-50 rounded-lg">
+                <p className="text-lg text-muted-foreground">
+                  {t("Lietotāja dati nav pieejami", "User data is not available")}
+                </p>
+              </div>
+            )}
+          </main>
         </div>
-      </main>
-      
-      <Footer />
-    </div>
+        
+        <Footer />
+      </div>
+    </ThemeProvider>
   );
 };
 
