@@ -102,13 +102,15 @@ const FormLabel = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 >(({ className, ...props }, ref) => {
-  const { error, formItemId } = useFormField()
+  const field = useFormField()
+  // Use optional chaining to safely access the error property
+  const hasError = field && 'error' in field && !!field.error
 
   return (
     <Label
       ref={ref}
-      className={cn(error && "text-destructive", className)}
-      htmlFor={formItemId}
+      className={cn(hasError && "text-destructive", className)}
+      htmlFor={field.formItemId}
       {...props}
     />
   )
@@ -119,18 +121,20 @@ const FormControl = React.forwardRef<
   React.ElementRef<typeof Slot>,
   React.ComponentPropsWithoutRef<typeof Slot>
 >(({ ...props }, ref) => {
-  const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
+  const field = useFormField()
+  // Use optional chaining to safely access the error property
+  const hasError = field && 'error' in field && !!field.error
 
   return (
     <Slot
       ref={ref}
-      id={formItemId}
+      id={field.formItemId}
       aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
+        !hasError
+          ? `${field.formDescriptionId}`
+          : `${field.formDescriptionId} ${field.formMessageId}`
       }
-      aria-invalid={!!error}
+      aria-invalid={hasError}
       {...props}
     />
   )
@@ -158,8 +162,10 @@ const FormMessage = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
-  const { error, formMessageId } = useFormField()
-  const body = error ? String(error?.message) : children
+  const field = useFormField()
+  // Safely check if the field has an error property
+  const errorMessage = field && 'error' in field ? field.error?.message : undefined
+  const body = errorMessage ? String(errorMessage) : children
 
   if (!body) {
     return null
@@ -168,7 +174,7 @@ const FormMessage = React.forwardRef<
   return (
     <p
       ref={ref}
-      id={formMessageId}
+      id={field.formMessageId}
       className={cn("text-sm font-medium text-destructive", className)}
       {...props}
     >

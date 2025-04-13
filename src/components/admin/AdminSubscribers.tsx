@@ -151,3 +151,6 @@ export function AdminSubscribers() {
     </div>
   );
 }
+
+// Add default export for lazy loading compatibility
+export default AdminSubscribers;
