@@ -1,7 +1,7 @@
 
 import React from "react";
 import { User } from "@/types/users";
-import { AccountTab } from "./tabs/AccountTab";
+import { AccountTab } from "./tabs/account";
 import { TicketsTab } from "./tabs/TicketsTab";
 import { PaymentsTab } from "./tabs/PaymentsTab";
 import { SettingsTab } from "./tabs/SettingsTab";
