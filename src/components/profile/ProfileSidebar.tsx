@@ -23,29 +23,32 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
   const { currentLanguage } = useLanguage();
   const { theme } = useTheme();
   
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lvText: string, enText: string, ruText?: string) => {
+    if (currentLanguage.code === 'lv') return lvText;
+    if (currentLanguage.code === 'ru') return ruText || enText;
+    return enText;
+  };
   
   const navItems = [
     {
       id: "account",
       icon: <UserIcon size={18} />,
-      label: t("Mans konts", "My Account")
+      label: t("Mans konts", "My Account", "Мой аккаунт")
     },
     {
       id: "tickets",
       icon: <Ticket size={18} />,
-      label: t("Manas biļetes", "My Tickets")
+      label: t("Manas biļetes", "My Tickets", "Мои билеты")
     },
     {
       id: "payments",
       icon: <CreditCard size={18} />,
-      label: t("Mani maksājumi", "My Payments")
+      label: t("Mani maksājumi", "My Payments", "Мои платежи")
     },
     {
       id: "settings",
       icon: <Settings size={18} />,
-      label: t("Iestatījumi", "Settings")
+      label: t("Iestatījumi", "Settings", "Настройки")
     }
   ];
   
@@ -76,7 +79,7 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
         <div className="flex flex-col items-center space-y-2">
           <UserAvatar user={completeUserObject} size="lg" />
           <h2 className="text-xl font-semibold mt-2">
-            {user ? user.name || t("Lietotājs", "User") : t("Lietotājs", "User")}
+            {user ? user.name || t("Lietotājs", "User", "Пользователь") : t("Lietotājs", "User", "Пользователь")}
           </h2>
           <p className="text-sm text-muted-foreground">
             {user ? user.email : ""}
@@ -104,7 +107,7 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
           onClick={() => console.log("Logout clicked")}
         >
           <LogOut size={18} className="mr-2" />
-          {t("Iziet", "Logout")}
+          {t("Iziet", "Logout", "Выйти")}
         </Button>
       </div>
     </aside>

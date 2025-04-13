@@ -28,8 +28,11 @@ export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
   
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lvText: string, enText: string, ruText?: string) => {
+    if (currentLanguage.code === 'lv') return lvText;
+    if (currentLanguage.code === 'ru') return ruText || enText;
+    return enText;
+  };
   
   const handleThemeChange = (checked: boolean) => {
     const newTheme = checked ? "dark" : "light";
@@ -37,8 +40,8 @@ export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
     
     toast({
       description: checked 
-        ? t("Tumšais motīvs ieslēgts", "Dark mode enabled") 
-        : t("Gaišais motīvs ieslēgts", "Light mode enabled"),
+        ? t("Tumšais motīvs ieslēgts", "Dark mode enabled", "Тёмный режим включен") 
+        : t("Gaišais motīvs ieslēgts", "Light mode enabled", "Светлый режим включен"),
     });
   };
   
@@ -50,7 +53,8 @@ export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
       toast({
         description: t(
           `Valoda nomainīta uz: ${selectedLanguage.name}`, 
-          `Language changed to: ${selectedLanguage.name}`
+          `Language changed to: ${selectedLanguage.name}`,
+          `Язык изменен на: ${selectedLanguage.name}`
         ),
       });
     }
@@ -60,17 +64,17 @@ export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>{t("Izskata iestatījumi", "Appearance Settings")}</CardTitle>
+          <CardTitle>{t("Izskata iestatījumi", "Appearance Settings", "Настройки внешнего вида")}</CardTitle>
           <CardDescription>
-            {t("Pielāgojiet aplikācijas izskatu", "Customize how the application looks")}
+            {t("Pielāgojiet aplikācijas izskatu", "Customize how the application looks", "Настройте внешний вид приложения")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>{t("Tumšais motīvs", "Dark Mode")}</Label>
+              <Label>{t("Tumšais motīvs", "Dark Mode", "Тёмный режим")}</Label>
               <p className="text-sm text-muted-foreground">
-                {t("Ieslēdziet tumšo motīvu, lai samazinātu acu slodzi", "Turn on dark mode to reduce eye strain")}
+                {t("Ieslēdziet tumšo motīvu, lai samazinātu acu slodzi", "Turn on dark mode to reduce eye strain", "Включите тёмный режим, чтобы уменьшить нагрузку на глаза")}
               </p>
             </div>
             <div className="flex items-center space-x-2">
@@ -87,9 +91,9 @@ export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
       
       <Card>
         <CardHeader>
-          <CardTitle>{t("Valodas iestatījumi", "Language Settings")}</CardTitle>
+          <CardTitle>{t("Valodas iestatījumi", "Language Settings", "Языковые настройки")}</CardTitle>
           <CardDescription>
-            {t("Izvēlieties aplikācijas valodu", "Choose the application language")}
+            {t("Izvēlieties aplikācijas valodu", "Choose the application language", "Выберите язык приложения")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -113,17 +117,17 @@ export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
       
       <Card>
         <CardHeader>
-          <CardTitle>{t("Paziņojumu iestatījumi", "Notification Settings")}</CardTitle>
+          <CardTitle>{t("Paziņojumu iestatījumi", "Notification Settings", "Настройки уведомлений")}</CardTitle>
           <CardDescription>
-            {t("Pārvaldiet, kādus paziņojumus vēlaties saņemt", "Manage what notifications you receive")}
+            {t("Pārvaldiet, kādus paziņojumus vēlaties saņemt", "Manage what notifications you receive", "Управляйте получаемыми уведомлениями")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>{t("E-pasta paziņojumi", "Email Notifications")}</Label>
+              <Label>{t("E-pasta paziņojumi", "Email Notifications", "Уведомления по электронной почте")}</Label>
               <p className="text-sm text-muted-foreground">
-                {t("Saņemiet paziņojumus uz e-pastu", "Receive notifications via email")}
+                {t("Saņemiet paziņojumus uz e-pastu", "Receive notifications via email", "Получайте уведомления по электронной почте")}
               </p>
             </div>
             <Switch defaultChecked={true} />
@@ -131,9 +135,9 @@ export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
           
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>{t("Mārketinga e-pasti", "Marketing Emails")}</Label>
+              <Label>{t("Mārketinga e-pasti", "Marketing Emails", "Маркетинговые сообщения")}</Label>
               <p className="text-sm text-muted-foreground">
-                {t("Saņemiet jaunumus un akcijas", "Receive news and promotions")}
+                {t("Saņemiet jaunumus un akcijas", "Receive news and promotions", "Получайте новости и акции")}
               </p>
             </div>
             <Switch defaultChecked={false} />

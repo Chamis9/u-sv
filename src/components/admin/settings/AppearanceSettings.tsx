@@ -22,6 +22,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { Save, RefreshCw, Moon, Sun } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -67,6 +68,17 @@ export function AppearanceSettings() {
     });
   };
 
+  const handleThemeChange = (checked: boolean) => {
+    const newTheme = checked ? "dark" : "light";
+    setTheme(newTheme);
+    
+    toast({
+      description: checked 
+        ? t("Tumšais motīvs ieslēgts", "Dark mode enabled") 
+        : t("Gaišais motīvs ieslēgts", "Light mode enabled"),
+    });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -75,53 +87,26 @@ export function AppearanceSettings() {
           {t("Pārvaldiet lietotāja saskarnes izskatu un valodu", "Manage the user interface appearance and language")}
         </CardDescription>
       </CardHeader>
-      <Form {...appearanceForm}>
-        <form onSubmit={appearanceForm.handleSubmit(onAppearanceSubmit)}>
-          <CardContent className="space-y-6">
-            <FormField
-              control={appearanceForm.control}
-              name="theme"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("Tēma", "Theme")}</FormLabel>
-                  <div className="flex items-center gap-4">
-                    <FormControl>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder={t("Izvēlēties tēmu", "Select theme")} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="light">
-                            <div className="flex items-center gap-2">
-                              <Sun className="h-4 w-4" />
-                              <span>{t("Gaišā", "Light")}</span>
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="dark">
-                            <div className="flex items-center gap-2">
-                              <Moon className="h-4 w-4" />
-                              <span>{t("Tumšā", "Dark")}</span>
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="system">
-                            <div className="flex items-center gap-2">
-                              <span>{t("Sistēmas", "System")}</span>
-                            </div>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                  </div>
-                  <FormDescription>
-                    {t("Izvēlieties vietnes tēmu", "Choose the site theme")}
-                  </FormDescription>
-                </FormItem>
-              )}
+      <CardContent className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <FormLabel>{t("Tumšais motīvs", "Dark Mode")}</FormLabel>
+            <p className="text-sm text-muted-foreground">
+              {t("Ieslēdziet tumšo motīvu, lai samazinātu acu slodzi", "Turn on dark mode to reduce eye strain")}
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Sun className="h-4 w-4 text-muted-foreground" />
+            <Switch 
+              checked={theme === "dark"}
+              onCheckedChange={handleThemeChange}
             />
-            
+            <Moon className="h-4 w-4 text-muted-foreground" />
+          </div>
+        </div>
+        
+        <Form {...appearanceForm}>
+          <form onSubmit={appearanceForm.handleSubmit(onAppearanceSubmit)}>
             <FormField
               control={appearanceForm.control}
               name="language"
@@ -131,23 +116,33 @@ export function AppearanceSettings() {
                   <div className="flex items-center gap-4">
                     <FormControl>
                       <Select 
-                        onValueChange={field.onChange} 
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          const newLanguage = languages.find(lang => lang.code === value);
+                          if (newLanguage) {
+                            setLanguage(newLanguage);
+                            toast({
+                              description: t(
+                                `Valoda nomainīta uz: ${newLanguage.name}`, 
+                                `Language changed to: ${newLanguage.name}`
+                              ),
+                            });
+                          }
+                        }} 
                         defaultValue={field.value}
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder={t("Izvēlēties valodu", "Select language")} />
                         </SelectTrigger>
                         <SelectContent>
-                          {languages
-                            .filter(lang => ['lv', 'en'].includes(lang.code))
-                            .map(language => (
-                              <SelectItem key={language.code} value={language.code}>
-                                <div className="flex items-center gap-2">
-                                  <span>{language.flag}</span>
-                                  <span>{language.name}</span>
-                                </div>
-                              </SelectItem>
-                            ))}
+                          {languages.map(language => (
+                            <SelectItem key={language.code} value={language.code}>
+                              <div className="flex items-center gap-2">
+                                <span>{language.flag}</span>
+                                <span>{language.name}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -158,23 +153,24 @@ export function AppearanceSettings() {
                 </FormItem>
               )}
             />
-          </CardContent>
-          <CardFooter className="flex justify-end space-x-2">
-            <Button 
-              type="button" 
-              variant="outline"
-              onClick={() => appearanceForm.reset()}
-            >
-              <RefreshCw className="mr-2 h-4 w-4" />
-              {t("Atiestatīt", "Reset")}
-            </Button>
-            <Button type="submit">
-              <Save className="mr-2 h-4 w-4" />
-              {t("Saglabāt izmaiņas", "Save changes")}
-            </Button>
-          </CardFooter>
-        </form>
-      </Form>
+            
+            <div className="mt-6 flex justify-end space-x-2">
+              <Button 
+                type="button" 
+                variant="outline"
+                onClick={() => appearanceForm.reset()}
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                {t("Atiestatīt", "Reset")}
+              </Button>
+              <Button type="submit">
+                <Save className="mr-2 h-4 w-4" />
+                {t("Saglabāt izmaiņas", "Save changes")}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
     </Card>
   );
 }
