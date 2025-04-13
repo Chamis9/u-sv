@@ -12,6 +12,8 @@ import {
   LogOut
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ProfileSidebarProps {
   activeTab: string;
@@ -22,11 +24,36 @@ interface ProfileSidebarProps {
 export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarProps) {
   const { currentLanguage } = useLanguage();
   const { theme } = useTheme();
+  const { logout } = useAuth();
+  const { toast } = useToast();
   
   const t = (lvText: string, enText: string, ruText?: string) => {
     if (currentLanguage.code === 'lv') return lvText;
     if (currentLanguage.code === 'ru') return ruText || enText;
     return enText;
+  };
+  
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast({
+        description: t(
+          "Jūs esat veiksmīgi izgājis no sistēmas",
+          "You have been successfully logged out",
+          "Вы успешно вышли из системы"
+        ),
+      });
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast({
+        variant: "destructive",
+        description: t(
+          "Kļūda izejot no sistēmas",
+          "Error during logout process",
+          "Ошибка при выходе из системы"
+        ),
+      });
+    }
   };
   
   const navItems = [
@@ -104,7 +131,7 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
         <Button 
           variant="destructive"
           className="w-full justify-start"
-          onClick={() => console.log("Logout clicked")}
+          onClick={handleLogout}
         >
           <LogOut size={18} className="mr-2" />
           {t("Iziet", "Logout", "Выйти")}
