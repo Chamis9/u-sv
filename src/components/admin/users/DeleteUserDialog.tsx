@@ -37,7 +37,6 @@ export function DeleteUserDialog({ user, open, onClose, onUserDeleted }: DeleteU
     if (!user) return;
     
     setIsDeleting(true);
-    console.log("Attempting to delete user:", user.id);
     
     try {
       const { success, error } = await deleteUser(user.id);

@@ -47,7 +47,6 @@ export function EditUserDialog({ user, open, onClose, onUserUpdated }: EditUserD
     if (!user) return;
     
     setIsSubmitting(true);
-    console.log("Attempting to update user:", user.id, "with name:", name, "and phone:", phone);
     
     try {
       const updatedUser = {
