@@ -5,7 +5,7 @@ import { UserListHeader } from "@/components/admin/users/UserListHeader";
 import { UserListTable } from "@/components/admin/users/UserListTable";
 import { EmptyOrErrorState } from "@/components/admin/users/EmptyOrErrorState";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, AlertCircle } from "lucide-react"; // Added AlertCircle import
 import { User } from "@/types/users";
 import { Pagination } from "@/components/ui/pagination";
 import { FilterDialog } from "@/components/admin/users/FilterDialog";
