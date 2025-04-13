@@ -2,19 +2,21 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Mail, Download } from "lucide-react";
+import { Search, Mail, Download, UserPlus } from "lucide-react";
 import { useLanguage } from "@/features/language";
 
 interface SubscriberListHeaderProps {
   searchTerm: string;
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onDownloadCSV: () => void;
+  onAddSubscriber?: () => void;
 }
 
 export function SubscriberListHeader({
   searchTerm,
   onSearchChange,
-  onDownloadCSV
+  onDownloadCSV,
+  onAddSubscriber
 }: SubscriberListHeaderProps) {
   const { currentLanguage } = useLanguage();
   
@@ -38,6 +40,11 @@ export function SubscriberListHeader({
         <Button variant="outline" size="sm" onClick={onDownloadCSV}>
           <Download className="h-4 w-4 mr-2" />
           {t('Eksportēt CSV', 'Export CSV')}
+        </Button>
+        
+        <Button size="sm" onClick={onAddSubscriber}>
+          <UserPlus className="h-4 w-4 mr-2" />
+          {t('Pievienot abonentu', 'Add Subscriber')}
         </Button>
         
         <Button size="sm">

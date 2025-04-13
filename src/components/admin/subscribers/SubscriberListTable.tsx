@@ -30,10 +30,16 @@ import {
   Mail, 
   Trash, 
   Edit,
-  Save
+  Save,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown
 } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Subscriber } from "@/hooks/useSubscribers";
+
+type SortField = 'id' | 'email' | 'created_at';
+type SortDirection = 'asc' | 'desc' | null;
 
 interface SubscriberListTableProps {
   subscribers: Subscriber[];
@@ -46,6 +52,8 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
   const [editedEmail, setEditedEmail] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [sortField, setSortField] = useState<SortField | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   
   const { currentLanguage } = useLanguage();
   
@@ -81,6 +89,51 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
       }
     }
   };
+  
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      // Cycle through: asc -> desc -> null
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortField(null);
+        setSortDirection(null);
+      }
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+  
+  // Sort the subscribers based on sort state
+  const sortedSubscribers = [...subscribers];
+  if (sortField && sortDirection) {
+    sortedSubscribers.sort((a, b) => {
+      let valueA = a[sortField];
+      let valueB = b[sortField];
+      
+      // Handle null values
+      if (valueA === null) return sortDirection === 'asc' ? -1 : 1;
+      if (valueB === null) return sortDirection === 'asc' ? 1 : -1;
+      
+      // Special case for dates
+      if (sortField === 'created_at') {
+        valueA = new Date(valueA).getTime();
+        valueB = new Date(valueB).getTime();
+      }
+      
+      if (valueA < valueB) return sortDirection === 'asc' ? -1 : 1;
+      if (valueA > valueB) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+  
+  const renderSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ArrowUpDown className="ml-1 h-4 w-4" />;
+    }
+    return sortDirection === 'asc' ? <ArrowUp className="ml-1 h-4 w-4" /> : <ArrowDown className="ml-1 h-4 w-4" />;
+  };
 
   return (
     <>
@@ -88,15 +141,42 @@ export function SubscriberListTable({ subscribers, onDelete, onUpdate }: Subscri
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>{t('E-pasts', 'Email')}</TableHead>
-              <TableHead>{t('Pievienošanās datums', 'Join Date')}</TableHead>
+              <TableHead>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => handleSort('id')} 
+                  className="p-0 h-auto font-medium text-muted-foreground hover:text-foreground flex items-center"
+                >
+                  ID
+                  {renderSortIcon('id')}
+                </Button>
+              </TableHead>
+              <TableHead>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => handleSort('email')} 
+                  className="p-0 h-auto font-medium text-muted-foreground hover:text-foreground flex items-center"
+                >
+                  {t('E-pasts', 'Email')}
+                  {renderSortIcon('email')}
+                </Button>
+              </TableHead>
+              <TableHead>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => handleSort('created_at')} 
+                  className="p-0 h-auto font-medium text-muted-foreground hover:text-foreground flex items-center"
+                >
+                  {t('Pievienošanās datums', 'Join Date')}
+                  {renderSortIcon('created_at')}
+                </Button>
+              </TableHead>
               <TableHead className="text-right">{t('Darbības', 'Actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {subscribers.length > 0 ? (
-              subscribers.map(subscriber => (
+            {sortedSubscribers.length > 0 ? (
+              sortedSubscribers.map(subscriber => (
                 <TableRow key={subscriber.id}>
                   <TableCell>{subscriber.id}</TableCell>
                   <TableCell className="font-medium">{subscriber.email}</TableCell>

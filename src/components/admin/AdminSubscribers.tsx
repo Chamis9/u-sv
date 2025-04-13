@@ -1,14 +1,17 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSubscribers } from "@/hooks/useSubscribers";
 import { useLanguage } from "@/features/language";
 import { SubscriberListHeader } from "@/components/admin/subscribers/SubscriberListHeader";
 import { SubscriberListTable } from "@/components/admin/subscribers/SubscriberListTable";
 import { EmptyOrErrorState } from "@/components/admin/subscribers/EmptyOrErrorState";
+import { AddSubscriberDialog } from "@/components/admin/subscribers/AddSubscriberDialog";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw } from "lucide-react";
 
 export function AdminSubscribers() {
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  
   const { 
     subscribers, 
     searchTerm, 
@@ -26,9 +29,6 @@ export function AdminSubscribers() {
   const { currentLanguage } = useLanguage();
   
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
-
-  // We'll intentionally not auto-refresh on mount
-  // The user will need to click the refresh button
 
   const handleRetry = () => {
     console.log("Manual refresh triggered");
@@ -82,6 +82,7 @@ export function AdminSubscribers() {
             searchTerm={searchTerm}
             onSearchChange={handleSearch}
             onDownloadCSV={handleDownloadCSV}
+            onAddSubscriber={() => setIsAddDialogOpen(true)}
           />
           
           {isLoading ? (
@@ -118,13 +119,18 @@ export function AdminSubscribers() {
             <div className="flex justify-center items-center h-64 text-center">
               <div>
                 <p className="text-muted-foreground">
-                  {t('Nav neviena abonenta. Pievienojiet pirmo abonentu, izmantojot jaunumu pietiekšanās formu vai manuāli izveidojiet ierakstu Supabase.', 
-                    'No subscribers yet. Add your first subscriber using the newsletter signup form or manually create a record in Supabase.')}
+                  {t('Nav neviena abonenta. Pievienojiet pirmo abonentu, izmantojot jaunumu pietiekšanās formu vai pievienojot manuāli.', 
+                    'No subscribers yet. Add your first subscriber using the newsletter signup form or add one manually.')}
                 </p>
-                <Button className="mt-4" variant="outline" onClick={handleRetry}>
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  {t('Atsvaidzināt datus', 'Refresh Data')}
-                </Button>
+                <div className="flex justify-center gap-2 mt-4">
+                  <Button variant="outline" onClick={handleRetry}>
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    {t('Atsvaidzināt datus', 'Refresh Data')}
+                  </Button>
+                  <Button onClick={() => setIsAddDialogOpen(true)}>
+                    {t('Pievienot abonentu', 'Add Subscriber')}
+                  </Button>
+                </div>
               </div>
             </div>
           ) : (
@@ -134,6 +140,12 @@ export function AdminSubscribers() {
               onUpdate={handleUpdateSubscriber}
             />
           )}
+          
+          <AddSubscriberDialog 
+            open={isAddDialogOpen}
+            onClose={() => setIsAddDialogOpen(false)}
+            onSubscriberAdded={refreshSubscribers}
+          />
         </>
       )}
     </div>
