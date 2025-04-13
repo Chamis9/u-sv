@@ -1,3 +1,4 @@
+
 import { memo, useState, useEffect } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
@@ -8,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Hero = memo(function Hero() {
   const { translations } = useLanguage();
   const { hero } = translations;
-  const [backgroundImage, setBackgroundImage] = useState('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80');
+  const [backgroundImage, setBackgroundImage] = useState('https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/backgrounds//netieku_bilesu_pardosana_fons_1.jpeg');
 
   useEffect(() => {
     const fetchBackgroundImage = async () => {
