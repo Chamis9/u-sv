@@ -108,6 +108,41 @@ export function useRegisteredUsers() {
     window.dispatchEvent(event);
   };
 
+  const handleToggleStatus = (user: User) => {
+    const newStatus = user.status === 'active' ? 'inactive' : 'active';
+    const updatedUser = {
+      ...user,
+      status: newStatus as 'active' | 'inactive',
+      updated_at: new Date().toISOString()
+    };
+    
+    handleUserUpdated(updatedUser);
+    
+    supabase
+      .from('registered_users')
+      .update({
+        status: newStatus,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', user.id)
+      .then(({ error }) => {
+        if (error) {
+          console.error("Error toggling user status:", error);
+          toast({
+            variant: "destructive",
+            title: t('Kļūda', 'Error'),
+            description: t('Neizdevās mainīt lietotāja statusu', 'Failed to change user status')
+          });
+        } else {
+          toast({
+            description: user.status === 'active' 
+              ? t('Lietotājs deaktivizēts', 'User deactivated') 
+              : t('Lietotājs aktivizēts', 'User activated')
+          });
+        }
+      });
+  };
+
   return {
     users: filteredUsers,
     searchTerm,
@@ -116,6 +151,7 @@ export function useRegisteredUsers() {
     fetchRegisteredUsers,
     handleSearch,
     handleUserUpdated,
-    handleUserDeleted
+    handleUserDeleted,
+    handleToggleStatus
   };
 }

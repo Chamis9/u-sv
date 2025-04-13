@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
@@ -19,7 +20,8 @@ export function RegisteredUsers() {
     fetchRegisteredUsers, 
     handleSearch, 
     handleUserUpdated, 
-    handleUserDeleted 
+    handleUserDeleted,
+    handleToggleStatus 
   } = useRegisteredUsers();
   
   const { currentLanguage } = useLanguage();
@@ -94,6 +96,7 @@ export function RegisteredUsers() {
               users={users} 
               onUserUpdated={handleUserUpdated}
               onUserDeleted={handleUserDeleted}
+              onToggleStatus={handleToggleStatus}
             />
           )}
         </>
