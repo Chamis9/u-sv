@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Footer } from "@/components/Footer";
 import { AdminHeader } from "@/components/admin/AdminHeader";
@@ -12,7 +12,23 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 function AdminPage() {
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [adminCount, setAdminCount] = useState(0);
   const { isAuthenticated, isAuthLoading } = useAuth();
+
+  // Klausīties administratoru skaita atjaunināšanas notikumam
+  useEffect(() => {
+    const handleAdminCountUpdate = (event: any) => {
+      if (event.detail && typeof event.detail.count === 'number') {
+        setAdminCount(event.detail.count);
+      }
+    };
+
+    window.addEventListener('adminCountUpdated', handleAdminCountUpdate);
+
+    return () => {
+      window.removeEventListener('adminCountUpdated', handleAdminCountUpdate);
+    };
+  }, []);
 
   if (isAuthLoading) {
     return (
@@ -51,6 +67,7 @@ function AdminPage() {
           activeTab={activeTab} 
           onTabChange={setActiveTab}
           subscriberCount={5}
+          adminCount={adminCount}
         />
         
         {/* Main content */}

@@ -9,6 +9,7 @@ interface NavigationProps {
   onTabChange: (tab: string) => void;
   userCount: number;
   subscriberCount: number;
+  adminCount?: number;
   translations: TranslationObject;
 }
 
@@ -17,9 +18,10 @@ export const Navigation = ({
   onTabChange, 
   userCount, 
   subscriberCount, 
+  adminCount = 0,
   translations 
 }: NavigationProps) => {
-  const navItems = getNavItems(translations, userCount, subscriberCount);
+  const navItems = getNavItems(translations, userCount, subscriberCount, adminCount);
   
   return (
     <nav className="flex-1 p-4 space-y-1">

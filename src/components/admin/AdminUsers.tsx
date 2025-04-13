@@ -36,7 +36,7 @@ export function AdminUsers() {
   // Share the total users count with the parent component
   useEffect(() => {
     // Using CustomEvent to pass data to parent component
-    const event = new CustomEvent('userCountUpdated', { 
+    const event = new CustomEvent('adminCountUpdated', { 
       detail: { count: totalUsers } 
     });
     window.dispatchEvent(event);
@@ -45,8 +45,8 @@ export function AdminUsers() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t('Lietotāju pārvaldība', 'User Management')}</h1>
-        <p className="text-muted-foreground">{t('Pārvaldiet platformas lietotājus un to lomas', 'Manage platform users and their roles')}</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('Administratoru pārvaldība', 'Administrator Management')}</h1>
+        <p className="text-muted-foreground">{t('Pārvaldiet platformas administratorus un to lomas', 'Manage platform administrators and their roles')}</p>
       </div>
       
       <div className="flex justify-end">
@@ -68,8 +68,8 @@ export function AdminUsers() {
             <h3 className="font-medium">{t('Autentifikācijas kļūda', 'Authentication Error')}</h3>
           </div>
           <p className="mt-2 text-sm">
-            {t('Jums jāpieslēdzas ar administratora kontu, lai piekļūtu lietotājiem.', 
-              'You need to sign in with an administrator account to access users.')}
+            {t('Jums jāpieslēdzas ar administratora kontu, lai piekļūtu administratoriem.', 
+              'You need to sign in with an administrator account to access administrators.')}
           </p>
         </div>
       )}
@@ -116,8 +116,8 @@ export function AdminUsers() {
             <div className="flex justify-center items-center h-64 text-center">
               <div>
                 <p className="text-muted-foreground">
-                  {t('Nav neviena lietotāja. Pievienojiet pirmo lietotāju, izmantojot reģistrācijas formu vai manuāli izveidojiet ierakstu Supabase.', 
-                    'No users yet. Add your first user using the registration form or manually create a record in Supabase.')}
+                  {t('Nav neviena administratora. Pievienojiet pirmo administratoru, izmantojot reģistrācijas formu vai manuāli izveidojiet ierakstu Supabase.', 
+                    'No administrators yet. Add your first administrator using the registration form or manually create a record in Supabase.')}
                 </p>
                 <Button className="mt-4" variant="outline" onClick={handleRetry}>
                   <RefreshCw className="h-4 w-4 mr-2" />

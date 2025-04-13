@@ -9,6 +9,7 @@ import { AdminMobileNav } from "@/components/admin/AdminMobileNav";
 // Lazy load admin components for better performance
 const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard").then(module => ({ default: module.AdminDashboard })));
 const AdminUsers = lazy(() => import("@/components/admin/AdminUsers").then(module => ({ default: module.AdminUsers })));
+const RegisteredUsers = lazy(() => import("@/components/admin/RegisteredUsers").then(module => ({ default: module.RegisteredUsers })));
 const AdminSubscribers = lazy(() => import("@/components/admin/AdminSubscribers").then(module => ({ default: module.AdminSubscribers })));
 const AdminSettings = lazy(() => import("@/components/admin/AdminSettings").then(module => ({ default: module.AdminSettings })));
 
@@ -24,7 +25,8 @@ export const AdminContent = memo(function AdminContent({ activeTab, onTabChange 
     return (
       <Suspense fallback={<div className="animate-pulse p-4 rounded-md bg-gray-100 dark:bg-gray-800 h-64"></div>}>
         {activeTab === "dashboard" && <AdminDashboard />}
-        {activeTab === "users" && <AdminUsers />}
+        {activeTab === "users" && <RegisteredUsers />}
+        {activeTab === "admins" && <AdminUsers />}
         {activeTab === "subscribers" && <AdminSubscribers />}
         {activeTab === "settings" && <AdminSettings />}
       </Suspense>

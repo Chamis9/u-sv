@@ -81,6 +81,36 @@ export type Database = {
         }
         Relationships: []
       }
+      registered_users: {
+        Row: {
+          auth_user_id: string | null
+          created_at: string
+          email: string | null
+          id: string
+          last_sign_in_at: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          auth_user_id?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_sign_in_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          auth_user_id?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_sign_in_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -12,13 +12,15 @@ interface AdminSidebarProps {
   onTabChange: (tab: string) => void;
   userCount?: number;
   subscriberCount?: number;
+  adminCount?: number;
 }
 
 export const AdminSidebar = memo(function AdminSidebar({ 
   activeTab, 
   onTabChange, 
   userCount: initialUserCount = 0, 
-  subscriberCount: initialSubscriberCount = 0 
+  subscriberCount: initialSubscriberCount = 0,
+  adminCount: initialAdminCount = 0
 }: AdminSidebarProps) {
   const { translations } = useLanguage();
   const { logout } = useAuth();
@@ -36,6 +38,7 @@ export const AdminSidebar = memo(function AdminSidebar({
         onTabChange={onTabChange}
         userCount={userCount}
         subscriberCount={subscriberCount}
+        adminCount={initialAdminCount}
         translations={translations}
       />
       

@@ -17,6 +17,7 @@ export const adminTranslations: Record<string, AdminTranslations> = {
     tabs: {
       dashboard: "Pārskats",
       users: "Lietotāji",
+      admins: "Administratori",
       subscribers: "Abonenti",
       settings: "Iestatījumi"
     },
@@ -39,6 +40,7 @@ export const adminTranslations: Record<string, AdminTranslations> = {
     tabs: {
       dashboard: "Dashboard",
       users: "Users",
+      admins: "Administrators",
       subscribers: "Subscribers",
       settings: "Settings"
     },
@@ -61,6 +63,7 @@ export const adminTranslations: Record<string, AdminTranslations> = {
     tabs: {
       dashboard: "Панель управления",
       users: "Пользователи",
+      admins: "Администраторы",
       subscribers: "Подписчики",
       settings: "Настройки"
     },
