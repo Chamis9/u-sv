@@ -9,7 +9,7 @@ import { EmptyOrErrorState } from "@/components/admin/users/EmptyOrErrorState";
 import { UserListHeader } from "@/components/admin/users/UserListHeader";
 import { UserListTable } from "@/components/admin/users/UserListTable";
 import { User } from "@/types/users";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { downloadUsersCSV, downloadBlob } from "@/utils/userUtils";
 
 export function RegisteredUsers() {
@@ -47,6 +47,8 @@ export function RegisteredUsers() {
         const formattedUsers: User[] = data.map((user: any) => ({
           id: user.id,
           email: user.email,
+          name: user.name,
+          phone: user.phone,
           created_at: user.created_at,
           last_sign_in_at: user.last_sign_in_at,
           updated_at: user.updated_at,
@@ -90,7 +92,9 @@ export function RegisteredUsers() {
       const lowerSearchTerm = term.toLowerCase();
       const filtered = users.filter(user => 
         user.email?.toLowerCase().includes(lowerSearchTerm) ||
-        user.id.toLowerCase().includes(lowerSearchTerm)
+        user.id.toLowerCase().includes(lowerSearchTerm) ||
+        user.name?.toLowerCase().includes(lowerSearchTerm) ||
+        user.phone?.toLowerCase().includes(lowerSearchTerm)
       );
       setFilteredUsers(filtered);
     }
@@ -119,6 +123,36 @@ export function RegisteredUsers() {
         description: t('Kļūda lejupielādējot failu', 'Error downloading file'),
       });
     }
+  };
+
+  // Handle user updates
+  const handleUserUpdated = (updatedUser: User) => {
+    const updatedUsers = users.map(u => 
+      u.id === updatedUser.id ? updatedUser : u
+    );
+    setUsers(updatedUsers);
+    
+    // Also update filtered users
+    const updatedFilteredUsers = filteredUsers.map(u => 
+      u.id === updatedUser.id ? updatedUser : u
+    );
+    setFilteredUsers(updatedFilteredUsers);
+  };
+
+  // Handle user deletion
+  const handleUserDeleted = (userId: string) => {
+    const updatedUsers = users.filter(u => u.id !== userId);
+    setUsers(updatedUsers);
+    
+    // Also update filtered users
+    const updatedFilteredUsers = filteredUsers.filter(u => u.id !== userId);
+    setFilteredUsers(updatedFilteredUsers);
+    
+    // Update user count
+    const event = new CustomEvent('userCountUpdated', { 
+      detail: { count: updatedUsers.length } 
+    });
+    window.dispatchEvent(event);
   };
 
   return (
@@ -192,7 +226,11 @@ export function RegisteredUsers() {
               </div>
             </div>
           ) : (
-            <UserListTable users={filteredUsers} />
+            <UserListTable 
+              users={filteredUsers} 
+              onUserUpdated={handleUserUpdated}
+              onUserDeleted={handleUserDeleted}
+            />
           )}
         </>
       )}

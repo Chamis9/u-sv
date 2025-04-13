@@ -7,6 +7,7 @@ import { UserListTable } from "@/components/admin/users/UserListTable";
 import { EmptyOrErrorState } from "@/components/admin/users/EmptyOrErrorState";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw } from "lucide-react";
+import { User } from "@/types/users";
 
 export function AdminUsers() {
   const { 
@@ -18,7 +19,9 @@ export function AdminUsers() {
     handleSearch, 
     handleDownloadCSV,
     refreshUsers,
-    totalUsers
+    totalUsers,
+    updateUser,
+    deleteUser
   } = useUsers();
   
   const { currentLanguage } = useLanguage();
@@ -41,6 +44,14 @@ export function AdminUsers() {
     });
     window.dispatchEvent(event);
   }, [totalUsers]);
+
+  const handleUserUpdated = (updatedUser: User) => {
+    updateUser(updatedUser);
+  };
+
+  const handleUserDeleted = (userId: string) => {
+    deleteUser(userId);
+  };
 
   return (
     <div className="space-y-6">
@@ -126,7 +137,11 @@ export function AdminUsers() {
               </div>
             </div>
           ) : (
-            <UserListTable users={users} />
+            <UserListTable 
+              users={users} 
+              onUserUpdated={handleUserUpdated}
+              onUserDeleted={handleUserDeleted}
+            />
           )}
         </>
       )}
