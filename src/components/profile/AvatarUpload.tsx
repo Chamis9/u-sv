@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { UserAvatar } from "./UserAvatar";
 import { Upload, Loader2 } from "lucide-react";
 import { useLanguage } from "@/features/language";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface AvatarUploadProps {
@@ -67,7 +67,7 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
     setIsUploading(true);
     
     try {
-      // Create a unique file path using user ID
+      // Create a unique file path using user ID and timestamp
       const userId = user.id;
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
@@ -82,6 +82,7 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
         });
       
       if (error) {
+        console.error("Upload error:", error);
         throw error;
       }
       
@@ -90,6 +91,8 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
         .from('avatars')
         .getPublicUrl(filePath);
       
+      console.log("Upload successful, public URL:", publicUrl);
+      
       // Update the user's avatar URL in the database
       const { error: updateError } = await supabase
         .from('registered_users')
@@ -97,6 +100,7 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
         .eq('id', user.id);
       
       if (updateError) {
+        console.error("Database update error:", updateError);
         throw updateError;
       }
       
@@ -117,9 +121,9 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
         variant: "destructive",
         title: t("Kļūda", "Error", "Ошибка"),
         description: t(
-          "Neizdevās augšupielādēt attēlu",
-          "Failed to upload image",
-          "Не удалось загрузить изображение"
+          "Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz.",
+          "Failed to upload image. Please try again.",
+          "Не удалось загрузить изображение. Пожалуйста, попробуйте еще раз."
         )
       });
     } finally {

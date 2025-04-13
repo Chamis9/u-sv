@@ -11,8 +11,10 @@ interface UserAvatarProps {
 
 export function UserAvatar({ user, size = "md" }: UserAvatarProps) {
   const { currentLanguage } = useLanguage();
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lvText: string, enText: string, ruText?: string) => 
+    currentLanguage.code === 'lv' ? lvText : 
+    currentLanguage.code === 'ru' ? (ruText || enText) : 
+    enText;
   
   const sizeClasses = {
     sm: "h-10 w-10",
@@ -34,7 +36,7 @@ export function UserAvatar({ user, size = "md" }: UserAvatarProps) {
     <Avatar className={`${sizeClasses[size]} border-2 border-primary/10`}>
       <AvatarImage 
         src={user.avatar_url || ""} 
-        alt={t("Lietotāja attēls", "User avatar")} 
+        alt={t("Lietotāja attēls", "User avatar", "Изображение пользователя")} 
         className="object-cover"
       />
       <AvatarFallback className="bg-primary/10 text-primary">
