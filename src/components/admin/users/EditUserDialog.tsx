@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/features/language";
 import { User } from "@/types/users";
-import { updateUser } from "@/utils/userUtils";
+import { updateUser } from "@/utils/user";
 import { useToast } from "@/hooks/use-toast";
 
 interface EditUserDialogProps {

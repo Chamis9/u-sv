@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import type { User } from '@/types/users';
 import { useLanguage } from '@/features/language';
-import { filterUsers, downloadUsersCSV, downloadBlob } from '@/utils/userUtils';
+import { filterUsers, downloadUsersCSV, downloadBlob } from '@/utils/user';
 import { logActivity } from '@/utils/activityLogger';
 
 export function useUserActions() {

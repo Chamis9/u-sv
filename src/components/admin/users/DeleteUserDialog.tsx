@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   AlertDialog,
@@ -13,7 +12,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/features/language";
 import { User } from "@/types/users";
-import { deleteUser } from "@/utils/userUtils";
+import { deleteUser } from "@/utils/user";
 
 interface DeleteUserDialogProps {
   user: User | null;

@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
@@ -9,7 +8,7 @@ import { UserDataError } from "@/components/admin/users/UserDataError";
 import { UserEmptyState } from "@/components/admin/users/UserEmptyState";
 import { RefreshDataButton } from "@/components/admin/users/RefreshDataButton";
 import { useRegisteredUsers } from "@/hooks/useRegisteredUsers";
-import { downloadUsersCSV, downloadBlob } from "@/utils/userUtils";
+import { downloadUsersCSV, downloadBlob } from "@/utils/user";
 
 export function RegisteredUsers() {
   const { 

@@ -1,6 +1,6 @@
 
 import { useState, useCallback } from 'react';
-import { fetchUsers } from '@/utils/userUtils';
+import { fetchUsers } from '@/utils/user';
 import { useUserAuth } from '@/hooks/useUserAuth';
 import { useLanguage } from '@/features/language';
 import type { User } from '@/types/users';

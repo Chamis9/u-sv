@@ -1,6 +1,6 @@
 
 import { useState, useCallback } from 'react';
-import { filterUsers } from '@/utils/userUtils';
+import { filterUsers } from '@/utils/user';
 import type { User } from '@/types/users';
 
 export function useUserSearch(users: User[]) {

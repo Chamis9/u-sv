@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
 import { User } from "@/types/users";
+import { filterUsers } from "@/utils/user";
 
 export function useRegisteredUsers() {
   const [users, setUsers] = useState<User[]>([]);
@@ -16,13 +16,11 @@ export function useRegisteredUsers() {
 
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  // Funkcija, lai ielādētu lietotājus no registered_users tabulas
   const fetchRegisteredUsers = async () => {
     setIsLoading(true);
     setError("");
     
     try {
-      // Iegūt lietotājus no registered_users tabulas
       const { data, error } = await supabase
         .from('registered_users')
         .select('*');
@@ -36,7 +34,6 @@ export function useRegisteredUsers() {
       } else {
         console.log("Received registered user data:", data);
         
-        // Pārveidot datus User formātā
         const formattedUsers: User[] = data.map((user: any) => ({
           id: user.id,
           email: user.email,
@@ -52,7 +49,6 @@ export function useRegisteredUsers() {
         setUsers(formattedUsers);
         setFilteredUsers(formattedUsers);
         
-        // Atjaunināt lietotāju skaitu
         const event = new CustomEvent('userCountUpdated', { 
           detail: { count: formattedUsers.length } 
         });
@@ -69,7 +65,6 @@ export function useRegisteredUsers() {
     }
   };
 
-  // Meklēšanas apstrāde
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);
@@ -88,30 +83,25 @@ export function useRegisteredUsers() {
     }
   };
 
-  // Handle user updates
   const handleUserUpdated = (updatedUser: User) => {
     const updatedUsers = users.map(u => 
       u.id === updatedUser.id ? updatedUser : u
     );
     setUsers(updatedUsers);
     
-    // Also update filtered users
     const updatedFilteredUsers = filteredUsers.map(u => 
       u.id === updatedUser.id ? updatedUser : u
     );
     setFilteredUsers(updatedFilteredUsers);
   };
 
-  // Handle user deletion
   const handleUserDeleted = (userId: string) => {
     const updatedUsers = users.filter(u => u.id !== userId);
     setUsers(updatedUsers);
     
-    // Also update filtered users
     const updatedFilteredUsers = filteredUsers.filter(u => u.id !== userId);
     setFilteredUsers(updatedFilteredUsers);
     
-    // Update user count
     const event = new CustomEvent('userCountUpdated', { 
       detail: { count: updatedUsers.length } 
     });

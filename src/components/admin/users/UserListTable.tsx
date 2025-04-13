@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Table, 
@@ -31,7 +30,7 @@ import { User as UserType } from "@/types/users";
 import { EditUserDialog } from "./EditUserDialog";
 import { DeleteUserDialog } from "./DeleteUserDialog";
 import { useToast } from "@/hooks/use-toast";
-import { toggleUserStatus } from "@/utils/userUtils";
+import { toggleUserStatus } from "@/utils/user";
 
 interface UserListTableProps {
   users: UserType[];
@@ -46,7 +45,6 @@ export function UserListTable({ users, onUserUpdated, onUserDeleted }: UserListT
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   
-  // Translation helper
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
   const handleEditClick = (user: UserType) => {
