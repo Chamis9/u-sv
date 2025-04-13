@@ -1,8 +1,8 @@
 
 import React from "react";
 import { User } from "@/types/users";
-import { useLanguage } from "@/features/language";
 import { AppearanceAndLanguage } from "@/components/shared/AppearanceAndLanguage";
+import { useLanguage } from "@/features/language";
 
 interface SettingsTabProps {
   user: User;
