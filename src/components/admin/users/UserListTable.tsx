@@ -7,8 +7,6 @@ import {
 import { User as UserType } from "@/types/users";
 import { EditUserDialog } from "./EditUserDialog";
 import { DeleteUserDialog } from "./DeleteUserDialog";
-import { useToast } from "@/hooks/use-toast";
-import { toggleUserStatus } from "@/utils/user";
 import { UserTableHeader } from "./UserTableHeader";
 import { UserTableRow } from "./UserTableRow";
 import { UserTableEmptyRow } from "./UserTableEmptyRow";
@@ -17,10 +15,15 @@ interface UserListTableProps {
   users: UserType[];
   onUserUpdated: (updatedUser: UserType) => void;
   onUserDeleted: (userId: string) => void;
+  onToggleStatus: (user: UserType) => void;
 }
 
-export function UserListTable({ users, onUserUpdated, onUserDeleted }: UserListTableProps) {
-  const { toast } = useToast();
+export function UserListTable({ 
+  users, 
+  onUserUpdated, 
+  onUserDeleted, 
+  onToggleStatus 
+}: UserListTableProps) {
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -35,29 +38,8 @@ export function UserListTable({ users, onUserUpdated, onUserDeleted }: UserListT
     setIsDeleteOpen(true);
   };
 
-  const handleStatusToggle = async (user: UserType) => {
-    const { success, error } = await toggleUserStatus(user);
-    
-    if (success) {
-      const newStatus = user.status === 'active' ? 'inactive' : 'active';
-      const updatedUser = {
-        ...user,
-        status: newStatus as 'active' | 'inactive'
-      };
-      onUserUpdated(updatedUser);
-      
-      toast({
-        description: user.status === 'active' 
-          ? 'Lietotājs deaktivizēts' 
-          : 'Lietotājs aktivizēts'
-      });
-    } else {
-      toast({
-        variant: "destructive",
-        title: 'Kļūda',
-        description: error || 'Neizdevās mainīt lietotāja statusu'
-      });
-    }
+  const handleStatusToggle = (user: UserType) => {
+    onToggleStatus(user);
   };
 
   return (

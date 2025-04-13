@@ -21,36 +21,37 @@ export function AdminUsers() {
     refreshUsers,
     totalUsers,
     updateUser,
-    deleteUser
+    deleteUser,
+    toggleUserStatus
   } = useUsers();
   
   const { currentLanguage } = useLanguage();
   
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  // We'll intentionally not auto-refresh on mount
-  // The user will need to click the refresh button
-
-  const handleRetry = () => {
-    console.log("Manual refresh triggered");
-    refreshUsers();
-  };
-
-  // Share the total users count with the parent component
+  // Refresh count with parent component
   useEffect(() => {
-    // Using CustomEvent to pass data to parent component
     const event = new CustomEvent('adminCountUpdated', { 
       detail: { count: totalUsers } 
     });
     window.dispatchEvent(event);
   }, [totalUsers]);
 
-  const handleUserUpdated = (updatedUser: User) => {
-    updateUser(updatedUser);
+  const handleUserUpdated = async (updatedUser: User) => {
+    await updateUser(updatedUser);
   };
 
-  const handleUserDeleted = (userId: string) => {
-    deleteUser(userId);
+  const handleUserDeleted = async (userId: string) => {
+    await deleteUser(userId);
+  };
+
+  const handleToggleStatus = async (user: User) => {
+    await toggleUserStatus(user);
+  };
+
+  const handleRetry = () => {
+    console.log("Manual refresh triggered");
+    refreshUsers();
   };
 
   return (
@@ -141,6 +142,7 @@ export function AdminUsers() {
               users={users} 
               onUserUpdated={handleUserUpdated}
               onUserDeleted={handleUserDeleted}
+              onToggleStatus={handleToggleStatus}
             />
           )}
         </>

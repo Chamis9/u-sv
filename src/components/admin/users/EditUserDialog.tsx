@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/features/language";
 import { User } from "@/types/users";
-import { updateUser } from "@/utils/user";
 import { useToast } from "@/hooks/use-toast";
 
 interface EditUserDialogProps {
@@ -52,28 +51,13 @@ export function EditUserDialog({ user, open, onClose, onUserUpdated }: EditUserD
     const updatedUser = {
       ...user,
       name,
-      phone
+      phone,
+      updated_at: new Date().toISOString()
     };
     
-    const { success, error } = await updateUser(updatedUser);
-    
+    onUserUpdated(updatedUser);
     setIsSubmitting(false);
-    
-    if (success) {
-      console.log("User successfully updated in Supabase");
-      toast({
-        description: t('Lietotājs veiksmīgi atjaunināts', 'User successfully updated')
-      });
-      onUserUpdated(updatedUser);
-      onClose();
-    } else {
-      console.error("Error updating user:", error);
-      toast({
-        variant: "destructive",
-        title: t('Kļūda', 'Error'),
-        description: error || t('Neizdevās atjaunināt lietotāju', 'Failed to update user')
-      });
-    }
+    onClose();
   };
   
   if (!user) return null;
