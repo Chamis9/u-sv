@@ -67,6 +67,12 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
     setIsUploading(true);
     
     try {
+      // Special handling for demo user - store avatar in localStorage instead
+      if (user.id.startsWith('mock-user-id')) {
+        handleDemoUserAvatar(file);
+        return;
+      }
+      
       // Create a unique file path using user ID and timestamp
       const userId = user.id;
       const fileExt = file.name.split('.').pop();
@@ -132,6 +138,48 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
+    }
+  };
+  
+  // Special handling for demo user
+  const handleDemoUserAvatar = async (file: File) => {
+    try {
+      // Convert file to data URL
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          const dataUrl = event.target.result.toString();
+          
+          // Store in localStorage
+          localStorage.setItem('demo_user_avatar', dataUrl);
+          
+          // Update avatar in state
+          onAvatarUpdate(dataUrl);
+          
+          toast({
+            description: t(
+              "Profila attēls veiksmīgi atjaunināts",
+              "Profile picture successfully updated",
+              "Изображение профиля успешно обновлено"
+            )
+          });
+          
+          setIsUploading(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error("Error handling demo user avatar:", error);
+      toast({
+        variant: "destructive",
+        title: t("Kļūda", "Error", "Ошибка"),
+        description: t(
+          "Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz.",
+          "Failed to upload image. Please try again.",
+          "Не удалось загрузить изображение. Пожалуйста, попробуйте еще раз."
+        )
+      });
+      setIsUploading(false);
     }
   };
   

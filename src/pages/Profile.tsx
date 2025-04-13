@@ -86,6 +86,9 @@ const Profile = () => {
 
   // Function to create a mock user for demonstration
   const createMockUser = (): User => {
+    // Get any stored avatar URL
+    const storedAvatarUrl = localStorage.getItem('demo_user_avatar');
+    
     return {
       id: "mock-user-id-123",
       email: userEmail || "demo@example.com",
@@ -96,12 +99,25 @@ const Profile = () => {
       last_sign_in_at: new Date(2023, 11, 25).toISOString(),
       role: 'user',
       status: 'active',
-      avatar_url: null
+      avatar_url: storedAvatarUrl || null
     };
   };
   
   // Function to handle user updates
   const handleUserUpdate = async (updatedUser: User) => {
+    // Check if this is a demo user
+    if (updatedUser.id.startsWith('mock-user-id')) {
+      // For demo users, we just update the local state
+      setUser(updatedUser);
+      
+      // If avatar changed, store it in localStorage
+      if (updatedUser.avatar_url && updatedUser.avatar_url !== user?.avatar_url) {
+        localStorage.setItem('demo_user_avatar', updatedUser.avatar_url);
+      }
+      
+      return;
+    }
+    
     setUser(updatedUser);
     
     try {
