@@ -49,11 +49,32 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
     }
   ];
   
+  // Create a complete user object to ensure it satisfies the User type
+  const completeUserObject: User = user ? {
+    id: user.id,
+    email: user.email,
+    name: user.name || null,
+    phone: user.phone || null,
+    last_sign_in_at: user.last_sign_in_at || null,
+    created_at: user.created_at || new Date().toISOString(),
+    updated_at: user.updated_at || null,
+    role: user.role || 'user',
+    status: user.status || 'active',
+    avatar_url: user.avatar_url || null
+  } : {
+    id: "",
+    email: "",
+    last_sign_in_at: null,
+    created_at: new Date().toISOString(),
+    updated_at: null,
+    status: 'active'
+  };
+  
   return (
     <aside className="hidden md:flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm">
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex flex-col items-center space-y-2">
-          <UserAvatar user={user || { id: "", email: "" }} size="lg" />
+          <UserAvatar user={completeUserObject} size="lg" />
           <h2 className="text-xl font-semibold mt-2">
             {user ? user.name || t("Lietotājs", "User") : t("Lietotājs", "User")}
           </h2>
