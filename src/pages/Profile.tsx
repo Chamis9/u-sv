@@ -24,55 +24,70 @@ const Profile = () => {
     currentLanguage.code === 'lv' ? lvText : enText;
 
   useEffect(() => {
-    // Redirect if not authenticated
-    if (!isAuthLoading && !isAuthenticated) {
-      navigate("/");
-      return;
-    }
-
+    // For demonstration purposes, instead of redirecting if not authenticated,
+    // we'll show mock data
     const fetchUserData = async () => {
-      if (!userEmail) return;
-      
       try {
         setIsLoading(true);
         
-        // Fetch user data from registered_users table
-        const { data, error } = await supabase
-          .from('registered_users')
-          .select('*')
-          .eq('email', userEmail)
-          .single();
+        if (isAuthenticated && userEmail) {
+          // Real user fetching logic for authenticated users
+          const { data, error } = await supabase
+            .from('registered_users')
+            .select('*')
+            .eq('email', userEmail)
+            .single();
+            
+          if (error) {
+            console.error("Error fetching user data:", error);
+            setUser(createMockUser()); // Fallback to mock data
+            return;
+          }
           
-        if (error) {
-          console.error("Error fetching user data:", error);
-          return;
-        }
-        
-        if (data) {
-          setUser({
-            id: data.id,
-            email: data.email,
-            name: data.name,
-            phone: data.phone,
-            created_at: data.created_at,
-            updated_at: data.updated_at,
-            last_sign_in_at: data.last_sign_in_at,
-            role: 'user',
-            status: data.status as 'active' | 'inactive',
-            avatar_url: null
-          });
+          if (data) {
+            setUser({
+              id: data.id,
+              email: data.email,
+              name: data.name,
+              phone: data.phone,
+              created_at: data.created_at,
+              updated_at: data.updated_at,
+              last_sign_in_at: data.last_sign_in_at,
+              role: 'user',
+              status: data.status as 'active' | 'inactive',
+              avatar_url: null
+            });
+          }
+        } else {
+          // Create mock user for demonstration
+          setUser(createMockUser());
         }
       } catch (error) {
         console.error("Error in profile data fetch:", error);
+        setUser(createMockUser()); // Fallback to mock data
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (userEmail) {
-      fetchUserData();
-    }
-  }, [isAuthenticated, isAuthLoading, userEmail, navigate]);
+    fetchUserData();
+  }, [isAuthenticated, isAuthLoading, userEmail]);
+
+  // Function to create a mock user for demonstration
+  const createMockUser = (): User => {
+    return {
+      id: "mock-user-id-123",
+      email: "demo@example.com",
+      name: "Demo Lietotājs",
+      phone: "+371 12345678",
+      created_at: new Date(2023, 0, 15).toISOString(),
+      updated_at: new Date(2023, 5, 20).toISOString(),
+      last_sign_in_at: new Date(2023, 11, 25).toISOString(),
+      role: 'user',
+      status: 'active',
+      avatar_url: null
+    };
+  };
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -84,6 +99,14 @@ const Profile = () => {
 
   const handleSave = async (updatedUser: User) => {
     try {
+      // For mock demo, just update the state without API calls
+      if (!isAuthenticated) {
+        setUser(updatedUser);
+        setIsEditing(false);
+        return true;
+      }
+      
+      // Real update logic for authenticated users
       const result = await updateUser(updatedUser);
       
       if (result.success) {
