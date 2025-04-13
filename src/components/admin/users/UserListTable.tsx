@@ -1,5 +1,5 @@
 
-import React, { useState, memo } from "react";
+import React, { useState, memo, useCallback } from "react";
 import { 
   Table, 
   TableBody
@@ -29,19 +29,30 @@ export const UserListTable = memo(function UserListTable({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   
-  const handleEditClick = (user: UserType) => {
+  // Use useCallback to memoize the event handlers
+  const handleEditClick = useCallback((user: UserType) => {
     setSelectedUser(user);
     setIsEditOpen(true);
-  };
+  }, []);
 
-  const handleDeleteClick = (user: UserType) => {
+  const handleDeleteClick = useCallback((user: UserType) => {
     setSelectedUser(user);
     setIsDeleteOpen(true);
-  };
+  }, []);
 
-  const handleStatusToggle = (user: UserType) => {
+  const handleStatusToggle = useCallback((user: UserType) => {
     onToggleStatus(user);
-  };
+  }, [onToggleStatus]);
+
+  const handleCloseEdit = useCallback(() => {
+    setIsEditOpen(false);
+    setSelectedUser(null);
+  }, []);
+
+  const handleCloseDelete = useCallback(() => {
+    setIsDeleteOpen(false);
+    setSelectedUser(null);
+  }, []);
 
   return (
     <>
@@ -67,20 +78,20 @@ export const UserListTable = memo(function UserListTable({
       </div>
       
       {/* Only render dialogs when they're needed */}
-      {isEditOpen && (
+      {isEditOpen && selectedUser && (
         <EditUserDialog 
           user={selectedUser}
           open={isEditOpen}
-          onClose={() => setIsEditOpen(false)}
+          onClose={handleCloseEdit}
           onUserUpdated={onUserUpdated}
         />
       )}
       
-      {isDeleteOpen && (
+      {isDeleteOpen && selectedUser && (
         <DeleteUserDialog 
           user={selectedUser}
           open={isDeleteOpen}
-          onClose={() => setIsDeleteOpen(false)}
+          onClose={handleCloseDelete}
           onUserDeleted={onUserDeleted}
         />
       )}

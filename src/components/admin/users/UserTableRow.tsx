@@ -1,5 +1,5 @@
 
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/features/language";
@@ -24,9 +24,11 @@ export const UserTableRow = memo(function UserTableRow({
 }: UserTableRowProps) {
   const { currentLanguage } = useLanguage();
   
-  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
+  const t = useCallback((lvText: string, enText: string) => 
+    currentLanguage.code === 'lv' ? lvText : enText, 
+  [currentLanguage.code]);
   
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     try {
       return new Date(dateString).toLocaleDateString(
         currentLanguage.code === 'lv' ? "lv-LV" : "en-US"
@@ -34,7 +36,12 @@ export const UserTableRow = memo(function UserTableRow({
     } catch (e) {
       return t('Nezināms datums', 'Unknown date');
     }
-  };
+  }, [currentLanguage.code, t]);
+  
+  // Memoize handler functions
+  const handleEdit = useCallback(() => onEdit(user), [user, onEdit]);
+  const handleDelete = useCallback(() => onDelete(user), [user, onDelete]);
+  const handleToggleStatus = useCallback(() => onToggleStatus(user), [user, onToggleStatus]);
   
   return (
     <TableRow>
@@ -61,9 +68,9 @@ export const UserTableRow = memo(function UserTableRow({
       <TableCell className="text-right">
         <UserActionsMenu
           user={user}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          onToggleStatus={onToggleStatus}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onToggleStatus={handleToggleStatus}
         />
       </TableCell>
     </TableRow>
@@ -73,6 +80,8 @@ export const UserTableRow = memo(function UserTableRow({
   return (
     prevProps.user.id === nextProps.user.id &&
     prevProps.user.status === nextProps.user.status &&
-    prevProps.user.updated_at === nextProps.user.updated_at
+    prevProps.user.updated_at === nextProps.user.updated_at &&
+    prevProps.user.email === nextProps.user.email &&
+    prevProps.user.name === nextProps.user.name
   );
 });
