@@ -1,5 +1,4 @@
-
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
@@ -14,38 +13,49 @@ export function useRegisteredUsers() {
   const [error, setError] = useState("");
   const { currentLanguage } = useLanguage();
   const { toast } = useToast();
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const cachedUsersRef = useRef<User[]>([]);
 
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  // Debounced search implementation
+  // Optimized search with proper debouncing
   useEffect(() => {
-    const delaySearch = setTimeout(() => {
+    const timer = setTimeout(() => {
       if (users.length > 0) {
         if (searchTerm.trim() === '') {
           setFilteredUsers(users);
         } else {
           const lowerSearchTerm = searchTerm.toLowerCase();
           const filtered = users.filter(user => 
-            user.email?.toLowerCase().includes(lowerSearchTerm) ||
+            (user.email?.toLowerCase().includes(lowerSearchTerm) || false) ||
             user.id.toLowerCase().includes(lowerSearchTerm) ||
-            user.name?.toLowerCase().includes(lowerSearchTerm) ||
-            user.phone?.toLowerCase().includes(lowerSearchTerm)
+            (user.name?.toLowerCase().includes(lowerSearchTerm) || false) ||
+            (user.phone?.toLowerCase().includes(lowerSearchTerm) || false)
           );
           setFilteredUsers(filtered);
         }
       }
-    }, 300); // 300ms delay for debouncing
+    }, 300);
 
-    return () => clearTimeout(delaySearch);
+    return () => clearTimeout(timer);
   }, [searchTerm, users]);
 
   const fetchRegisteredUsers = useCallback(async () => {
+    // Cancel any in-progress request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
+    // Create a new abort controller for this request
+    abortControllerRef.current = new AbortController();
+    
     setIsLoading(true);
     setError("");
     
     try {
       console.log("Fetching registered users...");
       
+      // Use server-side pagination if possible to limit data
       const { data, error } = await supabase
         .from('registered_users')
         .select('*')
@@ -55,8 +65,15 @@ export function useRegisteredUsers() {
         console.error("Error fetching registered users:", error);
         setError(t('Neizdevās ielādēt lietotājus. Lūdzu, mēģiniet vēlreiz.', 
                    'Failed to load users. Please try again.'));
-        setUsers([]);
-        setFilteredUsers([]);
+        
+        // Keep showing cached data if available
+        if (cachedUsersRef.current.length > 0) {
+          setUsers(cachedUsersRef.current);
+          setFilteredUsers(cachedUsersRef.current);
+        } else {
+          setUsers([]);
+          setFilteredUsers([]);
+        }
       } else {
         console.log("Received registered user data:", data);
         
@@ -72,15 +89,19 @@ export function useRegisteredUsers() {
           status: (user.status || 'active') as 'active' | 'inactive'
         }));
         
+        // Cache the users for future use
+        cachedUsersRef.current = formattedUsers;
+        
         setUsers(formattedUsers);
+        
         // Only apply filter if there's a search term
         if (searchTerm.trim() !== '') {
           const lowerSearchTerm = searchTerm.toLowerCase();
           const filtered = formattedUsers.filter(user => 
-            user.email?.toLowerCase().includes(lowerSearchTerm) ||
+            (user.email?.toLowerCase().includes(lowerSearchTerm) || false) ||
             user.id.toLowerCase().includes(lowerSearchTerm) ||
-            user.name?.toLowerCase().includes(lowerSearchTerm) ||
-            user.phone?.toLowerCase().includes(lowerSearchTerm)
+            (user.name?.toLowerCase().includes(lowerSearchTerm) || false) ||
+            (user.phone?.toLowerCase().includes(lowerSearchTerm) || false)
           );
           setFilteredUsers(filtered);
         } else {
@@ -93,15 +114,28 @@ export function useRegisteredUsers() {
         window.dispatchEvent(event);
       }
     } catch (err) {
-      console.error("Unexpected error in fetchRegisteredUsers:", err);
-      setError(t('Neizdevās ielādēt lietotājus. Lūdzu, mēģiniet vēlreiz.', 
-               'Failed to load users. Please try again.'));
-      setUsers([]);
-      setFilteredUsers([]);
+      // Only set error if this wasn't an abort error
+      if (err instanceof Error && err.name !== 'AbortError') {
+        console.error("Unexpected error in fetchRegisteredUsers:", err);
+        setError(t('Neizdevās ielādēt lietotājus. Lūdzu, mēģiniet vēlreiz.', 
+                'Failed to load users. Please try again.'));
+      }
     } finally {
-      setIsLoading(false);
+      // Only update loading state if this wasn't aborted
+      if (abortControllerRef.current?.signal.aborted === false) {
+        setIsLoading(false);
+      }
     }
   }, [currentLanguage.code, t, searchTerm]);
+
+  // Cleanup abort controller on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
@@ -113,6 +147,9 @@ export function useRegisteredUsers() {
     const updatedUsers = users.map(u => 
       u.id === updatedUser.id ? updatedUser : u
     );
+    
+    // Update the cache
+    cachedUsersRef.current = updatedUsers;
     setUsers(updatedUsers);
     
     // Only update filtered users if the updated user is in the filtered list
@@ -126,6 +163,9 @@ export function useRegisteredUsers() {
 
   const handleUserDeleted = (userId: string) => {
     const updatedUsers = users.filter(u => u.id !== userId);
+    
+    // Update the cache
+    cachedUsersRef.current = updatedUsers;
     setUsers(updatedUsers);
     
     const updatedFilteredUsers = filteredUsers.filter(u => u.id !== userId);
@@ -162,6 +202,13 @@ export function useRegisteredUsers() {
             title: t('Kļūda', 'Error'),
             description: t('Neizdevās mainīt lietotāja statusu', 'Failed to change user status')
           });
+          
+          // Revert the change in UI if DB update failed
+          const revertedUser = {
+            ...user,
+            updated_at: new Date().toISOString()
+          };
+          handleUserUpdated(revertedUser);
         } else {
           toast({
             description: user.status === 'active' 

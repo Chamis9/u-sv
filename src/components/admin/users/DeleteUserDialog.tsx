@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -29,9 +29,11 @@ export function DeleteUserDialog({ user, open, onClose, onUserDeleted }: DeleteU
   
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
   
+  // Return early if user is null
   if (!user) return null;
   
-  const handleDelete = async () => {
+  // Use useCallback to memoize the delete function
+  const handleDelete = useCallback(async () => {
     if (!user) return;
     
     setIsDeleting(true);
@@ -67,7 +69,7 @@ export function DeleteUserDialog({ user, open, onClose, onUserDeleted }: DeleteU
       setIsDeleting(false);
       onClose();
     }
-  };
+  }, [user, onUserDeleted, onClose, toast, t]);
   
   return (
     <AlertDialog open={open} onOpenChange={(open) => !open && onClose()}>

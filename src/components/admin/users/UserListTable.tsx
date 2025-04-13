@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import { 
   Table, 
   TableBody
@@ -18,7 +18,8 @@ interface UserListTableProps {
   onToggleStatus: (user: UserType) => void;
 }
 
-export function UserListTable({ 
+// Memoize the entire table component
+export const UserListTable = memo(function UserListTable({ 
   users, 
   onUserUpdated, 
   onUserDeleted, 
@@ -65,19 +66,24 @@ export function UserListTable({
         </Table>
       </div>
       
-      <EditUserDialog 
-        user={selectedUser}
-        open={isEditOpen}
-        onClose={() => setIsEditOpen(false)}
-        onUserUpdated={onUserUpdated}
-      />
+      {/* Only render dialogs when they're needed */}
+      {isEditOpen && (
+        <EditUserDialog 
+          user={selectedUser}
+          open={isEditOpen}
+          onClose={() => setIsEditOpen(false)}
+          onUserUpdated={onUserUpdated}
+        />
+      )}
       
-      <DeleteUserDialog 
-        user={selectedUser}
-        open={isDeleteOpen}
-        onClose={() => setIsDeleteOpen(false)}
-        onUserDeleted={onUserDeleted}
-      />
+      {isDeleteOpen && (
+        <DeleteUserDialog 
+          user={selectedUser}
+          open={isDeleteOpen}
+          onClose={() => setIsDeleteOpen(false)}
+          onUserDeleted={onUserDeleted}
+        />
+      )}
     </>
   );
-}
+});

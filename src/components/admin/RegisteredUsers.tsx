@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useState, useCallback } from "react";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
 import { EmptyOrErrorState } from "@/components/admin/users/EmptyOrErrorState";
@@ -31,12 +32,20 @@ export function RegisteredUsers() {
   const [pageSize] = useState(10);
   const totalPages = Math.ceil(users.length / pageSize);
   
-  const currentUsers = users.slice((page - 1) * pageSize, page * pageSize);
+  // Apply pagination only when rendering to avoid unnecessary calculations
+  const currentUsers = useCallback(() => {
+    return users.slice((page - 1) * pageSize, page * pageSize);
+  }, [users, page, pageSize]);
 
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
+  // Use lazy initialization for the initial data fetch
   useEffect(() => {
-    fetchRegisteredUsers();
+    const timer = setTimeout(() => {
+      fetchRegisteredUsers();
+    }, 100); // Small delay to allow UI to render first
+    
+    return () => clearTimeout(timer);
   }, []);
   
   useEffect(() => {
@@ -66,6 +75,9 @@ export function RegisteredUsers() {
       });
     }
   };
+
+  // Use memo to avoid unnecessary re-renders
+  const displayUsers = React.useMemo(() => currentUsers(), [currentUsers]);
 
   return (
     <div className="space-y-6">
@@ -102,7 +114,7 @@ export function RegisteredUsers() {
           ) : (
             <>
               <UserListTable 
-                users={currentUsers} 
+                users={displayUsers} 
                 onUserUpdated={handleUserUpdated}
                 onUserDeleted={handleUserDeleted}
                 onToggleStatus={handleToggleStatus}
