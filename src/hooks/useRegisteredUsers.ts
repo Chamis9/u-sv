@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
@@ -16,14 +17,39 @@ export function useRegisteredUsers() {
 
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  const fetchRegisteredUsers = async () => {
+  // Debounced search implementation
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      if (users.length > 0) {
+        if (searchTerm.trim() === '') {
+          setFilteredUsers(users);
+        } else {
+          const lowerSearchTerm = searchTerm.toLowerCase();
+          const filtered = users.filter(user => 
+            user.email?.toLowerCase().includes(lowerSearchTerm) ||
+            user.id.toLowerCase().includes(lowerSearchTerm) ||
+            user.name?.toLowerCase().includes(lowerSearchTerm) ||
+            user.phone?.toLowerCase().includes(lowerSearchTerm)
+          );
+          setFilteredUsers(filtered);
+        }
+      }
+    }, 300); // 300ms delay for debouncing
+
+    return () => clearTimeout(delaySearch);
+  }, [searchTerm, users]);
+
+  const fetchRegisteredUsers = useCallback(async () => {
     setIsLoading(true);
     setError("");
     
     try {
+      console.log("Fetching registered users...");
+      
       const { data, error } = await supabase
         .from('registered_users')
-        .select('*');
+        .select('*')
+        .order('created_at', { ascending: false });
         
       if (error) {
         console.error("Error fetching registered users:", error);
@@ -47,7 +73,19 @@ export function useRegisteredUsers() {
         }));
         
         setUsers(formattedUsers);
-        setFilteredUsers(formattedUsers);
+        // Only apply filter if there's a search term
+        if (searchTerm.trim() !== '') {
+          const lowerSearchTerm = searchTerm.toLowerCase();
+          const filtered = formattedUsers.filter(user => 
+            user.email?.toLowerCase().includes(lowerSearchTerm) ||
+            user.id.toLowerCase().includes(lowerSearchTerm) ||
+            user.name?.toLowerCase().includes(lowerSearchTerm) ||
+            user.phone?.toLowerCase().includes(lowerSearchTerm)
+          );
+          setFilteredUsers(filtered);
+        } else {
+          setFilteredUsers(formattedUsers);
+        }
         
         const event = new CustomEvent('userCountUpdated', { 
           detail: { count: formattedUsers.length } 
@@ -63,24 +101,12 @@ export function useRegisteredUsers() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentLanguage.code, t, searchTerm]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);
-    
-    if (term.trim() === '') {
-      setFilteredUsers(users);
-    } else {
-      const lowerSearchTerm = term.toLowerCase();
-      const filtered = users.filter(user => 
-        user.email?.toLowerCase().includes(lowerSearchTerm) ||
-        user.id.toLowerCase().includes(lowerSearchTerm) ||
-        user.name?.toLowerCase().includes(lowerSearchTerm) ||
-        user.phone?.toLowerCase().includes(lowerSearchTerm)
-      );
-      setFilteredUsers(filtered);
-    }
+    // Actual filtering is done in the useEffect with debounce
   };
 
   const handleUserUpdated = (updatedUser: User) => {
@@ -89,10 +115,13 @@ export function useRegisteredUsers() {
     );
     setUsers(updatedUsers);
     
-    const updatedFilteredUsers = filteredUsers.map(u => 
-      u.id === updatedUser.id ? updatedUser : u
-    );
-    setFilteredUsers(updatedFilteredUsers);
+    // Only update filtered users if the updated user is in the filtered list
+    if (filteredUsers.some(u => u.id === updatedUser.id)) {
+      const updatedFilteredUsers = filteredUsers.map(u => 
+        u.id === updatedUser.id ? updatedUser : u
+      );
+      setFilteredUsers(updatedFilteredUsers);
+    }
   };
 
   const handleUserDeleted = (userId: string) => {

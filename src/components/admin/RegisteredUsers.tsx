@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
 import { EmptyOrErrorState } from "@/components/admin/users/EmptyOrErrorState";
@@ -10,6 +10,7 @@ import { UserEmptyState } from "@/components/admin/users/UserEmptyState";
 import { RefreshDataButton } from "@/components/admin/users/RefreshDataButton";
 import { useRegisteredUsers } from "@/hooks/useRegisteredUsers";
 import { downloadUsersCSV, downloadBlob } from "@/utils/user";
+import { Pagination } from "@/components/ui/pagination";
 
 export function RegisteredUsers() {
   const { 
@@ -26,15 +27,28 @@ export function RegisteredUsers() {
   
   const { currentLanguage } = useLanguage();
   const { toast } = useToast();
+  
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+  const totalPages = Math.ceil(users.length / pageSize);
+  
+  // Get current page of users
+  const currentUsers = users.slice((page - 1) * pageSize, page * pageSize);
 
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  // Sākotnējā ielāde
+  // Initial load
   useEffect(() => {
     fetchRegisteredUsers();
   }, []);
+  
+  // Reset to first page when search changes
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
 
-  // CSV eksportēšana
+  // CSV export
   const handleDownloadCSV = () => {
     if (!users || users.length === 0) {
       toast({
@@ -92,12 +106,32 @@ export function RegisteredUsers() {
           ) : users.length === 0 ? (
             <UserEmptyState onRefresh={fetchRegisteredUsers} />
           ) : (
-            <UserListTable 
-              users={users} 
-              onUserUpdated={handleUserUpdated}
-              onUserDeleted={handleUserDeleted}
-              onToggleStatus={handleToggleStatus}
-            />
+            <>
+              <UserListTable 
+                users={currentUsers} 
+                onUserUpdated={handleUserUpdated}
+                onUserDeleted={handleUserDeleted}
+                onToggleStatus={handleToggleStatus}
+              />
+              
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-4">
+                  <Pagination>
+                    <Pagination.PrevButton
+                      onClick={() => setPage(p => Math.max(p - 1, 1))}
+                      disabled={page === 1}
+                    />
+                    <div className="flex items-center mx-4">
+                      {t('Lapa', 'Page')} {page} {t('no', 'of')} {totalPages}
+                    </div>
+                    <Pagination.NextButton
+                      onClick={() => setPage(p => Math.min(p + 1, totalPages))}
+                      disabled={page === totalPages}
+                    />
+                  </Pagination>
+                </div>
+              )}
+            </>
           )}
         </>
       )}

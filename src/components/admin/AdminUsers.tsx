@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useUsers } from "@/hooks/useUsers";
 import { useLanguage } from "@/features/language";
 import { UserListHeader } from "@/components/admin/users/UserListHeader";
@@ -8,6 +8,7 @@ import { EmptyOrErrorState } from "@/components/admin/users/EmptyOrErrorState";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { User } from "@/types/users";
+import { Pagination } from "@/components/ui/pagination";
 
 export function AdminUsers() {
   const { 
@@ -27,6 +28,14 @@ export function AdminUsers() {
   
   const { currentLanguage } = useLanguage();
   
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+  const totalPages = Math.ceil(users.length / pageSize);
+  
+  // Get current page of users
+  const currentUsers = users.slice((page - 1) * pageSize, page * pageSize);
+  
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
   // Refresh count with parent component
@@ -36,6 +45,11 @@ export function AdminUsers() {
     });
     window.dispatchEvent(event);
   }, [totalUsers]);
+  
+  // Reset to first page when search changes
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
 
   const handleUserUpdated = async (updatedUser: User) => {
     await updateUser(updatedUser);
@@ -68,7 +82,7 @@ export function AdminUsers() {
           disabled={isLoading}
           className="flex items-center"
         >
-          <RefreshCw className="h-4 w-4 mr-2" />
+          <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
           {t('Atjaunot datus no datubāzes', 'Refresh Data from Database')}
         </Button>
       </div>
@@ -138,12 +152,32 @@ export function AdminUsers() {
               </div>
             </div>
           ) : (
-            <UserListTable 
-              users={users} 
-              onUserUpdated={handleUserUpdated}
-              onUserDeleted={handleUserDeleted}
-              onToggleStatus={handleToggleStatus}
-            />
+            <>
+              <UserListTable 
+                users={currentUsers} 
+                onUserUpdated={handleUserUpdated}
+                onUserDeleted={handleUserDeleted}
+                onToggleStatus={handleToggleStatus}
+              />
+              
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-4">
+                  <Pagination>
+                    <Pagination.PrevButton
+                      onClick={() => setPage(p => Math.max(p - 1, 1))}
+                      disabled={page === 1}
+                    />
+                    <div className="flex items-center mx-4">
+                      {t('Lapa', 'Page')} {page} {t('no', 'of')} {totalPages}
+                    </div>
+                    <Pagination.NextButton
+                      onClick={() => setPage(p => Math.min(p + 1, totalPages))}
+                      disabled={page === totalPages}
+                    />
+                  </Pagination>
+                </div>
+              )}
+            </>
           )}
         </>
       )}
