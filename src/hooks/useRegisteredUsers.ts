@@ -1,222 +1,76 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useLanguage } from "@/features/language";
+
+import { useEffect } from "react";
+import { useUserFetch, useUserSearch, useUserModifications } from "@/hooks/user";
 import { useToast } from "@/hooks/use-toast";
-import { User } from "@/types/users";
-import { filterUsers } from "@/utils/user";
+import { useLanguage } from "@/features/language";
+import { downloadUsersCSV, downloadBlob } from "@/utils/user";
 
 export function useRegisteredUsers() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-  const { currentLanguage } = useLanguage();
+  const { 
+    users, 
+    isLoading, 
+    error, 
+    fetchUsers,
+    setUsers,
+    cachedUsersRef
+  } = useUserFetch('registered_users');
+  
+  const {
+    searchTerm,
+    filteredUsers,
+    handleSearch,
+    setFilteredUsers
+  } = useUserSearch(users);
+  
+  const {
+    handleUserUpdated,
+    handleUserDeleted,
+    handleToggleStatus
+  } = useUserModifications({
+    users,
+    filteredUsers,
+    setUsers,
+    setFilteredUsers,
+    cachedUsersRef,
+    tableName: 'registered_users'
+  });
+  
   const { toast } = useToast();
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const cachedUsersRef = useRef<User[]>([]);
-
+  const { currentLanguage } = useLanguage();
+  
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  // Optimized search with proper debouncing
+  // Use lazy initialization for the initial data fetch
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (users.length > 0) {
-        if (searchTerm.trim() === '') {
-          setFilteredUsers(users);
-        } else {
-          const lowerSearchTerm = searchTerm.toLowerCase();
-          const filtered = users.filter(user => 
-            (user.email?.toLowerCase().includes(lowerSearchTerm) || false) ||
-            user.id.toLowerCase().includes(lowerSearchTerm) ||
-            (user.name?.toLowerCase().includes(lowerSearchTerm) || false) ||
-            (user.phone?.toLowerCase().includes(lowerSearchTerm) || false)
-          );
-          setFilteredUsers(filtered);
-        }
-      }
-    }, 300);
-
+      fetchUsers();
+    }, 100); // Small delay to allow UI to render first
+    
     return () => clearTimeout(timer);
-  }, [searchTerm, users]);
+  }, [fetchUsers]);
 
-  const fetchRegisteredUsers = useCallback(async () => {
-    // Cancel any in-progress request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    
-    // Create a new abort controller for this request
-    abortControllerRef.current = new AbortController();
-    
-    setIsLoading(true);
-    setError("");
-    
-    try {
-      console.log("Fetching registered users...");
-      
-      // Use server-side pagination if possible to limit data
-      const { data, error } = await supabase
-        .from('registered_users')
-        .select('*')
-        .order('created_at', { ascending: false });
-        
-      if (error) {
-        console.error("Error fetching registered users:", error);
-        setError(t('Neizdevās ielādēt lietotājus. Lūdzu, mēģiniet vēlreiz.', 
-                   'Failed to load users. Please try again.'));
-        
-        // Keep showing cached data if available
-        if (cachedUsersRef.current.length > 0) {
-          setUsers(cachedUsersRef.current);
-          setFilteredUsers(cachedUsersRef.current);
-        } else {
-          setUsers([]);
-          setFilteredUsers([]);
-        }
-      } else {
-        console.log("Received registered user data:", data);
-        
-        const formattedUsers: User[] = data.map((user: any) => ({
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          phone: user.phone,
-          created_at: user.created_at,
-          last_sign_in_at: user.last_sign_in_at,
-          updated_at: user.updated_at,
-          role: 'user',
-          status: (user.status || 'active') as 'active' | 'inactive'
-        }));
-        
-        // Cache the users for future use
-        cachedUsersRef.current = formattedUsers;
-        
-        setUsers(formattedUsers);
-        
-        // Only apply filter if there's a search term
-        if (searchTerm.trim() !== '') {
-          const lowerSearchTerm = searchTerm.toLowerCase();
-          const filtered = formattedUsers.filter(user => 
-            (user.email?.toLowerCase().includes(lowerSearchTerm) || false) ||
-            user.id.toLowerCase().includes(lowerSearchTerm) ||
-            (user.name?.toLowerCase().includes(lowerSearchTerm) || false) ||
-            (user.phone?.toLowerCase().includes(lowerSearchTerm) || false)
-          );
-          setFilteredUsers(filtered);
-        } else {
-          setFilteredUsers(formattedUsers);
-        }
-        
-        const event = new CustomEvent('userCountUpdated', { 
-          detail: { count: formattedUsers.length } 
-        });
-        window.dispatchEvent(event);
-      }
-    } catch (err) {
-      // Only set error if this wasn't an abort error
-      if (err instanceof Error && err.name !== 'AbortError') {
-        console.error("Unexpected error in fetchRegisteredUsers:", err);
-        setError(t('Neizdevās ielādēt lietotājus. Lūdzu, mēģiniet vēlreiz.', 
-                'Failed to load users. Please try again.'));
-      }
-    } finally {
-      // Only update loading state if this wasn't aborted
-      if (abortControllerRef.current?.signal.aborted === false) {
-        setIsLoading(false);
-      }
-    }
-  }, [currentLanguage.code, t, searchTerm]);
-
-  // Cleanup abort controller on unmount
-  useEffect(() => {
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    };
-  }, []);
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value;
-    setSearchTerm(term);
-    // Actual filtering is done in the useEffect with debounce
-  };
-
-  const handleUserUpdated = (updatedUser: User) => {
-    const updatedUsers = users.map(u => 
-      u.id === updatedUser.id ? updatedUser : u
-    );
-    
-    // Update the cache
-    cachedUsersRef.current = updatedUsers;
-    setUsers(updatedUsers);
-    
-    // Only update filtered users if the updated user is in the filtered list
-    if (filteredUsers.some(u => u.id === updatedUser.id)) {
-      const updatedFilteredUsers = filteredUsers.map(u => 
-        u.id === updatedUser.id ? updatedUser : u
-      );
-      setFilteredUsers(updatedFilteredUsers);
-    }
-  };
-
-  const handleUserDeleted = (userId: string) => {
-    const updatedUsers = users.filter(u => u.id !== userId);
-    
-    // Update the cache
-    cachedUsersRef.current = updatedUsers;
-    setUsers(updatedUsers);
-    
-    const updatedFilteredUsers = filteredUsers.filter(u => u.id !== userId);
-    setFilteredUsers(updatedFilteredUsers);
-    
-    const event = new CustomEvent('userCountUpdated', { 
-      detail: { count: updatedUsers.length } 
-    });
-    window.dispatchEvent(event);
-  };
-
-  const handleToggleStatus = (user: User) => {
-    const newStatus = user.status === 'active' ? 'inactive' : 'active';
-    const updatedUser = {
-      ...user,
-      status: newStatus as 'active' | 'inactive',
-      updated_at: new Date().toISOString()
-    };
-    
-    handleUserUpdated(updatedUser);
-    
-    supabase
-      .from('registered_users')
-      .update({
-        status: newStatus,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', user.id)
-      .then(({ error }) => {
-        if (error) {
-          console.error("Error toggling user status:", error);
-          toast({
-            variant: "destructive",
-            title: t('Kļūda', 'Error'),
-            description: t('Neizdevās mainīt lietotāja statusu', 'Failed to change user status')
-          });
-          
-          // Revert the change in UI if DB update failed
-          const revertedUser = {
-            ...user,
-            updated_at: new Date().toISOString()
-          };
-          handleUserUpdated(revertedUser);
-        } else {
-          toast({
-            description: user.status === 'active' 
-              ? t('Lietotājs deaktivizēts', 'User deactivated') 
-              : t('Lietotājs aktivizēts', 'User activated')
-          });
-        }
+  const handleDownloadCSV = () => {
+    if (!users || users.length === 0) {
+      toast({
+        description: t('Nav lietotāju, ko lejupielādēt', 'No users to download'),
       });
+      return;
+    }
+
+    try {
+      const { blob, filename } = downloadUsersCSV(users, currentLanguage);
+      downloadBlob(blob, filename);
+      
+      toast({
+        description: t('CSV fails veiksmīgi lejupielādēts', 'CSV file downloaded successfully'),
+      });
+    } catch (error) {
+      console.error("Error downloading CSV:", error);
+      toast({
+        variant: "destructive",
+        description: t('Kļūda lejupielādējot failu', 'Error downloading file'),
+      });
+    }
   };
 
   return {
@@ -224,10 +78,11 @@ export function useRegisteredUsers() {
     searchTerm,
     isLoading,
     error,
-    fetchRegisteredUsers,
+    fetchRegisteredUsers: fetchUsers,
     handleSearch,
     handleUserUpdated,
     handleUserDeleted,
-    handleToggleStatus
+    handleToggleStatus,
+    handleDownloadCSV
   };
 }
