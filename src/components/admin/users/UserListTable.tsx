@@ -22,13 +22,15 @@ import {
   Edit, 
   Trash, 
   CheckCircle,
-  XCircle
+  XCircle,
+  User,
+  Phone
 } from "lucide-react";
 import { useLanguage } from "@/features/language";
-import { User } from "@/hooks/useUsers";
+import { User as UserType } from "@/types/users";
 
 interface UserListTableProps {
-  users: User[];
+  users: UserType[];
 }
 
 export function UserListTable({ users }: UserListTableProps) {
@@ -42,7 +44,9 @@ export function UserListTable({ users }: UserListTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>{t('Vārds', 'Name')}</TableHead>
             <TableHead>{t('E-pasts', 'Email')}</TableHead>
+            <TableHead>{t('Tālrunis', 'Phone')}</TableHead>
             <TableHead>{t('Loma', 'Role')}</TableHead>
             <TableHead>{t('Statuss', 'Status')}</TableHead>
             <TableHead>{t('Pievienošanās datums', 'Join Date')}</TableHead>
@@ -54,7 +58,15 @@ export function UserListTable({ users }: UserListTableProps) {
           {users.length > 0 ? (
             users.map(user => (
               <TableRow key={user.id}>
+                <TableCell className="flex items-center">
+                  <User className="h-4 w-4 mr-2 text-muted-foreground" />
+                  {user.name || t('Nav norādīts', 'Not specified')}
+                </TableCell>
                 <TableCell className="font-medium">{user.email || t('Nav e-pasta', 'No email')}</TableCell>
+                <TableCell className="flex items-center">
+                  <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
+                  {user.phone || t('Nav tālruņa', 'No phone')}
+                </TableCell>
                 <TableCell>
                   {user.role === "admin" ? (
                     <Badge variant="default">{t('Administrators', 'Administrator')}</Badge>
@@ -119,7 +131,7 @@ export function UserListTable({ users }: UserListTableProps) {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-6">
+              <TableCell colSpan={8} className="text-center py-6">
                 {t('Nav atrasts neviens lietotājs, kas atbilst meklēšanas kritērijiem.', 
                   'No users found matching search criteria.')}
               </TableCell>

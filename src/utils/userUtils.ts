@@ -6,13 +6,14 @@ export const fetchUsers = async () => {
   try {
     console.log("Fetching users from Supabase...");
     
-    const { data, error } = await supabase
-      .from('admin_user')
+    // First, fetch from registered_users table
+    const { data: registeredUsersData, error: registeredUsersError } = await supabase
+      .from('registered_users')
       .select('*');
       
-    if (error) {
-      console.error("Error fetching users:", error);
-      throw error;
+    if (registeredUsersError) {
+      console.error("Error fetching registered users:", registeredUsersError);
+      throw registeredUsersError;
     }
     
     // Additionally, try to get user data from the auth API if available
@@ -21,16 +22,18 @@ export const fetchUsers = async () => {
     if (authError) {
       console.warn("Could not fetch auth users (may require admin rights):", authError);
       
-      // If we can't get auth users, just return the admin_user data we have
+      // If we can't get auth users, just return the registered_users data
       return { 
-        data: data?.map(user => ({
+        data: registeredUsersData?.map(user => ({
           id: user.id,
           email: user.email,
+          name: user.name,
+          phone: user.phone,
           created_at: user.created_at,
-          last_sign_in_at: null,
-          updated_at: null,
-          role: 'admin',
-          status: 'active'
+          last_sign_in_at: user.last_sign_in_at,
+          updated_at: user.updated_at,
+          role: 'user',
+          status: user.status || 'active'
         })) || [], 
         error: null 
       };
@@ -40,21 +43,24 @@ export const fetchUsers = async () => {
     const users = authData?.users || [];
     
     return { 
-      data: users.map(user => {
+      data: registeredUsersData.map(registeredUser => {
+        const authUser = users.find(u => u.email === registeredUser.email);
+        
         // Check if user is banned or has a banned property in the metadata
         const isBanned = 
-          // @ts-ignore - We're checking if the property exists before using it
-          typeof user.banned === 'boolean' ? user.banned : 
-          // @ts-ignore - Check for metadata.banned as well
-          (user.user_metadata && typeof user.user_metadata.banned === 'boolean') ? 
-            user.user_metadata.banned : false;
+          authUser && 
+          (typeof authUser.banned === 'boolean' ? authUser.banned : 
+           (authUser.user_metadata && typeof authUser.user_metadata.banned === 'boolean') ? 
+             authUser.user_metadata.banned : false);
             
         return {
-          id: user.id,
-          email: user.email,
-          created_at: user.created_at,
-          last_sign_in_at: user.last_sign_in_at,
-          updated_at: user.updated_at,
+          id: registeredUser.id,
+          email: registeredUser.email,
+          name: registeredUser.name,
+          phone: registeredUser.phone,
+          created_at: registeredUser.created_at,
+          last_sign_in_at: authUser?.last_sign_in_at,
+          updated_at: registeredUser.updated_at,
           role: 'user',
           status: isBanned ? 'inactive' : 'active'
         };
