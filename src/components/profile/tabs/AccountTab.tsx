@@ -12,14 +12,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserAvatar } from "../UserAvatar";
 import { 
   Edit, 
   Save, 
-  X as Cancel,
-  Upload
+  X as Cancel
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { AvatarUpload } from "../AvatarUpload";
 
 interface AccountTabProps {
   user: User;
@@ -74,6 +73,15 @@ export function AccountTab({ user, onUserUpdate }: AccountTabProps) {
     setIsEditing(false);
   };
   
+  const handleAvatarUpdate = (url: string) => {
+    const updatedUser: User = {
+      ...user,
+      avatar_url: url,
+      updated_at: new Date().toISOString()
+    };
+    onUserUpdate(updatedUser);
+  };
+  
   return (
     <div className="space-y-6">
       <Card>
@@ -102,12 +110,11 @@ export function AccountTab({ user, onUserUpdate }: AccountTabProps) {
         <CardContent>
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex flex-col items-center space-y-4">
-              <UserAvatar user={user} size="lg" />
-              
-              <Button variant="outline" size="sm" className="w-full">
-                <Upload className="h-4 w-4 mr-2" />
-                {t("Augšupielādēt attēlu", "Upload Image")}
-              </Button>
+              <AvatarUpload 
+                user={user} 
+                onAvatarUpdate={handleAvatarUpdate} 
+                size="lg" 
+              />
             </div>
             
             <div className="flex-1 space-y-4">

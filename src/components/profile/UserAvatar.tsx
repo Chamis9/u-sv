@@ -35,6 +35,7 @@ export function UserAvatar({ user, size = "md" }: UserAvatarProps) {
       <AvatarImage 
         src={user.avatar_url || ""} 
         alt={t("Lietotāja attēls", "User avatar")} 
+        className="object-cover"
       />
       <AvatarFallback className="bg-primary/10 text-primary">
         {getInitials()}

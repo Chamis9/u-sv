@@ -15,6 +15,7 @@ import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { AdminLoginSection } from "@/components/admin/AdminLoginSection";
+import { useToast } from "@/hooks/use-toast";
 
 const Profile = () => {
   const { isAuthenticated, isAuthLoading, userEmail } = useAuth();
@@ -24,6 +25,7 @@ const Profile = () => {
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
   const navigate = useNavigate();
   const { currentLanguage } = useLanguage();
+  const { toast } = useToast();
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
@@ -59,7 +61,7 @@ const Profile = () => {
               last_sign_in_at: data.last_sign_in_at,
               role: 'user',
               status: data.status as 'active' | 'inactive',
-              avatar_url: null
+              avatar_url: data.avatar_url
             });
           } else {
             // Fallback to mock user if no data found
@@ -96,6 +98,40 @@ const Profile = () => {
       status: 'active',
       avatar_url: null
     };
+  };
+  
+  // Function to handle user updates
+  const handleUserUpdate = async (updatedUser: User) => {
+    setUser(updatedUser);
+    
+    try {
+      // Update user in database
+      const { data, error } = await supabase
+        .from('registered_users')
+        .update({
+          name: updatedUser.name,
+          email: updatedUser.email,
+          phone: updatedUser.phone,
+          avatar_url: updatedUser.avatar_url,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', updatedUser.id);
+        
+      if (error) {
+        throw error;
+      }
+      
+    } catch (error) {
+      console.error("Error updating user:", error);
+      toast({
+        variant: "destructive",
+        title: t("Kļūda", "Error"),
+        description: t(
+          "Neizdevās atjaunināt lietotāja datus", 
+          "Failed to update user data"
+        )
+      });
+    }
   };
 
   // If the user is not authenticated, show the admin login
@@ -151,7 +187,7 @@ const Profile = () => {
               <ProfileContent 
                 activeTab={activeTab} 
                 user={user} 
-                onUserUpdate={(updatedUser) => setUser(updatedUser)}
+                onUserUpdate={handleUserUpdate}
                 isLoading={isLoading}
               />
             ) : (
