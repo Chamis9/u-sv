@@ -35,18 +35,21 @@ export function DeleteUserDialog({ user, open, onClose, onUserDeleted }: DeleteU
     if (!user) return;
     
     setIsDeleting(true);
+    console.log("Attempting to delete user:", user.id);
     
     const { success, error } = await deleteUser(user.id);
     
     setIsDeleting(false);
     
     if (success) {
+      console.log("User successfully deleted from Supabase");
       toast({
         description: t('Lietotājs veiksmīgi dzēsts', 'User successfully deleted')
       });
       onUserDeleted(user.id);
       onClose();
     } else {
+      console.error("Error deleting user:", error);
       toast({
         variant: "destructive",
         title: t('Kļūda', 'Error'),

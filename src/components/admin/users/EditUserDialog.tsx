@@ -47,6 +47,7 @@ export function EditUserDialog({ user, open, onClose, onUserUpdated }: EditUserD
     if (!user) return;
     
     setIsSubmitting(true);
+    console.log("Attempting to update user:", user.id, "with name:", name, "and phone:", phone);
     
     const updatedUser = {
       ...user,
@@ -59,12 +60,14 @@ export function EditUserDialog({ user, open, onClose, onUserUpdated }: EditUserD
     setIsSubmitting(false);
     
     if (success) {
+      console.log("User successfully updated in Supabase");
       toast({
         description: t('Lietotājs veiksmīgi atjaunināts', 'User successfully updated')
       });
       onUserUpdated(updatedUser);
       onClose();
     } else {
+      console.error("Error updating user:", error);
       toast({
         variant: "destructive",
         title: t('Kļūda', 'Error'),
