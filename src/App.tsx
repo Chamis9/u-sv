@@ -10,6 +10,7 @@ import { LanguageProvider } from "./features/language";
 import { CookieConsent } from "./components/CookieConsent";
 import { clearAllCookies } from "./utils/cookieManager";
 import { ThemeProvider } from "./components/theme/ThemeProvider";
+import { AuthProvider } from "./contexts/AuthContext";
 
 // Lazy load pages for better performance
 const Index = lazy(() => import("./pages/Index"));
@@ -17,6 +18,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Admin = lazy(() => import("./pages/Admin"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 // Create a loading component
 const PageLoader = () => (
@@ -66,22 +68,25 @@ const App = () => {
       <HelmetProvider>
         <ThemeProvider defaultTheme="light">
           <TooltipProvider>
-            <LanguageProvider>
-              <Toaster />
-              <Sonner />
-              <CookieConsent />
-              <BrowserRouter>
-                <Suspense fallback={<PageLoader />}>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/admin" element={<Admin />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
-              </BrowserRouter>
-            </LanguageProvider>
+            <AuthProvider>
+              <LanguageProvider>
+                <Toaster />
+                <Sonner />
+                <CookieConsent />
+                <BrowserRouter>
+                  <Suspense fallback={<PageLoader />}>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/admin" element={<Admin />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
+                </BrowserRouter>
+              </LanguageProvider>
+            </AuthProvider>
           </TooltipProvider>
         </ThemeProvider>
       </HelmetProvider>

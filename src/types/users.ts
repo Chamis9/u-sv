@@ -9,4 +9,17 @@ export interface User {
   updated_at: string | null;
   role?: string;
   status?: 'active' | 'inactive';
+  avatar_url?: string | null;
+}
+
+export interface UserProfile {
+  userId: string;
+  email: string | null;
+  name: string | null;
+  phone: string | null;
+  avatarUrl: string | null;
+  status: 'active' | 'inactive';
+  role: string;
+  created: string;
+  lastLogin: string | null;
 }

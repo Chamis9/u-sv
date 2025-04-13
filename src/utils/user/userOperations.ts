@@ -7,7 +7,9 @@ export async function updateUser(user: User) {
   return updateUserBase(user, 'registered_users', {
     name: user.name,
     phone: user.phone,
-    status: user.status
+    status: user.status,
+    email: user.email,
+    updated_at: new Date().toISOString()
   });
 }
 
