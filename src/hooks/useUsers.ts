@@ -7,7 +7,7 @@ import { useUserLoading } from '@/hooks/useUserLoading';
 import { useLanguage } from '@/features/language';
 import type { User } from '@/types/users';
 import { useToast } from '@/hooks/use-toast';
-import { updateUser, deleteUser as deleteUserApi, toggleUserStatus } from '@/utils/user';
+import { updateUser, deleteUser, toggleUserStatus } from '@/utils/user/userOperations';
 
 export type { User };
 
@@ -76,9 +76,9 @@ export function useUsers() {
   };
   
   // Remove a user from the list
-  const deleteUser = async (userId: string) => {
+  const deleteUserData = async (userId: string) => {
     try {
-      const { success, error } = await deleteUserApi(userId);
+      const { success, error } = await deleteUser(userId);
       
       if (success) {
         const updatedUsers = users.filter(user => user.id !== userId);
@@ -162,7 +162,7 @@ export function useUsers() {
     refreshUsers: getUsers,
     totalUsers: users.length,
     updateUser: updateUserData,
-    deleteUser,
+    deleteUser: deleteUserData,
     toggleUserStatus: toggleStatus
   };
 }

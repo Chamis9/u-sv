@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useLanguage } from "@/features/language";
 import { User } from "@/types/users";
-import { supabase } from "@/integrations/supabase/client";
+import { deleteUser } from "@/utils/user/userOperations";
 import { useToast } from "@/hooks/use-toast";
 
 interface DeleteUserDialogProps {
@@ -40,17 +40,14 @@ export function DeleteUserDialog({ user, open, onClose, onUserDeleted }: DeleteU
     console.log("Attempting to delete user:", user.id);
     
     try {
-      const { error } = await supabase
-        .from('registered_users')
-        .delete()
-        .eq('id', user.id);
+      const { success, error } = await deleteUser(user.id);
         
-      if (error) {
+      if (!success) {
         console.error("Error deleting user:", error);
         toast({
           variant: "destructive",
           title: t('Kļūda', 'Error'),
-          description: t('Neizdevās dzēst lietotāju', 'Failed to delete user')
+          description: error || t('Neizdevās dzēst lietotāju', 'Failed to delete user')
         });
       } else {
         onUserDeleted(user.id);

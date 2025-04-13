@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Dialog, 
   DialogContent, 
@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/features/language";
 import { User } from "@/types/users";
+import { updateUser } from "@/utils/user/userOperations";
 import { useToast } from "@/hooks/use-toast";
 
 interface EditUserDialogProps {
@@ -33,7 +34,7 @@ export function EditUserDialog({ user, open, onClose, onUserUpdated }: EditUserD
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
   
   // Update state when user changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) {
       setName(user.name || null);
       setPhone(user.phone || null);
@@ -48,16 +49,40 @@ export function EditUserDialog({ user, open, onClose, onUserUpdated }: EditUserD
     setIsSubmitting(true);
     console.log("Attempting to update user:", user.id, "with name:", name, "and phone:", phone);
     
-    const updatedUser = {
-      ...user,
-      name,
-      phone,
-      updated_at: new Date().toISOString()
-    };
-    
-    onUserUpdated(updatedUser);
-    setIsSubmitting(false);
-    onClose();
+    try {
+      const updatedUser = {
+        ...user,
+        name,
+        phone,
+        updated_at: new Date().toISOString()
+      };
+      
+      const { success, error } = await updateUser(updatedUser);
+      
+      if (success) {
+        onUserUpdated(updatedUser);
+        toast({
+          description: t('Lietotājs veiksmīgi atjaunināts', 'User successfully updated')
+        });
+      } else {
+        console.error("Error updating user:", error);
+        toast({
+          variant: "destructive",
+          title: t('Kļūda', 'Error'),
+          description: error || t('Neizdevās atjaunināt lietotāju', 'Failed to update user')
+        });
+      }
+    } catch (err) {
+      console.error("Unexpected error updating user:", err);
+      toast({
+        variant: "destructive",
+        title: t('Kļūda', 'Error'),
+        description: t('Neizdevās atjaunināt lietotāju', 'Failed to update user')
+      });
+    } finally {
+      setIsSubmitting(false);
+      onClose();
+    }
   };
   
   if (!user) return null;
