@@ -14,14 +14,36 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "@/components/theme/ThemeProvider";
-import { Moon, Sun } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Moon, Sun, Save, RefreshCw } from "lucide-react";
+import { 
+  Form, 
+  FormControl, 
+  FormDescription, 
+  FormField, 
+  FormItem, 
+  FormLabel 
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 
 interface SettingsTabProps {
   user: User;
   onUserUpdate: (user: User) => void;
 }
+
+const appearanceFormSchema = z.object({
+  theme: z.enum(["light", "dark", "system"]),
+  language: z.string()
+});
 
 export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
   const { currentLanguage, setLanguage } = useLanguage();
@@ -34,6 +56,31 @@ export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
     return enText;
   };
   
+  // Appearance settings form
+  const appearanceForm = useForm<z.infer<typeof appearanceFormSchema>>({
+    resolver: zodResolver(appearanceFormSchema),
+    defaultValues: {
+      theme: theme as "light" | "dark" | "system",
+      language: currentLanguage.code
+    },
+  });
+  
+  const onAppearanceSubmit = (values: z.infer<typeof appearanceFormSchema>) => {
+    console.log(values);
+    setTheme(values.theme);
+    const newLanguage = languages.find(lang => lang.code === values.language);
+    if (newLanguage) {
+      setLanguage(newLanguage);
+    }
+    toast({
+      description: t(
+        "Izskats un valodas iestatījumi ir veiksmīgi saglabāti", 
+        "Appearance and language settings saved successfully",
+        "Настройки внешнего вида и языка успешно сохранены"
+      ),
+    });
+  };
+
   const handleThemeChange = (checked: boolean) => {
     const newTheme = checked ? "dark" : "light";
     setTheme(newTheme);
@@ -43,21 +90,6 @@ export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
         ? t("Tumšais motīvs ieslēgts", "Dark mode enabled", "Тёмный режим включен") 
         : t("Gaišais motīvs ieslēgts", "Light mode enabled", "Светлый режим включен"),
     });
-  };
-  
-  const handleLanguageChange = (value: string) => {
-    const selectedLanguage = languages.find(lang => lang.code === value);
-    if (selectedLanguage) {
-      setLanguage(selectedLanguage);
-      
-      toast({
-        description: t(
-          `Valoda nomainīta uz: ${selectedLanguage.name}`, 
-          `Language changed to: ${selectedLanguage.name}`,
-          `Язык изменен на: ${selectedLanguage.name}`
-        ),
-      });
-    }
   };
   
   return (
@@ -97,21 +129,73 @@ export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <RadioGroup 
-            defaultValue={currentLanguage.code}
-            onValueChange={handleLanguageChange}
-            className="space-y-3"
-          >
-            {languages.map((language) => (
-              <div key={language.code} className="flex items-center space-x-2">
-                <RadioGroupItem value={language.code} id={`language-${language.code}`} />
-                <Label htmlFor={`language-${language.code}`} className="flex items-center space-x-2">
-                  <span className="text-lg">{language.flag}</span>
-                  <span>{language.name}</span>
-                </Label>
+          <Form {...appearanceForm}>
+            <form onSubmit={appearanceForm.handleSubmit(onAppearanceSubmit)}>
+              <FormField
+                control={appearanceForm.control}
+                name="language"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Select 
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          const newLanguage = languages.find(lang => lang.code === value);
+                          if (newLanguage) {
+                            setLanguage(newLanguage);
+                            toast({
+                              description: t(
+                                `Valoda nomainīta uz: ${newLanguage.name}`, 
+                                `Language changed to: ${newLanguage.name}`,
+                                `Язык изменен на: ${newLanguage.name}`
+                              ),
+                            });
+                          }
+                        }} 
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder={t("Izvēlēties valodu", "Select language", "Выбрать язык")} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {languages.map(language => (
+                            <SelectItem key={language.code} value={language.code}>
+                              <div className="flex items-center gap-2">
+                                <span>{language.flag}</span>
+                                <span>{language.name}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormDescription>
+                      {t(
+                        "Izvēlieties profila valodu", 
+                        "Choose your profile language",
+                        "Выберите язык профиля"
+                      )}
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+              
+              <div className="mt-6 flex justify-end space-x-2">
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => appearanceForm.reset()}
+                >
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  {t("Atiestatīt", "Reset", "Сбросить")}
+                </Button>
+                <Button type="submit">
+                  <Save className="mr-2 h-4 w-4" />
+                  {t("Saglabāt izmaiņas", "Save changes", "Сохранить изменения")}
+                </Button>
               </div>
-            ))}
-          </RadioGroup>
+            </form>
+          </Form>
         </CardContent>
       </Card>
       
