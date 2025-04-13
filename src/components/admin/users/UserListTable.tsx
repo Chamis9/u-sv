@@ -63,9 +63,10 @@ export function UserListTable({ users, onUserUpdated, onUserDeleted }: UserListT
     const { success, error } = await toggleUserStatus(user);
     
     if (success) {
+      const newStatus = user.status === 'active' ? 'inactive' : 'active';
       const updatedUser = {
         ...user,
-        status: user.status === 'active' ? 'inactive' : 'active'
+        status: newStatus as 'active' | 'inactive'
       };
       onUserUpdated(updatedUser);
       
