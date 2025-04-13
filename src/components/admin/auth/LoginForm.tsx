@@ -141,10 +141,6 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
             </FormItem>
           )}
         />
-        <div className="mt-2 text-sm text-muted-foreground">
-          {t('Administratoru konti: admin@netieku.es, ieva@netieku.es, gunta@netieku.es', 
-             'Admin accounts: admin@netieku.es, ieva@netieku.es, gunta@netieku.es')}
-        </div>
         <div className="flex justify-end pt-4">
           <Button 
             type="submit" 
