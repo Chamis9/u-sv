@@ -57,14 +57,21 @@ const Profile = () => {
               status: data.status as 'active' | 'inactive',
               avatar_url: null
             });
+          } else {
+            // Ja dati nav atrasti, izmantojam mock lietotāju
+            setUser(createMockUser());
           }
         } else {
           // Create mock user for demonstration
-          setUser(createMockUser());
+          const mockUser = createMockUser();
+          console.log("Setting mock user:", mockUser);
+          setUser(mockUser);
         }
       } catch (error) {
         console.error("Error in profile data fetch:", error);
-        setUser(createMockUser()); // Fallback to mock data
+        const mockUser = createMockUser();
+        console.log("Setting mock user after error:", mockUser);
+        setUser(mockUser); // Fallback to mock data
       } finally {
         setIsLoading(false);
       }
