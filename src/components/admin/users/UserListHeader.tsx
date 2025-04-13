@@ -9,12 +9,18 @@ interface UserListHeaderProps {
   searchTerm: string;
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onDownloadCSV: () => void;
+  onAddUser?: () => void;
+  onFilter: () => void;
+  isAdmin?: boolean;
 }
 
 export function UserListHeader({ 
   searchTerm, 
   onSearchChange, 
-  onDownloadCSV 
+  onDownloadCSV,
+  onAddUser,
+  onFilter,
+  isAdmin = false
 }: UserListHeaderProps) {
   const { currentLanguage } = useLanguage();
   
@@ -44,15 +50,24 @@ export function UserListHeader({
           {t('Eksportēt CSV', 'Export CSV')}
         </Button>
         
-        <Button variant="outline" size="sm">
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={onFilter}
+        >
           <Filter className="h-4 w-4 mr-2" />
           {t('Filtrēt', 'Filter')}
         </Button>
         
-        <Button size="sm">
-          <UserPlus className="h-4 w-4 mr-2" />
-          {t('Pievienot lietotāju', 'Add User')}
-        </Button>
+        {!isAdmin && onAddUser && (
+          <Button 
+            size="sm"
+            onClick={onAddUser}
+          >
+            <UserPlus className="h-4 w-4 mr-2" />
+            {t('Pievienot lietotāju', 'Add User')}
+          </Button>
+        )}
       </div>
     </div>
   );

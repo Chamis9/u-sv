@@ -9,7 +9,10 @@ import { UserDataError } from "@/components/admin/users/UserDataError";
 import { UserEmptyState } from "@/components/admin/users/UserEmptyState";
 import { RefreshDataButton } from "@/components/admin/users/RefreshDataButton";
 import { useRegisteredUsers } from "@/hooks/useRegisteredUsers";
+import { AddUserDialog } from "@/components/admin/users/AddUserDialog";
+import { FilterDialog } from "@/components/admin/users/FilterDialog";
 import { Pagination } from "@/components/ui/pagination";
+import { User } from "@/types/users";
 
 export function RegisteredUsers() {
   const { 
@@ -30,22 +33,70 @@ export function RegisteredUsers() {
   
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
-  const totalPages = Math.ceil(users.length / pageSize);
   
-  // Apply pagination only when rendering to avoid unnecessary calculations
-  const currentUsers = useCallback(() => {
-    return users.slice((page - 1) * pageSize, page * pageSize);
-  }, [users, page, pageSize]);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    role: "",
+    status: "",
+    joinDate: "",
+    lastLogin: ""
+  });
+  
+  // Filter users based on active filters
+  const filteredUsers = React.useMemo(() => {
+    return users.filter(user => {
+      // Check each filter criteria
+      if (activeFilters.name && !user.name?.toLowerCase().includes(activeFilters.name.toLowerCase())) {
+        return false;
+      }
+      if (activeFilters.email && !user.email?.toLowerCase().includes(activeFilters.email.toLowerCase())) {
+        return false;
+      }
+      if (activeFilters.phone && !user.phone?.toLowerCase().includes(activeFilters.phone.toLowerCase())) {
+        return false;
+      }
+      if (activeFilters.role && user.role !== activeFilters.role) {
+        return false;
+      }
+      if (activeFilters.status && user.status !== activeFilters.status) {
+        return false;
+      }
+      // More complex date filters could be added here if needed
+      
+      return true;
+    });
+  }, [users, activeFilters]);
+  
+  const totalPages = Math.ceil(filteredUsers.length / pageSize);
+  
+  // Apply pagination
+  const currentUsers = React.useMemo(() => {
+    return filteredUsers.slice((page - 1) * pageSize, page * pageSize);
+  }, [filteredUsers, page, pageSize]);
 
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
   
-  // Reset to first page when search changes
+  // Reset to first page when search or filters change
   React.useEffect(() => {
     setPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, activeFilters]);
 
-  // Use memo to avoid unnecessary re-renders
-  const displayUsers = React.useMemo(() => currentUsers(), [currentUsers]);
+  const handleAddUser = () => {
+    setIsAddDialogOpen(true);
+  };
+
+  const handleOpenFilter = () => {
+    setIsFilterDialogOpen(true);
+  };
+
+  const handleApplyFilter = (filters: any) => {
+    setActiveFilters(filters);
+    setPage(1);
+  };
 
   return (
     <div className="space-y-6">
@@ -69,20 +120,22 @@ export function RegisteredUsers() {
             searchTerm={searchTerm}
             onSearchChange={handleSearch}
             onDownloadCSV={handleDownloadCSV}
+            onAddUser={handleAddUser}
+            onFilter={handleOpenFilter}
           />
           
-          {users.length === 0 && searchTerm ? (
+          {filteredUsers.length === 0 && searchTerm ? (
             <EmptyOrErrorState 
               isLoading={false} 
               error=""
               searchTerm={searchTerm} 
             />
-          ) : users.length === 0 ? (
+          ) : filteredUsers.length === 0 ? (
             <UserEmptyState onRefresh={fetchRegisteredUsers} />
           ) : (
             <>
               <UserListTable 
-                users={displayUsers} 
+                users={currentUsers} 
                 onUserUpdated={handleUserUpdated}
                 onUserDeleted={handleUserDeleted}
                 onToggleStatus={handleToggleStatus}
@@ -106,6 +159,23 @@ export function RegisteredUsers() {
                 </div>
               )}
             </>
+          )}
+          
+          {isAddDialogOpen && (
+            <AddUserDialog 
+              open={isAddDialogOpen}
+              onClose={() => setIsAddDialogOpen(false)}
+              onUserAdded={handleUserUpdated}
+            />
+          )}
+          
+          {isFilterDialogOpen && (
+            <FilterDialog 
+              open={isFilterDialogOpen}
+              onClose={() => setIsFilterDialogOpen(false)}
+              onApplyFilter={handleApplyFilter}
+              isAdmin={false}
+            />
           )}
         </>
       )}

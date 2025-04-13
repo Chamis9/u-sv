@@ -11,7 +11,8 @@ export function UserTableHeader() {
   return (
     <TableHeader>
       <TableRow>
-        <TableHead>{t('Kontaktinformācija', 'Contact Info')}</TableHead>
+        <TableHead>{t('Vārds', 'Name')}</TableHead>
+        <TableHead>{t('Telefons', 'Phone')}</TableHead>
         <TableHead>{t('E-pasts', 'Email')}</TableHead>
         <TableHead>{t('Loma', 'Role')}</TableHead>
         <TableHead>{t('Statuss', 'Status')}</TableHead>

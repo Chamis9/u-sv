@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useAdminUsers } from "@/hooks/useAdminUsers";
 import { useLanguage } from "@/features/language";
@@ -11,6 +12,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { updateUser, deleteUser } from "@/utils/admin/adminOperations";
 import { useToast } from "@/hooks/use-toast";
 import { downloadUsersCSV, downloadBlob } from "@/utils/user";
+import { FilterDialog } from "@/components/admin/users/FilterDialog";
 
 export function AdminUsers() {
   const { 
@@ -31,10 +33,38 @@ export function AdminUsers() {
   // Pagination state
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
-  const totalPages = Math.ceil(users.length / pageSize);
+  
+  // Filter state
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    role: "",
+    status: "",
+    joinDate: "",
+    lastLogin: ""
+  });
+  
+  // Filter users based on active filters
+  const filteredUsers = React.useMemo(() => {
+    return users.filter(user => {
+      // Check each filter criteria
+      if (activeFilters.email && !user.email?.toLowerCase().includes(activeFilters.email.toLowerCase())) {
+        return false;
+      }
+      // More filters can be added as needed
+      
+      return true;
+    });
+  }, [users, activeFilters]);
+  
+  const totalPages = Math.ceil(filteredUsers.length / pageSize);
   
   // Get current page of users
-  const currentUsers = users.slice((page - 1) * pageSize, page * pageSize);
+  const currentUsers = React.useMemo(() => {
+    return filteredUsers.slice((page - 1) * pageSize, page * pageSize);
+  }, [filteredUsers, page, pageSize]);
   
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
@@ -61,6 +91,15 @@ export function AdminUsers() {
       });
     }
   };
+  
+  const handleOpenFilter = () => {
+    setIsFilterDialogOpen(true);
+  };
+
+  const handleApplyFilter = (filters: any) => {
+    setActiveFilters(filters);
+    setPage(1);
+  };
 
   // Refresh count with parent component
   React.useEffect(() => {
@@ -70,10 +109,10 @@ export function AdminUsers() {
     window.dispatchEvent(event);
   }, [users.length]);
   
-  // Reset to first page when search changes
+  // Reset to first page when search or filters change
   React.useEffect(() => {
     setPage(1);
-  }, [searchTerm]);
+  }, [searchTerm, activeFilters]);
 
   const handleUserEditedUpdate = async (updatedUser: User) => {
     try {
@@ -172,6 +211,8 @@ export function AdminUsers() {
             searchTerm={searchTerm}
             onSearchChange={handleSearch}
             onDownloadCSV={handleDownloadCSV}
+            onFilter={handleOpenFilter}
+            isAdmin={true}
           />
           
           {isLoading ? (
@@ -198,13 +239,13 @@ export function AdminUsers() {
                 </Button>
               </div>
             </div>
-          ) : users.length === 0 && searchTerm ? (
+          ) : filteredUsers.length === 0 && searchTerm ? (
             <EmptyOrErrorState 
               isLoading={false} 
               error=""
               searchTerm={searchTerm} 
             />
-          ) : users.length === 0 ? (
+          ) : filteredUsers.length === 0 ? (
             <div className="flex justify-center items-center h-64 text-center">
               <div>
                 <p className="text-muted-foreground">
@@ -242,6 +283,15 @@ export function AdminUsers() {
                     />
                   </Pagination>
                 </div>
+              )}
+              
+              {isFilterDialogOpen && (
+                <FilterDialog 
+                  open={isFilterDialogOpen}
+                  onClose={() => setIsFilterDialogOpen(false)}
+                  onApplyFilter={handleApplyFilter}
+                  isAdmin={true}
+                />
               )}
             </>
           )}

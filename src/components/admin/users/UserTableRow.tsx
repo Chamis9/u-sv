@@ -4,7 +4,6 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/features/language";
 import type { User } from "@/types/users";
-import { UserContactInfo } from "./UserContactInfo";
 import { UserStatusBadge } from "./UserStatusBadge";
 import { UserActionsMenu } from "./UserActionsMenu";
 
@@ -45,9 +44,8 @@ export const UserTableRow = memo(function UserTableRow({
   
   return (
     <TableRow>
-      <TableCell>
-        <UserContactInfo name={user.name} phone={user.phone} />
-      </TableCell>
+      <TableCell>{user.name || t('Nav norādīts', 'Not specified')}</TableCell>
+      <TableCell>{user.phone || t('Nav norādīts', 'Not specified')}</TableCell>
       <TableCell className="font-medium">{user.email || t('Nav e-pasta', 'No email')}</TableCell>
       <TableCell>
         {user.role === "admin" ? (
@@ -83,6 +81,7 @@ export const UserTableRow = memo(function UserTableRow({
     prevProps.user.status === nextProps.user.status &&
     prevProps.user.updated_at === nextProps.user.updated_at &&
     prevProps.user.email === nextProps.user.email &&
-    prevProps.user.name === nextProps.user.name
+    prevProps.user.name === nextProps.user.name &&
+    prevProps.user.phone === nextProps.user.phone
   );
 });
