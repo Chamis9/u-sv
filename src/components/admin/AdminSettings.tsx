@@ -11,21 +11,37 @@ export function AdminSettings() {
   const { currentLanguage } = useLanguage();
   
   // Translation helper
-  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lvText: string, enText: string, ruText?: string) => {
+    if (currentLanguage.code === 'lv') return lvText;
+    if (currentLanguage.code === 'ru') return ruText || enText;
+    return enText;
+  };
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t("Platformas iestatījumi", "Platform Settings")}</h1>
-        <p className="text-muted-foreground">{t("Pārvaldiet platformas globālos iestatījumus", "Manage platform global settings")}</p>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {t("Platformas iestatījumi", "Platform Settings", "Настройки платформы")}
+        </h1>
+        <p className="text-muted-foreground">
+          {t("Pārvaldiet platformas globālos iestatījumus", "Manage platform global settings", "Управляйте глобальными настройками платформы")}
+        </p>
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6">
-          <TabsTrigger value="appearance">{t("Izskats un valoda", "Appearance and Language")}</TabsTrigger>
-          <TabsTrigger value="notifications">{t("Paziņojumi", "Notifications")}</TabsTrigger>
-          <TabsTrigger value="security">{t("Drošība", "Security")}</TabsTrigger>
-          <TabsTrigger value="integrations">{t("Integrācijas", "Integrations")}</TabsTrigger>
+          <TabsTrigger value="appearance">
+            {t("Izskats un valoda", "Appearance and Language", "Внешний вид и язык")}
+          </TabsTrigger>
+          <TabsTrigger value="notifications">
+            {t("Paziņojumi", "Notifications", "Уведомления")}
+          </TabsTrigger>
+          <TabsTrigger value="security">
+            {t("Drošība", "Security", "Безопасность")}
+          </TabsTrigger>
+          <TabsTrigger value="integrations">
+            {t("Integrācijas", "Integrations", "Интеграции")}
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="appearance">
@@ -47,3 +63,6 @@ export function AdminSettings() {
     </div>
   );
 }
+
+// Make sure to add a default export for lazy loading
+export default AdminSettings;
