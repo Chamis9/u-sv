@@ -13,12 +13,15 @@ import { ProfileSidebar } from "@/components/profile/ProfileSidebar";
 import { ProfileContent } from "@/components/profile/ProfileContent";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { AdminLogin } from "@/components/admin/AdminLogin";
+import { AdminLoginSection } from "@/components/admin/AdminLoginSection";
 
 const Profile = () => {
   const { isAuthenticated, isAuthLoading, userEmail } = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("account"); // Default tab is account
+  const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
   const navigate = useNavigate();
   const { currentLanguage } = useLanguage();
   
@@ -26,8 +29,7 @@ const Profile = () => {
     currentLanguage.code === 'lv' ? lvText : enText;
 
   useEffect(() => {
-    // For demonstration purposes, instead of redirecting if not authenticated,
-    // we'll show mock data
+    // Only try to fetch user data if authenticated
     const fetchUserData = async () => {
       try {
         setIsLoading(true);
@@ -60,20 +62,18 @@ const Profile = () => {
               avatar_url: null
             });
           } else {
-            // Ja dati nav atrasti, izmantojam mock lietotāju
+            // Fallback to mock user if no data found
             setUser(createMockUser());
           }
         } else {
-          // Create mock user for demonstration
-          const mockUser = createMockUser();
-          console.log("Setting mock user:", mockUser);
-          setUser(mockUser);
+          // No need to set mock user here, we'll show login screen instead
+          setUser(null);
         }
       } catch (error) {
         console.error("Error in profile data fetch:", error);
-        const mockUser = createMockUser();
-        console.log("Setting mock user after error:", mockUser);
-        setUser(mockUser); // Fallback to mock data
+        if (isAuthenticated) {
+          setUser(createMockUser()); // Only set mock user for authenticated users
+        }
       } finally {
         setIsLoading(false);
       }
@@ -86,7 +86,7 @@ const Profile = () => {
   const createMockUser = (): User => {
     return {
       id: "mock-user-id-123",
-      email: "demo@example.com",
+      email: userEmail || "demo@example.com",
       name: "Demo Lietotājs",
       phone: "+371 12345678",
       created_at: new Date(2023, 0, 15).toISOString(),
@@ -97,6 +97,30 @@ const Profile = () => {
       avatar_url: null
     };
   };
+
+  // If the user is not authenticated, show the admin login
+  if (!isAuthenticated) {
+    return (
+      <ThemeProvider>
+        <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+          <SEO 
+            title={t("Lietotāja profils - netieku.es", "User Profile - netieku.es")} 
+            description={t("Piekļūstiet savam lietotāja profilam", "Access your user profile")}
+          />
+          <Header />
+          
+          <AdminLoginSection onLoginClick={() => setShowLoginModal(true)} />
+          <AdminLogin 
+            isOpen={showLoginModal} 
+            onClose={() => setShowLoginModal(false)} 
+            onLoginSuccess={() => setShowLoginModal(false)} 
+          />
+          
+          <Footer />
+        </div>
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider>
