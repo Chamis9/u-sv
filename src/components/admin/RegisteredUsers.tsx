@@ -89,10 +89,6 @@ export function RegisteredUsers() {
     setIsAddDialogOpen(true);
   };
 
-  const handleOpenFilter = () => {
-    setIsFilterDialogOpen(true);
-  };
-
   const handleApplyFilter = (filters: any) => {
     setActiveFilters(filters);
     setPage(1);
@@ -121,7 +117,6 @@ export function RegisteredUsers() {
             onSearchChange={handleSearch}
             onDownloadCSV={handleDownloadCSV}
             onAddUser={handleAddUser}
-            onFilter={handleOpenFilter}
           />
           
           {filteredUsers.length === 0 && searchTerm ? (

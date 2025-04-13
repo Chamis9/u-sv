@@ -100,7 +100,6 @@ export function AdminUsersList({
         searchTerm={searchTerm}
         onSearchChange={handleSearch}
         onDownloadCSV={handleDownloadCSV}
-        onFilter={handleOpenFilter}
         isAdmin={true}
       />
       
