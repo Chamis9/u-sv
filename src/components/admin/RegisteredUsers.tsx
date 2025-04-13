@@ -10,7 +10,7 @@ import { UserEmptyState } from "@/components/admin/users/UserEmptyState";
 import { RefreshDataButton } from "@/components/admin/users/RefreshDataButton";
 import { useRegisteredUsers } from "@/hooks/useRegisteredUsers";
 import { AddUserDialog } from "@/components/admin/users/AddUserDialog";
-import { FilterDialog } from "@/components/admin/users/FilterDialog";
+import { SortField, SortDirection } from "@/components/admin/users/UserTableHeader";
 import { Pagination } from "@/components/ui/pagination";
 import { User } from "@/types/users";
 
@@ -33,64 +33,71 @@ export function RegisteredUsers() {
   
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
-  
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
-  const [activeFilters, setActiveFilters] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    role: "",
-    status: "",
-    joinDate: "",
-    lastLogin: ""
-  });
+  const [sortField, setSortField] = useState<SortField | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   
-  // Filter users based on active filters
-  const filteredUsers = React.useMemo(() => {
-    return users.filter(user => {
-      // Check each filter criteria
-      if (activeFilters.name && !user.name?.toLowerCase().includes(activeFilters.name.toLowerCase())) {
-        return false;
-      }
-      if (activeFilters.email && !user.email?.toLowerCase().includes(activeFilters.email.toLowerCase())) {
-        return false;
-      }
-      if (activeFilters.phone && !user.phone?.toLowerCase().includes(activeFilters.phone.toLowerCase())) {
-        return false;
-      }
-      if (activeFilters.role && user.role !== activeFilters.role) {
-        return false;
-      }
-      if (activeFilters.status && user.status !== activeFilters.status) {
-        return false;
-      }
-      // More complex date filters could be added here if needed
+  // Sort users based on sort field and direction
+  const sortedUsers = React.useMemo(() => {
+    if (!sortField || !sortDirection) return users;
+    
+    return [...users].sort((a, b) => {
+      const valueA = a[sortField as keyof User];
+      const valueB = b[sortField as keyof User];
       
-      return true;
+      // Handle null values
+      if (valueA === null) return sortDirection === 'asc' ? -1 : 1;
+      if (valueB === null) return sortDirection === 'asc' ? 1 : -1;
+      
+      // Special case for dates
+      if (sortField === 'created_at' || sortField === 'last_sign_in_at') {
+        const dateA = valueA ? new Date(valueA as string).getTime() : 0;
+        const dateB = valueB ? new Date(valueB as string).getTime() : 0;
+        return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+      }
+      
+      // Default string comparison
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
+        return sortDirection === 'asc' 
+          ? valueA.localeCompare(valueB)
+          : valueB.localeCompare(valueA);
+      }
+      
+      return 0;
     });
-  }, [users, activeFilters]);
+  }, [users, sortField, sortDirection]);
   
-  const totalPages = Math.ceil(filteredUsers.length / pageSize);
+  const totalPages = Math.ceil(sortedUsers.length / pageSize);
   
   // Apply pagination
   const currentUsers = React.useMemo(() => {
-    return filteredUsers.slice((page - 1) * pageSize, page * pageSize);
-  }, [filteredUsers, page, pageSize]);
+    return sortedUsers.slice((page - 1) * pageSize, page * pageSize);
+  }, [sortedUsers, page, pageSize]);
 
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
   
-  // Reset to first page when search or filters change
+  // Reset to first page when search or sort changes
   React.useEffect(() => {
     setPage(1);
-  }, [searchTerm, activeFilters]);
+  }, [searchTerm, sortField, sortDirection]);
 
   const handleAddUser = () => {
     setIsAddDialogOpen(true);
   };
-
-  const handleApplyFilter = (filters: any) => {
-    setActiveFilters(filters);
+  
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      // Cycle through: asc -> desc -> null
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortField(null);
+        setSortDirection(null);
+      }
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
     setPage(1);
   };
 
@@ -119,13 +126,13 @@ export function RegisteredUsers() {
             onAddUser={handleAddUser}
           />
           
-          {filteredUsers.length === 0 && searchTerm ? (
+          {sortedUsers.length === 0 && searchTerm ? (
             <EmptyOrErrorState 
               isLoading={false} 
               error=""
               searchTerm={searchTerm} 
             />
-          ) : filteredUsers.length === 0 ? (
+          ) : sortedUsers.length === 0 ? (
             <UserEmptyState onRefresh={fetchRegisteredUsers} />
           ) : (
             <>
@@ -134,6 +141,9 @@ export function RegisteredUsers() {
                 onUserUpdated={handleUserUpdated}
                 onUserDeleted={handleUserDeleted}
                 onToggleStatus={handleToggleStatus}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
               />
               
               {totalPages > 1 && (
@@ -161,15 +171,6 @@ export function RegisteredUsers() {
               open={isAddDialogOpen}
               onClose={() => setIsAddDialogOpen(false)}
               onUserAdded={handleUserUpdated}
-            />
-          )}
-          
-          {isFilterDialogOpen && (
-            <FilterDialog 
-              open={isFilterDialogOpen}
-              onClose={() => setIsFilterDialogOpen(false)}
-              onApplyFilter={handleApplyFilter}
-              isAdmin={false}
             />
           )}
         </>

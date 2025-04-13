@@ -5,12 +5,11 @@ import { UserListHeader } from "@/components/admin/users/UserListHeader";
 import { UserListTable } from "@/components/admin/users/UserListTable";
 import { EmptyOrErrorState } from "@/components/admin/users/EmptyOrErrorState";
 import { User } from "@/types/users";
-import { FilterDialog } from "@/components/admin/users/FilterDialog";
 import { downloadUsersCSV, downloadBlob } from "@/utils/user";
 import { useToast } from "@/hooks/use-toast";
 import { UserFilterStatus } from "./components/UserFilterStatus";
 import { UserPagination } from "./components/UserPagination";
-import { useUserFiltering } from "./hooks/useUserFiltering";
+import { useUserSorting } from "./hooks/useUserSorting";
 import { UserErrorState } from "./components/UserErrorState";
 import { UserEmptyContent } from "./components/UserEmptyContent";
 
@@ -42,15 +41,12 @@ export function AdminUsersList({
     page,
     setPage,
     totalPages,
-    isFilterDialogOpen,
-    setIsFilterDialogOpen,
-    activeFilters,
+    sortedUsers,
     currentUsers,
-    handleOpenFilter,
-    handleApplyFilter,
-    handleRemoveFilter,
-    handleClearFilters
-  } = useUserFiltering(users, searchTerm);
+    sortField,
+    sortDirection,
+    handleSort
+  } = useUserSorting(users, searchTerm);
   
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
   
@@ -86,7 +82,7 @@ export function AdminUsersList({
     return <UserErrorState error={error} onRetry={handleRetry} />;
   }
   
-  if (currentUsers.length === 0 && searchTerm) {
+  if (sortedUsers.length === 0 && searchTerm) {
     return <EmptyOrErrorState isLoading={false} error="" searchTerm={searchTerm} />;
   }
   
@@ -103,17 +99,14 @@ export function AdminUsersList({
         isAdmin={true}
       />
       
-      <UserFilterStatus 
-        activeFilters={activeFilters}
-        onRemoveFilter={handleRemoveFilter}
-        onClearFilters={handleClearFilters}
-      />
-      
       <UserListTable 
         users={currentUsers} 
         onUserUpdated={handleUserUpdated}
         onUserDeleted={handleUserDeleted}
         onToggleStatus={() => {}} // Not applicable for admins
+        sortField={sortField}
+        sortDirection={sortDirection}
+        onSort={handleSort}
       />
       
       <UserPagination 
@@ -121,15 +114,6 @@ export function AdminUsersList({
         totalPages={totalPages}
         setPage={setPage}
       />
-      
-      {isFilterDialogOpen && (
-        <FilterDialog 
-          open={isFilterDialogOpen}
-          onClose={() => setIsFilterDialogOpen(false)}
-          onApplyFilter={handleApplyFilter}
-          isAdmin={true}
-        />
-      )}
     </>
   );
 }

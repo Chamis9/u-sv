@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Download, UserPlus, Filter } from "lucide-react";
+import { Search, Download, UserPlus } from "lucide-react";
 import { useLanguage } from "@/features/language";
 
 interface UserListHeaderProps {
@@ -10,7 +10,6 @@ interface UserListHeaderProps {
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onDownloadCSV: () => void;
   onAddUser?: () => void;
-  onFilter?: () => void;
   isAdmin?: boolean;
 }
 
@@ -19,7 +18,6 @@ export function UserListHeader({
   onSearchChange, 
   onDownloadCSV,
   onAddUser,
-  onFilter,
   isAdmin = false
 }: UserListHeaderProps) {
   const { currentLanguage } = useLanguage();
