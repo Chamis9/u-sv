@@ -1,7 +1,10 @@
 
-import React from "react";
+import React, { memo } from "react";
 import { AdminDashboardContent } from "./dashboard/AdminDashboardContent";
 
-export function AdminDashboard() {
+export const AdminDashboard = memo(function AdminDashboard() {
   return <AdminDashboardContent />;
-}
+});
+
+// For compatibility with lazy loading
+export default AdminDashboard;

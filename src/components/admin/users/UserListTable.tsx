@@ -54,13 +54,16 @@ export const UserListTable = memo(function UserListTable({
     setSelectedUser(null);
   }, []);
 
+  // Only render users if there are any
+  const hasUsers = users && users.length > 0;
+
   return (
     <>
       <div className="rounded-md border shadow-sm overflow-hidden">
         <Table>
           <UserTableHeader />
           <TableBody>
-            {users.length > 0 ? (
+            {hasUsers ? (
               users.map(user => (
                 <UserTableRow 
                   key={user.id}

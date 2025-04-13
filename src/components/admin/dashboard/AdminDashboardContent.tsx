@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, memo } from "react";
 import { DashboardHeader } from "./DashboardHeader";
 import { DashboardStatsGrid } from "./DashboardStatsGrid";
 import { RecentActivitiesCard } from "./RecentActivitiesCard";
@@ -9,14 +9,16 @@ import { ActivityLogModal } from "@/components/admin/activity";
 import { useSubscribers } from "@/hooks/useSubscribers";
 import { useAdminTranslations } from "@/hooks/useAdminTranslations";
 
-export function AdminDashboardContent() {
+// Memoize entire component to prevent unnecessary rerenders
+export const AdminDashboardContent = memo(function AdminDashboardContent() {
   const [showActivityModal, setShowActivityModal] = useState(false);
   const { formatRelativeTime } = useAdminTranslations();
   
   // Use refs to prevent memory leaks
   const abortControllerRef = useRef<AbortController | null>(null);
+  const mountedRef = useRef(true);
   
-  // Optimize subscriber data fetching
+  // Prevent refreshing subscribers on every render with useCallback
   const { 
     subscribers,
     refreshSubscribers, 
@@ -28,6 +30,8 @@ export function AdminDashboardContent() {
   
   // Memoize subscriber processing to avoid expensive calculations on each render
   const processSubscribers = useCallback(() => {
+    if (!mountedRef.current) return;
+    
     if (subscribers.length > 0) {
       try {
         const sorted = [...subscribers].sort((a, b) => 
@@ -50,6 +54,8 @@ export function AdminDashboardContent() {
   
   // Use an effect to fetch data when the component mounts
   useEffect(() => {
+    mountedRef.current = true;
+    
     // Cancel any previous requests
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -62,8 +68,8 @@ export function AdminDashboardContent() {
     const loadData = async () => {
       try {
         await refreshSubscribers();
-      } catch (error) {
-        if (error.name !== 'AbortError') {
+      } catch (error: any) {
+        if (error.name !== 'AbortError' && mountedRef.current) {
           console.error("Error refreshing subscribers:", error);
         }
       }
@@ -73,6 +79,7 @@ export function AdminDashboardContent() {
     
     // Cleanup function
     return () => {
+      mountedRef.current = false;
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
@@ -81,7 +88,9 @@ export function AdminDashboardContent() {
   
   // Process subscribers when they change
   useEffect(() => {
-    processSubscribers();
+    if (mountedRef.current) {
+      processSubscribers();
+    }
   }, [subscribers, processSubscribers]);
   
   return (
@@ -111,4 +120,5 @@ export function AdminDashboardContent() {
       )}
     </div>
   );
-}
+});
+
