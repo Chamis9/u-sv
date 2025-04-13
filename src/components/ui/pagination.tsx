@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
 
@@ -105,6 +106,37 @@ const PaginationEllipsis = ({
   </span>
 )
 PaginationEllipsis.displayName = "PaginationEllipsis"
+
+// Create PrevButton and NextButton properties for the Pagination component
+const PrevButton = ({
+  className,
+  ...props
+}: React.ComponentProps<"button">) => (
+  <button
+    className={cn(buttonVariants({ variant: "outline" }), "gap-1 pl-2.5", className)}
+    {...props}
+  >
+    <ChevronLeft className="h-4 w-4" />
+    <span>Previous</span>
+  </button>
+)
+
+const NextButton = ({
+  className,
+  ...props
+}: React.ComponentProps<"button">) => (
+  <button
+    className={cn(buttonVariants({ variant: "outline" }), "gap-1 pr-2.5", className)}
+    {...props}
+  >
+    <span>Next</span>
+    <ChevronRight className="h-4 w-4" />
+  </button>
+)
+
+// Add the PrevButton and NextButton as properties to the Pagination component
+Pagination.PrevButton = PrevButton;
+Pagination.NextButton = NextButton;
 
 export {
   Pagination,

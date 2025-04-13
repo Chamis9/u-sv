@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
@@ -28,27 +27,22 @@ export function RegisteredUsers() {
   const { currentLanguage } = useLanguage();
   const { toast } = useToast();
   
-  // Pagination state
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
   const totalPages = Math.ceil(users.length / pageSize);
   
-  // Get current page of users
   const currentUsers = users.slice((page - 1) * pageSize, page * pageSize);
 
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  // Initial load
   useEffect(() => {
     fetchRegisteredUsers();
   }, []);
   
-  // Reset to first page when search changes
   useEffect(() => {
     setPage(1);
   }, [searchTerm]);
 
-  // CSV export
   const handleDownloadCSV = () => {
     if (!users || users.length === 0) {
       toast({
