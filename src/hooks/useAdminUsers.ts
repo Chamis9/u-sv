@@ -1,8 +1,10 @@
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useUserFetch, useUserSearch, useUserModifications } from "@/hooks/user";
 
 export function useAdminUsers() {
+  const initialized = useRef(false);
+  
   const { 
     users, 
     isLoading, 
@@ -32,14 +34,21 @@ export function useAdminUsers() {
     tableName: 'admin_user'
   });
   
-  // Use lazy initialization for the initial data fetch
+  // Use lazy initialization for the initial data fetch, but only once
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchUsers();
-    }, 100); // Small delay to allow UI to render first
-    
-    return () => clearTimeout(timer);
+    if (!initialized.current) {
+      const timer = setTimeout(() => {
+        fetchUsers();
+        initialized.current = true;
+      }, 100); // Small delay to allow UI to render first
+      
+      return () => clearTimeout(timer);
+    }
   }, [fetchUsers]);
+
+  const refreshData = () => {
+    fetchUsers(true); // Force a refresh
+  };
 
   return {
     users: filteredUsers,
@@ -47,7 +56,7 @@ export function useAdminUsers() {
     isLoading,
     error,
     isAuth,
-    fetchAdminUsers: fetchUsers,
+    fetchAdminUsers: refreshData,
     handleSearch,
     handleUserUpdated,
     handleUserDeleted

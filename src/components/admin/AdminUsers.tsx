@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAdminUsers } from "@/hooks/useAdminUsers";
 import { useLanguage } from "@/features/language";
 import { UserListHeader } from "@/components/admin/users/UserListHeader";
@@ -64,7 +63,7 @@ export function AdminUsers() {
   };
 
   // Refresh count with parent component
-  useEffect(() => {
+  React.useEffect(() => {
     const event = new CustomEvent('adminCountUpdated', { 
       detail: { count: users.length } 
     });
@@ -72,18 +71,9 @@ export function AdminUsers() {
   }, [users.length]);
   
   // Reset to first page when search changes
-  useEffect(() => {
+  React.useEffect(() => {
     setPage(1);
   }, [searchTerm]);
-
-  // Initial data fetch
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchAdminUsers();
-    }, 100); // Small delay to allow UI to render first
-    
-    return () => clearTimeout(timer);
-  }, [fetchAdminUsers]);
 
   const handleUserEditedUpdate = async (updatedUser: User) => {
     try {

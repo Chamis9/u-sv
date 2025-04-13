@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/features/language";
@@ -11,10 +12,17 @@ export function useUserFetch(tableName: 'registered_users' | 'admin_user') {
   const { currentLanguage } = useLanguage();
   const abortControllerRef = useRef<AbortController | null>(null);
   const cachedUsersRef = useRef<User[]>([]);
+  const hasLoadedRef = useRef(false); // Track if we've already loaded data
 
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  const fetchUsers = useCallback(async () => {
+  const fetchUsers = useCallback(async (forceRefresh = false) => {
+    // Skip fetching if we've already loaded and this isn't a forced refresh
+    if (hasLoadedRef.current && !forceRefresh && cachedUsersRef.current.length > 0) {
+      console.log(`Using cached ${tableName} data`);
+      return { data: cachedUsersRef.current, error: null };
+    }
+    
     // Cancel any in-progress request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -52,6 +60,8 @@ export function useUserFetch(tableName: 'registered_users' | 'admin_user') {
         } else {
           setUsers([]);
         }
+
+        return { data: [], error };
       } else {
         console.log(`Received ${tableName} data:`, data);
         
@@ -74,12 +84,15 @@ export function useUserFetch(tableName: 'registered_users' | 'admin_user') {
         // Cache the users for future use
         cachedUsersRef.current = formattedUsers;
         setUsers(formattedUsers);
+        hasLoadedRef.current = true; // Mark that we've successfully loaded data
         
         const eventName = tableName === 'registered_users' ? 'userCountUpdated' : 'adminCountUpdated';
         const event = new CustomEvent(eventName, { 
           detail: { count: formattedUsers.length } 
         });
         window.dispatchEvent(event);
+
+        return { data: formattedUsers, error: null };
       }
     } catch (err) {
       // Only set error if this wasn't an abort error
@@ -94,7 +107,10 @@ export function useUserFetch(tableName: 'registered_users' | 'admin_user') {
         if (tableName === 'admin_user') {
           setIsAuth(false);
         }
+
+        return { data: [], error: err };
       }
+      return { data: [], error: err };
     } finally {
       // Only update loading state if this wasn't aborted
       if (abortControllerRef.current?.signal.aborted === false) {

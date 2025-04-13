@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
 import { EmptyOrErrorState } from "@/components/admin/users/EmptyOrErrorState";
@@ -9,7 +9,6 @@ import { UserDataError } from "@/components/admin/users/UserDataError";
 import { UserEmptyState } from "@/components/admin/users/UserEmptyState";
 import { RefreshDataButton } from "@/components/admin/users/RefreshDataButton";
 import { useRegisteredUsers } from "@/hooks/useRegisteredUsers";
-import { downloadUsersCSV, downloadBlob } from "@/utils/user";
 import { Pagination } from "@/components/ui/pagination";
 
 export function RegisteredUsers() {
@@ -22,7 +21,8 @@ export function RegisteredUsers() {
     handleSearch, 
     handleUserUpdated, 
     handleUserDeleted,
-    handleToggleStatus 
+    handleToggleStatus,
+    handleDownloadCSV 
   } = useRegisteredUsers();
   
   const { currentLanguage } = useLanguage();
@@ -38,43 +38,11 @@ export function RegisteredUsers() {
   }, [users, page, pageSize]);
 
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
-
-  // Use lazy initialization for the initial data fetch
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchRegisteredUsers();
-    }, 100); // Small delay to allow UI to render first
-    
-    return () => clearTimeout(timer);
-  }, []);
   
-  useEffect(() => {
+  // Reset to first page when search changes
+  React.useEffect(() => {
     setPage(1);
   }, [searchTerm]);
-
-  const handleDownloadCSV = () => {
-    if (!users || users.length === 0) {
-      toast({
-        description: t('Nav lietotāju, ko lejupielādēt', 'No users to download'),
-      });
-      return;
-    }
-
-    try {
-      const { blob, filename } = downloadUsersCSV(users, currentLanguage);
-      downloadBlob(blob, filename);
-      
-      toast({
-        description: t('CSV fails veiksmīgi lejupielādēts', 'CSV file downloaded successfully'),
-      });
-    } catch (error) {
-      console.error("Error downloading CSV:", error);
-      toast({
-        variant: "destructive",
-        description: t('Kļūda lejupielādējot failu', 'Error downloading file'),
-      });
-    }
-  };
 
   // Use memo to avoid unnecessary re-renders
   const displayUsers = React.useMemo(() => currentUsers(), [currentUsers]);

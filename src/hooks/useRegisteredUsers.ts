@@ -1,11 +1,13 @@
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useUserFetch, useUserSearch, useUserModifications } from "@/hooks/user";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/features/language";
 import { downloadUsersCSV, downloadBlob } from "@/utils/user";
 
 export function useRegisteredUsers() {
+  const initialized = useRef(false);
+  
   const { 
     users, 
     isLoading, 
@@ -40,13 +42,16 @@ export function useRegisteredUsers() {
   
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  // Use lazy initialization for the initial data fetch
+  // Use lazy initialization for the initial data fetch, but only once
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchUsers();
-    }, 100); // Small delay to allow UI to render first
-    
-    return () => clearTimeout(timer);
+    if (!initialized.current) {
+      const timer = setTimeout(() => {
+        fetchUsers();
+        initialized.current = true;
+      }, 100); // Small delay to allow UI to render first
+      
+      return () => clearTimeout(timer);
+    }
   }, [fetchUsers]);
 
   const handleDownloadCSV = () => {
@@ -73,12 +78,16 @@ export function useRegisteredUsers() {
     }
   };
 
+  const refreshData = () => {
+    fetchUsers(true); // Force a refresh
+  };
+
   return {
     users: filteredUsers,
     searchTerm,
     isLoading,
     error,
-    fetchRegisteredUsers: fetchUsers,
+    fetchRegisteredUsers: refreshData,
     handleSearch,
     handleUserUpdated,
     handleUserDeleted,
