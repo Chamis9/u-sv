@@ -1,15 +1,19 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { User } from '@/types/users';
+import type { Database } from '@/integrations/supabase/types';
 
 export interface OperationResult {
   success: boolean;
   error?: string;
 }
 
+// Define valid table names as a type to match Supabase's requirements
+type ValidTableName = 'registered_users' | 'admin_user';
+
 export async function updateUserBase<T extends User>(
   user: T, 
-  tableName: string, 
+  tableName: ValidTableName, 
   updateFields: Record<string, any>
 ): Promise<OperationResult> {
   try {
@@ -40,7 +44,7 @@ export async function updateUserBase<T extends User>(
 
 export async function deleteUserBase(
   userId: string, 
-  tableName: string
+  tableName: ValidTableName
 ): Promise<OperationResult> {
   try {
     console.log(`Deleting user from ${tableName}:`, userId);
