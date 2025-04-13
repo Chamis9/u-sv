@@ -1,13 +1,38 @@
 
-import { memo } from "react";
+import { memo, useState, useEffect } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
 import { FallingTickets } from "@/components/FallingTickets";
 import { Helmet } from "react-helmet-async";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Hero = memo(function Hero() {
   const { translations } = useLanguage();
   const { hero } = translations;
+  const [backgroundImage, setBackgroundImage] = useState('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80');
+
+  useEffect(() => {
+    const fetchBackgroundImage = async () => {
+      try {
+        const { data, error } = await supabase.storage
+          .from('backgrounds')
+          .getPublicUrl('hero-background.jpg');
+
+        if (error) {
+          console.warn('Error fetching background image:', error);
+          return;
+        }
+
+        if (data?.publicUrl) {
+          setBackgroundImage(data.publicUrl);
+        }
+      } catch (err) {
+        console.error('Unexpected error fetching background image:', err);
+      }
+    };
+
+    fetchBackgroundImage();
+  }, []);
 
   // Generate structured data for the event
   const structuredData = {
@@ -40,7 +65,7 @@ export const Hero = memo(function Hero() {
       <div 
         className="absolute inset-0 z-[-1] bg-cover bg-center will-change-transform"
         style={{ 
-          backgroundImage: "url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80')" 
+          backgroundImage: `url('${backgroundImage}')` 
         }}
         aria-hidden="true"
       ></div>
