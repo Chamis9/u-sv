@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -6,26 +5,17 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/features/language";
-
-interface FilterValues {
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  status: string;
-  joinDate: string;
-  lastLogin: string;
-}
+import { UserFilters } from "./hooks/useUserFiltering";
 
 interface FilterDialogProps {
   open: boolean;
   onClose: () => void;
-  onApplyFilter: (filters: FilterValues) => void;
+  onApplyFilter: (filters: UserFilters) => void;
   isAdmin: boolean;
 }
 
 export function FilterDialog({ open, onClose, onApplyFilter, isAdmin }: FilterDialogProps) {
-  const [filters, setFilters] = useState<FilterValues>({
+  const [filters, setFilters] = useState<UserFilters>({
     name: "",
     email: "",
     phone: "",
@@ -39,7 +29,7 @@ export function FilterDialog({ open, onClose, onApplyFilter, isAdmin }: FilterDi
   
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  const handleChange = (field: keyof FilterValues, value: string) => {
+  const handleChange = (field: keyof UserFilters, value: string) => {
     setFilters(prev => ({
       ...prev,
       [field]: value

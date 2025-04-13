@@ -3,6 +3,7 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { useLanguage } from "@/features/language";
+import { UserFilters } from "../hooks/useUserFiltering";
 
 interface FilterBadgeProps {
   label: string;
@@ -26,7 +27,7 @@ function FilterBadge({ label, value, onRemove, filterKey }: FilterBadgeProps) {
 }
 
 interface UserFilterStatusProps {
-  activeFilters: Record<string, string>;
+  activeFilters: UserFilters;
   onRemoveFilter: (key: string) => void;
   onClearFilters: () => void;
 }
