@@ -3,11 +3,10 @@ import { useState, useEffect } from "react";
 
 /**
  * Custom hook to track subscriber count, listening for updates via custom events
- * @param initialCount Initial subscriber count
  * @returns Current subscriber count
  */
-export function useSubscriberCount(initialCount: number = 0) {
-  const [subscriberCount, setSubscriberCount] = useState(initialCount);
+export function useSubscriberCount() {
+  const [subscriberCount, setSubscriberCount] = useState(0);
   
   useEffect(() => {
     // Handler for subscriber count update events
