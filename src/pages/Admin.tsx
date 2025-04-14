@@ -66,7 +66,6 @@ function AdminPage() {
         <AdminSidebar 
           activeTab={activeTab} 
           onTabChange={setActiveTab}
-          subscriberCount={5}
           adminCount={adminCount}
         />
         
