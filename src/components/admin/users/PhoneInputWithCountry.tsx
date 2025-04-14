@@ -50,9 +50,15 @@ export function PhoneInputWithCountry({
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [localError, setLocalError] = useState<string>("");
+  const [selectedCode, setSelectedCode] = useState(countryCode);
+  
+  // Update the internal state when prop changes
+  useEffect(() => {
+    setSelectedCode(countryCode);
+  }, [countryCode]);
   
   // Find selected country info for placeholder
-  const selectedCountry = countryCodes.find(c => c.code === countryCode);
+  const selectedCountry = countryCodes.find(c => c.code === selectedCode);
   
   // Filter countries based on search
   const filteredCountries = countryCodes.filter(country => 
@@ -70,8 +76,8 @@ export function PhoneInputWithCountry({
     
     const digits = phoneNumber.replace(/\s/g, '');
     
-    if (!validatePhoneNumber(digits, countryCode)) {
-      const country = countryCodes.find(c => c.code === countryCode);
+    if (!validatePhoneNumber(digits, selectedCode)) {
+      const country = countryCodes.find(c => c.code === selectedCode);
       const expectedLength = country?.digits.join(t(' vai ', ' or '));
       setLocalError(t(
         `Telefona numuram jāsatur ${expectedLength} cipari`,
@@ -80,7 +86,7 @@ export function PhoneInputWithCountry({
     } else {
       setLocalError("");
     }
-  }, [phoneNumber, countryCode, t]);
+  }, [phoneNumber, selectedCode, t]);
   
   // Only allow numbers and spaces in phone field
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,14 +104,16 @@ export function PhoneInputWithCountry({
     // Only allow + and numbers
     value = value.replace(/[^\d+]/g, '');
     
-    // Check if it matches any existing code
-    const matchingCountry = countryCodes.find(c => c.code === value);
-    if (matchingCountry) {
-      onCountryCodeChange(matchingCountry.code);
-    } else {
-      // Allow custom input but warn user
-      onCountryCodeChange(value);
-    }
+    setSelectedCode(value);
+    onCountryCodeChange(value);
+  };
+  
+  // Handle country selection
+  const handleCountrySelect = (code: string) => {
+    setSelectedCode(code);
+    onCountryCodeChange(code);
+    setOpen(false);
+    setSearchValue("");
   };
   
   return (
@@ -128,7 +136,7 @@ export function PhoneInputWithCountry({
                   countryAbbr={selectedCountry.country} 
                 />
               ) : (
-                <span>{countryCode}</span>
+                <span>{selectedCode}</span>
               )}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -146,7 +154,7 @@ export function PhoneInputWithCountry({
                   <Input
                     type="text"
                     placeholder={t("Ievadīt kodu manuāli", "Enter code manually")}
-                    value={countryCode}
+                    value={selectedCode}
                     onChange={handleManualCodeInput}
                     className="mt-2"
                   />
@@ -157,11 +165,7 @@ export function PhoneInputWithCountry({
                       <CommandItem
                         key={country.code}
                         value={country.code}
-                        onSelect={() => {
-                          onCountryCodeChange(country.code);
-                          setOpen(false);
-                          setSearchValue("");
-                        }}
+                        onSelect={() => handleCountrySelect(country.code)}
                         className="flex items-center justify-between py-3"
                       >
                         <div className="flex items-center">
@@ -172,7 +176,7 @@ export function PhoneInputWithCountry({
                         </div>
                         <div className="flex items-center">
                           <span className="text-gray-500">{country.code}</span>
-                          {country.code === countryCode && (
+                          {country.code === selectedCode && (
                             <Check className="ml-2 h-4 w-4" />
                           )}
                         </div>
