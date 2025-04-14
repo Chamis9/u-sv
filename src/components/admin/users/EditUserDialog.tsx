@@ -16,7 +16,7 @@ import { User } from "@/types/users";
 import { updateUser } from "@/utils/user/userOperations";
 import { useToast } from "@/hooks/use-toast";
 import { PhoneInputWithCountry } from "./PhoneInputWithCountry";
-import { extractPhoneComponents, formatPhoneNumber } from "@/utils/phoneUtils";
+import { extractPhoneComponents, formatPhoneNumber, validatePhoneNumber } from "@/utils/phoneUtils";
 import { supabase } from "@/integrations/supabase/client";
 
 interface EditUserDialogProps {
@@ -79,6 +79,15 @@ export function EditUserDialog({ user, open, onClose, onUserUpdated }: EditUserD
     
     // Reset errors
     setErrors({});
+    
+    // Phone validation if provided
+    if (phoneNumber.trim()) {
+      const cleanPhone = phoneNumber.replace(/\s/g, '');
+      if (!validatePhoneNumber(cleanPhone, countryCode)) {
+        setErrors({phone: t('Ievadiet derīgu telefona numuru', 'Enter a valid phone number')});
+        return;
+      }
+    }
     
     setIsSubmitting(true);
     

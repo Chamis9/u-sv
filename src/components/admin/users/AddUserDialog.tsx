@@ -10,7 +10,7 @@ import { createUser } from "@/utils/user/userOperations";
 import { User } from "@/types/users";
 import { PhoneInputWithCountry } from "./PhoneInputWithCountry";
 import { supabase } from "@/integrations/supabase/client";
-import { formatPhoneNumber } from "@/utils/phoneUtils";
+import { formatPhoneNumber, validatePhoneNumber } from "@/utils/phoneUtils";
 
 interface AddUserDialogProps {
   open: boolean;
@@ -103,6 +103,15 @@ export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps
     } else if (!validateEmail(email)) {
       newErrors.email = t('Ievadiet derīgu e-pasta adresi', 'Enter a valid email address');
       isValid = false;
+    }
+    
+    // Phone validation if provided
+    if (phoneNumber.trim()) {
+      const cleanPhone = phoneNumber.replace(/\s/g, '');
+      if (!validatePhoneNumber(cleanPhone, countryCode)) {
+        newErrors.phone = t('Ievadiet derīgu telefona numuru', 'Enter a valid phone number');
+        isValid = false;
+      }
     }
     
     // Update errors state and stop if not valid

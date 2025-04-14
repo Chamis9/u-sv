@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Select, 
   SelectContent, 
@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { countryCodes, getCountryFlag } from "@/utils/phoneUtils";
+import { countryCodes, getCountryFlag, validatePhoneNumber } from "@/utils/phoneUtils";
 import { useLanguage } from "@/features/language";
 
 interface PhoneInputWithCountryProps {
@@ -37,8 +37,38 @@ export function PhoneInputWithCountry({
   const { currentLanguage } = useLanguage();
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
+  const [localError, setLocalError] = useState<string>("");
+  
   // Find selected country info for placeholder
   const selectedCountry = countryCodes.find(c => c.code === countryCode);
+  
+  // Validate phone number based on country requirements
+  useEffect(() => {
+    if (!phoneNumber.trim()) {
+      setLocalError("");
+      return;
+    }
+    
+    // Remove spaces for validation
+    const digits = phoneNumber.replace(/\s/g, '');
+    
+    if (!validatePhoneNumber(digits, countryCode)) {
+      const country = countryCodes.find(c => c.code === countryCode);
+      const expectedLength = country?.digits.join(t(' vai ', ' or '));
+      setLocalError(t(
+        `Telefona numuram jāsatur ${expectedLength} cipari`,
+        `Phone number must contain ${expectedLength} digits`
+      ));
+    } else {
+      setLocalError("");
+    }
+  }, [phoneNumber, countryCode, t]);
+  
+  // Only allow numbers and spaces in phone field
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^\d\s]/g, '');
+    onPhoneNumberChange(value);
+  };
   
   return (
     <div className="space-y-2">
@@ -68,14 +98,14 @@ export function PhoneInputWithCountry({
         
         <Input
           value={phoneNumber}
-          onChange={(e) => onPhoneNumberChange(e.target.value)}
+          onChange={handlePhoneChange}
           placeholder={placeholder || selectedCountry?.format || ""}
-          className={error ? "border-red-500" : ""}
+          className={(error || localError) ? "border-red-500" : ""}
         />
       </div>
       
-      {error && (
-        <p className="text-red-500 text-sm">{error}</p>
+      {(error || localError) && (
+        <p className="text-red-500 text-sm">{error || localError}</p>
       )}
     </div>
   );
