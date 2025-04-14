@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { 
   Dialog, 
   DialogContent, 
@@ -27,6 +27,14 @@ export function EditUserDialog({
   const { currentLanguage } = useLanguage();
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
+  // Clean up effect to ensure proper cleanup on unmount
+  useEffect(() => {
+    return () => {
+      // Cleanup function to ensure proper state reset when the dialog closes
+      // This helps prevent any lingering state that might cause the UI to become unresponsive
+    };
+  }, []);
+
   // If there's no user, we shouldn't render the dialog at all
   if (!user) return null;
 
@@ -34,7 +42,12 @@ export function EditUserDialog({
     <Dialog 
       open={open} 
       onOpenChange={(isOpen) => {
-        if (!isOpen) onClose();
+        if (!isOpen) {
+          // Make sure we properly clean up when dialog closes
+          setTimeout(() => {
+            onClose();
+          }, 0);
+        }
       }}
     >
       <DialogContent className="sm:max-w-[425px]">

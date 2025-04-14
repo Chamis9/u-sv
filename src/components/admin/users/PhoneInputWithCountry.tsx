@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { 
   Select, 
@@ -18,16 +17,11 @@ const CountryFlag = ({ countryCode }: { countryCode: string }) => {
   return (
     <div className="w-6 h-4 inline-flex items-center justify-center mr-2 overflow-hidden">
       <img 
-        src={`https://flagcdn.com/w20/${countryCode.toLowerCase()}.png`}
-        srcSet={`https://flagcdn.com/w40/${countryCode.toLowerCase()}.png 2x`}
+        src={`/flags/${countryCode.toLowerCase()}.svg`}
         width="20"
         height="15"
         alt=""
         className="max-w-full max-h-full object-contain"
-        onError={(e) => {
-          console.log(`Failed to load flag: ${countryCode}`);
-          e.currentTarget.style.display = 'none';
-        }}
       />
     </div>
   );
@@ -126,10 +120,7 @@ export function PhoneInputWithCountry({
         
         <Input
           value={phoneNumber}
-          onChange={(e) => {
-            const value = e.target.value.replace(/[^\d\s]/g, '');
-            onPhoneNumberChange(value);
-          }}
+          onChange={handlePhoneChange}
           placeholder={placeholder || selectedCountry?.format || ""}
           className={(error || localError) ? "border-red-500" : ""}
         />
