@@ -20,6 +20,7 @@ export const usePhoneInput = ({
   const [localError, setLocalError] = useState<string>("");
   const [selectedCode, setSelectedCode] = useState(initialCountryCode);
 
+  // Update internal state when props change
   useEffect(() => {
     setSelectedCode(initialCountryCode);
   }, [initialCountryCode]);

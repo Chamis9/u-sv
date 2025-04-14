@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/features/language";
 import { cn } from "@/lib/utils";
-import { CountrySelector } from "./components/CountrySelector";
+import CountrySelector from "./components/CountrySelector";
 import { usePhoneInput } from "./hooks/usePhoneInput";
 
 interface PhoneInputWithCountryProps {
@@ -89,3 +89,5 @@ export function PhoneInputWithCountry({
     </div>
   );
 }
+
+export default PhoneInputWithCountry;

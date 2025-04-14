@@ -42,7 +42,6 @@ export const CountrySelector = ({
           role="combobox"
           aria-expanded={open}
           className="w-[140px] justify-between"
-          onClick={() => setOpen(!open)}
         >
           {selectedCountry ? (
             <CountryCodeDisplay 
@@ -104,3 +103,5 @@ export const CountrySelector = ({
     </Popover>
   );
 };
+
+export default CountrySelector;
