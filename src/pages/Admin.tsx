@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminLogin } from "@/components/admin/AdminLogin";
@@ -20,11 +20,17 @@ function AdminPage() {
   const [adminCount, setAdminCount] = useState(0);
   const { isAuthenticated, isAuthLoading } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Get the active tab from the current route
   const getActiveTabFromRoute = () => {
     const path = location.pathname.split('/')[2] || 'dashboard';
     return path;
+  };
+  
+  // Handle tab change by navigating to the appropriate route
+  const handleTabChange = (tab: string) => {
+    navigate(`/admin/${tab}`);
   };
 
   // Listen for admin count updates
@@ -74,6 +80,7 @@ function AdminPage() {
       <div className="flex flex-1 overflow-hidden pt-16">
         <AdminSidebar 
           activeTab={getActiveTabFromRoute()} 
+          onTabChange={handleTabChange}
           adminCount={adminCount}
         />
         
