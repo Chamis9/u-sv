@@ -10,6 +10,12 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "./LanguageContext";
 import { languages } from "./translations";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Flag } from "lucide-react";
+
+// Helper to get country icon based on country code
+const FlagIcon = ({ countryCode }: { countryCode: string }) => {
+  return <Flag className="h-4 w-4 mr-2" />;
+};
 
 export const LanguageSelector = memo(function LanguageSelector() {
   const { currentLanguage, setLanguage } = useLanguage();
@@ -23,7 +29,7 @@ export const LanguageSelector = memo(function LanguageSelector() {
             variant="outline" 
             className="rounded-full bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20"
           >
-            <span className="mr-1">{currentLanguage.flag}</span> 
+            <FlagIcon countryCode={currentLanguage.flag} />
             <span>{currentLanguage.name}</span>
           </Button>
         </DropdownMenuTrigger>
@@ -34,7 +40,7 @@ export const LanguageSelector = memo(function LanguageSelector() {
               onClick={() => setLanguage(language)}
               className="cursor-pointer hover:bg-orange-100"
             >
-              <span className="mr-2">{language.flag}</span>
+              <FlagIcon countryCode={language.flag} />
               {language.name}
             </DropdownMenuItem>
           ))}

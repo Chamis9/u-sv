@@ -2,7 +2,7 @@
 import { Language } from './types';
 
 export const languages: Language[] = [
-  { code: "lv", name: "Latviešu", flag: "🇱🇻" },
-  { code: "en", name: "English", flag: "🇬🇧" },
-  { code: "ru", name: "Русский", flag: "🇷🇺" },
+  { code: "lv", name: "Latviešu", flag: "lv" },
+  { code: "en", name: "English", flag: "gb" },
+  { code: "ru", name: "Русский", flag: "ru" },
 ];

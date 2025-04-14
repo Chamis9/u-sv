@@ -10,8 +10,9 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { countryCodes, getCountryFlag, validatePhoneNumber } from "@/utils/phoneUtils";
+import { countryCodes, validatePhoneNumber } from "@/utils/phoneUtils";
 import { useLanguage } from "@/features/language";
+import { Flag } from "lucide-react";
 
 interface PhoneInputWithCountryProps {
   label: string;
@@ -77,9 +78,12 @@ export function PhoneInputWithCountry({
       <div className="flex space-x-2">
         <Select value={countryCode} onValueChange={onCountryCodeChange}>
           <SelectTrigger className="w-28">
-            <SelectValue 
-              placeholder={`${getCountryFlag(countryCodes[0].country)} ${countryCodes[0].code}`} 
-            />
+            <SelectValue>
+              <div className="flex items-center">
+                <Flag className="h-4 w-4 mr-1" />
+                <span>{countryCode}</span>
+              </div>
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -87,9 +91,12 @@ export function PhoneInputWithCountry({
                 <SelectItem 
                   key={country.code} 
                   value={country.code}
-                  className="flex items-center space-x-2"
+                  className="flex items-center"
                 >
-                  <span>{getCountryFlag(country.country)} {country.code}</span>
+                  <div className="flex items-center">
+                    <Flag className="h-4 w-4 mr-1" />
+                    <span>{country.code}</span>
+                  </div>
                 </SelectItem>
               ))}
             </SelectGroup>

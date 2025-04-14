@@ -30,15 +30,13 @@ export function EditUserDialog({
   // If there's no user, we shouldn't render the dialog at all
   if (!user) return null;
 
-  // Handle the dialog close event
-  const handleDialogClose = (isOpen: boolean) => {
-    if (!isOpen) {
-      onClose();
-    }
-  };
-
   return (
-    <Dialog open={open} onOpenChange={handleDialogClose}>
+    <Dialog 
+      open={open} 
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onClose();
+      }}
+    >
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{t('Rediģēt lietotāju', 'Edit User')}</DialogTitle>
