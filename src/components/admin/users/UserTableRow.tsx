@@ -1,7 +1,6 @@
 
 import React, { memo, useCallback } from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/features/language";
 import type { User } from "@/types/users";
 import { UserStatusBadge } from "./UserStatusBadge";
@@ -47,13 +46,6 @@ export const UserTableRow = memo(function UserTableRow({
       <TableCell>{user.name || t('Nav norādīts', 'Not specified')}</TableCell>
       <TableCell>{user.phone || t('Nav norādīts', 'Not specified')}</TableCell>
       <TableCell className="font-medium">{user.email || t('Nav e-pasta', 'No email')}</TableCell>
-      <TableCell>
-        {user.role === "admin" ? (
-          <Badge variant="default">{t('Administrators', 'Administrator')}</Badge>
-        ) : (
-          <Badge variant="outline">{t('Lietotājs', 'User')}</Badge>
-        )}
-      </TableCell>
       <TableCell>
         <UserStatusBadge status={user.status || 'active'} />
       </TableCell>

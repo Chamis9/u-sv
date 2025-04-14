@@ -28,13 +28,56 @@ export async function toggleUserStatus(user: User) {
 interface CreateUserParams {
   name?: string;
   email: string;
-  phone?: string;
+  phone?: string | null;
   status?: 'active' | 'inactive';
 }
 
 export async function createUser(userData: CreateUserParams) {
   try {
     console.log(`Creating new user:`, userData);
+    
+    // Check if email already exists
+    const { data: existingUsers, error: checkError } = await supabase
+      .from('registered_users')
+      .select('id')
+      .eq('email', userData.email)
+      .limit(1);
+      
+    if (checkError) {
+      console.error(`Error checking existing user:`, checkError);
+      return { 
+        success: false, 
+        error: checkError.message,
+        data: null
+      };
+    }
+    
+    if (existingUsers && existingUsers.length > 0) {
+      return {
+        success: false,
+        error: 'E-pasta adrese jau ir reģistrēta',
+        data: null
+      };
+    }
+    
+    // Check if phone already exists (if provided)
+    if (userData.phone) {
+      const { data: existingPhones, error: phoneCheckError } = await supabase
+        .from('registered_users')
+        .select('id')
+        .eq('phone', userData.phone)
+        .limit(1);
+        
+      if (phoneCheckError) {
+        console.error(`Error checking existing phone:`, phoneCheckError);
+      } else if (existingPhones && existingPhones.length > 0) {
+        return {
+          success: false,
+          error: 'Telefona numurs jau ir reģistrēts',
+          data: null
+        };
+      }
+    }
     
     const newUser = {
       name: userData.name || null,
