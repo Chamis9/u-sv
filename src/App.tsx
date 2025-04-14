@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -94,15 +93,10 @@ const App = () => {
                       </ThemeProvider>
                     } />
                     
-                    {/* Admin and Profile routes - allow theme switching */}
-                    <Route path="/admin" element={
+                    {/* Admin routes - allow theme switching */}
+                    <Route path="/admin/*" element={
                       <ThemeProvider defaultTheme="light">
                         <Admin />
-                      </ThemeProvider>
-                    } />
-                    <Route path="/profile" element={
-                      <ThemeProvider defaultTheme="light">
-                        <Profile />
                       </ThemeProvider>
                     } />
                     <Route path="/profile/*" element={

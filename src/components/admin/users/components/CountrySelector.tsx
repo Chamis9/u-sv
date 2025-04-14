@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
@@ -78,7 +77,10 @@ export const CountrySelector = ({
                   <CommandItem
                     key={country.code}
                     value={country.code}
-                    onSelect={() => handleCountrySelect(country.code)}
+                    onSelect={() => {
+                      handleCountrySelect(country.code);
+                      setOpen(false);
+                    }}
                     className="flex items-center justify-between py-3"
                   >
                     <div className="flex items-center">

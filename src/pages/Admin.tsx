@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminLogin } from "@/components/admin/AdminLogin";
@@ -8,14 +9,25 @@ import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminContent } from "@/components/admin/AdminContent";
 import { AdminLoginSection } from "@/components/admin/AdminLoginSection";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { AdminDashboard } from "@/components/admin/AdminDashboard";
+import { AdminUsers } from "@/components/admin/AdminUsers";
+import { RegisteredUsers } from "@/components/admin/RegisteredUsers";
+import { AdminSubscribers } from "@/components/admin/AdminSubscribers";
+import { AdminSettings } from "@/components/admin/AdminSettings";
 
 function AdminPage() {
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState("dashboard");
   const [adminCount, setAdminCount] = useState(0);
   const { isAuthenticated, isAuthLoading } = useAuth();
+  const location = useLocation();
 
-  // Klausīties administratoru skaita atjaunināšanas notikumam
+  // Get the active tab from the current route
+  const getActiveTabFromRoute = () => {
+    const path = location.pathname.split('/')[2] || 'dashboard';
+    return path;
+  };
+
+  // Listen for admin count updates
   useEffect(() => {
     const handleAdminCountUpdate = (event: any) => {
       if (event.detail && typeof event.detail.count === 'number') {
@@ -24,7 +36,6 @@ function AdminPage() {
     };
 
     window.addEventListener('adminCountUpdated', handleAdminCountUpdate);
-
     return () => {
       window.removeEventListener('adminCountUpdated', handleAdminCountUpdate);
     };
@@ -39,7 +50,6 @@ function AdminPage() {
   }
 
   if (!isAuthenticated) {
-    // Show login modal if not authenticated
     return (
       <>
         <AdminLoginSection onLoginClick={() => setShowLoginModal(true)} />
@@ -61,16 +71,21 @@ function AdminPage() {
 
       <AdminHeader />
       
-      <div className="flex flex-1 overflow-hidden pt-16"> {/* Added pt-16 to create space below header */}
-        {/* Sidebar */}
+      <div className="flex flex-1 overflow-hidden pt-16">
         <AdminSidebar 
-          activeTab={activeTab} 
-          onTabChange={setActiveTab}
+          activeTab={getActiveTabFromRoute()} 
           adminCount={adminCount}
         />
         
-        {/* Main content */}
-        <AdminContent activeTab={activeTab} onTabChange={setActiveTab} />
+        <Routes>
+          <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="/dashboard" element={<AdminDashboard />} />
+          <Route path="/users" element={<RegisteredUsers />} />
+          <Route path="/admins" element={<AdminUsers />} />
+          <Route path="/subscribers" element={<AdminSubscribers />} />
+          <Route path="/settings" element={<AdminSettings />} />
+          <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+        </Routes>
       </div>
       
       <Footer />
@@ -78,7 +93,6 @@ function AdminPage() {
   );
 }
 
-// Wrap the AdminPage with the AuthProvider to provide authentication context
 export default function Admin() {
   return (
     <AuthProvider>
