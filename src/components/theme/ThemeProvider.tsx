@@ -7,16 +7,19 @@ type ThemeProviderProps = {
   children: ReactNode;
   defaultTheme?: Theme;
   storageKey?: string;
+  disableToggle?: boolean;
 };
 
 type ThemeProviderState = {
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  isToggleDisabled: boolean;
 };
 
 const initialState: ThemeProviderState = {
   theme: "system",
   setTheme: () => null,
+  isToggleDisabled: false,
 };
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
@@ -25,11 +28,15 @@ export function ThemeProvider({
   children,
   defaultTheme = "system",
   storageKey = "ui-theme",
+  disableToggle = false,
   ...props
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  );
+  // If toggle is disabled, always use the defaultTheme
+  const initialTheme = disableToggle 
+    ? defaultTheme 
+    : (localStorage.getItem(storageKey) as Theme) || defaultTheme;
+  
+  const [theme, setThemeState] = useState<Theme>(initialTheme);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -49,16 +56,27 @@ export function ThemeProvider({
   }, [theme]);
 
   const setTheme = useCallback((theme: Theme) => {
-    localStorage.setItem(storageKey, theme);
-    setThemeState(theme);
-  }, [storageKey]);
+    // Only allow theme changes if toggle is not disabled
+    if (!disableToggle) {
+      localStorage.setItem(storageKey, theme);
+      setThemeState(theme);
+    }
+  }, [storageKey, disableToggle]);
+
+  // Force theme to defaultTheme if disableToggle becomes true
+  useEffect(() => {
+    if (disableToggle) {
+      setThemeState(defaultTheme);
+    }
+  }, [disableToggle, defaultTheme]);
 
   const value = useMemo(
     () => ({
       theme,
       setTheme,
+      isToggleDisabled: disableToggle,
     }),
-    [theme, setTheme]
+    [theme, setTheme, disableToggle]
   );
 
   return (

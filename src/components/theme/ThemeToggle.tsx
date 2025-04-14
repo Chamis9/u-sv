@@ -5,9 +5,14 @@ import { useTheme } from "./ThemeProvider";
 import { memo } from "react";
 
 export const ThemeToggle = memo(function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, isToggleDisabled } = useTheme();
 
   const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
+
+  // Don't render the toggle if it's disabled
+  if (isToggleDisabled) {
+    return null;
+  }
 
   return (
     <Button

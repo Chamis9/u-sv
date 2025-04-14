@@ -66,29 +66,56 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
-        <ThemeProvider defaultTheme="light">
-          <TooltipProvider>
-            <AuthProvider>
-              <LanguageProvider>
-                <Toaster />
-                <Sonner />
-                <CookieConsent />
-                <BrowserRouter>
-                  <Suspense fallback={<PageLoader />}>
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/admin" element={<Admin />} />
-                      <Route path="/profile" element={<Profile />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Suspense>
-                </BrowserRouter>
-              </LanguageProvider>
-            </AuthProvider>
-          </TooltipProvider>
-        </ThemeProvider>
+        <TooltipProvider>
+          <AuthProvider>
+            <LanguageProvider>
+              <Toaster />
+              <Sonner />
+              <CookieConsent />
+              <BrowserRouter>
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    {/* Home routes - fixed light theme */}
+                    <Route path="/" element={
+                      <ThemeProvider defaultTheme="light" disableToggle={true}>
+                        <Index />
+                      </ThemeProvider>
+                    } />
+                    <Route path="/privacy-policy" element={
+                      <ThemeProvider defaultTheme="light" disableToggle={true}>
+                        <PrivacyPolicy />
+                      </ThemeProvider>
+                    } />
+                    <Route path="/contact" element={
+                      <ThemeProvider defaultTheme="light" disableToggle={true}>
+                        <Contact />
+                      </ThemeProvider>
+                    } />
+                    
+                    {/* Admin and Profile routes - allow theme switching */}
+                    <Route path="/admin" element={
+                      <ThemeProvider defaultTheme="light">
+                        <Admin />
+                      </ThemeProvider>
+                    } />
+                    <Route path="/profile" element={
+                      <ThemeProvider defaultTheme="light">
+                        <Profile />
+                      </ThemeProvider>
+                    } />
+                    
+                    {/* 404 route */}
+                    <Route path="*" element={
+                      <ThemeProvider defaultTheme="light" disableToggle={true}>
+                        <NotFound />
+                      </ThemeProvider>
+                    } />
+                  </Routes>
+                </Suspense>
+              </BrowserRouter>
+            </LanguageProvider>
+          </AuthProvider>
+        </TooltipProvider>
       </HelmetProvider>
     </QueryClientProvider>
   );
