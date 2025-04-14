@@ -132,7 +132,7 @@ export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps
       }
       
       // Format and check phone if provided
-      let formattedPhone = "";
+      let formattedPhone = null;
       if (phoneNumber.trim()) {
         formattedPhone = formatPhoneNumber(countryCode, phoneNumber);
         
@@ -149,7 +149,7 @@ export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps
       const { success, data, error } = await createUser({
         name,
         email,
-        phone: formattedPhone || null,
+        phone: formattedPhone,
         status: 'active'
       });
       
