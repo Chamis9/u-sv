@@ -1,3 +1,4 @@
+
 import React from "react";
 import { EditUserForm } from "./EditUserForm";
 import { useEditUserForm } from "@/hooks/user/useEditUserForm";
@@ -28,7 +29,7 @@ export function EditUserFormContainer({
     validateForm,
     checkPhoneExists,
     t
-  } = useEditUserForm(user, onUserUpdated, onClose);
+  } = useEditUserForm(user);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));

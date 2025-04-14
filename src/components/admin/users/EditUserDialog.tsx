@@ -27,10 +27,18 @@ export function EditUserDialog({
   const { currentLanguage } = useLanguage();
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
+  // If there's no user, we shouldn't render the dialog at all
   if (!user) return null;
 
+  // Handle the dialog close event
+  const handleDialogClose = (isOpen: boolean) => {
+    if (!isOpen) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{t('Rediģēt lietotāju', 'Edit User')}</DialogTitle>

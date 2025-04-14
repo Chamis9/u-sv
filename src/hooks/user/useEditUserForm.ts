@@ -1,9 +1,8 @@
 
-import { useState } from "react";
-import { validateEmail, validatePhoneNumber } from "@/utils/phoneUtils";
+import { useState, useEffect } from "react";
+import { validatePhoneNumber } from "@/utils/phoneUtils";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/features/language";
-import { formatPhoneNumber } from "@/utils/phoneUtils";
 import type { User } from "@/types/users";
 
 interface EditUserFormState {
@@ -16,7 +15,7 @@ interface EditUserFormErrors {
   phone?: string;
 }
 
-export const useEditUserForm = (user: User | null, onUserUpdated: (user: User) => void, onClose: () => void) => {
+export const useEditUserForm = (user: User | null) => {
   const [formData, setFormData] = useState<EditUserFormState>({
     name: user?.name || null,
     countryCode: "+371",
@@ -27,6 +26,22 @@ export const useEditUserForm = (user: User | null, onUserUpdated: (user: User) =
   
   const { currentLanguage } = useLanguage();
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
+  
+  // Set initial phone number when user data is available
+  useEffect(() => {
+    if (user?.phone) {
+      // For simplicity, assuming the phone always starts with the country code
+      // In a real implementation, you might need a more sophisticated parser
+      const phoneWithoutCode = user.phone.startsWith("+371") 
+        ? user.phone.substring(4) 
+        : user.phone;
+      
+      setFormData(prev => ({
+        ...prev,
+        phoneNumber: phoneWithoutCode
+      }));
+    }
+  }, [user]);
   
   const checkPhoneExists = async (fullPhone: string, userId: string): Promise<boolean> => {
     if (!fullPhone) return false;
