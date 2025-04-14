@@ -1,4 +1,3 @@
-
 // Country codes for phone numbers
 export interface CountryCode {
   code: string;
@@ -74,4 +73,25 @@ export const extractPhoneComponents = (fullPhone: string | null): {
   
   // Default to Latvia if no match
   return { countryCode: "+371", phoneNumber: fullPhone };
+};
+
+// Helper function to convert country code to flag emoji
+export const getCountryFlag = (country: string): string => {
+  const countryToFlag: { [key: string]: string } = {
+    "Latvija": "🇱🇻",
+    "Lietuva": "🇱🇹",
+    "Igaunija": "🇪🇪",
+    "Polija": "🇵🇱",
+    "Krievija": "🇷🇺",
+    "Baltkrievija": "🇧🇾",
+    "Ukraina": "🇺🇦",
+    "ASV / Kanāda": "🇺🇸",
+    "Lielbritānija": "🇬🇧",
+    "Vācija": "🇩🇪",
+    "Francija": "🇫🇷",
+    "Zviedrija": "🇸🇪",
+    "Somija": "🇫🇮",
+    "Norvēģija": "🇳🇴"
+  };
+  return countryToFlag[country] || "🏳️";
 };

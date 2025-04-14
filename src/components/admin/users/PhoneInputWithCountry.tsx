@@ -1,7 +1,5 @@
 
-import React, { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React from "react";
 import { 
   Select, 
   SelectContent, 
@@ -10,7 +8,9 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { countryCodes, findCountryByCode, validatePhoneNumber } from "@/utils/phoneUtils";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { countryCodes, getCountryFlag } from "@/utils/phoneUtils";
 import { useLanguage } from "@/features/language";
 
 interface PhoneInputWithCountryProps {
@@ -36,58 +36,30 @@ export function PhoneInputWithCountry({
 }: PhoneInputWithCountryProps) {
   const { currentLanguage } = useLanguage();
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
-  
-  const [isValid, setIsValid] = useState(true);
-  const [localError, setLocalError] = useState("");
-  
-  // Format info for selected country
-  const selectedCountry = findCountryByCode(countryCode);
-  const format = selectedCountry?.format || "";
-  
-  // Validate when phone number or country code changes
-  useEffect(() => {
-    if (!phoneNumber) {
-      setIsValid(true);
-      setLocalError("");
-      return;
-    }
-    
-    const valid = validatePhoneNumber(phoneNumber, countryCode);
-    setIsValid(valid);
-    
-    if (!valid) {
-      const country = findCountryByCode(countryCode);
-      const expectedLength = country?.digits.join(" vai ") || "";
-      setLocalError(t(
-        `Telefona numuram jāsatur ${expectedLength} cipari`,
-        `Phone number must contain ${expectedLength} digits`
-      ));
-    } else {
-      setLocalError("");
-    }
-  }, [phoneNumber, countryCode, t]);
-  
-  // Handle phone number input change
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Allow only numbers and spaces
-    const value = e.target.value.replace(/[^\d\s]/g, '');
-    onPhoneNumberChange(value);
-  };
+
+  // Find selected country info for placeholder
+  const selectedCountry = countryCodes.find(c => c.code === countryCode);
   
   return (
     <div className="space-y-2">
-      <Label htmlFor="phone">{label}{required && " *"}</Label>
+      <Label>{label}{required && " *"}</Label>
       
       <div className="flex space-x-2">
         <Select value={countryCode} onValueChange={onCountryCodeChange}>
           <SelectTrigger className="w-28">
-            <SelectValue placeholder="+371" />
+            <SelectValue 
+              placeholder={`${getCountryFlag(countryCodes[0].country)} ${countryCodes[0].code}`} 
+            />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               {countryCodes.map((country) => (
-                <SelectItem key={country.code} value={country.code}>
-                  {country.code} {country.country}
+                <SelectItem 
+                  key={country.code} 
+                  value={country.code}
+                  className="flex items-center space-x-2"
+                >
+                  <span>{getCountryFlag(country.country)} {country.code}</span>
                 </SelectItem>
               ))}
             </SelectGroup>
@@ -95,16 +67,15 @@ export function PhoneInputWithCountry({
         </Select>
         
         <Input
-          id="phone"
           value={phoneNumber}
-          onChange={handlePhoneChange}
-          placeholder={placeholder || format}
-          className={!isValid ? "border-red-500" : ""}
+          onChange={(e) => onPhoneNumberChange(e.target.value)}
+          placeholder={placeholder || selectedCountry?.format || ""}
+          className={error ? "border-red-500" : ""}
         />
       </div>
       
-      {(error || localError) && (
-        <p className="text-red-500 text-sm">{error || localError}</p>
+      {error && (
+        <p className="text-red-500 text-sm">{error}</p>
       )}
     </div>
   );
