@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
+import RegistrationForm from "@/components/registration/RegistrationForm";
 
 const Registration = () => {
   const { currentLanguage } = useLanguage();
@@ -27,11 +28,7 @@ const Registration = () => {
           {t('Reģistrācija', 'Registration')}
         </h1>
         
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <p className="text-gray-600 dark:text-gray-300">
-            {t('Reģistrācijas forma tiks ieviesta drīzumā.', 'Registration form will be implemented soon.')}
-          </p>
-        </div>
+        <RegistrationForm />
       </div>
     </div>
   );
