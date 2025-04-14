@@ -53,3 +53,43 @@ export const extractPhoneComponents = (fullPhone: string | null): {
     phoneNumber: fullPhone.startsWith("+371") ? fullPhone.substring(5).trim() : fullPhone.trim()
   };
 };
+
+// Check if email already exists in database
+export const checkEmailExists = async (email: string): Promise<boolean> => {
+  const { supabase } = await import('@/integrations/supabase/client');
+  
+  try {
+    const { data, error } = await supabase
+      .from('registered_users')
+      .select('email')
+      .eq('email', email)
+      .limit(1);
+    
+    if (error) throw error;
+    return data && data.length > 0;
+  } catch (err) {
+    console.error("Error checking email:", err);
+    return false;
+  }
+};
+
+// Check if phone already exists in database
+export const checkPhoneExists = async (fullPhone: string): Promise<boolean> => {
+  if (!fullPhone) return false;
+  
+  const { supabase } = await import('@/integrations/supabase/client');
+  
+  try {
+    const { data, error } = await supabase
+      .from('registered_users')
+      .select('phone')
+      .eq('phone', fullPhone)
+      .limit(1);
+    
+    if (error) throw error;
+    return data && data.length > 0;
+  } catch (err) {
+    console.error("Error checking phone:", err);
+    return false;
+  }
+};

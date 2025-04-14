@@ -1,21 +1,18 @@
+
 import React, { useState, useEffect } from "react";
 import { 
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-  DialogClose
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { validateEmail, validatePhoneNumber, formatPhoneNumber, checkEmailExists, checkPhoneExists } from "@/utils/phoneUtils";
 import type { User } from "@/types/users";
 import { createUser } from "@/utils/user/userOperations";
+import { AddUserForm } from "./AddUserForm";
 
 interface AddUserDialogProps {
   open: boolean;

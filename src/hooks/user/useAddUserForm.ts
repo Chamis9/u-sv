@@ -90,7 +90,7 @@ export const useAddUserForm = () => {
     // Phone validation if provided
     if (formData.phoneNumber.trim()) {
       const cleanPhone = formData.phoneNumber.replace(/\s/g, '');
-      if (!validatePhoneNumber(cleanPhone, formData.countryCode)) {
+      if (!validatePhoneNumber(cleanPhone)) {
         newErrors.phone = t('Ievadiet derīgu telefona numuru', 'Enter a valid phone number');
         isValid = false;
       }

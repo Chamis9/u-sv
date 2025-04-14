@@ -41,7 +41,7 @@ export const usePhoneInput = ({
     
     const digits = phoneNumber.replace(/\s/g, '');
     
-    if (!validatePhoneNumber(digits, selectedCode)) {
+    if (!validatePhoneNumber(digits)) {
       const country = countryCodes.find(c => c.code === selectedCode);
       const expectedLength = country?.digits.join(getTranslation(' vai ', ' or '));
       setLocalError(getTranslation(
