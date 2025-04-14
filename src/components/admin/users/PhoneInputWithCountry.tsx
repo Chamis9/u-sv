@@ -12,7 +12,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { countryCodes, validatePhoneNumber } from "@/utils/phoneUtils";
 import { useLanguage } from "@/features/language";
-import { Flag } from "lucide-react";
+
+// Helper to display country flag using ISO country code
+const CountryFlag = ({ countryCode }: { countryCode: string }) => {
+  return (
+    <img 
+      src={`https://flagcdn.com/w20/${countryCode.toLowerCase()}.png`}
+      srcSet={`https://flagcdn.com/w40/${countryCode.toLowerCase()}.png 2x`}
+      width="20"
+      height="15"
+      alt={`${countryCode} flag`}
+      className="mr-2"
+    />
+  );
+};
 
 interface PhoneInputWithCountryProps {
   label: string;
@@ -80,7 +93,9 @@ export function PhoneInputWithCountry({
           <SelectTrigger className="w-28">
             <SelectValue>
               <div className="flex items-center">
-                <Flag className="h-4 w-4 mr-1" />
+                {selectedCountry && (
+                  <CountryFlag countryCode={selectedCountry.country.toLowerCase()} />
+                )}
                 <span>{countryCode}</span>
               </div>
             </SelectValue>
@@ -94,7 +109,7 @@ export function PhoneInputWithCountry({
                   className="flex items-center"
                 >
                   <div className="flex items-center">
-                    <Flag className="h-4 w-4 mr-1" />
+                    <CountryFlag countryCode={country.country.toLowerCase()} />
                     <span>{country.code}</span>
                   </div>
                 </SelectItem>

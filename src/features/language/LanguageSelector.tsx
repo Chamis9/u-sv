@@ -8,13 +8,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "./LanguageContext";
-import { languages } from "./translations";
+import { languages } from "./languages";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Flag } from "lucide-react";
 
-// Helper to get country icon based on country code
+// Component to display the country flag using ISO country code
 const FlagIcon = ({ countryCode }: { countryCode: string }) => {
-  return <Flag className="h-4 w-4 mr-2" />;
+  return (
+    <img 
+      src={`https://flagcdn.com/w20/${countryCode.toLowerCase()}.png`}
+      srcSet={`https://flagcdn.com/w40/${countryCode.toLowerCase()}.png 2x`}
+      width="20"
+      height="15"
+      alt={`${countryCode} flag`}
+      className="mr-2"
+    />
+  );
 };
 
 export const LanguageSelector = memo(function LanguageSelector() {
