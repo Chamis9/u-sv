@@ -1,3 +1,4 @@
+
 // Country codes for phone numbers
 export interface CountryCode {
   code: string;
@@ -22,6 +23,12 @@ export const countryCodes: CountryCode[] = [
   { code: "+358", country: "Somija", format: "+358 XX XXX XXXX", digits: [9] },
   { code: "+47", country: "Norvēģija", format: "+47 XXX XX XXX", digits: [8] }
 ];
+
+// Validate email format
+export const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
 
 // Find country by code
 export const findCountryByCode = (code: string): CountryCode | undefined => {
