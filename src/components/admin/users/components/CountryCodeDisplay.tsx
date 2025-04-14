@@ -16,3 +16,5 @@ export const CountryCodeDisplay = ({ countryCode, countryAbbr }: CountryCodeDisp
     </div>
   );
 };
+
+export default CountryCodeDisplay;

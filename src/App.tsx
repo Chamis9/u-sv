@@ -12,8 +12,10 @@ import { clearAllCookies } from "./utils/cookieManager";
 import { ThemeProvider } from "./components/theme/ThemeProvider";
 import { AuthProvider } from "./contexts/AuthContext";
 
-// Lazy load pages for better performance
-const Index = lazy(() => import("./pages/Index"));
+// Import Index directly instead of lazy loading to fix dynamic import issue
+import Index from "./pages/Index";
+
+// Lazy load other pages for better performance
 const NotFound = lazy(() => import("./pages/NotFound"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Contact = lazy(() => import("./pages/Contact"));
