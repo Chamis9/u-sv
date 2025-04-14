@@ -99,6 +99,8 @@ const App = () => {
                         <Admin />
                       </ThemeProvider>
                     } />
+                    
+                    {/* Profile routes - allow theme switching */}
                     <Route path="/profile/*" element={
                       <ThemeProvider defaultTheme="light">
                         <Profile />

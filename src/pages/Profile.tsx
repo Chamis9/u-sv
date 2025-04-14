@@ -1,5 +1,6 @@
 
 import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { SEO } from "@/components/SEO";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -13,7 +14,12 @@ const Profile = () => {
         description="Pārvaldiet savu lietotāja profilu"
       />
       <Header />
-      <ProfileContainer />
+      <div className="flex-1">
+        <Routes>
+          <Route path="/" element={<Navigate to="/profile/account" replace />} />
+          <Route path="/*" element={<ProfileContainer />} />
+        </Routes>
+      </div>
       <Footer />
     </div>
   );
