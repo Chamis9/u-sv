@@ -103,6 +103,11 @@ const App = () => {
                         <Profile />
                       </ThemeProvider>
                     } />
+                    <Route path="/profile/*" element={
+                      <ThemeProvider defaultTheme="light">
+                        <Profile />
+                      </ThemeProvider>
+                    } />
                     
                     {/* 404 route */}
                     <Route path="*" element={
