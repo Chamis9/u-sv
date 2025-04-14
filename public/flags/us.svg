@@ -1,2 +1,30 @@
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1235 650"><path fill="#B22234" d="M0,0 1235,0 1235,650 0,650z"/><path d="M0,50 1235,50M0,150 1235,150M0,250 1235,250M0,350 1235,350M0,450 1235,450M0,550 1235,550M0,650 1235,650" stroke="white" stroke-width="50"/><rect width="494" height="350" fill="#3C3B6E"/><g fill="white"><g id="s18"><g id="s9"><g id="s5"><g id="s4"><path id="s" d="M247,50 260.4,94.7 307,94.7 269.3,122.5 282.7,167.3 247,142.5 211.3,167.3 224.7,122.5 187,94.7 233.6,94.7z"/><use href="#s" transform="translate(247,175) rotate(216)"/></g><use href="#s4" transform="translate(0,87.5)"/></g><use href="#s5" transform="translate(0,87.5)"/></g><use href="#s9" transform="translate(0,87.5)"/></g><use href="#s18" transform="translate(247,0)"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1235 650">
+  <rect width="1235" height="650" fill="#ffffff"/>
+  <g fill="#bf0a30">
+    <rect width="1235" height="50" y="0"/>
+    <rect width="1235" height="50" y="100"/>
+    <rect width="1235" height="50" y="200"/>
+    <rect width="1235" height="50" y="300"/>
+    <rect width="1235" height="50" y="400"/>
+    <rect width="1235" height="50" y="500"/>
+    <rect width="1235" height="50" y="600"/>
+  </g>
+  <rect width="494" height="350" fill="#002868"/>
+  <g fill="#ffffff">
+    <g id="s18">
+      <g id="s9">
+        <g id="s5">
+          <g id="s4">
+            <path id="s" d="M247,50 l14,43 h44 l-36,26 l14,43 l-36,-26 l-36,26 l14,-43 l-36,-26 h44 z"/>
+            <use href="#s" x="-98.4" y="87.5"/>
+          </g>
+          <use href="#s4" x="98.4" y="87.5"/>
+        </g>
+        <use href="#s5" x="-98.4" y="175"/>
+      </g>
+      <use href="#s9" x="98.4" y="175"/>
+    </g>
+    <use href="#s18" x="-98.4" y="-175"/>
+  </g>
+</svg>

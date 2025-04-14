@@ -1,13 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import { 
-  Select, 
-  SelectContent, 
-  SelectGroup, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Command, CommandInput, CommandList, CommandGroup, CommandItem } from "@/components/ui/command";
@@ -15,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { countryCodes, validatePhoneNumber } from "@/utils/phoneUtils";
 import { useLanguage } from "@/features/language";
 
@@ -127,27 +120,29 @@ export function PhoneInputWithCountry({
                 onValueChange={setSearchValue}
               />
               <CommandList>
-                <CommandGroup>
-                  {filteredCountries.map((country) => (
-                    <CommandItem
-                      key={country.code}
-                      value={country.code}
-                      onSelect={() => {
-                        onCountryCodeChange(country.code);
-                        setOpen(false);
-                        setSearchValue("");
-                      }}
-                      className="flex items-center"
-                    >
-                      <CountryFlag countryCode={country.country.toLowerCase()} />
-                      <span className="ml-2">{country.name}</span>
-                      <span className="ml-2 text-gray-500">{country.code}</span>
-                      {country.code === countryCode && (
-                        <Check className="ml-auto h-4 w-4" />
-                      )}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
+                <ScrollArea className="h-[300px]">
+                  <CommandGroup>
+                    {filteredCountries.map((country) => (
+                      <CommandItem
+                        key={country.code}
+                        value={country.code}
+                        onSelect={() => {
+                          onCountryCodeChange(country.code);
+                          setOpen(false);
+                          setSearchValue("");
+                        }}
+                        className="flex items-center"
+                      >
+                        <CountryFlag countryCode={country.country.toLowerCase()} />
+                        <span className="ml-2">{country.name}</span>
+                        <span className="ml-2 text-gray-500">{country.code}</span>
+                        {country.code === countryCode && (
+                          <Check className="ml-auto h-4 w-4" />
+                        )}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </ScrollArea>
               </CommandList>
             </Command>
           </PopoverContent>
