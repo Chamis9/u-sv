@@ -8,20 +8,20 @@ export interface CountryCode {
 }
 
 export const countryCodes: CountryCode[] = [
-  { code: "+371", country: "Latvija", format: "+371 XXXXXXXX", digits: [8] },
-  { code: "+370", country: "Lietuva", format: "+370 XXXXXXXX", digits: [8] },
-  { code: "+372", country: "Igaunija", format: "+372 XXXXXXXX", digits: [7, 8] },
-  { code: "+48", country: "Polija", format: "+48 XXXXXXXXX", digits: [9] },
-  { code: "+7", country: "Krievija", format: "+7 XXX XXX XXXX", digits: [10] },
-  { code: "+375", country: "Baltkrievija", format: "+375 XX XXX XXXX", digits: [9] },
-  { code: "+380", country: "Ukraina", format: "+380 XX XXX XXXX", digits: [9] },
-  { code: "+1", country: "ASV / Kanāda", format: "+1 XXX XXX XXXX", digits: [10] },
-  { code: "+44", country: "Lielbritānija", format: "+44 XXXX XXXXXX", digits: [10] },
-  { code: "+49", country: "Vācija", format: "+49 XXXX XXXXXX", digits: [10, 11] },
-  { code: "+33", country: "Francija", format: "+33 X XX XX XX XX", digits: [9] },
-  { code: "+46", country: "Zviedrija", format: "+46 XX XXX XXXX", digits: [9] },
-  { code: "+358", country: "Somija", format: "+358 XX XXX XXXX", digits: [9] },
-  { code: "+47", country: "Norvēģija", format: "+47 XXX XX XXX", digits: [8] }
+  { code: "+371", country: "lv", format: "+371 XXXXXXXX", digits: [8] },
+  { code: "+370", country: "lt", format: "+370 XXXXXXXX", digits: [8] },
+  { code: "+372", country: "ee", format: "+372 XXXXXXXX", digits: [7, 8] },
+  { code: "+48", country: "pl", format: "+48 XXXXXXXXX", digits: [9] },
+  { code: "+7", country: "ru", format: "+7 XXX XXX XXXX", digits: [10] },
+  { code: "+375", country: "by", format: "+375 XX XXX XXXX", digits: [9] },
+  { code: "+380", country: "ua", format: "+380 XX XXX XXXX", digits: [9] },
+  { code: "+1", country: "us", format: "+1 XXX XXX XXXX", digits: [10] },
+  { code: "+44", country: "gb", format: "+44 XXXX XXXXXX", digits: [10] },
+  { code: "+49", country: "de", format: "+49 XXXX XXXXXX", digits: [10, 11] },
+  { code: "+33", country: "fr", format: "+33 X XX XX XX XX", digits: [9] },
+  { code: "+46", country: "se", format: "+46 XX XXX XXXX", digits: [9] },
+  { code: "+358", country: "fi", format: "+358 XX XXX XXXX", digits: [9] },
+  { code: "+47", country: "no", format: "+47 XXX XX XXX", digits: [8] }
 ];
 
 // Validate email format

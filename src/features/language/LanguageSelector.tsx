@@ -13,15 +13,22 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 // Component to display the country flag using ISO country code
 const FlagIcon = ({ countryCode }: { countryCode: string }) => {
+  // Use country code directly in URL, handle errors
   return (
-    <img 
-      src={`https://flagcdn.com/w20/${countryCode.toLowerCase()}.png`}
-      srcSet={`https://flagcdn.com/w40/${countryCode.toLowerCase()}.png 2x`}
-      width="20"
-      height="15"
-      alt={`${countryCode} flag`}
-      className="mr-2"
-    />
+    <div className="w-6 h-4 inline-flex items-center justify-center mr-2 overflow-hidden">
+      <img 
+        src={`https://flagcdn.com/w20/${countryCode.toLowerCase()}.png`}
+        srcSet={`https://flagcdn.com/w40/${countryCode.toLowerCase()}.png 2x`}
+        width="20"
+        height="15"
+        alt=""
+        className="max-w-full max-h-full object-contain"
+        onError={(e) => {
+          console.log(`Failed to load flag: ${countryCode}`);
+          e.currentTarget.style.display = 'none';
+        }}
+      />
+    </div>
   );
 };
 
