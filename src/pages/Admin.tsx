@@ -84,15 +84,17 @@ function AdminPage() {
           adminCount={adminCount}
         />
         
-        <Routes>
-          <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="/dashboard" element={<AdminDashboard />} />
-          <Route path="/users" element={<RegisteredUsers />} />
-          <Route path="/admins" element={<AdminUsers />} />
-          <Route path="/subscribers" element={<AdminSubscribers />} />
-          <Route path="/settings" element={<AdminSettings />} />
-          <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
-        </Routes>
+        <div className="flex-1 overflow-auto p-8">
+          <Routes>
+            <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="/dashboard" element={<AdminDashboard />} />
+            <Route path="/users" element={<RegisteredUsers />} />
+            <Route path="/admins" element={<AdminUsers />} />
+            <Route path="/subscribers" element={<AdminSubscribers />} />
+            <Route path="/settings" element={<AdminSettings />} />
+            <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+          </Routes>
+        </div>
       </div>
       
       <Footer />
