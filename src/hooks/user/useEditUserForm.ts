@@ -7,7 +7,6 @@ import type { User } from "@/types/users";
 
 interface EditUserFormState {
   name: string | null;
-  countryCode: string;
   phoneNumber: string;
 }
 
@@ -18,7 +17,6 @@ interface EditUserFormErrors {
 export const useEditUserForm = (user: User | null) => {
   const [formData, setFormData] = useState<EditUserFormState>({
     name: user?.name || null,
-    countryCode: "+371",
     phoneNumber: "",
   });
   const [errors, setErrors] = useState<EditUserFormErrors>({});
@@ -30,10 +28,8 @@ export const useEditUserForm = (user: User | null) => {
   // Set initial phone number when user data is available
   useEffect(() => {
     if (user?.phone) {
-      // For simplicity, assuming the phone always starts with the country code
-      // In a real implementation, you might need a more sophisticated parser
       const phoneWithoutCode = user.phone.startsWith("+371") 
-        ? user.phone.substring(4) 
+        ? user.phone.substring(5) 
         : user.phone;
       
       setFormData(prev => ({
@@ -68,9 +64,8 @@ export const useEditUserForm = (user: User | null) => {
     
     // Phone validation if provided
     if (formData.phoneNumber.trim()) {
-      const cleanPhone = formData.phoneNumber.replace(/\s/g, '');
-      if (!validatePhoneNumber(cleanPhone, formData.countryCode)) {
-        newErrors.phone = t('Ievadiet derīgu telefona numuru', 'Enter a valid phone number');
+      if (!validatePhoneNumber(formData.phoneNumber)) {
+        newErrors.phone = t('Ievadiet derīgu 8 ciparu telefona numuru', 'Enter a valid 8-digit phone number');
         isValid = false;
       }
     }

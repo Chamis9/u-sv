@@ -4,14 +4,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
-import { PhoneInputWithCountry } from "./PhoneInputWithCountry";
 import type { User } from "@/types/users";
 
 interface EditUserFormProps {
   user: User;
   formData: {
     name: string | null;
-    countryCode: string;
     phoneNumber: string;
   };
   errors: {
@@ -62,19 +60,25 @@ export function EditUserForm({
           />
         </div>
         
-        <div className="grid grid-cols-4 items-start gap-4">
-          <Label htmlFor="phone" className="text-right mt-2">
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="phone" className="text-right">
             {t('Tālrunis', 'Phone')}
           </Label>
           <div className="col-span-3">
-            <PhoneInputWithCountry
-              label=""
-              countryCode={formData.countryCode}
-              phoneNumber={formData.phoneNumber}
-              onCountryCodeChange={(code) => onInputChange('countryCode', code)}
-              onPhoneNumberChange={(number) => onInputChange('phoneNumber', number)}
-              error={errors.phone}
-            />
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">+371</span>
+              <Input
+                id="phone"
+                value={formData.phoneNumber}
+                onChange={(e) => onInputChange('phoneNumber', e.target.value.replace(/\D/g, ''))}
+                className="flex-1"
+                placeholder={t('XXXXXXXX', 'XXXXXXXX')}
+                maxLength={8}
+              />
+            </div>
+            {errors.phone && (
+              <p className="text-sm text-destructive mt-1">{errors.phone}</p>
+            )}
           </div>
         </div>
       </div>

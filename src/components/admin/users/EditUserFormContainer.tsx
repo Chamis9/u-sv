@@ -50,7 +50,7 @@ export function EditUserFormContainer({
     try {
       let formattedPhone = null;
       if (formData.phoneNumber.trim()) {
-        formattedPhone = formatPhoneNumber(formData.countryCode, formData.phoneNumber);
+        formattedPhone = formatPhoneNumber(formData.phoneNumber);
         
         if (formattedPhone !== user.phone) {
           const phoneExists = await checkPhoneExists(formattedPhone, user.id);

@@ -1,12 +1,21 @@
-
-import React, { useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
+import React, { useState, useEffect } from "react";
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/features/language";
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
+import { validateEmail, validatePhoneNumber, formatPhoneNumber, checkEmailExists, checkPhoneExists } from "@/utils/phoneUtils";
+import type { User } from "@/types/users";
 import { createUser } from "@/utils/user/userOperations";
-import { User } from "@/types/users";
-import { formatPhoneNumber } from "@/utils/phoneUtils";
-import { AddUserForm } from "./AddUserForm";
-import { useAddUserForm } from "@/hooks/user/useAddUserForm";
 
 interface AddUserDialogProps {
   open: boolean;
@@ -15,19 +24,19 @@ interface AddUserDialogProps {
 }
 
 export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps) {
-  const {
-    formData,
-    setFormData,
-    errors,
-    setErrors,
-    isSubmitting,
-    setIsSubmitting,
-    resetForm,
-    validateForm,
-    checkEmailExists,
-    checkPhoneExists,
-    t
-  } = useAddUserForm();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phoneNumber: ""
+  });
+  const [errors, setErrors] = useState<{
+    email?: string;
+    phone?: string;
+  }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const { currentLanguage } = useLanguage();
+  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
   
   const { toast } = useToast();
   
@@ -35,14 +44,30 @@ export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps
     if (open) {
       setErrors({});
     } else {
-      resetForm();
+      setFormData({
+        name: "",
+        email: "",
+        phoneNumber: ""
+      });
     }
   }, [open]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!(await validateForm())) {
+    // Validate form
+    const newErrors: typeof errors = {};
+    
+    if (!validateEmail(formData.email)) {
+      newErrors.email = t('Ievadiet derīgu e-pasta adresi', 'Enter a valid email address');
+    }
+    
+    if (formData.phoneNumber && !validatePhoneNumber(formData.phoneNumber)) {
+      newErrors.phone = t('Ievadiet derīgu 8 ciparu telefona numuru', 'Enter a valid 8-digit phone number');
+    }
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
     
@@ -52,10 +77,10 @@ export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps
       // Check if email already exists
       const emailExists = await checkEmailExists(formData.email);
       if (emailExists) {
-        setErrors(prev => ({
-          ...prev,
+        setErrors({
+          ...errors,
           email: t('Šis e-pasts jau ir reģistrēts', 'This email is already registered')
-        }));
+        });
         setIsSubmitting(false);
         return;
       }
@@ -63,15 +88,15 @@ export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps
       // Format and check phone if provided
       let formattedPhone = null;
       if (formData.phoneNumber.trim()) {
-        formattedPhone = formatPhoneNumber(formData.countryCode, formData.phoneNumber);
+        formattedPhone = formatPhoneNumber(formData.phoneNumber);
         
         // Check if phone already exists
         const phoneExists = await checkPhoneExists(formattedPhone);
         if (phoneExists) {
-          setErrors(prev => ({
-            ...prev,
+          setErrors({
+            ...errors,
             phone: t('Šis telefons jau ir reģistrēts', 'This phone is already registered')
-          }));
+          });
           setIsSubmitting(false);
           return;
         }
@@ -90,7 +115,6 @@ export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps
           description: t('Lietotājs veiksmīgi pievienots', 'User successfully added')
         });
         onClose();
-        resetForm();
       } else {
         console.error("Error creating user:", error);
         toast({
@@ -113,6 +137,10 @@ export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps
   
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear errors when user types
+    if (errors[field as keyof typeof errors]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
   };
   
   return (
