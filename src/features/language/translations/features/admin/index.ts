@@ -10,7 +10,7 @@ export const adminTranslations: Record<string, AdminTranslations> = {
   lv: {
     title: "Administratora panelis",
     defaultUser: "Administrators",
-    logout: "Izrakstīties",
+    logout: "Iziet", // Changed from "Izrakstīties"
     returnToHome: "Atgriezties uz sākumlapu",
     logoutSuccess: "Jūs esat veiksmīgi izrakstījies",
     logoutError: "Kļūda izrakstīšanās laikā",
