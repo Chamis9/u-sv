@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types/users";
 import { useToast } from "@/hooks/use-toast";
@@ -13,10 +12,9 @@ interface AvatarUploadOptions {
 export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUploadOptions) {
   try {
     // Create a unique file path using user ID and timestamp
-    const userId = user.id;
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}.${fileExt}`;
-    const filePath = `${userId}/${fileName}`;
+    const filePath = `${user.id}/${fileName}`;
     
     console.log("Preparing to upload avatar to path:", filePath);
     
@@ -42,15 +40,15 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
       .getPublicUrl(filePath);
     
     const publicUrl = publicUrlData?.publicUrl;
-    console.log("Generated public URL:", publicUrl);
     
     if (!publicUrl) {
       console.error("Failed to generate public URL");
       throw new Error("Failed to generate public URL for uploaded avatar");
     }
     
+    console.log("Generated public URL:", publicUrl);
+    
     // Update the user's avatar URL in the database
-    console.log("Updating user profile with new avatar URL");
     const { error: updateError } = await supabase
       .from('registered_users')
       .update({ 
