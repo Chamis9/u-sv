@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types/users";
 import { useToast } from "@/hooks/use-toast";
@@ -186,9 +187,3 @@ export function validateAvatarFile(file: File, toast: ReturnType<typeof useToast
   
   return true;
 }
-
-export { 
-  uploadAvatarToSupabase, 
-  handleDemoUserAvatar, 
-  validateAvatarFile 
-};
