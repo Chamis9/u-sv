@@ -79,10 +79,10 @@ export const useRegistrationForm = () => {
             variant: "destructive"
           });
           return;
-      }
+        }
       }
 
-      // Proceed with registration if validation passes
+      // Register user with Supabase
       const { error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
