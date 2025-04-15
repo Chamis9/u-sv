@@ -5,7 +5,7 @@ import { useLanguage } from "@/features/language";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export type SortField = 'name' | 'phone' | 'email' | 'status' | 'created_at' | 'last_sign_in_at';
+export type SortField = 'first_name' | 'last_name' | 'phone' | 'email' | 'status' | 'created_at' | 'last_sign_in_at';
 export type SortDirection = 'asc' | 'desc' | null;
 
 interface UserTableHeaderProps {
@@ -42,7 +42,8 @@ export function UserTableHeader({ onSort, sortField, sortDirection }: UserTableH
   return (
     <TableHeader>
       <TableRow>
-        <SortableHeader field="name" label={t('Vārds', 'Name')} />
+        <SortableHeader field="first_name" label={t('Vārds', 'First Name')} />
+        <SortableHeader field="last_name" label={t('Uzvārds', 'Last Name')} />
         <SortableHeader field="phone" label={t('Telefons', 'Phone')} />
         <SortableHeader field="email" label={t('E-pasts', 'Email')} />
         <SortableHeader field="status" label={t('Statuss', 'Status')} />

@@ -13,7 +13,6 @@ interface UserTableRowProps {
   onToggleStatus: (user: User) => void;
 }
 
-// Memoize the row component with a custom comparison function to prevent unnecessary re-renders
 export const UserTableRow = memo(function UserTableRow({ 
   user, 
   onEdit, 
@@ -36,19 +35,14 @@ export const UserTableRow = memo(function UserTableRow({
     }
   }, [currentLanguage.code, t]);
   
-  // Memoize handler functions to avoid creating new functions on each render
   const handleEdit = useCallback(() => onEdit(user), [user, onEdit]);
   const handleDelete = useCallback(() => onDelete(user), [user, onDelete]);
   const handleToggleStatus = useCallback(() => onToggleStatus(user), [user, onToggleStatus]);
   
-  // Get full name from first_name and last_name
-  const fullName = [user.first_name, user.last_name]
-    .filter(Boolean)
-    .join(" ") || t('Nav norādīts', 'Not specified');
-  
   return (
     <TableRow>
-      <TableCell>{fullName}</TableCell>
+      <TableCell>{user.first_name || t('Nav norādīts', 'Not specified')}</TableCell>
+      <TableCell>{user.last_name || t('Nav norādīts', 'Not specified')}</TableCell>
       <TableCell>{user.phone || t('Nav norādīts', 'Not specified')}</TableCell>
       <TableCell className="font-medium">{user.email || t('Nav e-pasta', 'No email')}</TableCell>
       <TableCell>
@@ -71,8 +65,6 @@ export const UserTableRow = memo(function UserTableRow({
     </TableRow>
   );
 }, (prevProps, nextProps) => {
-  // Custom comparison function to prevent unnecessary re-renders
-  // Only re-render if these critical properties change
   return (
     prevProps.user.id === nextProps.user.id &&
     prevProps.user.status === nextProps.user.status &&
