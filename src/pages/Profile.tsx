@@ -21,7 +21,10 @@ const Profile = () => {
         <Routes>
           <Route path="/" element={<Navigate to="/profile/account" replace />} />
           <Route path="/*" element={
-            <ProfileContainer />
+            <ProfileContainer 
+              isAuthenticated={isAuthenticated}
+              isLoading={isAuthLoading}
+            />
           } />
         </Routes>
       </div>

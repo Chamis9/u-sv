@@ -1,17 +1,20 @@
 
 import React from "react";
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import { User } from "@/types/users";
 import { ProfileSidebar } from "./ProfileSidebar";
-import { ProfileAuthGuard } from "./components/ProfileAuthGuard";
+import { ProfileAuthGuard } from "./ProfileAuthGuard";
 import { ProfileMainContent } from "./components/ProfileMainContent";
 import { useProfileData } from "./hooks/useProfileData";
 import { useUserUpdates } from "./hooks/useUserUpdates";
 
-export function ProfileContainer() {
-  const { isAuthenticated } = useAuth();
-  const { user, setUser, isLoading } = useProfileData();
+interface ProfileContainerProps {
+  isAuthenticated: boolean;
+  isLoading: boolean;
+}
+
+export function ProfileContainer({ isAuthenticated, isLoading }: ProfileContainerProps) {
+  const { user, setUser, isLoading: isDataLoading } = useProfileData();
   const { handleUserUpdate } = useUserUpdates();
   const location = useLocation();
   const navigate = useNavigate();
@@ -35,7 +38,7 @@ export function ProfileContainer() {
   };
 
   return (
-    <ProfileAuthGuard isAuthenticated={isAuthenticated}>
+    <ProfileAuthGuard isAuthenticated={isAuthenticated} isLoading={isLoading}>
       <div className="flex flex-1 overflow-hidden pt-16">
         <ProfileSidebar 
           activeTab={getActiveTabFromRoute()} 
@@ -51,7 +54,7 @@ export function ProfileContainer() {
                 activeTab="account"
                 user={user}
                 onUserUpdate={updateUser}
-                isLoading={isLoading}
+                isLoading={isDataLoading}
               />
             } />
             <Route path="/tickets" element={
@@ -59,7 +62,7 @@ export function ProfileContainer() {
                 activeTab="tickets"
                 user={user}
                 onUserUpdate={updateUser}
-                isLoading={isLoading}
+                isLoading={isDataLoading}
               />
             } />
             <Route path="/payments" element={
@@ -67,7 +70,7 @@ export function ProfileContainer() {
                 activeTab="payments"
                 user={user}
                 onUserUpdate={updateUser}
-                isLoading={isLoading}
+                isLoading={isDataLoading}
               />
             } />
             <Route path="/settings" element={
@@ -75,7 +78,7 @@ export function ProfileContainer() {
                 activeTab="settings"
                 user={user}
                 onUserUpdate={updateUser}
-                isLoading={isLoading}
+                isLoading={isDataLoading}
               />
             } />
             <Route path="*" element={<Navigate to="/profile/account" replace />} />
