@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { User } from "@/types/users";
 
@@ -24,22 +23,19 @@ const initialFilters: UserFilters = {
 
 export function useUserFiltering(users: User[], searchTerm: string) {
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize] = useState(50);
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState<UserFilters>(initialFilters);
 
-  // Handle opening filter dialog
   const handleOpenFilter = useCallback(() => {
     setIsFilterDialogOpen(true);
   }, []);
 
-  // Handle applying filter
   const handleApplyFilter = useCallback((filters: UserFilters) => {
     setActiveFilters(filters);
     setPage(1);
   }, []);
 
-  // Handle removing a single filter
   const handleRemoveFilter = useCallback((key: keyof UserFilters) => {
     setActiveFilters(prev => ({
       ...prev,
@@ -48,22 +44,18 @@ export function useUserFiltering(users: User[], searchTerm: string) {
     setPage(1);
   }, []);
 
-  // Handle clearing all filters
   const handleClearFilters = useCallback(() => {
     setActiveFilters(initialFilters);
     setPage(1);
   }, []);
 
-  // Filter users based on active filters
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
-      // Get full name for filtering
       const fullName = [user.first_name, user.last_name]
         .filter(Boolean)
         .join(' ')
         .toLowerCase();
       
-      // Check each filter criteria
       if (activeFilters.name && !fullName.includes(activeFilters.name.toLowerCase())) {
         return false;
       }
@@ -79,7 +71,6 @@ export function useUserFiltering(users: User[], searchTerm: string) {
       if (activeFilters.status && user.status !== activeFilters.status) {
         return false;
       }
-      // More filters can be added as needed
       
       return true;
     });
@@ -87,12 +78,10 @@ export function useUserFiltering(users: User[], searchTerm: string) {
   
   const totalPages = Math.ceil(filteredUsers.length / pageSize);
   
-  // Get current page of users
   const currentUsers = useMemo(() => {
     return filteredUsers.slice((page - 1) * pageSize, page * pageSize);
   }, [filteredUsers, page, pageSize]);
   
-  // Reset to first page when search or filters change
   useEffect(() => {
     setPage(1);
   }, [searchTerm, activeFilters]);
