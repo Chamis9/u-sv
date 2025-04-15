@@ -44,13 +44,16 @@ export function UserAvatar({ user, size = "md" }: UserAvatarProps) {
   }, [user.avatar_url, user.id]);
   
   const getInitials = () => {
-    if (!user.name) return user.email ? user.email.substring(0, 2).toUpperCase() : "?";
+    // Get initials from first_name and last_name if available
+    const firstInitial = user.first_name ? user.first_name.charAt(0).toUpperCase() : '';
+    const lastInitial = user.last_name ? user.last_name.charAt(0).toUpperCase() : '';
     
-    const nameParts = user.name.split(" ");
-    if (nameParts.length > 1) {
-      return `${nameParts[0].charAt(0)}${nameParts[1].charAt(0)}`.toUpperCase();
+    if (firstInitial || lastInitial) {
+      return `${firstInitial}${lastInitial}`;
     }
-    return user.name.substring(0, 2).toUpperCase();
+    
+    // Fallback to email if no name is available
+    return user.email ? user.email.substring(0, 2).toUpperCase() : "?";
   };
 
   return (

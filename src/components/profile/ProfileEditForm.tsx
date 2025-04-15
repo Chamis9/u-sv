@@ -17,7 +17,8 @@ interface ProfileEditFormProps {
 }
 
 interface ProfileFormValues {
-  name: string;
+  first_name: string;
+  last_name: string;
   phone: string;
   email: string;
 }
@@ -31,7 +32,8 @@ export function ProfileEditForm({ user, onCancel, onSave }: ProfileEditFormProps
 
   const { register, handleSubmit, formState: { errors } } = useForm<ProfileFormValues>({
     defaultValues: {
-      name: user.name || "",
+      first_name: user.first_name || "",
+      last_name: user.last_name || "",
       phone: user.phone || "",
       email: user.email || ""
     }
@@ -42,7 +44,8 @@ export function ProfileEditForm({ user, onCancel, onSave }: ProfileEditFormProps
     try {
       const updatedUser: User = {
         ...user,
-        name: data.name,
+        first_name: data.first_name,
+        last_name: data.last_name,
         phone: data.phone,
         email: data.email,
         updated_at: new Date().toISOString()
@@ -79,14 +82,26 @@ export function ProfileEditForm({ user, onCancel, onSave }: ProfileEditFormProps
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="name">{t("Vārds", "Name")}</Label>
+            <Label htmlFor="first_name">{t("Vārds", "First Name")}</Label>
             <Input 
-              id="name"
-              placeholder={t("Ievadiet savu vārdu", "Enter your name")}
-              {...register("name")}
+              id="first_name"
+              placeholder={t("Ievadiet savu vārdu", "Enter your first name")}
+              {...register("first_name")}
             />
-            {errors.name && (
-              <p className="text-sm text-destructive">{errors.name.message}</p>
+            {errors.first_name && (
+              <p className="text-sm text-destructive">{errors.first_name.message}</p>
+            )}
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="last_name">{t("Uzvārds", "Last Name")}</Label>
+            <Input 
+              id="last_name"
+              placeholder={t("Ievadiet savu uzvārdu", "Enter your last name")}
+              {...register("last_name")}
+            />
+            {errors.last_name && (
+              <p className="text-sm text-destructive">{errors.last_name.message}</p>
             )}
           </div>
           

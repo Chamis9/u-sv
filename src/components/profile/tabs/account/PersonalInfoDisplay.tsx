@@ -13,8 +13,13 @@ export function PersonalInfoDisplay({ user, t }: PersonalInfoDisplayProps) {
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label className="text-muted-foreground">{t("Vārds", "Name")}</Label>
-          <p>{user.name || t("Nav norādīts", "Not specified")}</p>
+          <Label className="text-muted-foreground">{t("Vārds", "First Name")}</Label>
+          <p>{user.first_name || t("Nav norādīts", "Not specified")}</p>
+        </div>
+        
+        <div>
+          <Label className="text-muted-foreground">{t("Uzvārds", "Last Name")}</Label>
+          <p>{user.last_name || t("Nav norādīts", "Not specified")}</p>
         </div>
         
         <div>

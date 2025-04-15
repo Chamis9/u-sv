@@ -79,11 +79,17 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
     }
   ];
   
+  // Create a full name from first_name and last_name
+  const fullName = user && (user.first_name || user.last_name) 
+    ? [user.first_name, user.last_name].filter(Boolean).join(" ")
+    : t("Lietotājs", "User", "Пользователь");
+  
   // Create a complete user object to ensure it satisfies the User type
   const completeUserObject: User = user ? {
     id: user.id,
     email: user.email,
-    name: user.name || null,
+    first_name: user.first_name || null,
+    last_name: user.last_name || null,
     phone: user.phone || null,
     last_sign_in_at: user.last_sign_in_at || null,
     created_at: user.created_at || new Date().toISOString(),
@@ -106,7 +112,7 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
         <div className="flex flex-col items-center space-y-2">
           <UserAvatar user={completeUserObject} size="lg" />
           <h2 className="text-xl font-semibold mt-2">
-            {user ? user.name || t("Lietotājs", "User", "Пользователь") : t("Lietotājs", "User", "Пользователь")}
+            {fullName}
           </h2>
           <p className="text-sm text-muted-foreground">
             {user ? user.email : ""}

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { UserAvatar } from "./UserAvatar";
 import { User } from "@/types/users";
 import { useLanguage } from "@/features/language";
@@ -26,6 +26,10 @@ export function ProfileInfo({ user, onEdit }: ProfileInfoProps) {
       return t("Nederīgs datums", "Invalid date");
     }
   };
+  
+  const fullName = [user.first_name, user.last_name]
+    .filter(Boolean)
+    .join(" ") || t("Nav norādīts", "Not specified");
 
   return (
     <Card>
@@ -40,7 +44,7 @@ export function ProfileInfo({ user, onEdit }: ProfileInfoProps) {
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex flex-col items-center gap-2">
             <UserAvatar user={user} size="lg" />
-            <h3 className="font-medium text-lg mt-2">{user.name || t("Nav norādīts", "Not specified")}</h3>
+            <h3 className="font-medium text-lg mt-2">{fullName}</h3>
             <span className="text-sm text-muted-foreground">{user.role || "user"}</span>
           </div>
           

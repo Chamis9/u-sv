@@ -27,7 +27,8 @@ export const fetchUsers = async () => {
         data: registeredUsersData?.map(user => ({
           id: user.id,
           email: user.email,
-          name: user.name,
+          first_name: user.first_name,
+          last_name: user.last_name,
           phone: user.phone,
           created_at: user.created_at,
           last_sign_in_at: user.last_sign_in_at,
@@ -55,7 +56,8 @@ export const fetchUsers = async () => {
         return {
           id: registeredUser.id,
           email: registeredUser.email,
-          name: registeredUser.name,
+          first_name: registeredUser.first_name,
+          last_name: registeredUser.last_name,
           phone: registeredUser.phone,
           created_at: registeredUser.created_at,
           last_sign_in_at: authUser?.last_sign_in_at,

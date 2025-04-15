@@ -5,7 +5,8 @@ import { supabase } from '@/integrations/supabase/client';
 
 export async function updateUser(user: User) {
   return updateUserBase(user, 'registered_users', {
-    name: user.name,
+    first_name: user.first_name,
+    last_name: user.last_name,
     phone: user.phone,
     status: user.status,
     email: user.email,
@@ -26,7 +27,8 @@ export async function toggleUserStatus(user: User) {
 }
 
 interface CreateUserParams {
-  name?: string;
+  first_name?: string;
+  last_name?: string;
   email: string;
   phone?: string | null;
   status?: 'active' | 'inactive';
@@ -80,7 +82,8 @@ export async function createUser(userData: CreateUserParams) {
     }
     
     const newUser = {
-      name: userData.name || null,
+      first_name: userData.first_name || null,
+      last_name: userData.last_name || null,
       email: userData.email,
       phone: userData.phone || null,
       status: userData.status || 'active',
@@ -107,7 +110,8 @@ export async function createUser(userData: CreateUserParams) {
     const createdUser: User = {
       id: data.id,
       email: data.email,
-      name: data.name,
+      first_name: data.first_name,
+      last_name: data.last_name,
       phone: data.phone,
       status: data.status as 'active' | 'inactive',
       created_at: data.created_at,

@@ -11,7 +11,8 @@ export function createMockUser(): User {
   return {
     id: "mock-user-id-123",
     email: "demo@example.com",
-    name: "Demo Lietotājs",
+    first_name: "Demo",
+    last_name: "Lietotājs",
     phone: "+371 12345678",
     created_at: new Date(2023, 0, 15).toISOString(),
     updated_at: new Date(2023, 5, 20).toISOString(),
