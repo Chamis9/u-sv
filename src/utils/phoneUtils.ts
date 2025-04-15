@@ -1,4 +1,3 @@
-
 export interface CountryCode {
   code: string;
   country: string;
@@ -59,14 +58,10 @@ export const checkEmailExists = async (email: string): Promise<boolean> => {
   const { supabase } = await import('@/integrations/supabase/client');
   
   try {
-    const { data, error } = await supabase
-      .from('registered_users')
-      .select('email')
-      .eq('email', email)
-      .limit(1);
+    const { data, error } = await supabase.rpc('check_email_exists', { check_email: email });
     
     if (error) throw error;
-    return data && data.length > 0;
+    return data || false;
   } catch (err) {
     console.error("Error checking email:", err);
     return false;
@@ -80,14 +75,10 @@ export const checkPhoneExists = async (fullPhone: string): Promise<boolean> => {
   const { supabase } = await import('@/integrations/supabase/client');
   
   try {
-    const { data, error } = await supabase
-      .from('registered_users')
-      .select('phone')
-      .eq('phone', fullPhone)
-      .limit(1);
+    const { data, error } = await supabase.rpc('check_phone_exists', { check_phone: fullPhone });
     
     if (error) throw error;
-    return data && data.length > 0;
+    return data || false;
   } catch (err) {
     console.error("Error checking phone:", err);
     return false;

@@ -87,9 +87,10 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           email: string | null
+          first_name: string | null
           id: string
+          last_name: string | null
           last_sign_in_at: string | null
-          name: string | null
           phone: string | null
           status: string | null
           updated_at: string | null
@@ -99,9 +100,10 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           email?: string | null
+          first_name?: string | null
           id?: string
+          last_name?: string | null
           last_sign_in_at?: string | null
-          name?: string | null
           phone?: string | null
           status?: string | null
           updated_at?: string | null
@@ -111,9 +113,10 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           email?: string | null
+          first_name?: string | null
           id?: string
+          last_name?: string | null
           last_sign_in_at?: string | null
-          name?: string | null
           phone?: string | null
           status?: string | null
           updated_at?: string | null
@@ -125,7 +128,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_email_exists: {
+        Args: { check_email: string }
+        Returns: boolean
+      }
+      check_phone_exists: {
+        Args: { check_phone: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
