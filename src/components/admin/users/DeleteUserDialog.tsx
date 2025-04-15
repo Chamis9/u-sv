@@ -74,8 +74,8 @@ export function DeleteUserDialog({ user, open, onClose, onUserDeleted }: DeleteU
           <AlertDialogTitle>{t('Dzēst lietotāju', 'Delete User')}</AlertDialogTitle>
           <AlertDialogDescription>
             {t(
-              'Vai tiešām vēlaties dzēst šo lietotāju? Šī darbība nevar tikt atcelta.',
-              'Are you sure you want to delete this user? This action cannot be undone.'
+              'Vai tiešām vēlaties dzēst šo lietotāju? Šī darbība ir neatgriezeniska.',
+              'Are you sure you want to delete this user? This action is irreversible.'
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
