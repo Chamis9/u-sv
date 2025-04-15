@@ -43,7 +43,7 @@ export const getNavItems = (
       id: 'logout',
       icon: <LogOut />,
       label: translations.admin?.logout || 'Logout',
-      badge: 0
+      badge: undefined  // Remove the badge for logout
     }
   ];
 
