@@ -3,13 +3,13 @@ import { Mail, UserCircle } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { LoginDialog } from "@/components/auth/LoginDialog";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 
 export function Navigation() {
   const { currentLanguage } = useLanguage();
-  const { isAuthenticated, user, lastAvatarUpdate } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   
   const translations = {
@@ -58,7 +58,6 @@ export function Navigation() {
               title={t.myProfile}
             >
               <UserAvatar user={user} size="sm" />
-              <span className="hidden md:inline text-sm">{t.profile}</span>
             </Link>
           ) : (
             <Button
