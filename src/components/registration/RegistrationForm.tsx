@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import PhoneInputWithCountry from "@/components/admin/users/PhoneInputWithCountry";
 import { PersonalInfoFields } from "./components/PersonalInfoFields";
 import { PasswordFields } from "./components/PasswordFields";
-import { TermsAndNewsletter } from "./components/TermsAndNewsletter";
 import { useRegistrationForm } from "./hooks/useRegistrationForm";
 
 const RegistrationForm = () => {
@@ -59,8 +58,6 @@ const RegistrationForm = () => {
             required={false}
             placeholder="12345678"
           />
-
-          <TermsAndNewsletter form={form} t={t} />
 
           <Button type="submit" className="w-full">
             {t('Reģistrēties', 'Register')}

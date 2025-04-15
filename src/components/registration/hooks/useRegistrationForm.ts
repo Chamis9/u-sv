@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/features/language";
@@ -13,7 +14,6 @@ export interface RegistrationFormData {
   confirmPassword: string;
   countryCode: string;
   phoneNumber: string;
-  termsAccepted: boolean;
   newsletter: boolean;
 }
 
@@ -26,8 +26,7 @@ export const useRegistrationForm = () => {
     defaultValues: {
       countryCode: "+371",
       phoneNumber: "",
-      newsletter: false,
-      termsAccepted: false
+      newsletter: false
     },
     mode: "onSubmit"
   });
@@ -56,19 +55,10 @@ export const useRegistrationForm = () => {
   };
 
   const onSubmit = async (data: RegistrationFormData) => {
-    if (!data.termsAccepted) {
-      toast({
-        title: t('Kļūda', 'Error'),
-        description: t('Jums jāpiekrīt lietošanas noteikumiem', 'You must accept the terms and conditions'),
-        variant: "destructive"
-      });
-      return;
-    }
-
     try {
-      const phoneNumber = data.phoneNumber || "";
-      const countryCode = data.countryCode || "+371";
+      const phoneNumber = data.phoneNumber ? `${data.countryCode}${data.phoneNumber}` : "";
       
+      // Check if email exists
       const emailExists = await checkEmailExists(data.email);
       if (emailExists) {
         toast({
@@ -79,8 +69,9 @@ export const useRegistrationForm = () => {
         return;
       }
 
-      if (phoneNumber.trim()) {
-        const phoneExists = await checkPhoneExists(`${countryCode}${phoneNumber}`);
+      // Check if phone exists (if provided)
+      if (phoneNumber) {
+        const phoneExists = await checkPhoneExists(phoneNumber);
         if (phoneExists) {
           toast({
             title: t('Kļūda', 'Error'),
@@ -88,16 +79,18 @@ export const useRegistrationForm = () => {
             variant: "destructive"
           });
           return;
-        }
+      }
       }
 
+      // Proceed with registration if validation passes
       const { error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
           data: {
-            name: `${data.firstName} ${data.lastName}`,
-            phone: phoneNumber ? `${countryCode}${phoneNumber}` : null
+            first_name: data.firstName,
+            last_name: data.lastName,
+            phone: phoneNumber || null
           }
         }
       });
