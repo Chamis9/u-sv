@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types/users";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +18,13 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
     const filePath = `${user.id}/${fileName}`;
     
     console.log("Preparing to upload avatar to path:", filePath);
+    
+    // Check if we have a valid session before uploading
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session) {
+      console.error("No active session found");
+      throw new Error("You must be logged in to upload an avatar");
+    }
     
     // Upload the file to Supabase Storage
     console.log("Uploading file to Supabase storage...");
@@ -74,15 +82,36 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
     
   } catch (error) {
     console.error("Error uploading avatar:", error);
+    
+    // Provide more specific error messages based on the error
+    let errorMessage = t(
+      "Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz.",
+      "Failed to upload image. Please try again.",
+      "Не удалось загрузить изображение. Пожалуйста, попробуйте еще раз."
+    );
+    
+    if (error instanceof Error) {
+      if (error.message.includes("storage") || error.message.includes("bucket")) {
+        errorMessage = t(
+          "Failu glabātava nav pieejama. Lūdzu, sazinieties ar administrātoru.",
+          "File storage is unavailable. Please contact the administrator.",
+          "Хранилище файлов недоступно. Пожалуйста, свяжитесь с администратором."
+        );
+      } else if (error.message.includes("auth") || error.message.includes("logged in")) {
+        errorMessage = t(
+          "Jums jāpiesakās, lai augšupielādētu attēlu.",
+          "You must be logged in to upload an image.",
+          "Вы должны быть авторизованы, чтобы загрузить изображение."
+        );
+      }
+    }
+    
     toast({
       variant: "destructive",
       title: t("Kļūda", "Error", "Ошибка"),
-      description: t(
-        "Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz.",
-        "Failed to upload image. Please try again.",
-        "Не удалось загрузить изображение. Пожалуйста, попробуйте еще раз."
-      )
+      description: errorMessage
     });
+    
     return null;
   }
 }
