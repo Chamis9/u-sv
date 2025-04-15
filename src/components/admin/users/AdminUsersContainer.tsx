@@ -88,11 +88,18 @@ export function AdminUsersContainer() {
   
   // Refresh count with parent component
   useEffect(() => {
+    console.log("AdminUsersContainer: users count updated to", users.length);
     const event = new CustomEvent('adminCountUpdated', { 
       detail: { count: users.length } 
     });
     window.dispatchEvent(event);
   }, [users.length]);
+
+  // Initial fetch when component mounts
+  useEffect(() => {
+    console.log("AdminUsersContainer: Initial fetch");
+    fetchAdminUsers();
+  }, [fetchAdminUsers]);
 
   return (
     <div className="space-y-6">

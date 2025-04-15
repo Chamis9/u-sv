@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/features/language";
@@ -72,7 +71,8 @@ export function useUserFetch(tableName: 'registered_users' | 'admin_user') {
         const formattedUsers: User[] = data.map((user: any) => ({
           id: user.id,
           email: user.email,
-          name: tableName === 'registered_users' ? user.name : user.email,
+          first_name: tableName === 'registered_users' ? user.first_name : null,
+          last_name: tableName === 'registered_users' ? user.last_name : null,
           phone: tableName === 'registered_users' ? user.phone : null,
           created_at: user.created_at,
           last_sign_in_at: tableName === 'registered_users' ? user.last_sign_in_at : null,

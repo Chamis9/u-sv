@@ -36,8 +36,10 @@ export function useAdminUsers() {
   
   // Use lazy initialization for the initial data fetch, but only once
   useEffect(() => {
+    console.log("useAdminUsers effect running, initialized:", initialized.current);
     if (!initialized.current) {
       const timer = setTimeout(() => {
+        console.log("Triggering fetchUsers in useAdminUsers");
         fetchUsers();
         initialized.current = true;
       }, 100); // Small delay to allow UI to render first
@@ -47,6 +49,7 @@ export function useAdminUsers() {
   }, [fetchUsers]);
 
   const refreshData = () => {
+    console.log("Manual refresh triggered in useAdminUsers");
     fetchUsers(true); // Force a refresh
   };
 
