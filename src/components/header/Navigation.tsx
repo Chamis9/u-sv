@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Mail, UserCircle } from "lucide-react";
 import { useLanguage } from "@/features/language";
@@ -6,20 +5,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { LoginDialog } from "@/components/auth/LoginDialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/profile/UserAvatar";
 
 export function Navigation() {
   const { currentLanguage } = useLanguage();
   const { isAuthenticated, user, lastAvatarUpdate } = useAuth();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
-  const [avatarKey, setAvatarKey] = useState(Date.now());
-  
-  // Refresh avatar when lastAvatarUpdate changes
-  useEffect(() => {
-    if (lastAvatarUpdate) {
-      setAvatarKey(lastAvatarUpdate);
-    }
-  }, [lastAvatarUpdate]);
   
   const translations = {
     lv: {
@@ -66,16 +57,7 @@ export function Navigation() {
               className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors relative z-10"
               title={t.myProfile}
             >
-              <Avatar className="h-8 w-8">
-                <AvatarImage 
-                  src={user.avatar_url || ""} 
-                  alt={t.myProfile} 
-                  key={avatarKey} // Key forces rerender when avatar changes
-                />
-                <AvatarFallback>
-                  <UserCircle className="h-6 w-6" />
-                </AvatarFallback>
-              </Avatar>
+              <UserAvatar user={user} size="sm" />
               <span className="hidden md:inline text-sm">{t.profile}</span>
             </Link>
           ) : (

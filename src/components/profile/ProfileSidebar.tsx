@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useLanguage } from "@/features/language";
 import { UserAvatar } from "./UserAvatar";
@@ -13,7 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProfileSidebarProps {
   activeTab: string;
@@ -24,7 +23,7 @@ interface ProfileSidebarProps {
 export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarProps) {
   const { currentLanguage } = useLanguage();
   const { theme } = useTheme();
-  const { logout } = useAuth();
+  const { logout, lastAvatarUpdate } = useAuth();
   const { toast } = useToast();
   
   const t = (lvText: string, enText: string, ruText?: string) => {
@@ -79,12 +78,10 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
     }
   ];
   
-  // Create a full name from first_name and last_name
   const fullName = user && (user.first_name || user.last_name) 
     ? [user.first_name, user.last_name].filter(Boolean).join(" ")
     : t("Lietotājs", "User", "Пользователь");
   
-  // Create a complete user object to ensure it satisfies the User type
   const completeUserObject: User = user ? {
     id: user.id,
     email: user.email,
@@ -110,7 +107,7 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
     <aside className="hidden md:flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm">
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex flex-col items-center space-y-2">
-          <UserAvatar user={completeUserObject} size="lg" />
+          <UserAvatar user={completeUserObject} size="lg" forceRefresh={true} />
           <h2 className="text-xl font-semibold mt-2">
             {fullName}
           </h2>
