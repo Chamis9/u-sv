@@ -29,6 +29,7 @@ const RegistrationForm = () => {
   const { register, handleSubmit, formState: { errors }, watch, setValue, getValues } = useForm<RegistrationFormData>({
     defaultValues: {
       countryCode: "+371",
+      phoneNumber: "",
       newsletter: false,
       termsAccepted: false
     }
@@ -50,13 +51,18 @@ const RegistrationForm = () => {
   };
 
   const validatePassword = (value: string) => {
-    if (value !== watch('password')) {
+    const password = watch('password');
+    if (!value || !password || value !== password) {
       return t('Paroles nesakrīt', 'Passwords do not match');
     }
     return true;
   };
 
   const onSubmit = async (data: RegistrationFormData) => {
+    // Safely handle phone number by ensuring it's not undefined
+    const phoneNumber = data.phoneNumber || "";
+    const countryCode = data.countryCode || "+371";
+    
     // Check if email exists
     const emailExists = await checkEmailExists(data.email);
     if (emailExists) {
@@ -65,12 +71,14 @@ const RegistrationForm = () => {
       };
     }
 
-    // Check if phone exists
-    const phoneExists = await checkPhoneExists(`${data.countryCode}${data.phoneNumber}`);
-    if (phoneExists) {
-      return {
-        phone: t('Telefona numurs jau ir reģistrēts', 'Phone number is already registered')
-      };
+    // Check if phone exists - only if phone is provided
+    if (phoneNumber.trim()) {
+      const phoneExists = await checkPhoneExists(`${countryCode}${phoneNumber}`);
+      if (phoneExists) {
+        return {
+          phone: t('Telefona numurs jau ir reģistrēts', 'Phone number is already registered')
+        };
+      }
     }
 
     console.log("Form submitted:", data);
@@ -161,11 +169,11 @@ const RegistrationForm = () => {
           <PhoneInputWithCountry
             label={t('Telefona numurs', 'Phone Number')}
             countryCode={watch('countryCode')}
-            phoneNumber={watch('phoneNumber')}
+            phoneNumber={watch('phoneNumber') || ""}
             onCountryCodeChange={(code) => setValue('countryCode', code)}
             onPhoneNumberChange={(number) => setValue('phoneNumber', number)}
             error={errors.phoneNumber?.message}
-            required={true}
+            required={false}
             placeholder="12345678"
           />
 
