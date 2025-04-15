@@ -4,25 +4,25 @@ import { Mail, UserCircle } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { LoginDialog } from "@/components/auth/LoginDialog";
 
 export function Navigation() {
   const { currentLanguage } = useLanguage();
   const { isAuthenticated, userEmail } = useAuth();
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   
   const translations = {
     lv: {
       contact: "Kontakti",
-      login: "Pieslēgties",
       profile: userEmail || "Profils"
     },
     en: {
       contact: "Contact",
-      login: "Login",
       profile: userEmail || "Profile"
     },
     ru: {
       contact: "Контакты",
-      login: "Войти",
       profile: userEmail || "Профиль"
     }
   };
@@ -50,26 +50,27 @@ export function Navigation() {
           {isAuthenticated ? (
             <Link
               to="/profile"
-              className="text-white hover:text-orange-400 transition-colors flex items-center gap-1.5 relative z-10 text-sm md:text-base"
+              className="text-white hover:text-orange-400 transition-colors flex items-center relative z-10"
             >
-              <UserCircle size={16} />
-              {t.profile}
+              <UserCircle size={20} />
             </Link>
           ) : (
             <Button
               variant="ghost"
-              size="sm"
-              asChild
+              size="icon"
               className="text-white hover:text-orange-400"
+              onClick={() => setShowLoginDialog(true)}
             >
-              <Link to="/admin">
-                <UserCircle className="h-5 w-5" />
-                {t.login}
-              </Link>
+              <UserCircle size={20} />
             </Button>
           )}
         </li>
       </ul>
+      
+      <LoginDialog 
+        isOpen={showLoginDialog} 
+        onClose={() => setShowLoginDialog(false)} 
+      />
     </nav>
   );
 }
