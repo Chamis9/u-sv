@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -83,7 +82,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
         <DialogHeader>
           <DialogTitle>{translations.title}</DialogTitle>
           <DialogDescription id="login-dialog-description">
-            {translations.loginDescription || "Please enter your email and password to log in"}
+            {translations.loginDescription}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>

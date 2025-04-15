@@ -12,6 +12,7 @@ export const getLoginTranslations = (code: string) => {
       loginLoading: "Pieslēdzas...",
       invalidCredentials: "Nepareizs e-pasts vai parole",
       resetPasswordSent: "Paroles atjaunošanas saite nosūtīta uz jūsu e-pastu",
+      loginDescription: "Lūdzu, ievadiet savu e-pastu un paroli, lai pieslēgtos",
     },
     en: {
       title: "Login",
@@ -22,6 +23,7 @@ export const getLoginTranslations = (code: string) => {
       loginLoading: "Logging in...",
       invalidCredentials: "Invalid email or password",
       resetPasswordSent: "Password reset link has been sent to your email",
+      loginDescription: "Please enter your email and password to log in",
     },
     ru: {
       title: "Войти",
@@ -32,6 +34,7 @@ export const getLoginTranslations = (code: string) => {
       loginLoading: "Вход...",
       invalidCredentials: "Неверный email или пароль",
       resetPasswordSent: "Ссылка для сброса пароля отправлена на ваш email",
+      loginDescription: "Пожалуйста, введите ваш email и пароль для входа",
     },
   };
 
