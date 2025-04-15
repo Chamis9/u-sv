@@ -186,3 +186,9 @@ export function validateAvatarFile(file: File, toast: ReturnType<typeof useToast
   
   return true;
 }
+
+export { 
+  uploadAvatarToSupabase, 
+  handleDemoUserAvatar, 
+  validateAvatarFile 
+};
