@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types/users";
 import { useToast } from "@/hooks/use-toast";
@@ -12,13 +11,6 @@ interface AvatarUploadOptions {
 
 export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUploadOptions) {
   try {
-    // Create a unique file path using user ID and timestamp
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}.${fileExt}`;
-    const filePath = `${user.id}/${fileName}`;
-    
-    console.log("Preparing to upload avatar to path:", filePath);
-    
     // Check if we have a valid session before uploading
     const { data: sessionData } = await supabase.auth.getSession();
     if (!sessionData.session) {
@@ -26,11 +18,16 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
       throw new Error("You must be logged in to upload an avatar");
     }
     
+    // Create a unique file path using user ID and timestamp
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+    
+    console.log("Preparing to upload avatar to path:", fileName);
+    
     // Upload the file to Supabase Storage
-    console.log("Uploading file to Supabase storage...");
     const { data, error } = await supabase.storage
       .from('avatars')
-      .upload(filePath, file, {
+      .upload(fileName, file, {
         cacheControl: '3600',
         upsert: true
       });
@@ -45,7 +42,7 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
     // Get public URL for the uploaded file
     const { data: publicUrlData } = supabase.storage
       .from('avatars')
-      .getPublicUrl(filePath);
+      .getPublicUrl(fileName);
     
     const publicUrl = publicUrlData?.publicUrl;
     
@@ -83,7 +80,6 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
   } catch (error) {
     console.error("Error uploading avatar:", error);
     
-    // Provide more specific error messages based on the error
     let errorMessage = t(
       "Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz.",
       "Failed to upload image. Please try again.",
