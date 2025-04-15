@@ -20,7 +20,7 @@ export const TermsAndNewsletter = ({ form, t }: TermsAndNewsletterProps) => {
         <Checkbox
           id="termsAccepted"
           {...register("termsAccepted", {
-            validate: () => termsAccepted || t('Jums jāpiekrīt noteikumiem', 'You must accept the terms')
+            required: t('Jums jāpiekrīt noteikumiem', 'You must accept the terms')
           })}
         />
         <Label htmlFor="termsAccepted" className="text-sm">

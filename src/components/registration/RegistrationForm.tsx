@@ -63,7 +63,7 @@ const RegistrationForm = () => {
           <TermsAndNewsletter form={form} t={t} />
 
           <Button type="submit" className="w-full">
-            {t('Iesniegt', 'Submit')}
+            {t('Reģistrēties', 'Register')}
           </Button>
         </form>
       </CardContent>
