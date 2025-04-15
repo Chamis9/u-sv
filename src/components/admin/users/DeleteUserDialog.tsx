@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from "react";
 import { 
   AlertDialog,
@@ -29,10 +28,13 @@ export function DeleteUserDialog({ user, open, onClose, onUserDeleted }: DeleteU
   
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
   
-  // Return early if user is null
-  if (!user) return null;
-  
-  // Use useCallback to memoize the delete function
+  const getUserFullName = () => {
+    if (!user) return '';
+    const firstName = user.first_name || t('Nav norādīts', 'Not specified');
+    const lastName = user.last_name || t('Nav norādīts', 'Not specified');
+    return `${firstName} ${lastName}`;
+  };
+
   const handleDelete = useCallback(async () => {
     if (!user) return;
     
@@ -74,8 +76,8 @@ export function DeleteUserDialog({ user, open, onClose, onUserDeleted }: DeleteU
           <AlertDialogTitle>{t('Dzēst lietotāju', 'Delete User')}</AlertDialogTitle>
           <AlertDialogDescription>
             {t(
-              'Vai tiešām vēlaties dzēst šo lietotāju? Šī darbība ir neatgriezeniska.',
-              'Are you sure you want to delete this user? This action is irreversible.'
+              `Vai tiešām vēlaties dzēst ${getUserFullName()}? Šī darbība ir neatgriezeniska.`,
+              `Are you sure you want to delete ${getUserFullName()}? This action is irreversible.`
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
