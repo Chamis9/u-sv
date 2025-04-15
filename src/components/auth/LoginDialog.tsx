@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -75,9 +76,15 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent 
+        className="sm:max-w-[425px]"
+        aria-describedby="login-dialog-description"
+      >
         <DialogHeader>
           <DialogTitle>{translations.title}</DialogTitle>
+          <DialogDescription id="login-dialog-description">
+            {translations.loginDescription || "Please enter your email and password to log in"}
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
