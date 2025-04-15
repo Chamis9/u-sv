@@ -1,7 +1,9 @@
 
 import React, { useState } from "react";
+import { UserCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { LoginDialog } from "@/components/auth/LoginDialog";
-import { LoadingSpinner } from "./LoadingSpinner";
+import { LoadingSpinner } from "./components/LoadingSpinner";
 
 interface ProfileAuthGuardProps {
   children: React.ReactNode;
