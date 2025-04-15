@@ -1,128 +1,18 @@
+
 import React from "react";
-import { useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useLanguage } from "@/features/language";
-import { validatePhoneNumber, checkEmailExists, checkPhoneExists } from "@/utils/phoneUtils";
-import { Checkbox } from "@/components/ui/checkbox";
 import PhoneInputWithCountry from "@/components/admin/users/PhoneInputWithCountry";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { toast } from "@/components/ui/use-toast";
-
-interface RegistrationFormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  countryCode: string;
-  phoneNumber: string;
-  termsAccepted: boolean;
-  newsletter: boolean;
-}
+import { PersonalInfoFields } from "./components/PersonalInfoFields";
+import { PasswordFields } from "./components/PasswordFields";
+import { TermsAndNewsletter } from "./components/TermsAndNewsletter";
+import { useRegistrationForm } from "./hooks/useRegistrationForm";
 
 const RegistrationForm = () => {
-  const navigate = useNavigate();
-  const { currentLanguage } = useLanguage();
-  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
-  
-  const { register, handleSubmit, formState: { errors, dirtyFields }, watch, setValue, getValues } = useForm<RegistrationFormData>({
-    defaultValues: {
-      countryCode: "+371",
-      phoneNumber: "",
-      newsletter: false,
-      termsAccepted: false
-    },
-    mode: "onChange"
-  });
-
-  const passwordValidation = {
-    required: t('Lauks ir obligāts', 'This field is required'),
-    minLength: {
-      value: 8,
-      message: t('Vismaz 8 simboli', 'Minimum 8 characters')
-    },
-    pattern: {
-      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      message: t(
-        'Parolei jāsatur vismaz 1 lielais burts, 1 mazais burts, 1 cipars un 1 īpašais simbols',
-        'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character'
-      )
-    }
-  };
-
-  const validatePassword = (value: string) => {
-    const password = watch('password');
-    if (!value || !password || value !== password) {
-      return t('Paroles nesakrīt', 'Passwords do not match');
-    }
-    return true;
-  };
-
-  const onSubmit = async (data: RegistrationFormData) => {
-    try {
-      const phoneNumber = data.phoneNumber || "";
-      const countryCode = data.countryCode || "+371";
-      
-      const emailExists = await checkEmailExists(data.email);
-      if (emailExists) {
-        toast({
-          title: t('Kļūda', 'Error'),
-          description: t('E-pasta adrese jau ir reģistrēta', 'Email is already registered'),
-          variant: "destructive"
-        });
-        return;
-      }
-
-      if (phoneNumber.trim()) {
-        const phoneExists = await checkPhoneExists(`${countryCode}${phoneNumber}`);
-        if (phoneExists) {
-          toast({
-            title: t('Kļūda', 'Error'),
-            description: t('Telefona numurs jau ir reģistrēts', 'Phone number is already registered'),
-            variant: "destructive"
-          });
-          return;
-        }
-      }
-
-      const { error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          data: {
-            name: `${data.firstName} ${data.lastName}`,
-            phone: phoneNumber ? `${countryCode}${phoneNumber}` : null
-          }
-        }
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: t('Veiksmīga reģistrācija', 'Registration successful'),
-        description: t(
-          'Jūsu konts ir izveidots. Lūdzu pārbaudiet savu e-pastu, lai apstiprinātu reģistrāciju.',
-          'Your account has been created. Please check your email to confirm registration.'
-        )
-      });
-
-      navigate('/');
-    } catch (error) {
-      console.error('Registration error:', error);
-      toast({
-        title: t('Kļūda', 'Error'),
-        description: error instanceof Error ? error.message : t(
-          'Radās kļūda reģistrācijas laikā. Lūdzu mēģiniet vēlreiz.',
-          'An error occurred during registration. Please try again.'
-        ),
-        variant: "destructive"
-      });
-    }
-  };
+  const { form, passwordValidation, validatePassword, onSubmit, t } = useRegistrationForm();
+  const { handleSubmit, watch, setValue, formState: { errors } } = form;
 
   return (
     <Card className="max-w-xl mx-auto">
@@ -131,38 +21,14 @@ const RegistrationForm = () => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">{t('Vārds', 'First Name')}</Label>
-              <Input
-                id="firstName"
-                {...register("firstName", { required: t('Lauks ir obligāts', 'This field is required') })}
-                placeholder={t('Ievadiet vārdu', 'Enter your first name')}
-              />
-              {errors.firstName && (
-                <p className="text-sm text-red-500">{errors.firstName.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="lastName">{t('Uzvārds', 'Last Name')}</Label>
-              <Input
-                id="lastName"
-                {...register("lastName", { required: t('Lauks ir obligāts', 'This field is required') })}
-                placeholder={t('Ievadiet uzvārdu', 'Enter your last name')}
-              />
-              {errors.lastName && (
-                <p className="text-sm text-red-500">{errors.lastName.message}</p>
-              )}
-            </div>
-          </div>
+          <PersonalInfoFields form={form} t={t} />
 
           <div className="space-y-2">
             <Label htmlFor="email">{t('E-pasts', 'Email')}</Label>
             <Input
               id="email"
               type="email"
-              {...register("email", {
+              {...form.register("email", {
                 required: t('Lauks ir obligāts', 'This field is required'),
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -176,34 +42,12 @@ const RegistrationForm = () => {
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password">{t('Parole', 'Password')}</Label>
-            <Input
-              id="password"
-              type="password"
-              {...register("password", passwordValidation)}
-              placeholder={t('Ievadiet paroli', 'Enter your password')}
-            />
-            {errors.password && (
-              <p className="text-sm text-red-500">{errors.password.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">{t('Apstiprināt paroli', 'Confirm Password')}</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              {...register("confirmPassword", {
-                required: t('Lauks ir obligāts', 'This field is required'),
-                validate: validatePassword
-              })}
-              placeholder={t('Ievadiet paroli vēlreiz', 'Re-enter your password')}
-            />
-            {errors.confirmPassword && (
-              <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
-            )}
-          </div>
+          <PasswordFields 
+            form={form} 
+            t={t} 
+            passwordValidation={passwordValidation}
+            validatePassword={validatePassword}
+          />
 
           <PhoneInputWithCountry
             label={t('Telefona numurs', 'Phone Number')}
@@ -216,30 +60,7 @@ const RegistrationForm = () => {
             placeholder="12345678"
           />
 
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="termsAccepted"
-              {...register("termsAccepted", {
-                required: t('Jums jāpiekrīt noteikumiem', 'You must accept the terms')
-              })}
-            />
-            <Label htmlFor="termsAccepted" className="text-sm">
-              {t('Es piekrītu lietošanas noteikumiem', 'I agree to the terms and conditions')}
-            </Label>
-          </div>
-          {errors.termsAccepted && (
-            <p className="text-sm text-red-500">{errors.termsAccepted.message}</p>
-          )}
-
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="newsletter"
-              {...register("newsletter")}
-            />
-            <Label htmlFor="newsletter" className="text-sm">
-              {t('Vēlos saņemt jaunumus', 'I want to receive newsletters')}
-            </Label>
-          </div>
+          <TermsAndNewsletter form={form} t={t} />
 
           <Button type="submit" className="w-full">
             {t('Iesniegt', 'Submit')}
