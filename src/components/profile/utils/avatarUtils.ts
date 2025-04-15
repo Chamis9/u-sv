@@ -18,6 +18,8 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
     const fileName = `${Date.now()}.${fileExt}`;
     const filePath = `${userId}/${fileName}`;
     
+    console.log("Uploading avatar to path:", filePath);
+    
     // Upload the file to Supabase Storage
     const { data, error } = await supabase.storage
       .from('avatars')
@@ -41,7 +43,10 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
     // Update the user's avatar URL in the database
     const { error: updateError } = await supabase
       .from('registered_users')
-      .update({ avatar_url: publicUrl })
+      .update({ 
+        avatar_url: publicUrl,
+        updated_at: new Date().toISOString()
+      })
       .eq('id', user.id);
     
     if (updateError) {

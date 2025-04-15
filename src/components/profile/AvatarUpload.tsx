@@ -45,6 +45,8 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
     setIsUploading(true);
     
     try {
+      console.log("Processing avatar upload for user:", user.id);
+      
       // Special handling for demo user - store avatar in localStorage instead
       if (user.id.startsWith('mock-user-id')) {
         await handleDemoUserAvatar(file, onAvatarUpdate, toast, t);
@@ -58,10 +60,15 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
         });
         
         if (publicUrl) {
+          console.log("Avatar upload successful, updating UI with new URL");
           // Call the callback to update avatar in parent component
           onAvatarUpdate(publicUrl);
+        } else {
+          console.error("Avatar upload failed - no URL returned");
         }
       }
+    } catch (err) {
+      console.error("Error in avatar upload process:", err);
     } finally {
       setIsUploading(false);
       // Reset the file input
