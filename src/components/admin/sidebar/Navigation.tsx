@@ -21,7 +21,6 @@ export const Navigation = ({
   adminCount = 0,
   translations 
 }: NavigationProps) => {
-  // Fix: Only pass three arguments as expected by getNavItems
   const navItems = getNavItems(translations, userCount, subscriberCount);
   
   return (
