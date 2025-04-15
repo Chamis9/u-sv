@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
@@ -10,7 +9,6 @@ import { AdminContent } from "@/components/admin/AdminContent";
 import { AdminLoginSection } from "@/components/admin/AdminLoginSection";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
-import { AdminUsers } from "@/components/admin/AdminUsers";
 import { RegisteredUsers } from "@/components/admin/RegisteredUsers";
 import { AdminSubscribers } from "@/components/admin/AdminSubscribers";
 import { AdminSettings } from "@/components/admin/AdminSettings";
@@ -81,7 +79,6 @@ function AdminPage() {
         <AdminSidebar 
           activeTab={getActiveTabFromRoute()} 
           onTabChange={handleTabChange}
-          adminCount={adminCount}
         />
         
         <div className="flex-1 overflow-auto p-8">
@@ -89,7 +86,6 @@ function AdminPage() {
             <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/dashboard" element={<AdminDashboard />} />
             <Route path="/users" element={<RegisteredUsers />} />
-            <Route path="/admins" element={<AdminUsers />} />
             <Route path="/subscribers" element={<AdminSubscribers />} />
             <Route path="/settings" element={<AdminSettings />} />
             <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />

@@ -1,6 +1,5 @@
-
 import React from "react";
-import { LucideIcon, Home, Users, Mail, Settings, IconNode, Shield } from "lucide-react";
+import { LucideIcon, Home, Users, Mail, Settings } from "lucide-react";
 import { TranslationObject } from "@/features/language/types";
 
 // Define an interface for nav items
@@ -15,7 +14,6 @@ interface NavItem {
 const iconMap: Record<string, LucideIcon> = {
   dashboard: Home,
   users: Users,
-  admins: Shield,
   subscribers: Mail,
   settings: Settings,
 };
@@ -44,19 +42,10 @@ const getIconComponent = (id: string): React.ReactNode => {
   return <IconComponent className="mr-2 h-4 w-4" />;
 };
 
-/**
- * Generates navigation items based on translations and badge counts
- * @param translations Translation object for internationalization
- * @param userCount Number of users for badge display
- * @param subscriberCount Number of subscribers for badge display
- * @param adminCount Number of administrators for badge display
- * @returns Array of navigation items
- */
 export function getNavItems(
   translations: TranslationObject, 
   userCount: number, 
-  subscriberCount: number,
-  adminCount: number = 0
+  subscriberCount: number
 ): NavItem[] {
   const items: NavItem[] = [
     {
@@ -69,12 +58,6 @@ export function getNavItems(
       icon: getIconComponent("users"),
       label: getTranslatedLabel("users", translations, 'Users'),
       badge: userCount
-    },
-    {
-      id: "admins",
-      icon: getIconComponent("admins"),
-      label: getTranslatedLabel("admins", translations, 'Administrators'),
-      badge: adminCount
     },
     {
       id: "subscribers",

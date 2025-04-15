@@ -1,7 +1,6 @@
-
 import React, { memo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Home, Users, Mail, Settings, Shield } from "lucide-react";
+import { Home, Users, Mail, Settings } from "lucide-react";
 import { useLanguage } from "@/features/language";
 
 interface AdminMobileNavProps {
@@ -15,7 +14,6 @@ export const AdminMobileNav = memo(function AdminMobileNav({ activeTab, onTabCha
   const icons = {
     dashboard: <Home className="h-5 w-5" />,
     users: <Users className="h-5 w-5" />,
-    admins: <Shield className="h-5 w-5" />,
     subscribers: <Mail className="h-5 w-5" />,
     settings: <Settings className="h-5 w-5" />
   };
@@ -23,7 +21,6 @@ export const AdminMobileNav = memo(function AdminMobileNav({ activeTab, onTabCha
   const titles = {
     dashboard: translations.admin?.tabs?.dashboard || 'Dashboard',
     users: translations.admin?.tabs?.users || 'Users',
-    admins: translations.admin?.tabs?.admins || 'Administrators',
     subscribers: translations.admin?.tabs?.subscribers || 'Subscribers',
     settings: translations.admin?.tabs?.settings || 'Settings'
   };

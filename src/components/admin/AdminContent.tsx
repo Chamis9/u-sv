@@ -1,4 +1,3 @@
-
 import React, { memo, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,6 @@ import { AdminMobileNav } from "@/components/admin/AdminMobileNav";
 
 // Lazy load admin components for better performance
 const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard"));
-const AdminUsers = lazy(() => import("@/components/admin/AdminUsers"));
 const RegisteredUsers = lazy(() => import("@/components/admin/RegisteredUsers"));
 const AdminSubscribers = lazy(() => import("@/components/admin/AdminSubscribers"));
 const AdminSettings = lazy(() => import("@/components/admin/AdminSettings"));
@@ -26,7 +24,6 @@ export const AdminContent = memo(function AdminContent({ activeTab, onTabChange 
       <Suspense fallback={<div className="animate-pulse p-4 rounded-md bg-gray-100 dark:bg-gray-800 h-64"></div>}>
         {activeTab === "dashboard" && <AdminDashboard />}
         {activeTab === "users" && <RegisteredUsers />}
-        {activeTab === "admins" && <AdminUsers />}
         {activeTab === "subscribers" && <AdminSubscribers />}
         {activeTab === "settings" && <AdminSettings />}
       </Suspense>
