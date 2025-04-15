@@ -9,7 +9,8 @@ import type { User } from "@/types/users";
 interface EditUserFormProps {
   user: User;
   formData: {
-    name: string | null;
+    first_name: string | null;
+    last_name: string | null;
     phoneNumber: string;
   };
   errors: {
@@ -48,15 +49,28 @@ export function EditUserForm({
         </div>
         
         <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="name" className="text-right">
-            {t('Vārds', 'Name')}
+          <Label htmlFor="first_name" className="text-right">
+            {t('Vārds', 'First Name')}
           </Label>
           <Input
-            id="name"
-            value={formData.name || ''}
-            onChange={(e) => onInputChange('name', e.target.value)}
+            id="first_name"
+            value={formData.first_name || ''}
+            onChange={(e) => onInputChange('first_name', e.target.value)}
             className="col-span-3"
-            placeholder={t('Ievadiet vārdu', 'Enter name')}
+            placeholder={t('Ievadiet vārdu', 'Enter first name')}
+          />
+        </div>
+        
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="last_name" className="text-right">
+            {t('Uzvārds', 'Last Name')}
+          </Label>
+          <Input
+            id="last_name"
+            value={formData.last_name || ''}
+            onChange={(e) => onInputChange('last_name', e.target.value)}
+            className="col-span-3"
+            placeholder={t('Ievadiet uzvārdu', 'Enter last name')}
           />
         </div>
         

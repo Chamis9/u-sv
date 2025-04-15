@@ -41,9 +41,14 @@ export const UserTableRow = memo(function UserTableRow({
   const handleDelete = useCallback(() => onDelete(user), [user, onDelete]);
   const handleToggleStatus = useCallback(() => onToggleStatus(user), [user, onToggleStatus]);
   
+  // Get full name from first_name and last_name
+  const fullName = [user.first_name, user.last_name]
+    .filter(Boolean)
+    .join(" ") || t('Nav norādīts', 'Not specified');
+  
   return (
     <TableRow>
-      <TableCell>{user.name || t('Nav norādīts', 'Not specified')}</TableCell>
+      <TableCell>{fullName}</TableCell>
       <TableCell>{user.phone || t('Nav norādīts', 'Not specified')}</TableCell>
       <TableCell className="font-medium">{user.email || t('Nav e-pasta', 'No email')}</TableCell>
       <TableCell>
@@ -73,7 +78,8 @@ export const UserTableRow = memo(function UserTableRow({
     prevProps.user.status === nextProps.user.status &&
     prevProps.user.updated_at === nextProps.user.updated_at &&
     prevProps.user.email === nextProps.user.email &&
-    prevProps.user.name === nextProps.user.name &&
+    prevProps.user.first_name === nextProps.user.first_name &&
+    prevProps.user.last_name === nextProps.user.last_name &&
     prevProps.user.phone === nextProps.user.phone
   );
 });

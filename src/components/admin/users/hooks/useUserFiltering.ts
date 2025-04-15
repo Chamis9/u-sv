@@ -57,8 +57,14 @@ export function useUserFiltering(users: User[], searchTerm: string) {
   // Filter users based on active filters
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
+      // Get full name for filtering
+      const fullName = [user.first_name, user.last_name]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      
       // Check each filter criteria
-      if (activeFilters.name && !user.name?.toLowerCase().includes(activeFilters.name.toLowerCase())) {
+      if (activeFilters.name && !fullName.includes(activeFilters.name.toLowerCase())) {
         return false;
       }
       if (activeFilters.email && !user.email?.toLowerCase().includes(activeFilters.email.toLowerCase())) {

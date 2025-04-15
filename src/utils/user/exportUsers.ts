@@ -3,13 +3,14 @@ import type { User } from '@/types/users';
 
 export const downloadUsersCSV = (users: User[], language: { code: string }) => {
   // Generate CSV headers
-  const headers = ['ID', 'Email', 'Name', 'Phone', 'Role', 'Status', 'Created At', 'Last Sign In'];
+  const headers = ['ID', 'Email', 'First Name', 'Last Name', 'Phone', 'Role', 'Status', 'Created At', 'Last Sign In'];
   
   // Generate CSV rows
   const rows = users.map(user => [
     user.id,
     user.email || '',
-    user.name || '',
+    user.first_name || '',
+    user.last_name || '',
     user.phone || '',
     user.role || '',
     user.status || '',

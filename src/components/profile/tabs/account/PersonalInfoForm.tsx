@@ -1,11 +1,12 @@
 
 import React from "react";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface PersonalInfoFormProps {
   formData: {
-    name: string;
+    first_name: string;
+    last_name: string;
     email: string;
     phone: string;
   };
@@ -16,37 +17,48 @@ interface PersonalInfoFormProps {
 export function PersonalInfoForm({ formData, onChange, t }: PersonalInfoFormProps) {
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="name">{t("Vārds", "Name")}</Label>
+      <div>
+        <Label htmlFor="first_name">{t("Vārds", "First Name")}</Label>
         <Input
-          id="name"
-          name="name"
-          value={formData.name}
+          id="first_name"
+          name="first_name"
+          value={formData.first_name}
           onChange={onChange}
-          placeholder={t("Ievadiet savu vārdu", "Enter your name")}
+          placeholder={t("Ievadiet vārdu", "Enter your first name")}
         />
       </div>
       
-      <div className="space-y-2">
+      <div>
+        <Label htmlFor="last_name">{t("Uzvārds", "Last Name")}</Label>
+        <Input
+          id="last_name"
+          name="last_name"
+          value={formData.last_name}
+          onChange={onChange}
+          placeholder={t("Ievadiet uzvārdu", "Enter your last name")}
+        />
+      </div>
+      
+      <div>
         <Label htmlFor="email">{t("E-pasts", "Email")}</Label>
         <Input
           id="email"
           name="email"
-          type="email"
           value={formData.email}
           onChange={onChange}
-          placeholder={t("Ievadiet savu e-pastu", "Enter your email")}
+          placeholder={t("Ievadiet e-pastu", "Enter your email")}
+          type="email"
         />
       </div>
       
-      <div className="space-y-2">
+      <div>
         <Label htmlFor="phone">{t("Tālrunis", "Phone")}</Label>
         <Input
           id="phone"
           name="phone"
           value={formData.phone}
           onChange={onChange}
-          placeholder={t("Ievadiet savu tālruni", "Enter your phone")}
+          placeholder={t("Ievadiet tālruni", "Enter your phone")}
         />
       </div>
     </div>

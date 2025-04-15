@@ -6,7 +6,8 @@ import { useLanguage } from "@/features/language";
 import type { User } from "@/types/users";
 
 interface EditUserFormState {
-  name: string | null;
+  first_name: string | null;
+  last_name: string | null;
   phoneNumber: string;
 }
 
@@ -16,7 +17,8 @@ interface EditUserFormErrors {
 
 export const useEditUserForm = (user: User | null) => {
   const [formData, setFormData] = useState<EditUserFormState>({
-    name: user?.name || null,
+    first_name: user?.first_name || null,
+    last_name: user?.last_name || null,
     phoneNumber: "",
   });
   const [errors, setErrors] = useState<EditUserFormErrors>({});

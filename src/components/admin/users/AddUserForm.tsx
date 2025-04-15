@@ -7,7 +7,8 @@ import { DialogFooter } from "@/components/ui/dialog";
 
 interface AddUserFormProps {
   formData: {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     phoneNumber: string;
   };
@@ -34,12 +35,22 @@ export function AddUserForm({
   return (
     <form onSubmit={onSubmit} className="space-y-4 pt-4">
       <div className="grid gap-2">
-        <Label htmlFor="name">{t('Vārds', 'Name')}</Label>
+        <Label htmlFor="firstName">{t('Vārds', 'First Name')}</Label>
         <Input
-          id="name"
-          value={formData.name}
-          onChange={(e) => onInputChange('name', e.target.value)}
-          placeholder={t('Ievadiet lietotāja vārdu', 'Enter user name')}
+          id="firstName"
+          value={formData.firstName}
+          onChange={(e) => onInputChange('firstName', e.target.value)}
+          placeholder={t('Ievadiet lietotāja vārdu', 'Enter first name')}
+        />
+      </div>
+      
+      <div className="grid gap-2">
+        <Label htmlFor="lastName">{t('Uzvārds', 'Last Name')}</Label>
+        <Input
+          id="lastName"
+          value={formData.lastName}
+          onChange={(e) => onInputChange('lastName', e.target.value)}
+          placeholder={t('Ievadiet lietotāja uzvārdu', 'Enter last name')}
         />
       </div>
       

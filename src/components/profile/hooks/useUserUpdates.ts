@@ -24,7 +24,8 @@ export function useUserUpdates() {
       const { data, error } = await supabase
         .from('registered_users')
         .update({
-          name: updatedUser.name,
+          first_name: updatedUser.first_name,
+          last_name: updatedUser.last_name,
           email: updatedUser.email,
           phone: updatedUser.phone,
           avatar_url: updatedUser.avatar_url,

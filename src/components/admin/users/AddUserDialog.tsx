@@ -22,7 +22,8 @@ interface AddUserDialogProps {
 
 export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps) {
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phoneNumber: ""
   });
@@ -42,7 +43,8 @@ export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps
       setErrors({});
     } else {
       setFormData({
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phoneNumber: ""
       });
@@ -100,7 +102,8 @@ export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps
       }
       
       const { success, data, error } = await createUser({
-        name: formData.name,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
         email: formData.email,
         phone: formattedPhone,
         status: 'active'

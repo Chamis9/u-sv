@@ -25,7 +25,8 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: user.name || "",
+    first_name: user.first_name || "",
+    last_name: user.last_name || "",
     email: user.email || "",
     phone: user.phone || ""
   });
@@ -42,7 +43,8 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
     // Create updated user object
     const updatedUser: User = {
       ...user,
-      name: formData.name,
+      first_name: formData.first_name,
+      last_name: formData.last_name,
       email: formData.email,
       phone: formData.phone,
       updated_at: new Date().toISOString()
@@ -61,7 +63,8 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
   const handleCancel = () => {
     // Reset to original data
     setFormData({
-      name: user.name || "",
+      first_name: user.first_name || "",
+      last_name: user.last_name || "",
       email: user.email || "",
       phone: user.phone || ""
     });

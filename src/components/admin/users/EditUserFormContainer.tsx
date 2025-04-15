@@ -64,7 +64,8 @@ export function EditUserFormContainer({
       
       const updatedUser = {
         ...user,
-        name: formData.name,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
         phone: formattedPhone,
         updated_at: new Date().toISOString()
       };
