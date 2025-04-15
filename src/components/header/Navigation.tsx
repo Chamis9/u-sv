@@ -50,6 +50,7 @@ export function Navigation() {
           {isAuthenticated ? (
             <Link
               to="/profile"
+              onClick={handleLinkClick}
               className="text-white hover:text-orange-400 transition-colors flex items-center relative z-10"
             >
               <UserCircle size={20} />
