@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types/users";
 import { useToast } from "@/hooks/use-toast";
@@ -16,28 +15,12 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
     const userId = user.id;
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}.${fileExt}`;
-    const filePath = `avatars/${userId}/${fileName}`;
+    const filePath = `${userId}/${fileName}`;
     
     console.log("Preparing to upload avatar to path:", filePath);
     
-    // Check if avatars bucket exists, create it if it doesn't
-    const { data: buckets } = await supabase.storage.listBuckets();
-    const avatarBucketExists = buckets?.some(bucket => bucket.name === 'avatars');
-    
-    if (!avatarBucketExists) {
-      console.log("Avatars bucket doesn't exist, attempting to create it");
-      const { error: createBucketError } = await supabase.storage.createBucket('avatars', {
-        public: true
-      });
-      
-      if (createBucketError) {
-        console.error("Error creating avatars bucket:", createBucketError);
-        throw createBucketError;
-      }
-      console.log("Avatars bucket created successfully");
-    }
-    
     // Upload the file to Supabase Storage
+    // We'll try with the default 'avatars' bucket that should already exist
     console.log("Uploading file to Supabase storage...");
     const { data, error } = await supabase.storage
       .from('avatars')
