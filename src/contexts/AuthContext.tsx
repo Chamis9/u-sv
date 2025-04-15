@@ -1,11 +1,13 @@
 
 import React, { createContext, useContext } from "react";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
+import { User } from "@/types/users";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   isAuthLoading: boolean;
   userEmail: string | null;
+  user: User | null;
   logout: () => Promise<void>;
 }
 
@@ -13,6 +15,7 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   isAuthLoading: true,
   userEmail: null,
+  user: null,
   logout: async () => {},
 });
 

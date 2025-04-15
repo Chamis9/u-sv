@@ -1,181 +1,119 @@
 
-import { useState, useEffect } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
-import { logActivity } from '@/utils/activityLogger';
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { User } from "@/types/users";
 
 export function useSupabaseAuth() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const { toast } = useToast();
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Check authentication status
-    const checkAuthStatus = async () => {
+    const checkAuth = async () => {
       try {
-        // Check if we have an active Supabase session
-        const { data } = await supabase.auth.getSession();
+        setIsAuthLoading(true);
         
-        if (data.session) {
-          // We have an active session, now check if the user is in the admin_user table
-          const email = data.session.user?.email;
+        // Get current session
+        const { data: sessionData } = await supabase.auth.getSession();
+        const session = sessionData.session;
+        
+        if (session) {
+          setIsAuthenticated(true);
+          setUserEmail(session.user.email);
           
-          if (email) {
-            const { data: adminData, error: adminError } = await supabase
-              .from('admin_user')
-              .select('*')
-              .eq('email', email)
-              .maybeSingle();
-
-            if (adminError) {
-              console.error('Error checking admin status:', adminError);
-              setIsAuthenticated(false);
-              setUserEmail(null);
-            } else if (adminData) {
-              // User is authenticated and is an admin
-              setIsAuthenticated(true);
-              setUserEmail(email);
-              localStorage.setItem('admin_authenticated', 'true');
-              localStorage.setItem('admin_email', email);
-              
-              // Log login activity
-              logActivity({
-                activityType: 'login',
-                description: `Admin user logged in`,
-                email: email,
-              });
-            } else {
-              // User is authenticated but not an admin
-              console.error('User is not an admin');
-              await supabase.auth.signOut();
-              setIsAuthenticated(false);
-              setUserEmail(null);
-            }
-          } else {
-            setIsAuthenticated(false);
-            setUserEmail(null);
+          // Fetch user data if authenticated
+          const { data: userData, error } = await supabase
+            .from('registered_users')
+            .select('*')
+            .eq('email', session.user.email)
+            .single();
+          
+          if (!error && userData) {
+            setUser({
+              id: userData.id,
+              email: userData.email,
+              first_name: userData.first_name,
+              last_name: userData.last_name,
+              phone: userData.phone,
+              created_at: userData.created_at,
+              updated_at: userData.updated_at,
+              last_sign_in_at: userData.last_sign_in_at,
+              role: 'user',
+              status: userData.status as 'active' | 'inactive',
+              avatar_url: userData.avatar_url
+            });
           }
         } else {
-          // No active session
           setIsAuthenticated(false);
           setUserEmail(null);
-          localStorage.removeItem('admin_authenticated');
-          localStorage.removeItem('admin_email');
+          setUser(null);
         }
       } catch (error) {
-        console.error('Auth status check error:', error);
+        console.error("Error checking auth:", error);
         setIsAuthenticated(false);
         setUserEmail(null);
+        setUser(null);
       } finally {
         setIsAuthLoading(false);
       }
     };
-
-    checkAuthStatus();
-
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (event === 'SIGNED_OUT') {
-          const email = localStorage.getItem('admin_email');
-          if (email) {
-            // Log logout activity
-            logActivity({
-              activityType: 'logout',
-              description: `Admin user logged out`,
-              email: email,
+    
+    checkAuth();
+    
+    // Set up auth state change listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          setIsAuthenticated(true);
+          setUserEmail(session.user.email);
+          
+          // Fetch user data if authenticated
+          const { data: userData, error } = await supabase
+            .from('registered_users')
+            .select('*')
+            .eq('email', session.user.email)
+            .single();
+          
+          if (!error && userData) {
+            setUser({
+              id: userData.id,
+              email: userData.email,
+              first_name: userData.first_name,
+              last_name: userData.last_name,
+              phone: userData.phone,
+              created_at: userData.created_at,
+              updated_at: userData.updated_at,
+              last_sign_in_at: userData.last_sign_in_at,
+              role: 'user',
+              status: userData.status as 'active' | 'inactive',
+              avatar_url: userData.avatar_url
             });
           }
-          
-          localStorage.removeItem('admin_authenticated');
-          localStorage.removeItem('admin_email');
+        } else if (event === 'SIGNED_OUT') {
           setIsAuthenticated(false);
           setUserEmail(null);
-        } else if (event === 'SIGNED_IN' && session) {
-          // When signed in, check if the user is an admin
-          const email = session.user?.email;
-          if (email) {
-            // Use setTimeout to avoid nested Supabase calls
-            setTimeout(async () => {
-              const { data: adminData, error: adminError } = await supabase
-                .from('admin_user')
-                .select('*')
-                .eq('email', email)
-                .maybeSingle();
-
-              if (!adminError && adminData) {
-                localStorage.setItem('admin_authenticated', 'true');
-                localStorage.setItem('admin_email', email);
-                setIsAuthenticated(true);
-                setUserEmail(email);
-                
-                // Log login activity
-                logActivity({
-                  activityType: 'login',
-                  description: `Admin user logged in`,
-                  email: email,
-                });
-              } else {
-                // Not an admin, sign out
-                await supabase.auth.signOut();
-                setIsAuthenticated(false);
-                setUserEmail(null);
-              }
-            }, 0);
-          }
+          setUser(null);
         }
       }
     );
-
+    
     return () => {
-      subscription.unsubscribe();
+      authListener.subscription.unsubscribe();
     };
   }, []);
 
   const logout = async () => {
     try {
-      const email = userEmail;
-      
-      // Sign out from Supabase
       await supabase.auth.signOut();
-      
-      // Clear local auth data
-      localStorage.removeItem('admin_authenticated');
-      localStorage.removeItem('admin_email');
       setIsAuthenticated(false);
       setUserEmail(null);
-      
-      // Log logout activity
-      if (email) {
-        logActivity({
-          activityType: 'logout',
-          description: `Admin user logged out`,
-          email: email,
-        });
-      }
-      
-      toast({
-        description: "You have been successfully logged out",
-      });
-      
-      // Use global logout function if defined
-      if (window.logout) {
-        window.logout();
-      }
+      setUser(null);
     } catch (error) {
-      toast({
-        variant: "destructive",
-        description: "Failed to log out. Please try again.",
-      });
+      console.error("Error logging out:", error);
+      throw error;
     }
   };
 
-  return {
-    isAuthenticated,
-    isAuthLoading,
-    userEmail,
-    logout
-  };
+  return { isAuthenticated, isAuthLoading, userEmail, user, logout };
 }
