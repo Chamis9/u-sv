@@ -7,8 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useLanguage } from "@/features/language";
-import { useToast } from "@/components/ui/use-toast";
-import { Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { validateEmail, validatePhoneNumber, formatPhoneNumber, checkEmailExists, checkPhoneExists } from "@/utils/phoneUtils";
 import type { User } from "@/types/users";
 import { createUser } from "@/utils/user/userOperations";
@@ -94,7 +93,7 @@ export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps
         if (phoneExists) {
           setErrors({
             ...errors,
-            phone: t('Šis telefons jau ir reģistrēts', 'This phone is already registered')
+            phone: t('Šis telefona numurs jau ir reģistrēts', 'This phone number is already registered')
           });
           setIsSubmitting(false);
           return;

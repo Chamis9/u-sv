@@ -1,3 +1,4 @@
+
 export interface CountryCode {
   code: string;
   country: string;
@@ -38,8 +39,16 @@ export const validatePhoneNumber = (phoneNumber: string): boolean => {
 
 // Format a raw phone number for display
 export const formatPhoneNumber = (phoneNumber: string): string => {
-  if (!phoneNumber) return "+371";
-  return phoneNumber.startsWith("+371") ? phoneNumber : `+371 ${phoneNumber}`;
+  if (!phoneNumber) return "";
+  
+  // Clean the input of any non-digit characters
+  const cleanedNumber = phoneNumber.replace(/\D/g, '');
+  
+  // If the phone number already has the country code, return it as is
+  if (phoneNumber.startsWith("+371")) return phoneNumber;
+  
+  // Add the country code if it's not already there
+  return `+371 ${cleanedNumber}`;
 };
 
 // Extract phone components (country code and number)

@@ -125,6 +125,14 @@ export function RegisteredUsers() {
     await handleToggleStatus(user);
   }, [handleToggleStatus, trackUserUpdate]);
 
+  // Handle user added event with immediate refresh
+  const handleUserAdded = useCallback((newUser: User) => {
+    // Update the user in the local state
+    handleUserUpdated(newUser);
+    // Refresh the data to ensure we have the latest from the server
+    fetchRegisteredUsers();
+  }, [handleUserUpdated, fetchRegisteredUsers]);
+
   return (
     <div className="space-y-6">
       <div>
@@ -194,7 +202,7 @@ export function RegisteredUsers() {
             <AddUserDialog 
               open={isAddDialogOpen}
               onClose={() => setIsAddDialogOpen(false)}
-              onUserAdded={handleUserUpdated}
+              onUserAdded={handleUserAdded}
             />
           )}
         </>
