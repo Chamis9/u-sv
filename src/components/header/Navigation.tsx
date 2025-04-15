@@ -1,22 +1,29 @@
 
 import { Link } from "react-router-dom";
-import { Mail } from "lucide-react";
+import { Mail, UserCircle } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 
 export function Navigation() {
   const { currentLanguage } = useLanguage();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, userEmail } = useAuth();
   
   const translations = {
     lv: {
-      contact: "Kontakti"
+      contact: "Kontakti",
+      login: "Pieslēgties",
+      profile: userEmail || "Profils"
     },
     en: {
-      contact: "Contact"
+      contact: "Contact",
+      login: "Login",
+      profile: userEmail || "Profile"
     },
     ru: {
-      contact: "Контакты"
+      contact: "Контакты",
+      login: "Войти",
+      profile: userEmail || "Профиль"
     }
   };
 
@@ -38,6 +45,29 @@ export function Navigation() {
             <Mail size={16} />
             {t.contact}
           </Link>
+        </li>
+        <li>
+          {isAuthenticated ? (
+            <Link
+              to="/profile"
+              className="text-white hover:text-orange-400 transition-colors flex items-center gap-1.5 relative z-10 text-sm md:text-base"
+            >
+              <UserCircle size={16} />
+              {t.profile}
+            </Link>
+          ) : (
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
+              className="text-white hover:text-orange-400"
+            >
+              <Link to="/admin">
+                <UserCircle className="h-5 w-5" />
+                {t.login}
+              </Link>
+            </Button>
+          )}
         </li>
       </ul>
     </nav>
