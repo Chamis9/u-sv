@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Mail, UserCircle } from "lucide-react";
 import { useLanguage } from "@/features/language";
@@ -9,23 +10,23 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function Navigation() {
   const { currentLanguage } = useLanguage();
-  const { isAuthenticated, userEmail } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   
   const translations = {
     lv: {
       contact: "Kontakti",
-      profile: userEmail || "Profils",
+      profile: "Mans Konts",
       myProfile: "Mans Profils"
     },
     en: {
       contact: "Contact",
-      profile: userEmail || "Profile",
+      profile: "My Account",
       myProfile: "My Profile"
     },
     ru: {
       contact: "Контакты",
-      profile: userEmail || "Профиль",
+      profile: "Мой Аккаунт",
       myProfile: "Мой Профиль"
     }
   };
@@ -50,20 +51,20 @@ export function Navigation() {
           </Link>
         </li>
         <li>
-          {isAuthenticated ? (
+          {isAuthenticated && user ? (
             <Link
-              to={`/profile`}
+              to={`/profile/${user.id}/account`}
               onClick={handleLinkClick}
               className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors relative z-10"
               title={t.myProfile}
             >
               <Avatar className="h-8 w-8">
-                <AvatarImage src="" alt={t.myProfile} />
+                <AvatarImage src={user.avatar_url || ""} alt={t.myProfile} />
                 <AvatarFallback>
                   <UserCircle className="h-6 w-6" />
                 </AvatarFallback>
               </Avatar>
-              <span className="hidden md:inline text-sm">{t.myProfile}</span>
+              <span className="hidden md:inline text-sm">{t.profile}</span>
             </Link>
           ) : (
             <Button
