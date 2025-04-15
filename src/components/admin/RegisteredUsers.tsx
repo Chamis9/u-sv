@@ -13,6 +13,7 @@ import { AddUserDialog } from "@/components/admin/users/AddUserDialog";
 import { SortField, SortDirection } from "@/components/admin/users/UserTableHeader";
 import { Pagination } from "@/components/ui/pagination";
 import { User } from "@/types/users";
+import { useUserFiltering } from "./users/hooks/useUserFiltering";
 
 export function RegisteredUsers() {
   const { 
@@ -31,17 +32,26 @@ export function RegisteredUsers() {
   const { currentLanguage } = useLanguage();
   const { toast } = useToast();
   
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [sortField, setSortField] = useState<SortField | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   
+  // Use our enhanced useUserFiltering hook
+  const {
+    page,
+    setPage,
+    pageSize,
+    totalPages,
+    filteredUsers,
+    currentUsers,
+    trackUserUpdate
+  } = useUserFiltering(users, searchTerm);
+  
   // Sort users based on sort field and direction
   const sortedUsers = React.useMemo(() => {
-    if (!sortField || !sortDirection) return users;
+    if (!sortField || !sortDirection) return filteredUsers;
     
-    return [...users].sort((a, b) => {
+    return [...filteredUsers].sort((a, b) => {
       const valueA = a[sortField as keyof User];
       const valueB = b[sortField as keyof User];
       
@@ -65,12 +75,10 @@ export function RegisteredUsers() {
       
       return 0;
     });
-  }, [users, sortField, sortDirection]);
+  }, [filteredUsers, sortField, sortDirection]);
   
-  const totalPages = Math.ceil(sortedUsers.length / pageSize);
-  
-  // Apply pagination
-  const currentUsers = React.useMemo(() => {
+  // Apply pagination to sorted users
+  const currentSortedUsers = React.useMemo(() => {
     return sortedUsers.slice((page - 1) * pageSize, page * pageSize);
   }, [sortedUsers, page, pageSize]);
 
@@ -79,7 +87,7 @@ export function RegisteredUsers() {
   // Reset to first page when search or sort changes
   React.useEffect(() => {
     setPage(1);
-  }, [searchTerm, sortField, sortDirection]);
+  }, [searchTerm, sortField, sortDirection, setPage]);
 
   const handleAddUser = () => {
     setIsAddDialogOpen(true);
@@ -98,8 +106,24 @@ export function RegisteredUsers() {
       setSortField(field);
       setSortDirection('asc');
     }
-    setPage(1);
   };
+
+  // Enhanced handle toggle status to update local state immediately
+  const enhancedToggleStatus = useCallback(async (user: User) => {
+    // Immediately update local state for responsive UI
+    const newStatus = user.status === 'active' ? 'inactive' : 'active';
+    const updatedUser = {
+      ...user,
+      status: newStatus as 'active' | 'inactive',
+      updated_at: new Date().toISOString()
+    };
+    
+    // Track the updated user to maintain consistent state
+    trackUserUpdate(updatedUser);
+    
+    // Call the actual API update function
+    await handleToggleStatus(user);
+  }, [handleToggleStatus, trackUserUpdate]);
 
   return (
     <div className="space-y-6">
@@ -137,10 +161,10 @@ export function RegisteredUsers() {
           ) : (
             <>
               <UserListTable 
-                users={currentUsers} 
+                users={currentSortedUsers} 
                 onUserUpdated={handleUserUpdated}
                 onUserDeleted={handleUserDeleted}
-                onToggleStatus={handleToggleStatus}
+                onToggleStatus={enhancedToggleStatus}
                 sortField={sortField}
                 sortDirection={sortDirection}
                 onSort={handleSort}

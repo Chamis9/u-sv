@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { User } from "@/types/users";
 
@@ -26,6 +27,8 @@ export function useUserFiltering(users: User[], searchTerm: string) {
   const [pageSize] = useState(50);
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState<UserFilters>(initialFilters);
+  // Add state to track updated users to prevent status flickering
+  const [updatedUsers, setUpdatedUsers] = useState<Record<string, User>>({});
 
   const handleOpenFilter = useCallback(() => {
     setIsFilterDialogOpen(true);
@@ -49,8 +52,21 @@ export function useUserFiltering(users: User[], searchTerm: string) {
     setPage(1);
   }, []);
 
+  // Add a function to track updated users
+  const trackUserUpdate = useCallback((updatedUser: User) => {
+    setUpdatedUsers(prev => ({
+      ...prev,
+      [updatedUser.id]: updatedUser
+    }));
+  }, []);
+
   const filteredUsers = useMemo(() => {
-    return users.filter(user => {
+    // Apply updates to user list first
+    const mergedUsers = users.map(user => 
+      updatedUsers[user.id] ? { ...user, ...updatedUsers[user.id] } : user
+    );
+    
+    return mergedUsers.filter(user => {
       const fullName = [user.first_name, user.last_name]
         .filter(Boolean)
         .join(' ')
@@ -74,7 +90,7 @@ export function useUserFiltering(users: User[], searchTerm: string) {
       
       return true;
     });
-  }, [users, activeFilters]);
+  }, [users, activeFilters, updatedUsers]);
   
   const totalPages = Math.ceil(filteredUsers.length / pageSize);
   
@@ -99,6 +115,7 @@ export function useUserFiltering(users: User[], searchTerm: string) {
     handleOpenFilter,
     handleApplyFilter,
     handleRemoveFilter,
-    handleClearFilters
+    handleClearFilters,
+    trackUserUpdate
   };
 }

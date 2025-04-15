@@ -37,7 +37,10 @@ export const UserTableRow = memo(function UserTableRow({
   
   const handleEdit = useCallback(() => onEdit(user), [user, onEdit]);
   const handleDelete = useCallback(() => onDelete(user), [user, onDelete]);
-  const handleToggleStatus = useCallback(() => onToggleStatus(user), [user, onToggleStatus]);
+  const handleToggleStatus = useCallback(() => {
+    // Use the current user object from props to ensure latest state
+    onToggleStatus(user);
+  }, [user, onToggleStatus]);
   
   return (
     <TableRow>
@@ -65,6 +68,7 @@ export const UserTableRow = memo(function UserTableRow({
     </TableRow>
   );
 }, (prevProps, nextProps) => {
+  // Enhanced memo logic to better detect status changes
   return (
     prevProps.user.id === nextProps.user.id &&
     prevProps.user.status === nextProps.user.status &&
