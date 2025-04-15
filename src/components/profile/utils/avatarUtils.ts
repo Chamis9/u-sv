@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types/users";
 import { useToast } from "@/hooks/use-toast";
@@ -23,6 +24,8 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
     const fileName = `${user.id}/${Date.now()}.${fileExt}`;
     
     console.log("Preparing to upload avatar to path:", fileName);
+    console.log("Current user ID:", user.id);
+    console.log("Current auth user ID:", sessionData.session.user.id);
     
     // Upload the file to Supabase Storage
     const { data, error } = await supabase.storage
