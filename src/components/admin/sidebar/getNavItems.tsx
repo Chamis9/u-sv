@@ -19,7 +19,7 @@ export const getNavItems = (
       id: 'dashboard',
       icon: <Home />,
       label: translations.admin?.tabs?.dashboard || 'Dashboard',
-      badge: 0
+      badge: undefined  // Remove badge for dashboard
     },
     {
       id: 'users',
@@ -37,7 +37,7 @@ export const getNavItems = (
       id: 'settings',
       icon: <Settings />,
       label: translations.admin?.tabs?.settings || 'Settings',
-      badge: 0
+      badge: undefined  // Remove badge for settings
     },
     {
       id: 'logout',
