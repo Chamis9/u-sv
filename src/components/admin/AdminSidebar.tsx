@@ -40,7 +40,7 @@ export const AdminSidebar = memo(function AdminSidebar({
         translations={translations}
       />
       
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="mt-auto p-4 border-t border-gray-200 dark:border-gray-700">
         <LogoutButton 
           logoutText={translations.admin?.logout || 'Logout'} 
           onLogout={logout} 
