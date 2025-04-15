@@ -5,6 +5,7 @@ import { UserAvatar } from "./UserAvatar";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
 import { UploadButton } from "./UploadButton";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   validateAvatarFile, 
   uploadAvatarToSupabase, 
@@ -20,9 +21,11 @@ interface AvatarUploadProps {
 
 export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const [forceRefresh, setForceRefresh] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { t } = useProfileTranslation();
+  const { refreshUserData } = useAuth();
   
   const handleUploadClick = () => {
     if (fileInputRef.current) {
@@ -63,6 +66,12 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
           console.log("Avatar upload successful, updating UI with new URL:", publicUrl);
           // Call the callback to update avatar in parent component
           onAvatarUpdate(publicUrl);
+          
+          // Refresh the user data in the auth context
+          await refreshUserData();
+          
+          // Force refresh the avatar component
+          setForceRefresh(prev => !prev);
         } else {
           console.error("Avatar upload failed - no URL returned");
           toast({
@@ -98,7 +107,7 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
   
   return (
     <div className="flex flex-col items-center gap-4">
-      <UserAvatar user={user} size={size} />
+      <UserAvatar user={user} size={size} forceRefresh={forceRefresh} />
       
       <div>
         <input

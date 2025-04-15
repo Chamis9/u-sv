@@ -9,6 +9,8 @@ interface AuthContextType {
   userEmail: string | null;
   user: User | null;
   logout: () => Promise<void>;
+  refreshUserData: () => Promise<void>;
+  lastAvatarUpdate: number;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -17,6 +19,8 @@ const AuthContext = createContext<AuthContextType>({
   userEmail: null,
   user: null,
   logout: async () => {},
+  refreshUserData: async () => {},
+  lastAvatarUpdate: Date.now(),
 });
 
 export const useAuth = () => useContext(AuthContext);

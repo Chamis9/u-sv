@@ -4,14 +4,22 @@ import { Mail, UserCircle } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LoginDialog } from "@/components/auth/LoginDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function Navigation() {
   const { currentLanguage } = useLanguage();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, lastAvatarUpdate } = useAuth();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [avatarKey, setAvatarKey] = useState(Date.now());
+  
+  // Refresh avatar when lastAvatarUpdate changes
+  useEffect(() => {
+    if (lastAvatarUpdate) {
+      setAvatarKey(lastAvatarUpdate);
+    }
+  }, [lastAvatarUpdate]);
   
   const translations = {
     lv: {
@@ -59,7 +67,11 @@ export function Navigation() {
               title={t.myProfile}
             >
               <Avatar className="h-8 w-8">
-                <AvatarImage src={user.avatar_url || ""} alt={t.myProfile} />
+                <AvatarImage 
+                  src={user.avatar_url || ""} 
+                  alt={t.myProfile} 
+                  key={avatarKey} // Key forces rerender when avatar changes
+                />
                 <AvatarFallback>
                   <UserCircle className="h-6 w-6" />
                 </AvatarFallback>
