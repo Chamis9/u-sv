@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types/users";
 import { useToast } from "@/hooks/use-toast";
@@ -20,7 +21,6 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
     console.log("Preparing to upload avatar to path:", filePath);
     
     // Upload the file to Supabase Storage
-    // We'll try with the default 'avatars' bucket that should already exist
     console.log("Uploading file to Supabase storage...");
     const { data, error } = await supabase.storage
       .from('avatars')
