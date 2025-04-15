@@ -11,7 +11,7 @@ interface TermsAndNewsletterProps {
 }
 
 export const TermsAndNewsletter = ({ form, t }: TermsAndNewsletterProps) => {
-  const { register, formState: { errors } } = form;
+  const { register, formState: { errors }, trigger } = form;
 
   return (
     <>
@@ -21,6 +21,10 @@ export const TermsAndNewsletter = ({ form, t }: TermsAndNewsletterProps) => {
           {...register("termsAccepted", {
             required: t('Jums jāpiekrīt noteikumiem', 'You must accept the terms')
           })}
+          onCheckedChange={() => {
+            // Trigger validation immediately when checkbox state changes
+            setTimeout(() => trigger("termsAccepted"), 0);
+          }}
         />
         <Label htmlFor="termsAccepted" className="text-sm">
           {t('Es piekrītu lietošanas noteikumiem', 'I agree to the terms and conditions')}
