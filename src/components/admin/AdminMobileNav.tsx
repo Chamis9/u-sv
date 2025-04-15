@@ -1,3 +1,4 @@
+
 import React, { memo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Home, Users, Mail, Settings } from "lucide-react";
@@ -28,7 +29,7 @@ export const AdminMobileNav = memo(function AdminMobileNav({ activeTab, onTabCha
   return (
     <div className="md:hidden mb-6">
       <Tabs value={activeTab} onValueChange={onTabChange}>
-        <TabsList className="w-full grid grid-cols-5">
+        <TabsList className="w-full grid grid-cols-4">
           {Object.entries(icons).map(([key, icon]) => (
             <TabsTrigger key={key} value={key} title={titles[key as keyof typeof titles]}>
               {icon}

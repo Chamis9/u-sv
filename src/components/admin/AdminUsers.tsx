@@ -1,9 +1,10 @@
 
 import React from "react";
-import { AdminUsersContainer } from "./users/AdminUsersContainer";
+import { RegisteredUsers } from "./RegisteredUsers";
 
 export function AdminUsers() {
-  return <AdminUsersContainer />;
+  // Simply render RegisteredUsers component since we removed AdminUsersContainer
+  return <RegisteredUsers />;
 }
 
 // Add default export for lazy loading compatibility

@@ -21,7 +21,8 @@ export const Navigation = ({
   adminCount = 0,
   translations 
 }: NavigationProps) => {
-  const navItems = getNavItems(translations, userCount, subscriberCount, adminCount);
+  // Fix: Only pass three arguments as expected by getNavItems
+  const navItems = getNavItems(translations, userCount, subscriberCount);
   
   return (
     <nav className="flex-1 p-4 space-y-1">
