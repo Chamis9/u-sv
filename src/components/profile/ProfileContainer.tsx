@@ -1,33 +1,43 @@
-
 import React from "react";
-import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import { User } from "@/types/users";
 import { ProfileSidebar } from "./ProfileSidebar";
 import { ProfileAuthGuard } from "./ProfileAuthGuard";
 import { ProfileMainContent } from "./components/ProfileMainContent";
 import { useProfileData } from "./hooks/useProfileData";
 import { useUserUpdates } from "./hooks/useUserUpdates";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ProfileContainerProps {
   isAuthenticated: boolean;
   isLoading: boolean;
+  userId: string;
 }
 
-export function ProfileContainer({ isAuthenticated, isLoading }: ProfileContainerProps) {
+export function ProfileContainer({ isAuthenticated, isLoading, userId }: ProfileContainerProps) {
+  const { userId: routeUserId } = useParams();
+  const { user: authUser } = useAuth();
   const { user, setUser, isLoading: isDataLoading } = useProfileData();
   const { handleUserUpdate } = useUserUpdates();
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Check if user is trying to access their own profile
+  React.useEffect(() => {
+    if (routeUserId && authUser && routeUserId !== authUser.id) {
+      navigate(`/profile/${authUser.id}/account`, { replace: true });
+    }
+  }, [routeUserId, authUser, navigate]);
+
   // Get the active tab from the current route
   const getActiveTabFromRoute = () => {
-    const path = location.pathname.split('/')[2] || 'account';
+    const path = location.pathname.split('/')[3] || 'account';
     return path;
   };
 
   // Handle tab change by navigating to the appropriate route
   const handleTabChange = (tab: string) => {
-    navigate(`/profile/${tab}`);
+    navigate(`/profile/${userId}/${tab}`);
   };
 
   // Function to handle user updates
@@ -48,7 +58,7 @@ export function ProfileContainer({ isAuthenticated, isLoading }: ProfileContaine
         
         <div className="flex-1 overflow-auto p-8">
           <Routes>
-            <Route path="/" element={<Navigate to="/profile/account" replace />} />
+            <Route path="/" element={<Navigate to={`/profile/${userId}/account`} replace />} />
             <Route path="/account" element={
               <ProfileMainContent
                 activeTab="account"
@@ -81,7 +91,7 @@ export function ProfileContainer({ isAuthenticated, isLoading }: ProfileContaine
                 isLoading={isDataLoading}
               />
             } />
-            <Route path="*" element={<Navigate to="/profile/account" replace />} />
+            <Route path="*" element={<Navigate to={`/profile/${userId}/account`} replace />} />
           </Routes>
         </div>
       </div>

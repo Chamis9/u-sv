@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Mail, UserCircle } from "lucide-react";
 import { useLanguage } from "@/features/language";
@@ -53,7 +52,7 @@ export function Navigation() {
         <li>
           {isAuthenticated ? (
             <Link
-              to="/profile"
+              to={`/profile`}
               onClick={handleLinkClick}
               className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors relative z-10"
               title={t.myProfile}
