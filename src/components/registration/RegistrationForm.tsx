@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +8,9 @@ import { useLanguage } from "@/features/language";
 import { validatePhoneNumber, checkEmailExists, checkPhoneExists } from "@/utils/phoneUtils";
 import { Checkbox } from "@/components/ui/checkbox";
 import PhoneInputWithCountry from "@/components/admin/users/PhoneInputWithCountry";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/use-toast";
 
 interface RegistrationFormData {
   firstName: string;
@@ -23,16 +25,18 @@ interface RegistrationFormData {
 }
 
 const RegistrationForm = () => {
+  const navigate = useNavigate();
   const { currentLanguage } = useLanguage();
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
   
-  const { register, handleSubmit, formState: { errors }, watch, setValue, getValues } = useForm<RegistrationFormData>({
+  const { register, handleSubmit, formState: { errors, dirtyFields }, watch, setValue, getValues } = useForm<RegistrationFormData>({
     defaultValues: {
       countryCode: "+371",
       phoneNumber: "",
       newsletter: false,
       termsAccepted: false
-    }
+    },
+    mode: "onChange"
   });
 
   const passwordValidation = {
@@ -59,30 +63,65 @@ const RegistrationForm = () => {
   };
 
   const onSubmit = async (data: RegistrationFormData) => {
-    // Safely handle phone number by ensuring it's not undefined
-    const phoneNumber = data.phoneNumber || "";
-    const countryCode = data.countryCode || "+371";
-    
-    // Check if email exists
-    const emailExists = await checkEmailExists(data.email);
-    if (emailExists) {
-      return {
-        email: t('E-pasta adrese jau ir reģistrēta', 'Email is already registered')
-      };
-    }
-
-    // Check if phone exists - only if phone is provided
-    if (phoneNumber.trim()) {
-      const phoneExists = await checkPhoneExists(`${countryCode}${phoneNumber}`);
-      if (phoneExists) {
-        return {
-          phone: t('Telefona numurs jau ir reģistrēts', 'Phone number is already registered')
-        };
+    try {
+      const phoneNumber = data.phoneNumber || "";
+      const countryCode = data.countryCode || "+371";
+      
+      const emailExists = await checkEmailExists(data.email);
+      if (emailExists) {
+        toast({
+          title: t('Kļūda', 'Error'),
+          description: t('E-pasta adrese jau ir reģistrēta', 'Email is already registered'),
+          variant: "destructive"
+        });
+        return;
       }
-    }
 
-    console.log("Form submitted:", data);
-    // Implementation will be added later
+      if (phoneNumber.trim()) {
+        const phoneExists = await checkPhoneExists(`${countryCode}${phoneNumber}`);
+        if (phoneExists) {
+          toast({
+            title: t('Kļūda', 'Error'),
+            description: t('Telefona numurs jau ir reģistrēts', 'Phone number is already registered'),
+            variant: "destructive"
+          });
+          return;
+        }
+      }
+
+      const { error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            name: `${data.firstName} ${data.lastName}`,
+            phone: phoneNumber ? `${countryCode}${phoneNumber}` : null
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: t('Veiksmīga reģistrācija', 'Registration successful'),
+        description: t(
+          'Jūsu konts ir izveidots. Lūdzu pārbaudiet savu e-pastu, lai apstiprinātu reģistrāciju.',
+          'Your account has been created. Please check your email to confirm registration.'
+        )
+      });
+
+      navigate('/');
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast({
+        title: t('Kļūda', 'Error'),
+        description: error instanceof Error ? error.message : t(
+          'Radās kļūda reģistrācijas laikā. Lūdzu mēģiniet vēlreiz.',
+          'An error occurred during registration. Please try again.'
+        ),
+        variant: "destructive"
+      });
+    }
   };
 
   return (
