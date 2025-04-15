@@ -5,7 +5,7 @@ import {
   Users, 
   Inbox, 
   Settings, 
-  LogOut  // Adding LogOut icon from Lucide React
+  LogOut
 } from 'lucide-react';
 import { TranslationObject } from '@/features/language/types';
 
@@ -18,25 +18,25 @@ export const getNavItems = (
     {
       id: 'dashboard',
       icon: <Home />,
-      label: translations.admin?.dashboard || 'Dashboard',
+      label: translations.admin?.tabs?.dashboard || 'Dashboard',
       badge: 0
     },
     {
       id: 'users',
       icon: <Users />,
-      label: translations.admin?.users || 'Users',
+      label: translations.admin?.tabs?.users || 'Users',
       badge: userCount
     },
     {
       id: 'subscribers',
       icon: <Inbox />,
-      label: translations.admin?.subscribers || 'Subscribers',
+      label: translations.admin?.tabs?.subscribers || 'Subscribers',
       badge: subscriberCount
     },
     {
       id: 'settings',
       icon: <Settings />,
-      label: translations.admin?.settings || 'Settings',
+      label: translations.admin?.tabs?.settings || 'Settings',
       badge: 0
     },
     {
