@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/features/language";
@@ -30,7 +29,7 @@ export const useRegistrationForm = () => {
       newsletter: false,
       termsAccepted: false
     },
-    mode: "onChange"
+    mode: "onSubmit"
   });
 
   const passwordValidation = {
@@ -57,6 +56,15 @@ export const useRegistrationForm = () => {
   };
 
   const onSubmit = async (data: RegistrationFormData) => {
+    if (!data.termsAccepted) {
+      toast({
+        title: t('Kļūda', 'Error'),
+        description: t('Jums jāpiekrīt lietošanas noteikumiem', 'You must accept the terms and conditions'),
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       const phoneNumber = data.phoneNumber || "";
       const countryCode = data.countryCode || "+371";
