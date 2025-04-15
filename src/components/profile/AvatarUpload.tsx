@@ -60,15 +60,33 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
         });
         
         if (publicUrl) {
-          console.log("Avatar upload successful, updating UI with new URL");
+          console.log("Avatar upload successful, updating UI with new URL:", publicUrl);
           // Call the callback to update avatar in parent component
           onAvatarUpdate(publicUrl);
         } else {
           console.error("Avatar upload failed - no URL returned");
+          toast({
+            variant: "destructive",
+            title: t("Kļūda", "Error", "Ошибка"),
+            description: t(
+              "Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz.",
+              "Failed to upload image. Please try again.",
+              "Не удалось загрузить изображение. Пожалуйста, попробуйте еще раз."
+            )
+          });
         }
       }
     } catch (err) {
       console.error("Error in avatar upload process:", err);
+      toast({
+        variant: "destructive",
+        title: t("Kļūda", "Error", "Ошибка"),
+        description: t(
+          "Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz.",
+          "Failed to upload image. Please try again.",
+          "Не удалось загрузить изображение. Пожалуйста, попробуйте еще раз."
+        )
+      });
     } finally {
       setIsUploading(false);
       // Reset the file input

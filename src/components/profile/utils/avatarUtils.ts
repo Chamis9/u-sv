@@ -16,11 +16,29 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
     const userId = user.id;
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}.${fileExt}`;
-    const filePath = `${userId}/${fileName}`;
+    const filePath = `avatars/${userId}/${fileName}`;
     
-    console.log("Uploading avatar to path:", filePath);
+    console.log("Preparing to upload avatar to path:", filePath);
+    
+    // Check if avatars bucket exists, create it if it doesn't
+    const { data: buckets } = await supabase.storage.listBuckets();
+    const avatarBucketExists = buckets?.some(bucket => bucket.name === 'avatars');
+    
+    if (!avatarBucketExists) {
+      console.log("Avatars bucket doesn't exist, attempting to create it");
+      const { error: createBucketError } = await supabase.storage.createBucket('avatars', {
+        public: true
+      });
+      
+      if (createBucketError) {
+        console.error("Error creating avatars bucket:", createBucketError);
+        throw createBucketError;
+      }
+      console.log("Avatars bucket created successfully");
+    }
     
     // Upload the file to Supabase Storage
+    console.log("Uploading file to Supabase storage...");
     const { data, error } = await supabase.storage
       .from('avatars')
       .upload(filePath, file, {
@@ -33,14 +51,23 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
       throw error;
     }
     
+    console.log("File uploaded successfully, data:", data);
+    
     // Get public URL for the uploaded file
-    const { data: { publicUrl } } = supabase.storage
+    const { data: publicUrlData } = supabase.storage
       .from('avatars')
       .getPublicUrl(filePath);
     
-    console.log("Upload successful, public URL:", publicUrl);
+    const publicUrl = publicUrlData?.publicUrl;
+    console.log("Generated public URL:", publicUrl);
+    
+    if (!publicUrl) {
+      console.error("Failed to generate public URL");
+      throw new Error("Failed to generate public URL for uploaded avatar");
+    }
     
     // Update the user's avatar URL in the database
+    console.log("Updating user profile with new avatar URL");
     const { error: updateError } = await supabase
       .from('registered_users')
       .update({ 
