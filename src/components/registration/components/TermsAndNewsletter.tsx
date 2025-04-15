@@ -11,7 +11,7 @@ interface TermsAndNewsletterProps {
 }
 
 export const TermsAndNewsletter = ({ form, t }: TermsAndNewsletterProps) => {
-  const { register, formState: { errors }, trigger, watch } = form;
+  const { register, formState: { errors }, watch } = form;
   const termsAccepted = watch("termsAccepted");
 
   return (
@@ -20,14 +20,14 @@ export const TermsAndNewsletter = ({ form, t }: TermsAndNewsletterProps) => {
         <Checkbox
           id="termsAccepted"
           {...register("termsAccepted", {
-            validate: (value) => value === true || t('Jums jāpiekrīt noteikumiem', 'You must accept the terms')
+            validate: () => termsAccepted || t('Jums jāpiekrīt noteikumiem', 'You must accept the terms')
           })}
         />
         <Label htmlFor="termsAccepted" className="text-sm">
           {t('Es piekrītu lietošanas noteikumiem', 'I agree to the terms and conditions')}
         </Label>
       </div>
-      {errors.termsAccepted && !termsAccepted && (
+      {errors.termsAccepted && (
         <p className="text-sm text-red-500">{errors.termsAccepted.message}</p>
       )}
 
@@ -43,4 +43,3 @@ export const TermsAndNewsletter = ({ form, t }: TermsAndNewsletterProps) => {
     </>
   );
 };
-
