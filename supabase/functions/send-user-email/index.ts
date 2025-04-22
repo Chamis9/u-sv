@@ -52,7 +52,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const emailResponse = await resend.emails.send({
-      from: "Lovable <onboarding@resend.dev>", // Update this with your verified domain
+      from: "netieku.es <onboarding@resend.dev>", // Atjaunojam nosaukumu
       to: [to],
       subject: subject,
       html: message,
