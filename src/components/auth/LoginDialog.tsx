@@ -22,9 +22,10 @@ import { PasswordInput } from "./PasswordInput";
 interface LoginDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  anchorPosition?: { x: number; y: number };
 }
 
-export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
+export function LoginDialog({ isOpen, onClose, anchorPosition }: LoginDialogProps) {
   const [isLoading, setIsLoading] = React.useState(false);
   const { currentLanguage } = useLanguage();
   const { toast } = useToast();
@@ -76,8 +77,14 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
 
   return (
     <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
+      <DrawerContent 
+        className="fixed right-0 top-[60px] w-[300px] rounded-lg mx-4"
+        style={{
+          left: anchorPosition ? `${anchorPosition.x - 150}px` : 'auto',
+          transform: 'none'
+        }}
+      >
+        <div className="max-h-[90vh] overflow-y-auto">
           <DrawerHeader>
             <DrawerTitle>{translations.title}</DrawerTitle>
             <DrawerDescription>

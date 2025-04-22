@@ -3,7 +3,7 @@ import { Mail, UserCircle } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { LoginDialog } from "@/components/auth/LoginDialog";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 
@@ -11,6 +11,8 @@ export function Navigation() {
   const { currentLanguage } = useLanguage();
   const { isAuthenticated, user } = useAuth();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [buttonPosition, setButtonPosition] = useState<{ x: number; y: number } | undefined>();
   
   const translations = {
     lv: {
@@ -34,6 +36,14 @@ export function Navigation() {
 
   const handleLinkClick = () => {
     window.scrollTo(0, 0);
+  };
+
+  const handleLoginClick = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setButtonPosition({ x: rect.left + rect.width / 2, y: rect.bottom });
+    }
+    setShowLoginDialog(true);
   };
 
   return (
@@ -61,10 +71,11 @@ export function Navigation() {
             </Link>
           ) : (
             <Button
+              ref={buttonRef}
               variant="ghost"
               size="icon"
               className="text-white hover:text-orange-400"
-              onClick={() => setShowLoginDialog(true)}
+              onClick={handleLoginClick}
             >
               <UserCircle size={20} />
             </Button>
@@ -74,7 +85,8 @@ export function Navigation() {
       
       <LoginDialog 
         isOpen={showLoginDialog} 
-        onClose={() => setShowLoginDialog(false)} 
+        onClose={() => setShowLoginDialog(false)}
+        anchorPosition={buttonPosition}
       />
     </nav>
   );
