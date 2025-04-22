@@ -15,12 +15,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { loginFormSchema, type LoginFormData } from "./schema";
 import { getLoginTranslations } from "./translations";
 import { EmailInput } from "./EmailInput";
 import { PasswordInput } from "./PasswordInput";
-import { Facebook, Google, Mail } from "lucide-react";
 
 interface LoginDialogProps {
   isOpen: boolean;
@@ -59,32 +57,6 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
     }
   };
 
-  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: window.location.origin
-        }
-      });
-
-      if (error) throw error;
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        description: translations.loginError,
-      });
-    }
-  };
-
-  const handleSmartIDLogin = () => {
-    // Smart-ID implementation will need to be done separately
-    // as it's not a standard provider in Supabase
-    toast({
-      description: "Smart-ID login is not yet implemented",
-    });
-  };
-
   const onSubmit = async (values: LoginFormData) => {
     setIsLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
@@ -119,36 +91,6 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
           </TabsList>
           
           <TabsContent value="login" className="space-y-4">
-            <div className="grid grid-cols-2 gap-4 py-4">
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => handleSocialLogin('google')}
-              >
-                <Google className="mr-2 h-4 w-4" />
-                Gmail
-              </Button>
-              <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => handleSocialLogin('facebook')}
-              >
-                <Facebook className="mr-2 h-4 w-4" />
-                Facebook
-              </Button>
-            </div>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <Separator />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  {translations.orContinueWith}
-                </span>
-              </div>
-            </div>
-
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <EmailInput form={form} label={translations.email} />
@@ -169,14 +111,6 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                 </div>
               </form>
             </Form>
-
-            <Button 
-              variant="outline" 
-              className="w-full mt-4"
-              onClick={handleSmartIDLogin}
-            >
-              Smart-ID
-            </Button>
           </TabsContent>
           
           <TabsContent value="register">
