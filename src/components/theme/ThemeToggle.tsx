@@ -19,6 +19,7 @@ export const ThemeToggle = memo(function ThemeToggle() {
       size="icon"
       onClick={toggleTheme}
       aria-label="Toggle theme"
+      tabIndex="-1"
       className="rounded-full text-white hover:text-orange-400 hover:bg-transparent transition-colors duration-300"
     >
       <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 hover:text-orange-400" />
