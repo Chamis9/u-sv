@@ -26,7 +26,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Received contact form submission from ${name} (${email})`);
 
-    // Vienkārša validācija
+    // Pamata validācija
     if (!name || name.length < 2) {
       return new Response(JSON.stringify({ error: "Vārds ir obligāts un jābūt vismaz 2 simboliem." }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders }});
     }
@@ -37,9 +37,9 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response(JSON.stringify({ error: "Ziņojums ir obligāts un jābūt vismaz 10 simboliem." }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders }});
     }
 
-    // Sūtam uz info@netieku.es
+    // Izmantojam Resend test adresi, lai būtu bez domēnu verifikācijas prasībām
     const emailResponse = await resend.emails.send({
-      from: "Netieku.es <info@netieku.es>",
+      from: "Netieku.es <onboarding@resend.dev>",
       to: ["info@netieku.es"],
       subject: `Netieku.es | Kontaktformas ziņa (${name}, ${email})`,
       html: `
@@ -71,3 +71,4 @@ const handler = async (req: Request): Promise<Response> => {
 };
 
 serve(handler);
+
