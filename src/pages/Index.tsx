@@ -5,7 +5,6 @@ import { Footer } from "@/components/Footer";
 import { HowItWorks } from "@/components/HowItWorks";
 import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
-import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 
 const Index = () => {
   return (
@@ -18,7 +17,6 @@ const Index = () => {
           <HowItWorks />
         </main>
         <Footer />
-        <GlobalThemeToggle />
       </div>
     </ThemeProvider>
   );
