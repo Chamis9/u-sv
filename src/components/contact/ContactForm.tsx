@@ -59,21 +59,27 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     try {
-      // Using the new contact-form-email function instead of send-user-email
-      const { error } = await supabase.functions.invoke('contact-form-email', {
-        body: {
-          name: data.name,
-          email: data.email,
-          message: data.message
+      // Sūtīt uz jauno edge funkciju
+      const response = await fetch(
+        "https://bljjkzgswgeqswuuryvm.functions.supabase.co/send-contact-email",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: data.name,
+            email: data.email,
+            message: data.message,
+          }),
         }
-      });
-      if (error) {
-        throw error;
+      );
+      const result = await response.json();
+      if (!response.ok || result.error) {
+        throw new Error(result.error || "Failed to send email");
       }
       toast.success(t.successMessage);
       form.reset();
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending contact email:", error);
       toast.error(t.errorMessage);
     } finally {
       setIsSubmitting(false);
