@@ -135,18 +135,6 @@ export function Navigation() {
                     {t.myPayments}
                   </Link>
                   
-                  <div className="border-t p-4 flex justify-between items-center">
-                    <span className="text-sm">{t.darkMode}</span>
-                    <button
-                      onClick={toggleTheme}
-                      className="rounded-full w-10 h-5 bg-gray-300 dark:bg-gray-600 relative flex items-center px-1 transition-colors"
-                    >
-                      <div className={`w-3 h-3 bg-white rounded-full transition-transform ${
-                        theme === 'dark' ? 'translate-x-5' : ''
-                      }`}></div>
-                    </button>
-                  </div>
-                  
                   <div className="border-t">
                     <Button
                       variant="ghost"
