@@ -30,7 +30,7 @@ export const Hero = memo(function Hero() {
         </script>
       </Helmet>
       
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40 z-0"></div>
+      <div className="absolute inset-0 bg-black/40 z-0"></div>
       
       <FallingTickets />
       
