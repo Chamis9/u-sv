@@ -10,7 +10,7 @@ interface SEOProps {
 
 export function SEO({
   title = "netieku.es - biļešu apmaiņas platforma",
-  description = "Pirmā Latvijas C2C biļešu apmaiņas platforma - droši pērc un pārdod biļetes uz koncertiem, teātri, sporta pasākumiem un citiem notikumiem.",
+  description = "Pirmā Latvijas biļešu apmaiņas platforma - droši pērc un pārdod biļetes uz koncertiem, teātri, sporta pasākumiem un citiem notikumiem.",
   canonicalUrl = "https://netieku.es",
   ogImage = "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14"
 }: SEOProps) {

@@ -5,7 +5,6 @@ export type HeroTranslations = {
   title: string;
   titleHighlight: string;
   subtitle: string;
-  c2cExplanation?: string;
   subscribeText: string;
   learnMoreBtn: string;
 };
