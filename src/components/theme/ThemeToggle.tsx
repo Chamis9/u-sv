@@ -9,7 +9,6 @@ export const ThemeToggle = memo(function ThemeToggle() {
 
   const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
 
-  // Don't render the toggle if it's disabled
   if (isToggleDisabled) {
     return null;
   }
@@ -20,7 +19,7 @@ export const ThemeToggle = memo(function ThemeToggle() {
       size="icon"
       onClick={toggleTheme}
       aria-label="Toggle theme"
-      className="rounded-full"
+      className="rounded-full text-white hover:text-white hover:bg-white/20"
     >
       <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
       <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />

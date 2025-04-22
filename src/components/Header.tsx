@@ -17,7 +17,7 @@ export function Header() {
             <div className="flex-1 flex justify-center">
               <Navigation />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-white">
               <ThemeToggle />
               <LanguageSelector />
             </div>
@@ -27,7 +27,7 @@ export function Header() {
             <div className="flex items-center">
               <Logo />
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 text-white">
               <Navigation />
               <ThemeToggle />
               <LanguageSelector />

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -34,7 +33,6 @@ interface ContactFormProps {
 export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  // Define form validation schema with zod
   const formSchema = z.object({
     name: z.string().min(2, {
       message: "Name must be at least 2 characters.",
@@ -47,7 +45,6 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
     }),
   });
 
-  // Define form with react-hook-form and zod resolver
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -61,16 +58,13 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
     setIsSubmitting(true);
     
     try {
-      // Send email using the form data
-      // In a real application, this would connect to an API to send the email
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network request
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       console.log('Sending email to: raivis.ogorodovs@gmail.com');
       console.log('From:', data.name, data.email);
       console.log('Message:', data.message);
       
       toast.success(t.successMessage);
-      // Reset form
       form.reset();
     } catch (error) {
       console.error('Error sending message:', error);
@@ -81,8 +75,8 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
   };
 
   return (
-    <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm p-6 rounded-lg border border-white/20">
-      <h2 className="text-2xl font-semibold mb-6 text-white">{t.formTitle}</h2>
+    <div className="bg-white/95 dark:bg-gray-800/95 p-6 rounded-lg shadow-lg">
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white">{t.formTitle}</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -90,17 +84,17 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium text-white">
+                <FormLabel className="text-sm font-medium text-gray-700 dark:text-gray-200">
                   {t.nameLabel}
                 </FormLabel>
                 <FormControl>
                   <Input 
                     placeholder={t.namePlaceholder} 
                     {...field} 
-                    className="bg-white/10 dark:bg-white/5 border-white/30 dark:border-white/20 text-white placeholder:text-gray-300"
+                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-300"
                   />
                 </FormControl>
-                <FormMessage className="text-red-400" />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
@@ -110,7 +104,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium text-white">
+                <FormLabel className="text-sm font-medium text-gray-700 dark:text-gray-200">
                   {t.emailLabel}
                 </FormLabel>
                 <FormControl>
@@ -118,10 +112,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
                     type="email" 
                     placeholder={t.emailPlaceholder} 
                     {...field} 
-                    className="bg-white/10 dark:bg-white/5 border-white/30 dark:border-white/20 text-white placeholder:text-gray-300"
+                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-300"
                   />
                 </FormControl>
-                <FormMessage className="text-red-400" />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
@@ -131,7 +125,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
             name="message"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium text-white">
+                <FormLabel className="text-sm font-medium text-gray-700 dark:text-gray-200">
                   {t.messageLabel}
                 </FormLabel>
                 <FormControl>
@@ -139,17 +133,17 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
                     placeholder={t.messagePlaceholder} 
                     rows={5} 
                     {...field} 
-                    className="bg-white/10 dark:bg-white/5 border-white/30 dark:border-white/20 text-white placeholder:text-gray-300"
+                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-300"
                   />
                 </FormControl>
-                <FormMessage className="text-red-400" />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
           
           <Button 
             type="submit" 
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white border-none"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white"
             disabled={isSubmitting}
           >
             {isSubmitting ? (
