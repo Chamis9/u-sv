@@ -11,10 +11,26 @@ import { RegistrationForm } from "@/components/auth/forms/RegistrationForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getLoginTranslations } from "@/components/auth/translations";
 
+// Navigation translations for different languages
+const navigationTranslations = {
+  lv: {
+    contact: "Kontakti"
+  },
+  en: {
+    contact: "Contact"
+  },
+  ru: {
+    contact: "Контакты"
+  }
+};
+
 export function Navigation() {
   const { currentLanguage } = useLanguage();
   const { isAuthenticated, user, logout } = useAuth();
   const translations = getLoginTranslations(currentLanguage.code);
+  
+  // Get navigation translations based on current language
+  const navTranslations = navigationTranslations[currentLanguage.code as keyof typeof navigationTranslations] || navigationTranslations.en;
   
   const handleLinkClick = () => {
     window.scrollTo(0, 0);
@@ -38,7 +54,7 @@ export function Navigation() {
             className="text-white hover:text-orange-400 transition-colors flex items-center gap-1.5 relative z-10 text-sm md:text-base"
           >
             <Mail size={16} />
-            Contact
+            {navTranslations.contact}
           </Link>
         </li>
         <li>
