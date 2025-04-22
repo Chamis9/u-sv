@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Mail, UserCircle } from "lucide-react";
 import { useLanguage } from "@/features/language";
@@ -12,7 +13,6 @@ export function Navigation() {
   const { isAuthenticated, user } = useAuth();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const [buttonPosition, setButtonPosition] = useState<{ x: number; y: number } | undefined>();
   
   const translations = {
     lv: {
@@ -39,10 +39,6 @@ export function Navigation() {
   };
 
   const handleLoginClick = () => {
-    if (buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setButtonPosition({ x: rect.left + rect.width / 2, y: rect.bottom });
-    }
     setShowLoginDialog(true);
   };
 
@@ -86,7 +82,6 @@ export function Navigation() {
       <LoginDialog 
         isOpen={showLoginDialog} 
         onClose={() => setShowLoginDialog(false)}
-        anchorPosition={buttonPosition}
       />
     </nav>
   );

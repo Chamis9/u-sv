@@ -20,7 +20,7 @@ import { loginFormSchema, type LoginFormData } from "./schema";
 import { getLoginTranslations } from "./translations";
 import { EmailInput } from "./EmailInput";
 import { PasswordInput } from "./PasswordInput";
-import { Facebook, Mail } from "lucide-react";
+import { Facebook, Google, Mail } from "lucide-react";
 
 interface LoginDialogProps {
   isOpen: boolean;
@@ -59,7 +59,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
     }
   };
 
-  const handleSocialLogin = async (provider: 'google' | 'facebook' | 'smartid') => {
+  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
@@ -75,6 +75,14 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
         description: translations.loginError,
       });
     }
+  };
+
+  const handleSmartIDLogin = () => {
+    // Smart-ID implementation will need to be done separately
+    // as it's not a standard provider in Supabase
+    toast({
+      description: "Smart-ID login is not yet implemented",
+    });
   };
 
   const onSubmit = async (values: LoginFormData) => {
@@ -117,7 +125,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                 className="w-full"
                 onClick={() => handleSocialLogin('google')}
               >
-                <Mail className="mr-2 h-4 w-4" />
+                <Google className="mr-2 h-4 w-4" />
                 Gmail
               </Button>
               <Button 
@@ -165,7 +173,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
             <Button 
               variant="outline" 
               className="w-full mt-4"
-              onClick={() => handleSocialLogin('smartid')}
+              onClick={handleSmartIDLogin}
             >
               Smart-ID
             </Button>

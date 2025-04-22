@@ -36,11 +36,14 @@ export const getLoginTranslations = (code: string) => {
       email: "Электронная почта",
       password: "Пароль",
       login: "Войти",
+      register: "Регистрация", // Added missing property
       forgotPassword: "Забыли пароль",
       loginLoading: "Вход...",
       invalidCredentials: "Неверный email или пароль",
       resetPasswordSent: "Ссылка для сброса пароля отправлена на ваш email",
       loginDescription: "Пожалуйста, введите ваш email и пароль для входа",
+      loginError: "Произошла ошибка при входе. Пожалуйста, попробуйте еще раз.", // Added missing property
+      orContinueWith: "или продолжить с", // Added missing property
     },
   };
 
