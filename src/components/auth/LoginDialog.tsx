@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -192,8 +193,21 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                     )}
                   </div>
                 </div>
+                
                 <EmailInput form={registrationForm} label={translations.email} />
+                
+                <PhoneInputWithCountry
+                  label={translations.phoneNumber}
+                  countryCode={registrationForm.watch('countryCode') || '+371'}
+                  phoneNumber={registrationForm.watch('phoneNumber') || ''}
+                  onCountryCodeChange={(code) => registrationForm.setValue('countryCode', code)}
+                  onPhoneNumberChange={(number) => registrationForm.setValue('phoneNumber', number)}
+                  required={false}
+                  placeholder={translations.phoneNumberPlaceholder}
+                />
+                
                 <PasswordInput form={registrationForm} label={translations.password} />
+                
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">{translations.confirmPassword}</Label>
                   <Input
@@ -209,16 +223,6 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                   )}
                 </div>
 
-                <PhoneInputWithCountry
-                  label={`${translations.phoneNumber} ${translations.phoneOptional}`}
-                  countryCode={registrationForm.watch('countryCode') || '+371'}
-                  phoneNumber={registrationForm.watch('phoneNumber') || ''}
-                  onCountryCodeChange={(code) => registrationForm.setValue('countryCode', code)}
-                  onPhoneNumberChange={(number) => registrationForm.setValue('phoneNumber', number)}
-                  required={false}
-                  placeholder={translations.phoneNumberPlaceholder}
-                />
-
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? translations.registrationLoading : translations.register}
                 </Button>
@@ -230,3 +234,4 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
     </Dialog>
   );
 }
+

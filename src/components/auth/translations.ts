@@ -24,7 +24,7 @@ export const getLoginTranslations = (code: string) => {
       registrationSuccess: "Reģistrācija veiksmīga! Lūdzu pārbaudiet savu e-pastu.",
       phoneNumber: "Telefona numurs",
       phoneNumberPlaceholder: "Ievadiet telefona numuru",
-      phoneOptional: "(nav obligāts)",
+      phoneOptional: "",
     },
     en: {
       title: "Login",
@@ -48,7 +48,7 @@ export const getLoginTranslations = (code: string) => {
       registrationSuccess: "Registration successful! Please check your email.",
       phoneNumber: "Phone Number",
       phoneNumberPlaceholder: "Enter phone number",
-      phoneOptional: "(optional)",
+      phoneOptional: "",
     },
     ru: {
       title: "Войти",
@@ -72,7 +72,7 @@ export const getLoginTranslations = (code: string) => {
       registrationSuccess: "Регистрация успешна! Пожалуйста, проверьте свою почту.",
       phoneNumber: "Номер телефона",
       phoneNumberPlaceholder: "Введите номер телефона",
-      phoneOptional: "(не обязательно)",
+      phoneOptional: "",
     },
   };
 
