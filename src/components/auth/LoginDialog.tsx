@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,7 +42,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
   });
 
   const registrationForm = useForm<RegistrationFormData>({
-    resolver: zodResolver(registrationFormSchema),
+    resolver: zodResolver(getRegistrationFormSchema(currentLanguage.code)),
     defaultValues: {
       email: "",
       password: "",
@@ -234,4 +233,3 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
     </Dialog>
   );
 }
-
