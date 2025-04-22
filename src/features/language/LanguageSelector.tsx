@@ -1,4 +1,3 @@
-
 import { memo } from "react";
 import { 
   DropdownMenu,
@@ -12,7 +11,6 @@ import { languages } from "./languages";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Globe } from "lucide-react";
 
-// Komponents, kas attēlo karodziņu pēc ISO koda
 const FlagIcon = ({ countryCode }: { countryCode: string }) => {
   return (
     <div className="w-6 h-4 inline-flex items-center justify-center mr-2 overflow-hidden">
@@ -40,15 +38,13 @@ export const LanguageSelector = memo(function LanguageSelector() {
             size={isMobile ? "sm" : "default"}
             className={`
               rounded-full
-              bg-background
+              bg-white/10
               text-foreground
-              border-border
+              border-white/20
               shadow
-              backdrop-blur
-              hover:bg-accent
-              hover:text-accent-foreground
-              focus-visible:ring-2
-              focus-visible:ring-primary
+              backdrop-blur-md
+              hover:bg-white/20
+              focus:bg-white/30
               transition
               px-3 py-1
               min-w-[110px]
@@ -65,11 +61,11 @@ export const LanguageSelector = memo(function LanguageSelector() {
           align="end"
           className={`
             min-w-[160px]
-            bg-background
+            bg-white/90
             text-foreground
-            border-border
+            border-white/20
             shadow-lg
-            backdrop-blur
+            backdrop-blur-md
             rounded-xl
             mt-2
           `}
@@ -84,10 +80,8 @@ export const LanguageSelector = memo(function LanguageSelector() {
                 gap-2 px-3 py-2
                 rounded-md
                 transition
-                focus:bg-accent focus:text-accent-foreground
-                hover:bg-orange-100
-                dark:hover:bg-muted
-                dark:focus:bg-muted
+                hover:bg-white/20
+                focus:bg-white/30
                 font-medium
               `}
             >
