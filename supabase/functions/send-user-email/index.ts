@@ -24,6 +24,8 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { name, email, message }: ContactFormRequest = await req.json();
 
+    console.log(`Received contact form submission from ${name} (${email})`);
+
     // Vienkārša validācija
     if (!name || name.length < 2) {
       return new Response(JSON.stringify({ error: "Vārds ir obligāts un jābūt vismaz 2 simboliem." }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders }});
@@ -48,7 +50,10 @@ const handler = async (req: Request): Promise<Response> => {
       `
     });
 
+    console.log("Email send response:", JSON.stringify(emailResponse));
+
     if (emailResponse.error) {
+      console.error("Email send error:", JSON.stringify(emailResponse.error));
       throw new Error("Neizdevās nosūtīt epastu: " + (emailResponse.error.message || JSON.stringify(emailResponse.error)));
     }
 
@@ -57,6 +62,7 @@ const handler = async (req: Request): Promise<Response> => {
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
+    console.error("Function error:", error.message || "Unknown error");
     return new Response(JSON.stringify({ error: error?.message || "Nezināma kļūda" }), {
       status: 500,
       headers: { "Content-Type": "application/json", ...corsHeaders },
