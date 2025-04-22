@@ -34,7 +34,7 @@ export function PasswordInput({
               <Input
                 type={showPassword ? "text" : "password"}
                 className="pl-10 pr-10"
-                placeholder={placeholder}
+                placeholder={placeholder || label}
                 {...field}
               />
               <Button
@@ -61,3 +61,4 @@ export function PasswordInput({
     />
   );
 }
+

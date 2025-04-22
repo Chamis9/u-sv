@@ -51,3 +51,4 @@ export function PasswordFields({ form, translations }: PasswordFieldsProps) {
     </>
   );
 }
+
