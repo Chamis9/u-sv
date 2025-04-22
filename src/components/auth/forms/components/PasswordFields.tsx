@@ -22,7 +22,7 @@ export function PasswordFields({ form, translations }: PasswordFieldsProps) {
             <FormControl>
               <Input 
                 type="password"
-                placeholder={translations.password} 
+                placeholder={translations.password}
                 {...field} 
               />
             </FormControl>
@@ -40,7 +40,7 @@ export function PasswordFields({ form, translations }: PasswordFieldsProps) {
             <FormControl>
               <Input 
                 type="password"
-                placeholder={translations.confirmPasswordPlaceholder} 
+                placeholder={translations.confirmPassword}
                 {...field} 
               />
             </FormControl>
