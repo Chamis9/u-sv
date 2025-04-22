@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -5,12 +6,12 @@ import { useLanguage } from "@/features/language";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+} from "@/components/ui/drawer";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { loginFormSchema, type LoginFormData } from "./schema";
@@ -74,38 +75,39 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent 
-        className="sm:max-w-[425px]"
-        aria-describedby="login-dialog-description"
-      >
-        <DialogHeader>
-          <DialogTitle>{translations.title}</DialogTitle>
-          <DialogDescription id="login-dialog-description">
-            {translations.loginDescription}
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
-            <EmailInput form={form} label={translations.email} />
-            <PasswordInput form={form} label={translations.password} />
-            <div className="flex items-center justify-between">
-              <Button
-                type="button"
-                variant="link"
-                className="px-0"
-                onClick={handleResetPassword}
-                disabled={isLoading}
-              >
-                {translations.forgotPassword}
-              </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? translations.loginLoading : translations.login}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <Drawer open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DrawerContent>
+        <div className="mx-auto w-full max-w-sm">
+          <DrawerHeader>
+            <DrawerTitle>{translations.title}</DrawerTitle>
+            <DrawerDescription>
+              {translations.loginDescription}
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="p-4">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <EmailInput form={form} label={translations.email} />
+                <PasswordInput form={form} label={translations.password} />
+                <div className="flex items-center justify-between">
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="px-0"
+                    onClick={handleResetPassword}
+                    disabled={isLoading}
+                  >
+                    {translations.forgotPassword}
+                  </Button>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading ? translations.loginLoading : translations.login}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </div>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }
