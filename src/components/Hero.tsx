@@ -9,7 +9,6 @@ export const Hero = memo(function Hero() {
   const { translations } = useLanguage();
   const { hero } = translations;
 
-  // Generate structured data for the event
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -22,30 +21,26 @@ export const Hero = memo(function Hero() {
   };
 
   return (
-    <section id="hero" className="relative h-[80vh] flex items-center justify-center overflow-hidden">
-      {/* Structured data */}
+    <section id="hero" className="relative h-[80vh] flex items-center justify-center overflow-hidden dark:bg-gray-900">
       <Helmet>
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
         </script>
       </Helmet>
       
-      {/* Background overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40 z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40 dark:from-black/80 dark:to-black/60 z-0"></div>
       
-      {/* Falling tickets animation */}
       <FallingTickets />
       
-      {/* Background image with optimization for better performance */}
       <div 
         className="absolute inset-0 z-[-1] bg-cover bg-center will-change-transform"
         style={{ 
-          backgroundImage: "url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80')" 
+          backgroundImage: "url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80')",
+          filter: "brightness(0.8)"
         }}
         aria-hidden="true"
       ></div>
       
-      {/* Hero content */}
       <div className="container mx-auto px-4 z-10 text-center py-20">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">

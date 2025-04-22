@@ -19,7 +19,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-gradient-to-b from-gray-900 to-black py-8 px-4 text-gray-300 border-t border-gray-800">
+    <footer className="bg-gradient-to-b from-gray-900 to-black dark:from-black dark:to-gray-900 py-8 px-4 text-gray-300 border-t border-gray-800">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
