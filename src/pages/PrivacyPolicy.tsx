@@ -15,7 +15,7 @@ const PrivacyPolicy = () => {
         title={`${content.title} | netieku.es`}
         description={content.intro}
       />
-      <div className="min-h-screen flex flex-col bg-gradient-to-b from-black via-gray-900 to-gray-800 text-white">
+      <div className="min-h-screen flex flex-col dark:bg-gradient-to-b dark:from-black dark:via-gray-900 dark:to-gray-800 bg-white text-gray-900 dark:text-white">
         <Header />
         
         <main className="flex-grow pt-24 pb-12">
@@ -28,6 +28,6 @@ const PrivacyPolicy = () => {
       </div>
     </>
   );
-};
+}
 
 export default PrivacyPolicy;

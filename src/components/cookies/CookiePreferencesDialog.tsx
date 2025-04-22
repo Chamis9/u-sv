@@ -41,14 +41,14 @@ export function CookiePreferencesDialog({
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] bg-gradient-to-b from-black via-gray-900 to-gray-800 text-gray-300 border-gray-700">
+      <DialogContent className="sm:max-w-[600px] dark:bg-gradient-to-b dark:from-black dark:via-gray-900 dark:to-gray-800 dark:text-gray-300 dark:border-gray-700 bg-white border-gray-200 text-gray-900">
         <DialogHeader>
           <DialogTitle className="text-orange-500">{cookieConsent.dialogTitle}</DialogTitle>
-          <DialogDescription className="text-gray-400">
+          <DialogDescription className="dark:text-gray-400 text-gray-600">
             {cookieConsent.dialogDescription}
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 py-4 text-sm text-gray-300">
+        <div className="space-y-4 py-4 text-sm dark:text-gray-300 text-gray-700">
           <p>{cookieConsent.whatAreCookies}</p>
           <p>{cookieConsent.whyWeUseCookies}</p>
           <p className="font-medium text-orange-500">{cookieConsent.typesOfCookies}</p>
