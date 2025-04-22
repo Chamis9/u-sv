@@ -37,9 +37,9 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response(JSON.stringify({ error: "Ziņojums ir obligāts un jābūt vismaz 10 simboliem." }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders }});
     }
 
-    // Sūtam uz info@netieku.es, bet izmantojam Resend noklusējuma domēnu
+    // Sūtam uz info@netieku.es
     const emailResponse = await resend.emails.send({
-      from: "Netieku.es <onboarding@resend.dev>", // Using Resend's default verified domain
+      from: "Netieku.es <info@netieku.es>",
       to: ["info@netieku.es"],
       subject: `Netieku.es | Kontaktformas ziņa (${name}, ${email})`,
       html: `
