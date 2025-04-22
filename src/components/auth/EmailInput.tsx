@@ -15,7 +15,7 @@ export function EmailInput({
   form, 
   label, 
   name = "email", 
-  placeholder = "admin@example.com" 
+  placeholder = "" // Remove default placeholder
 }: EmailInputProps) {
   return (
     <FormField
