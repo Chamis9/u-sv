@@ -1,3 +1,4 @@
+
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -14,6 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ContactFormProps {
   translations: {
@@ -56,14 +58,23 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
-    
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      console.log('Sending email to: raivis.ogorodovs@gmail.com');
-      console.log('From:', data.name, data.email);
-      console.log('Message:', data.message);
-      
+      // Sūta e-pastu caur Supabase Edge funkciju (send-user-email)
+      const { error } = await supabase.functions.invoke('send-user-email', {
+        body: {
+          to: "info@netieku.es",
+          subject: `Netieku.es | Ziņa no kontaktformas (${data.name}, ${data.email})`,
+          message: `
+            <h2>Saņemta jauna ziņa no netieku.es kontaktformas!</h2>
+            <b>No:</b> ${data.name} (${data.email})<br/>
+            <b>Ziņojums:</b><br/>
+            <div style="white-space: pre-wrap">${data.message}</div>
+          `
+        }
+      });
+      if (error) {
+        throw error;
+      }
       toast.success(t.successMessage);
       form.reset();
     } catch (error) {
