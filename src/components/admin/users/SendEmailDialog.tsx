@@ -54,6 +54,13 @@ export function SendEmailDialog({ user, open, onClose }: SendEmailDialogProps) {
     setIsSending(true);
     
     try {
+      // Log payload for debugging
+      console.log("Sending email with payload:", {
+        to: user.email,
+        subject: values.subject,
+        message: values.message,
+      });
+      
       const { data: response, error } = await supabase.functions.invoke('send-user-email', {
         body: {
           to: user.email,
@@ -62,7 +69,12 @@ export function SendEmailDialog({ user, open, onClose }: SendEmailDialogProps) {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase function error:", error);
+        throw error;
+      }
+      
+      console.log("Email send response:", response);
 
       toast({
         description: t(
@@ -72,6 +84,7 @@ export function SendEmailDialog({ user, open, onClose }: SendEmailDialogProps) {
       });
       
       onClose();
+      form.reset();
     } catch (error) {
       console.error("Error sending email:", error);
       toast({
