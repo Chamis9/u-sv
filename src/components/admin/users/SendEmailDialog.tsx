@@ -28,7 +28,6 @@ export function SendEmailDialog({ user, open, onClose }: SendEmailDialogProps) {
   const { currentLanguage } = useLanguage();
   const { toast } = useToast();
   const [isSending, setIsSending] = React.useState(false);
-  const [errorDetails, setErrorDetails] = React.useState<string | null>(null);
 
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
@@ -53,38 +52,17 @@ export function SendEmailDialog({ user, open, onClose }: SendEmailDialogProps) {
     }
 
     setIsSending(true);
-    setErrorDetails(null);
     
     try {
-      // Log payload for debugging
-      console.log("Sending email with payload:", {
-        to: user.email,
-        subject: values.subject,
-        message: values.message,
-        fromContact: false // Norādam, ka šis NAV no kontaktformas
-      });
-      
       const { data: response, error } = await supabase.functions.invoke('send-user-email', {
         body: {
           to: user.email,
           subject: values.subject,
           message: values.message,
-          fromContact: false // Norādam, ka šis NAV no kontaktformas
         },
       });
 
-      if (error) {
-        console.error("Supabase function error:", error);
-        throw error;
-      }
-      
-      // Pārbaudām vai response satur kļūdu
-      if (response && response.error) {
-        console.error("Email service error:", response.error);
-        throw new Error(response.error);
-      }
-      
-      console.log("Email send response:", response);
+      if (error) throw error;
 
       toast({
         description: t(
@@ -94,20 +72,13 @@ export function SendEmailDialog({ user, open, onClose }: SendEmailDialogProps) {
       });
       
       onClose();
-      form.reset();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error sending email:", error);
-      
-      // Saglabājam detalizētu kļūdas informāciju
-      if (error.details) {
-        setErrorDetails(JSON.stringify(error.details, null, 2));
-      }
-      
       toast({
         variant: "destructive",
         description: t(
-          "Kļūda sūtot e-pastu: " + (error.message || "Nezināma kļūda"),
-          "Error sending email: " + (error.message || "Unknown error")
+          "Kļūda sūtot e-pastu",
+          "Error sending email"
         ),
       });
     } finally {
@@ -153,15 +124,6 @@ export function SendEmailDialog({ user, open, onClose }: SendEmailDialogProps) {
                 </FormItem>
               )}
             />
-
-            {errorDetails && (
-              <div className="p-3 rounded bg-red-50 dark:bg-red-900/20 text-xs font-mono overflow-auto max-h-32">
-                <p className="text-red-600 dark:text-red-400 font-semibold mb-1">
-                  {t("Kļūdas detaļas:", "Error details:")}
-                </p>
-                {errorDetails}
-              </div>
-            )}
 
             <div className="flex justify-end gap-2">
               <Button

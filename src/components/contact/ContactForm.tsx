@@ -62,15 +62,14 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
       // Sūta e-pastu caur Supabase Edge funkciju (send-user-email)
       const { error } = await supabase.functions.invoke('send-user-email', {
         body: {
-          to: data.email, // Šeit mēs norādam sūtītāja e-pastu
+          to: "info@netieku.es",
           subject: `Netieku.es | Ziņa no kontaktformas (${data.name}, ${data.email})`,
           message: `
             <h2>Saņemta jauna ziņa no netieku.es kontaktformas!</h2>
             <b>No:</b> ${data.name} (${data.email})<br/>
             <b>Ziņojums:</b><br/>
             <div style="white-space: pre-wrap">${data.message}</div>
-          `,
-          fromContact: true // Jauns parametrs, norāda, ka e-pasts ir no kontaktformas
+          `
         }
       });
       if (error) {
