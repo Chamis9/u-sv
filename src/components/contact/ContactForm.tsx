@@ -59,8 +59,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     try {
-      // Sūta e-pastu caur Supabase Edge funkciju (send-user-email)
-      const { error } = await supabase.functions.invoke('send-user-email', {
+      console.log("Sending contact form data:", data);
+      
+      // Calling Supabase Edge function (send-user-email)
+      const { data: response, error } = await supabase.functions.invoke('send-user-email', {
         body: {
           to: "info@netieku.es",
           subject: `Netieku.es | Ziņa no kontaktformas (${data.name}, ${data.email})`,
@@ -72,9 +74,13 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
           `
         }
       });
+      
       if (error) {
+        console.error("Edge function error:", error);
         throw error;
       }
+      
+      console.log("Edge function response:", response);
       toast.success(t.successMessage);
       form.reset();
     } catch (error) {

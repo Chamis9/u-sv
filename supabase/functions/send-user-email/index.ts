@@ -25,6 +25,7 @@ const handler = async (req: Request): Promise<Response> => {
     const { to, subject, message }: EmailRequest = await req.json();
 
     console.log(`Sending email to ${to} with subject: ${subject}`);
+    console.log(`Message content length: ${message?.length || 0} characters`);
     console.log(`Using API key: ${Deno.env.get("RESEND_API_KEY") ? "API key exists" : "API key is missing"}`);
 
     // Verify email address format
