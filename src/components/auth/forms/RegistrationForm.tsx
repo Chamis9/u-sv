@@ -6,11 +6,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { EmailInput } from "../EmailInput";
-import { PasswordInput } from "../PasswordInput";
-import PhoneInputWithCountry from "@/components/admin/users/PhoneInputWithCountry";
+import { NameFields } from "./components/NameFields";
+import { PhoneField } from "./components/PhoneField";
+import { PasswordFields } from "./components/PasswordFields";
 import { getRegistrationFormSchema, type RegistrationFormData } from "../schema";
 
 interface RegistrationFormProps {
@@ -71,62 +70,10 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="firstName">{translations.firstName}</Label>
-            <Input
-              id="firstName"
-              {...form.register("firstName")}
-              placeholder={translations.firstNamePlaceholder}
-            />
-            {form.formState.errors.firstName && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.firstName.message}
-              </p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="lastName">{translations.lastName}</Label>
-            <Input
-              id="lastName"
-              {...form.register("lastName")}
-              placeholder={translations.lastNamePlaceholder}
-            />
-            {form.formState.errors.lastName && (
-              <p className="text-sm text-destructive">
-                {form.formState.errors.lastName.message}
-              </p>
-            )}
-          </div>
-        </div>
-        
+        <NameFields form={form} translations={translations} />
         <EmailInput form={form} label={translations.email} />
-        
-        <PhoneInputWithCountry
-          label={translations.phoneNumber}
-          countryCode={form.watch('countryCode')}
-          phoneNumber={form.watch('phoneNumber') || ""}
-          onCountryCodeChange={(code) => form.setValue('countryCode', code)}
-          onPhoneNumberChange={(number) => form.setValue('phoneNumber', number)}
-          placeholder={translations.phoneNumberPlaceholder}
-        />
-        
-        <PasswordInput form={form} label={translations.password} />
-        
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword">{translations.confirmPassword}</Label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            {...form.register("confirmPassword")}
-            placeholder={translations.confirmPasswordPlaceholder}
-          />
-          {form.formState.errors.confirmPassword && (
-            <p className="text-sm text-destructive">
-              {form.formState.errors.confirmPassword.message}
-            </p>
-          )}
-        </div>
+        <PasswordFields form={form} translations={translations} />
+        <PhoneField form={form} translations={translations} />
 
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? translations.registrationLoading : translations.register}
