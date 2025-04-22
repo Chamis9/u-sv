@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,7 +15,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { loginFormSchema, registrationFormSchema, type LoginFormData, type RegistrationFormData } from "./schema";
+import { loginFormSchema, getRegistrationFormSchema, type LoginFormData, type RegistrationFormData } from "./schema";
 import { getLoginTranslations } from "./translations";
 import { EmailInput } from "./EmailInput";
 import { PasswordInput } from "./PasswordInput";
