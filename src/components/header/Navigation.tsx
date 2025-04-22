@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Mail, UserCircle, LogOut } from "lucide-react";
 import { useLanguage } from "@/features/language";
@@ -21,8 +20,6 @@ export function Navigation() {
       profile: "Mans Konts",
       myProfile: "Mans Profils",
       logout: "Iziet",
-      mySubscriptions: "Mani abonamenti",
-      subscribe: "Abonēt",
       settings: "Iestatījumi",
       darkMode: "Tumšais režīms"
     },
@@ -31,8 +28,6 @@ export function Navigation() {
       profile: "My Account",
       myProfile: "My Profile",
       logout: "Logout",
-      mySubscriptions: "My Subscriptions",
-      subscribe: "Subscribe",
       settings: "Settings",
       darkMode: "Dark Mode"
     },
@@ -41,8 +36,6 @@ export function Navigation() {
       profile: "Мой Аккаунт",
       myProfile: "Мой Профиль",
       logout: "Выйти",
-      mySubscriptions: "Мои подписки",
-      subscribe: "Подписаться",
       settings: "Настройки",
       darkMode: "Тёмный режим"
     }
@@ -112,25 +105,6 @@ export function Navigation() {
                   >
                     {t.myProfile}
                   </Link>
-                  
-                  <div className="border-t">
-                    <Link
-                      to="/subscriptions" 
-                      className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm"
-                    >
-                      {t.mySubscriptions}
-                    </Link>
-                  </div>
-                  
-                  <div className="p-3 border-t">
-                    <Button 
-                      variant="orange" 
-                      className="w-full" 
-                      onClick={() => {}}
-                    >
-                      {t.subscribe}
-                    </Button>
-                  </div>
                   
                   <div className="border-t p-4 flex justify-between items-center">
                     <span className="text-sm">{t.darkMode}</span>
