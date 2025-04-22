@@ -11,6 +11,7 @@ import { LoginForm } from "@/components/auth/forms/LoginForm";
 import { RegistrationForm } from "@/components/auth/forms/RegistrationForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getLoginTranslations } from "@/components/auth/translations";
+import { useState } from "react";
 
 // Navigation translations for different languages
 const navigationTranslations = {
@@ -42,6 +43,7 @@ export function Navigation() {
   const { isAuthenticated, user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const translations = getLoginTranslations(currentLanguage.code);
+  const [isAuthCardOpen, setIsAuthCardOpen] = useState(false);
   
   // Get navigation translations based on current language
   const navTranslations = navigationTranslations[currentLanguage.code as keyof typeof navigationTranslations] || navigationTranslations.en;
@@ -143,7 +145,7 @@ export function Navigation() {
               </HoverCardContent>
             </HoverCard>
           ) : (
-            <HoverCard>
+            <HoverCard open={isAuthCardOpen} onOpenChange={setIsAuthCardOpen}>
               <HoverCardTrigger asChild>
                 <Button
                   variant="ghost"
@@ -153,7 +155,18 @@ export function Navigation() {
                   <UserCircle size={20} />
                 </Button>
               </HoverCardTrigger>
-              <HoverCardContent className="w-[400px] p-4">
+              <HoverCardContent 
+                className="w-[400px] p-4"
+                onInteractOutside={(e) => {
+                  // Prevent closing when interacting with form elements
+                  if (e.target && (
+                    (e.target as HTMLElement).tagName === 'INPUT' || 
+                    (e.target as HTMLElement).closest('form')
+                  )) {
+                    e.preventDefault();
+                  }
+                }}
+              >
                 <Tabs defaultValue="login" className="w-full">
                   <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="login">{translations.login}</TabsTrigger>
@@ -161,14 +174,17 @@ export function Navigation() {
                   </TabsList>
                   
                   <TabsContent value="login" className="space-y-4 mt-4">
-                    <LoginForm onClose={() => {}} translations={translations} />
+                    <LoginForm 
+                      onClose={() => setIsAuthCardOpen(false)} 
+                      translations={translations} 
+                    />
                   </TabsContent>
                   
                   <TabsContent value="register" className="space-y-4 mt-4">
                     <RegistrationForm 
                       translations={translations} 
                       languageCode={currentLanguage.code}
-                      onClose={() => {}}
+                      onClose={() => setIsAuthCardOpen(false)}
                     />
                   </TabsContent>
                 </Tabs>
