@@ -23,6 +23,7 @@ export function Navigation() {
       myProfile: "Mans Profils",
       myTickets: "Manas biļetes",
       myPayments: "Mani maksājumi",
+      myAccount: "Mans konts",
       logout: "Iziet",
       settings: "Iestatījumi",
       darkMode: "Tumšais režīms"
@@ -33,6 +34,7 @@ export function Navigation() {
       myProfile: "My Profile",
       myTickets: "My Tickets",
       myPayments: "My Payments",
+      myAccount: "My Account",
       logout: "Logout",
       settings: "Settings",
       darkMode: "Dark Mode"
@@ -43,6 +45,7 @@ export function Navigation() {
       myProfile: "Мой Профиль",
       myTickets: "Мои билеты",
       myPayments: "Мои платежи",
+      myAccount: "Мой аккаунт",
       logout: "Выйти",
       settings: "Настройки",
       darkMode: "Тёмный режим"
@@ -107,6 +110,14 @@ export function Navigation() {
                       </p>
                     </div>
                   </div>
+                  
+                  <Link
+                    to={`/profile/${user.id}/account`}
+                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
+                  >
+                    <UserCircle size={16} />
+                    {t.myAccount}
+                  </Link>
                   
                   <Link
                     to={`/profile/${user.id}/tickets`}
