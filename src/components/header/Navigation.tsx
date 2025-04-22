@@ -14,13 +14,25 @@ import { getLoginTranslations } from "@/components/auth/translations";
 // Navigation translations for different languages
 const navigationTranslations = {
   lv: {
-    contact: "Kontakti"
+    contact: "Kontakti",
+    myAccount: "Mans konts",
+    myTickets: "Manas biļetes",
+    myPayments: "Mani maksājumi",
+    logout: "Iziet"
   },
   en: {
-    contact: "Contact"
+    contact: "Contact",
+    myAccount: "My Account",
+    myTickets: "My Tickets",
+    myPayments: "My Payments",
+    logout: "Logout"
   },
   ru: {
-    contact: "Контакты"
+    contact: "Контакты",
+    myAccount: "Мой аккаунт",
+    myTickets: "Мои билеты",
+    myPayments: "Мои платежи",
+    logout: "Выйти"
   }
 };
 
@@ -86,7 +98,7 @@ export function Navigation() {
                     className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
                   >
                     <UserCircle size={16} />
-                    My Account
+                    {navTranslations.myAccount}
                   </Link>
                   
                   <Link
@@ -94,7 +106,7 @@ export function Navigation() {
                     className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
                   >
                     <Ticket size={16} />
-                    My Tickets
+                    {navTranslations.myTickets}
                   </Link>
                   
                   <Link
@@ -102,7 +114,7 @@ export function Navigation() {
                     className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
                   >
                     <Wallet size={16} />
-                    My Payments
+                    {navTranslations.myPayments}
                   </Link>
                   
                   <div className="border-t">
@@ -112,7 +124,7 @@ export function Navigation() {
                       onClick={handleLogout}
                     >
                       <LogOut size={16} />
-                      Logout
+                      {navTranslations.logout}
                     </Button>
                   </div>
                 </div>
