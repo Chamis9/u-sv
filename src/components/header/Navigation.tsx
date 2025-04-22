@@ -1,8 +1,9 @@
 
 import { Link } from "react-router-dom";
-import { Mail, UserCircle, LogOut, Ticket, Wallet } from "lucide-react";
+import { Mail, UserCircle, LogOut, Ticket, Wallet, Moon, Sun } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/components/theme/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
@@ -39,6 +40,7 @@ const navigationTranslations = {
 export function Navigation() {
   const { currentLanguage } = useLanguage();
   const { isAuthenticated, user, logout } = useAuth();
+  const { theme, setTheme } = useTheme();
   const translations = getLoginTranslations(currentLanguage.code);
   
   // Get navigation translations based on current language
@@ -68,6 +70,16 @@ export function Navigation() {
             <Mail size={16} />
             {navTranslations.contact}
           </Link>
+        </li>
+        <li>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            className="text-white hover:text-orange-400"
+          >
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          </Button>
         </li>
         <li>
           {isAuthenticated && user ? (

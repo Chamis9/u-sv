@@ -72,9 +72,9 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <NameFields form={form} translations={translations} />
         <EmailInput form={form} label={translations.email} />
-        <PasswordFields form={form} translations={translations} />
         <PhoneField form={form} translations={translations} />
-
+        <PasswordFields form={form} translations={translations} />
+        
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? translations.registrationLoading : translations.register}
         </Button>
