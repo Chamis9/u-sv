@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, UserCircle, LogOut } from "lucide-react";
+import { Mail, UserCircle, LogOut, Ticket, Wallet } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -7,10 +7,12 @@ import { useState, useRef } from "react";
 import { LoginDialog } from "@/components/auth/LoginDialog";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 export function Navigation() {
   const { currentLanguage } = useLanguage();
   const { isAuthenticated, user, logout } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   
@@ -19,6 +21,8 @@ export function Navigation() {
       contact: "Kontakti",
       profile: "Mans Konts",
       myProfile: "Mans Profils",
+      myTickets: "Manas biļetes",
+      myPayments: "Mani maksājumi",
       logout: "Iziet",
       settings: "Iestatījumi",
       darkMode: "Tumšais režīms"
@@ -27,6 +31,8 @@ export function Navigation() {
       contact: "Contact",
       profile: "My Account",
       myProfile: "My Profile",
+      myTickets: "My Tickets",
+      myPayments: "My Payments",
       logout: "Logout",
       settings: "Settings",
       darkMode: "Dark Mode"
@@ -35,6 +41,8 @@ export function Navigation() {
       contact: "Контакты",
       profile: "Мой Аккаунт",
       myProfile: "Мой Профиль",
+      myTickets: "Мои билеты",
+      myPayments: "Мои платежи",
       logout: "Выйти",
       settings: "Настройки",
       darkMode: "Тёмный режим"
@@ -57,6 +65,10 @@ export function Navigation() {
     } catch (error) {
       console.error("Logout error:", error);
     }
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   return (
@@ -93,24 +105,35 @@ export function Navigation() {
                       <p className="font-medium text-sm">
                         {user.first_name} {user.last_name}
                       </p>
-                      <p className="text-xs text-gray-500">
-                        {t.myProfile}
-                      </p>
                     </div>
                   </div>
                   
                   <Link
-                    to={`/profile/${user.id}/account`}
-                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm"
+                    to={`/profile/${user.id}/tickets`}
+                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
                   >
-                    {t.myProfile}
+                    <Ticket size={16} />
+                    {t.myTickets}
+                  </Link>
+                  
+                  <Link
+                    to={`/profile/${user.id}/payments`}
+                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
+                  >
+                    <Wallet size={16} />
+                    {t.myPayments}
                   </Link>
                   
                   <div className="border-t p-4 flex justify-between items-center">
                     <span className="text-sm">{t.darkMode}</span>
-                    <div className="rounded-full w-10 h-5 bg-gray-300 relative flex items-center px-1">
-                      <div className="w-3 h-3 bg-white rounded-full"></div>
-                    </div>
+                    <button
+                      onClick={toggleTheme}
+                      className="rounded-full w-10 h-5 bg-gray-300 dark:bg-gray-600 relative flex items-center px-1 transition-colors"
+                    >
+                      <div className={`w-3 h-3 bg-white rounded-full transition-transform ${
+                        theme === 'dark' ? 'translate-x-5' : ''
+                      }`}></div>
+                    </button>
                   </div>
                   
                   <div className="border-t">
