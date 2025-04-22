@@ -184,10 +184,25 @@ export function SubscribeForm() {
     validateEmail(selectedEmail);
   };
 
+  // Only check for autofilled inputs that belong to this specific form
+  const checkForAutofill = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Don't show dropdown if input has the 'using-autofill' class 
+    // This indicates it was autofilled in the hover card
+    if (e.target.classList.contains('using-autofill')) {
+      setShowDropdown(false);
+      return;
+    }
+    
+    // Otherwise show dropdown with previous emails for this specific input
+    if (previousEmails.length > 0) {
+      setShowDropdown(true);
+    }
+  };
+
   return (
     <form 
       onSubmit={handleSubmit} 
-      className="flex flex-col sm:flex-row gap-3 w-full max-w-md bg-transparent p-0"
+      className="flex flex-col sm:flex-row gap-3 w-full max-w-md bg-transparent p-0 subscribe-form"
     >
       <div className="relative flex-grow">
         <Input
@@ -195,7 +210,7 @@ export function SubscribeForm() {
           placeholder={texts.placeholder}
           value={email}
           onChange={handleEmailChange}
-          onFocus={() => previousEmails.length > 0 && setShowDropdown(true)}
+          onFocus={checkForAutofill}
           onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
           required
           aria-invalid={formError ? "true" : "false"}

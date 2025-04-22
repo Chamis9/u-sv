@@ -71,12 +71,23 @@ export function Navigation() {
     const handleAutoFill = () => {
       const inputs = document.querySelectorAll('input');
       inputs.forEach(input => {
-        input.addEventListener('animationstart', (e) => {
-          // This is fired when Chrome's autofill animation starts
-          if (e.animationName.includes('onAutoFill')) {
-            setIsAuthCardOpen(true);
-          }
-        });
+        // Only add listeners to inputs inside the hover card to prevent affecting other forms like subscribe
+        if (input.closest('.hover-card-content')) {
+          input.addEventListener('animationstart', (e) => {
+            // This is fired when Chrome's autofill animation starts
+            if (e.animationName.includes('onAutoFill')) {
+              setIsAuthCardOpen(true);
+              
+              // Add a class to identify autofill is happening
+              input.classList.add('using-autofill');
+              
+              // Remove the class after some time
+              setTimeout(() => {
+                input.classList.remove('using-autofill');
+              }, 1000);
+            }
+          });
+        }
       });
     };
 
@@ -211,7 +222,7 @@ export function Navigation() {
                 </Button>
               </HoverCardTrigger>
               <HoverCardContent 
-                className="w-[400px] p-4"
+                className="w-[400px] p-4 hover-card-content"
                 onPointerDownOutside={(e) => {
                   // Prevent closing when clicking on form elements
                   if (e.target && (
