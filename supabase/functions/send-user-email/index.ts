@@ -9,9 +9,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface EmailRequest {
-  to: string;
-  subject: string;
+interface ContactFormRequest {
+  name: string;
+  email: string;
   message: string;
 }
 
@@ -22,72 +22,45 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { to, subject, message }: EmailRequest = await req.json();
+    const { name, email, message }: ContactFormRequest = await req.json();
 
-    console.log(`Sending email to ${to} with subject: ${subject}`);
-    console.log(`Using API key: ${Deno.env.get("RESEND_API_KEY") ? "API key exists" : "API key is missing"}`);
-
-    // Verify email address format
-    if (!to || !to.includes('@')) {
-      console.error("Invalid email address:", to);
-      return new Response(
-        JSON.stringify({ error: "Invalid email address" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
-      );
+    // Vienkārša validācija
+    if (!name || name.length < 2) {
+      return new Response(JSON.stringify({ error: "Vārds ir obligāts un jābūt vismaz 2 simboliem." }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders }});
+    }
+    if (!email || !email.includes("@")) {
+      return new Response(JSON.stringify({ error: "Nederīga e-pasta adrese." }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders }});
+    }
+    if (!message || message.length < 10) {
+      return new Response(JSON.stringify({ error: "Ziņojums ir obligāts un jābūt vismaz 10 simboliem." }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders }});
     }
 
-    // Validate input
-    if (!subject || !message) {
-      console.error("Missing required fields");
-      return new Response(
-        JSON.stringify({ error: "Subject and message are required" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
-      );
-    }
-
+    // Sūtam uz info@netieku.es
     const emailResponse = await resend.emails.send({
-      from: "Lovable <onboarding@resend.dev>", // Update this with your verified domain
-      to: [to],
-      subject: subject,
-      html: message,
+      from: "Netieku.es <info@netieku.es>",
+      to: ["info@netieku.es"],
+      subject: `Netieku.es | Kontaktformas ziņa (${name}, ${email})`,
+      html: `
+        <h2>Jauna ziņa no kontaktformas!</h2>
+        <b>No:</b> ${name} (${email})<br/>
+        <b>Ziņa:</b><br/>
+        <div style="white-space: pre-wrap">${message}</div>
+      `
     });
-
-    console.log("Email send response:", JSON.stringify(emailResponse));
 
     if (emailResponse.error) {
-      throw new Error(`Resend API error: ${emailResponse.error.message || JSON.stringify(emailResponse.error)}`);
+      throw new Error("Neizdevās nosūtīt epastu: " + (emailResponse.error.message || JSON.stringify(emailResponse.error)));
     }
 
-    return new Response(JSON.stringify(emailResponse), {
+    return new Response(JSON.stringify({ ok: true, data: emailResponse.data }), {
       status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
-      },
+      headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
-    console.error("Error sending email:", error);
-    console.error("Error details:", error.message);
-    
-    return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        details: typeof error === 'object' ? Object.getOwnPropertyNames(error).reduce((acc, key) => {
-          acc[key] = String(error[key]);
-          return acc;
-        }, {} as Record<string, string>) : null
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
-    );
+    return new Response(JSON.stringify({ error: error?.message || "Nezināma kļūda" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
   }
 };
 
