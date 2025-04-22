@@ -2,8 +2,8 @@
 import React from "react";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { RegistrationFormData } from "../schema";
 import { UseFormReturn } from "react-hook-form";
+import { RegistrationFormData } from "@/components/auth/schema";
 
 interface PasswordFieldsProps {
   form: UseFormReturn<RegistrationFormData>;

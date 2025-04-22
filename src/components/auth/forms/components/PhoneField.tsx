@@ -2,7 +2,7 @@
 import React from "react";
 import PhoneInputWithCountry from "@/components/admin/users/PhoneInputWithCountry";
 import { UseFormReturn } from "react-hook-form";
-import { RegistrationFormData } from "../schema";
+import { RegistrationFormData } from "@/components/auth/schema";
 
 interface PhoneFieldProps {
   form: UseFormReturn<RegistrationFormData>;
