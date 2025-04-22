@@ -9,9 +9,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface EmailRequest {
-  to: string;
-  subject: string;
+interface ContactFormRequest {
+  name: string;
+  email: string;
   message: string;
 }
 
@@ -22,14 +22,26 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { to, subject, message }: EmailRequest = await req.json();
+    const { name, email, message }: ContactFormRequest = await req.json();
 
-    console.log(`Sending email to ${to} with subject: ${subject}`);
+    console.log(`Processing contact form submission from ${name} (${email})`);
     console.log(`Using API key: ${Deno.env.get("RESEND_API_KEY") ? "API key exists" : "API key is missing"}`);
 
+    // Validate input
+    if (!name || !email || !message) {
+      console.error("Missing required fields in contact form submission");
+      return new Response(
+        JSON.stringify({ error: "Name, email, and message are required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
     // Verify email address format
-    if (!to || !to.includes('@')) {
-      console.error("Invalid email address:", to);
+    if (!email.includes('@')) {
+      console.error("Invalid email address in contact form:", email);
       return new Response(
         JSON.stringify({ error: "Invalid email address" }),
         {
@@ -39,26 +51,21 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Validate input
-    if (!subject || !message) {
-      console.error("Missing required fields");
-      return new Response(
-        JSON.stringify({ error: "Subject and message are required" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
-      );
-    }
+    const htmlMessage = `
+      <h2>Saņemta jauna ziņa no netieku.es kontaktformas!</h2>
+      <b>No:</b> ${name} (${email})<br/>
+      <b>Ziņojums:</b><br/>
+      <div style="white-space: pre-wrap">${message}</div>
+    `;
 
     const emailResponse = await resend.emails.send({
-      from: "Netieku.es <info@netieku.es>", // Updated from a generic sender
-      to: [to],
-      subject: subject,
-      html: message,
+      from: "Netieku.es <info@netieku.es>",
+      to: ["info@netieku.es"],
+      subject: `Netieku.es | Ziņa no kontaktformas (${name}, ${email})`,
+      html: htmlMessage,
     });
 
-    console.log("Email send response:", JSON.stringify(emailResponse));
+    console.log("Contact form email response:", JSON.stringify(emailResponse));
 
     if (emailResponse.error) {
       throw new Error(`Resend API error: ${emailResponse.error.message || JSON.stringify(emailResponse.error)}`);
@@ -72,7 +79,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
     });
   } catch (error: any) {
-    console.error("Error sending email:", error);
+    console.error("Error sending contact form email:", error);
     console.error("Error details:", error.message);
     
     return new Response(
