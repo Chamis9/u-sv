@@ -1,19 +1,12 @@
 
 import { Link } from "react-router-dom";
-import { Mail, UserCircle, LogOut, Ticket, Wallet, Moon, Sun } from "lucide-react";
+import { Mail } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTheme } from "@/components/theme/ThemeProvider";
-import { Button } from "@/components/ui/button";
-import { UserAvatar } from "@/components/profile/UserAvatar";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { LoginForm } from "@/components/auth/forms/LoginForm";
-import { RegistrationForm } from "@/components/auth/forms/RegistrationForm";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getLoginTranslations } from "@/components/auth/translations";
-import { useState, useEffect } from "react";
+import { AuthHoverCard } from "@/components/auth/hover-card/AuthHoverCard";
+import { UserHoverCard } from "@/components/auth/user-menu/UserHoverCard";
 
-// Navigation translations for different languages
 const navigationTranslations = {
   lv: {
     contact: "Kontakti",
@@ -47,11 +40,8 @@ const navigationTranslations = {
 export function Navigation() {
   const { currentLanguage } = useLanguage();
   const { isAuthenticated, user, logout } = useAuth();
-  const { theme, setTheme } = useTheme();
   const translations = getLoginTranslations(currentLanguage.code);
-  const [isAuthCardOpen, setIsAuthCardOpen] = useState(false);
   
-  // Get navigation translations based on current language
   const navTranslations = navigationTranslations[currentLanguage.code as keyof typeof navigationTranslations] || navigationTranslations.en;
   
   const handleLinkClick = () => {
@@ -65,40 +55,6 @@ export function Navigation() {
       console.error("Logout error:", error);
     }
   };
-
-  // Prevent the hover card from closing when autofill happens
-  useEffect(() => {
-    const handleAutoFill = () => {
-      const inputs = document.querySelectorAll('input');
-      inputs.forEach(input => {
-        // Only add listeners to inputs inside the hover card to prevent affecting other forms like subscribe
-        if (input.closest('.hover-card-content')) {
-          input.addEventListener('animationstart', (e) => {
-            // This is fired when Chrome's autofill animation starts
-            if (e.animationName.includes('onAutoFill')) {
-              setIsAuthCardOpen(true);
-              
-              // Add a class to identify autofill is happening
-              input.classList.add('using-autofill');
-              
-              // Remove the class after some time
-              setTimeout(() => {
-                input.classList.remove('using-autofill');
-              }, 1000);
-            }
-          });
-        }
-      });
-    };
-
-    if (isAuthCardOpen) {
-      // Add a slight delay to ensure the DOM elements are available
-      const timer = setTimeout(() => {
-        handleAutoFill();
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-  }, [isAuthCardOpen]);
 
   return (
     <nav className="relative z-10">
@@ -115,187 +71,17 @@ export function Navigation() {
         </li>
         <li>
           {isAuthenticated && user ? (
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <Link
-                  to={`/profile/${user.id}/account`}
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors relative z-10"
-                  title="My Profile"
-                >
-                  <UserAvatar user={user} size="sm" />
-                </Link>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-64 p-0 overflow-hidden">
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-3 p-4 border-b">
-                    <UserAvatar user={user} size="md" />
-                    <div>
-                      <p className="font-medium text-sm">
-                        {user.first_name} {user.last_name}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <Link
-                    to={`/profile/${user.id}/account`}
-                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
-                  >
-                    <UserCircle size={16} />
-                    {navTranslations.myAccount}
-                  </Link>
-                  
-                  <Link
-                    to={`/profile/${user.id}/tickets`}
-                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
-                  >
-                    <Ticket size={16} />
-                    {navTranslations.myTickets}
-                  </Link>
-                  
-                  <Link
-                    to={`/profile/${user.id}/payments`}
-                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
-                  >
-                    <Wallet size={16} />
-                    {navTranslations.myPayments}
-                  </Link>
-                  
-                  <Button
-                    variant="ghost"
-                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 w-full justify-start text-sm flex items-center gap-2"
-                    onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-                  >
-                    {theme === "dark" ? (
-                      <>
-                        <Sun size={16} />
-                        {navTranslations.lightMode}
-                      </>
-                    ) : (
-                      <>
-                        <Moon size={16} />
-                        {navTranslations.darkMode}
-                      </>
-                    )}
-                  </Button>
-                  
-                  <div className="border-t">
-                    <Button
-                      variant="ghost"
-                      className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 w-full justify-start text-sm flex items-center gap-2"
-                      onClick={handleLogout}
-                    >
-                      <LogOut size={16} />
-                      {navTranslations.logout}
-                    </Button>
-                  </div>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
+            <UserHoverCard 
+              user={user}
+              translations={navTranslations}
+              onLogout={handleLogout}
+              onLinkClick={handleLinkClick}
+            />
           ) : (
-            <HoverCard 
-              open={isAuthCardOpen} 
-              onOpenChange={(open) => {
-                // Only allow the card to close if it's explicitly closed by user action
-                if (open) {
-                  setIsAuthCardOpen(true);
-                } else {
-                  // Check if there's active form interaction before closing
-                  const activeElement = document.activeElement;
-                  const isInteractingWithForm = activeElement && 
-                    (activeElement.tagName === 'INPUT' || 
-                     activeElement.closest('form'));
-                  
-                  if (!isInteractingWithForm) {
-                    setIsAuthCardOpen(false);
-                  }
-                }
-              }}
-            >
-              <HoverCardTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-white hover:text-orange-400"
-                >
-                  <UserCircle size={20} />
-                </Button>
-              </HoverCardTrigger>
-              <HoverCardContent 
-                className="w-[400px] p-4 hover-card-content"
-                onPointerDownOutside={(e) => {
-                  // Prevent closing when clicking on form elements
-                  if (e.target && (
-                    (e.target as HTMLElement).tagName === 'INPUT' || 
-                    (e.target as HTMLElement).closest('form')
-                  )) {
-                    e.preventDefault();
-                  }
-                }}
-                onFocusOutside={(e) => {
-                  // Prevent closing when focusing on form elements
-                  if (e.target && (
-                    (e.target as HTMLElement).tagName === 'INPUT' || 
-                    (e.target as HTMLElement).closest('form')
-                  )) {
-                    e.preventDefault();
-                  }
-                }}
-                onInteractOutside={(e) => {
-                  // Prevent closing when interacting with form elements or autocomplete
-                  if (e.target && (
-                    (e.target as HTMLElement).tagName === 'INPUT' || 
-                    (e.target as HTMLElement).closest('form') ||
-                    document.querySelector('.autofill') // Check for autofill elements
-                  )) {
-                    e.preventDefault();
-                  }
-                }}
-              >
-                <div className="flex justify-end mb-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="px-2"
-                    onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-                  >
-                    {theme === "dark" ? (
-                      <>
-                        <Sun size={16} className="mr-1" />
-                        {navTranslations.lightMode}
-                      </>
-                    ) : (
-                      <>
-                        <Moon size={16} className="mr-1" />
-                        {navTranslations.darkMode}
-                      </>
-                    )}
-                  </Button>
-                </div>
-                
-                <Tabs defaultValue="login" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="login">{translations.login}</TabsTrigger>
-                    <TabsTrigger value="register">{translations.register}</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="login" className="space-y-4 mt-4">
-                    <LoginForm 
-                      onClose={() => setIsAuthCardOpen(false)} 
-                      translations={translations} 
-                    />
-                  </TabsContent>
-                  
-                  <TabsContent value="register" className="space-y-4 mt-4">
-                    <RegistrationForm 
-                      translations={translations} 
-                      languageCode={currentLanguage.code}
-                      onClose={() => setIsAuthCardOpen(false)}
-                    />
-                  </TabsContent>
-                </Tabs>
-              </HoverCardContent>
-            </HoverCard>
+            <AuthHoverCard 
+              translations={translations}
+              currentLanguage={currentLanguage}
+            />
           )}
         </li>
       </ul>
