@@ -20,7 +20,7 @@ export function NameFields({ form, translations }: NameFieldsProps) {
           <FormItem>
             <FormLabel>{translations.firstName}</FormLabel>
             <FormControl>
-              <Input placeholder={translations.firstNamePlaceholder} {...field} />
+              <Input {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -34,7 +34,7 @@ export function NameFields({ form, translations }: NameFieldsProps) {
           <FormItem>
             <FormLabel>{translations.lastName}</FormLabel>
             <FormControl>
-              <Input placeholder={translations.lastNamePlaceholder} {...field} />
+              <Input {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
