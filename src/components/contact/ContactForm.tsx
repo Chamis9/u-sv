@@ -59,12 +59,17 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     try {
-      // Izmantojam jauno kontaktformas funkciju
-      const { error } = await supabase.functions.invoke('contact-form-email', {
+      // Sūta e-pastu caur Supabase Edge funkciju (send-user-email)
+      const { error } = await supabase.functions.invoke('send-user-email', {
         body: {
-          name: data.name,
-          email: data.email,
-          message: data.message
+          to: "info@netieku.es",
+          subject: `Netieku.es | Ziņa no kontaktformas (${data.name}, ${data.email})`,
+          message: `
+            <h2>Saņemta jauna ziņa no netieku.es kontaktformas!</h2>
+            <b>No:</b> ${data.name} (${data.email})<br/>
+            <b>Ziņojums:</b><br/>
+            <div style="white-space: pre-wrap">${data.message}</div>
+          `
         }
       });
       if (error) {

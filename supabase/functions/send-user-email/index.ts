@@ -13,7 +13,6 @@ interface EmailRequest {
   to: string;
   subject: string;
   message: string;
-  from?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -23,26 +22,16 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    // Pārbaudām, vai ir pieejama API atslēga
-    const apiKey = Deno.env.get("RESEND_API_KEY");
-    if (!apiKey) {
-      console.error("RESEND_API_KEY is not set");
-      return new Response(
-        JSON.stringify({ error: "API key is not configured" }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
-      );
-    }
+    const { to, subject, message }: EmailRequest = await req.json();
 
-    const { to, subject, message, from }: EmailRequest = await req.json();
-    
-    // Pārbaudām obligātos laukus
-    if (!to || !subject || !message) {
-      console.error("Missing required fields", { to, subject, message: message ? "present" : "missing" });
+    console.log(`Sending email to ${to} with subject: ${subject}`);
+    console.log(`Using API key: ${Deno.env.get("RESEND_API_KEY") ? "API key exists" : "API key is missing"}`);
+
+    // Verify email address format
+    if (!to || !to.includes('@')) {
+      console.error("Invalid email address:", to);
       return new Response(
-        JSON.stringify({ error: "Missing required fields: to, subject, and message are required" }),
+        JSON.stringify({ error: "Invalid email address" }),
         {
           status: 400,
           headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -50,12 +39,20 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    console.log(`Attempting to send email to ${to} with subject: ${subject}`);
-    
-    const senderEmail = from || "Netieku.es <info@netieku.es>";
-    
+    // Validate input
+    if (!subject || !message) {
+      console.error("Missing required fields");
+      return new Response(
+        JSON.stringify({ error: "Subject and message are required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
     const emailResponse = await resend.emails.send({
-      from: senderEmail,
+      from: "Lovable <onboarding@resend.dev>", // Update this with your verified domain
       to: [to],
       subject: subject,
       html: message,
@@ -64,7 +61,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Email send response:", JSON.stringify(emailResponse));
 
     if (emailResponse.error) {
-      throw new Error(`Resend API error: ${JSON.stringify(emailResponse.error)}`);
+      throw new Error(`Resend API error: ${emailResponse.error.message || JSON.stringify(emailResponse.error)}`);
     }
 
     return new Response(JSON.stringify(emailResponse), {
