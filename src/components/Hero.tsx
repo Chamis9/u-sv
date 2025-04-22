@@ -79,4 +79,3 @@ export const Hero = memo(function Hero() {
     </section>
   );
 });
-
