@@ -1,64 +1,21 @@
-
 import { Link } from "react-router-dom";
 import { Mail, UserCircle, LogOut, Ticket, Wallet } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { LoginDialog } from "@/components/auth/LoginDialog";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { LoginForm } from "@/components/auth/forms/LoginForm";
+import { RegistrationForm } from "@/components/auth/forms/RegistrationForm";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getLoginTranslations } from "@/components/auth/translations";
 
 export function Navigation() {
   const { currentLanguage } = useLanguage();
   const { isAuthenticated, user, logout } = useAuth();
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
-  const [initialTab, setInitialTab] = useState<"login" | "register">("login");
+  const translations = getLoginTranslations(currentLanguage.code);
   
-  const translations = {
-    lv: {
-      contact: "Kontakti",
-      profile: "Mans Konts",
-      myProfile: "Mans Profils",
-      myTickets: "Manas biļetes",
-      myPayments: "Mani maksājumi",
-      myAccount: "Mans konts",
-      logout: "Iziet",
-      settings: "Iestatījumi",
-      darkMode: "Tumšais režīms",
-      login: "Pieslēgties",
-      register: "Reģistrēties"
-    },
-    en: {
-      contact: "Contact",
-      profile: "My Account",
-      myProfile: "My Profile",
-      myTickets: "My Tickets",
-      myPayments: "My Payments",
-      myAccount: "My Account",
-      logout: "Logout",
-      settings: "Settings",
-      darkMode: "Dark Mode",
-      login: "Login",
-      register: "Register"
-    },
-    ru: {
-      contact: "Контакты",
-      profile: "Мой Аккаунт",
-      myProfile: "Мой Профиль",
-      myTickets: "Мои билеты",
-      myPayments: "Мои платежи",
-      myAccount: "Мой аккаунт",
-      logout: "Выйти",
-      settings: "Настройки",
-      darkMode: "Тёмный режим",
-      login: "Войти",
-      register: "Регистрация"
-    }
-  };
-
-  const t = translations[currentLanguage.code as keyof typeof translations] || translations.en;
-
   const handleLinkClick = () => {
     window.scrollTo(0, 0);
   };
@@ -71,11 +28,6 @@ export function Navigation() {
     }
   };
 
-  const openLoginDialog = (tab: "login" | "register" = "login") => {
-    setInitialTab(tab);
-    setShowLoginDialog(true);
-  };
-
   return (
     <nav className="relative z-10">
       <ul className="flex space-x-4 md:space-x-6 items-center">
@@ -86,7 +38,7 @@ export function Navigation() {
             className="text-white hover:text-orange-400 transition-colors flex items-center gap-1.5 relative z-10 text-sm md:text-base"
           >
             <Mail size={16} />
-            {t.contact}
+            {translations.contact}
           </Link>
         </li>
         <li>
@@ -161,34 +113,30 @@ export function Navigation() {
                   <UserCircle size={20} />
                 </Button>
               </HoverCardTrigger>
-              <HoverCardContent className="w-64 p-0 overflow-hidden">
-                <div className="flex flex-col">
-                  <Button
-                    variant="ghost"
-                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 w-full justify-start text-sm"
-                    onClick={() => openLoginDialog("login")}
-                  >
-                    {t.login}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 w-full justify-start text-sm"
-                    onClick={() => openLoginDialog("register")}
-                  >
-                    {t.register}
-                  </Button>
-                </div>
+              <HoverCardContent className="w-[400px] p-4">
+                <Tabs defaultValue="login" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="login">{translations.login}</TabsTrigger>
+                    <TabsTrigger value="register">{translations.register}</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="login" className="space-y-4 mt-4">
+                    <LoginForm onSuccess={() => {}} translations={translations} />
+                  </TabsContent>
+                  
+                  <TabsContent value="register" className="space-y-4 mt-4">
+                    <RegistrationForm 
+                      translations={translations} 
+                      languageCode={currentLanguage.code}
+                      onSuccess={() => {}}
+                    />
+                  </TabsContent>
+                </Tabs>
               </HoverCardContent>
             </HoverCard>
           )}
         </li>
       </ul>
-      
-      <LoginDialog 
-        isOpen={showLoginDialog} 
-        onClose={() => setShowLoginDialog(false)}
-        defaultTab={initialTab}
-      />
     </nav>
   );
 }
