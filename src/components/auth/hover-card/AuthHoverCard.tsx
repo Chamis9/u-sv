@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { UserCircle } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
@@ -65,9 +64,9 @@ export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardPr
         <Button
           variant="ghost"
           size="icon"
-          className="text-white hover:text-orange-400 transition-colors duration-300"
+          className="text-white hover:text-orange-400 transition-colors duration-300 hover:bg-transparent"
         >
-          <UserCircle size={20} />
+          <UserCircle size={20} className="hover:text-orange-400" />
         </Button>
       </HoverCardTrigger>
       <HoverCardContent 
@@ -124,4 +123,3 @@ export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardPr
     </HoverCard>
   );
 }
-
