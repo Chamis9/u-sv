@@ -20,7 +20,6 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Profile = lazy(() => import("./pages/Profile"));
-const Registration = lazy(() => import("./pages/Registration"));
 
 // Create a loading component
 const PageLoader = () => (
@@ -98,13 +97,6 @@ const App = () => {
                     <Route path="/admin/*" element={
                       <ThemeProvider defaultTheme="light">
                         <Admin />
-                      </ThemeProvider>
-                    } />
-                    
-                    {/* Registration route - allow theme switching */}
-                    <Route path="/registration" element={
-                      <ThemeProvider defaultTheme="light">
-                        <Registration />
                       </ThemeProvider>
                     } />
                     
