@@ -7,6 +7,7 @@ import { LoginForm } from "@/components/auth/forms/LoginForm";
 import { RegistrationForm } from "@/components/auth/forms/RegistrationForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeModeToggle } from "../theme/ThemeModeToggle";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 interface AuthHoverCardProps {
   translations: any;
@@ -15,6 +16,7 @@ interface AuthHoverCardProps {
 
 export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardProps) {
   const [isAuthCardOpen, setIsAuthCardOpen] = useState(false);
+  const { theme } = useTheme(); // Get current theme
 
   useEffect(() => {
     const handleAutoFill = () => {
@@ -70,7 +72,8 @@ export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardPr
         </Button>
       </HoverCardTrigger>
       <HoverCardContent 
-        className="w-[400px] p-4 hover-card-content"
+        className={`w-[400px] p-4 hover-card-content 
+          ${theme === 'dark' ? 'dark:bg-gray-800 dark:border-gray-700' : ''}`}
         onPointerDownOutside={(e) => {
           if (e.target && (
             (e.target as HTMLElement).tagName === 'INPUT' || 

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { User } from "@/types/users";
 import { ThemeModeToggle } from "../theme/ThemeModeToggle";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 interface UserHoverCardProps {
   user: User;
@@ -15,6 +16,8 @@ interface UserHoverCardProps {
 }
 
 export function UserHoverCard({ user, translations, onLogout, onLinkClick }: UserHoverCardProps) {
+  const { theme } = useTheme(); // Get current theme
+
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
@@ -27,7 +30,10 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
           <UserAvatar user={user} size="sm" />
         </Link>
       </HoverCardTrigger>
-      <HoverCardContent className="w-64 p-0 overflow-hidden">
+      <HoverCardContent 
+        className={`w-64 p-0 overflow-hidden 
+          ${theme === 'dark' ? 'dark:bg-gray-800 dark:border-gray-700' : ''}`}
+      >
         <div className="flex flex-col">
           <div className="flex items-center gap-3 p-4 border-b">
             <UserAvatar user={user} size="md" />
@@ -40,7 +46,7 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
           
           <Link
             to={`/profile/${user.id}/account`}
-            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
+            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 block w-full text-left text-sm flex items-center gap-2"
           >
             <UserCircle size={16} />
             {translations.myAccount}
@@ -48,7 +54,7 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
           
           <Link
             to={`/profile/${user.id}/tickets`}
-            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
+            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 block w-full text-left text-sm flex items-center gap-2"
           >
             <Ticket size={16} />
             {translations.myTickets}
@@ -56,7 +62,7 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
           
           <Link
             to={`/profile/${user.id}/payments`}
-            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
+            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 block w-full text-left text-sm flex items-center gap-2"
           >
             <Wallet size={16} />
             {translations.myPayments}
@@ -69,7 +75,7 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
           <div className="border-t">
             <Button
               variant="ghost"
-              className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 w-full justify-start text-sm flex items-center gap-2"
+              className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 w-full justify-start text-sm flex items-center gap-2"
               onClick={onLogout}
             >
               <LogOut size={16} />
