@@ -81,8 +81,8 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
   };
 
   return (
-    <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg">
-      <h2 className="text-2xl font-semibold mb-6">{t.formTitle}</h2>
+    <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm p-6 rounded-lg border border-white/20">
+      <h2 className="text-2xl font-semibold mb-6 text-white">{t.formTitle}</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -90,14 +90,14 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium">
+                <FormLabel className="text-sm font-medium text-white">
                   {t.nameLabel}
                 </FormLabel>
                 <FormControl>
                   <Input 
                     placeholder={t.namePlaceholder} 
                     {...field} 
-                    className="bg-white/5 border-white/20 text-white placeholder:text-gray-400"
+                    className="bg-white/10 dark:bg-white/5 border-white/30 dark:border-white/20 text-white placeholder:text-gray-300"
                   />
                 </FormControl>
                 <FormMessage className="text-red-400" />
@@ -110,7 +110,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium">
+                <FormLabel className="text-sm font-medium text-white">
                   {t.emailLabel}
                 </FormLabel>
                 <FormControl>
@@ -118,7 +118,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
                     type="email" 
                     placeholder={t.emailPlaceholder} 
                     {...field} 
-                    className="bg-white/5 border-white/20 text-white placeholder:text-gray-400"
+                    className="bg-white/10 dark:bg-white/5 border-white/30 dark:border-white/20 text-white placeholder:text-gray-300"
                   />
                 </FormControl>
                 <FormMessage className="text-red-400" />
@@ -131,7 +131,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
             name="message"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium">
+                <FormLabel className="text-sm font-medium text-white">
                   {t.messageLabel}
                 </FormLabel>
                 <FormControl>
@@ -139,7 +139,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
                     placeholder={t.messagePlaceholder} 
                     rows={5} 
                     {...field} 
-                    className="bg-white/5 border-white/20 text-white placeholder:text-gray-400"
+                    className="bg-white/10 dark:bg-white/5 border-white/30 dark:border-white/20 text-white placeholder:text-gray-300"
                   />
                 </FormControl>
                 <FormMessage className="text-red-400" />

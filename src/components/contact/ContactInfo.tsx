@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Mail, Phone, MapPin, Instagram, Facebook, Twitter } from "lucide-react";
 import { useLanguage } from "@/features/language";
@@ -29,18 +28,18 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({ translations: t }) => 
       <div className="space-y-4">
         <div className="flex items-center space-x-3">
           <MapPin className="text-orange-500" size={24} />
-          <h3 className="text-xl font-semibold">{t.addressTitle}</h3>
+          <h3 className="text-xl font-semibold text-white dark:text-white">{t.addressTitle}</h3>
         </div>
-        <p className="pl-9 text-gray-300">{t.address}</p>
+        <p className="pl-9 text-white dark:text-white font-medium">{t.address}</p>
       </div>
 
       <div className="space-y-4">
         <div className="flex items-center space-x-3">
           <Mail className="text-orange-500" size={24} />
-          <h3 className="text-xl font-semibold">{t.emailTitle}</h3>
+          <h3 className="text-xl font-semibold text-white dark:text-white">{t.emailTitle}</h3>
         </div>
-        <p className="pl-9 text-gray-300">
-          <a href={`mailto:${t.email}`} className="hover:text-orange-400 transition-colors">
+        <p className="pl-9">
+          <a href={`mailto:${t.email}`} className="text-white dark:text-white font-medium hover:text-orange-400 transition-colors">
             {t.email}
           </a>
         </p>
@@ -49,37 +48,36 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({ translations: t }) => 
       <div className="space-y-4">
         <div className="flex items-center space-x-3">
           <Phone className="text-orange-500" size={24} />
-          <h3 className="text-xl font-semibold">{t.phoneTitle}</h3>
+          <h3 className="text-xl font-semibold text-white dark:text-white">{t.phoneTitle}</h3>
         </div>
-        <p className="pl-9 text-gray-300">
-          <a href="tel:+37120000000" className="hover:text-orange-400 transition-colors">
+        <p className="pl-9">
+          <a href="tel:+37120000000" className="text-white dark:text-white font-medium hover:text-orange-400 transition-colors">
             {t.phone}
           </a>
         </p>
       </div>
       
       <div className="space-y-4">
-        <h3 className="text-xl font-semibold">{t.socialTitle}</h3>
+        <h3 className="text-xl font-semibold text-white dark:text-white">{t.socialTitle}</h3>
         <div className="flex space-x-4 pl-2">
           <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" 
-             className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors" 
+             className="p-2 bg-white/20 dark:bg-white/10 rounded-full hover:bg-white/30 dark:hover:bg-white/20 transition-colors" 
              aria-label="Instagram">
-            <Instagram size={20} />
+            <Instagram size={20} className="text-white" />
           </a>
           <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
-             className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+             className="p-2 bg-white/20 dark:bg-white/10 rounded-full hover:bg-white/30 dark:hover:bg-white/20 transition-colors"
              aria-label="Facebook">
-            <Facebook size={20} />
+            <Facebook size={20} className="text-white" />
           </a>
           <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
-             className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+             className="p-2 bg-white/20 dark:bg-white/10 rounded-full hover:bg-white/30 dark:hover:bg-white/20 transition-colors"
              aria-label="X (Twitter)">
-            <Twitter size={20} />
+            <Twitter size={20} className="text-white" />
           </a>
           <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer"
-             className="p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+             className="p-2 bg-white/20 dark:bg-white/10 rounded-full hover:bg-white/30 dark:hover:bg-white/20 transition-colors"
              aria-label="TikTok">
-            {/* Using SVG directly for TikTok since it's not exported from lucide-react */}
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
               width="20" 
@@ -90,7 +88,7 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({ translations: t }) => 
               strokeWidth="2" 
               strokeLinecap="round" 
               strokeLinejoin="round" 
-              className="lucide lucide-tiktok"
+              className="text-white"
             >
               <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
             </svg>

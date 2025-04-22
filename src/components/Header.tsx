@@ -3,6 +3,7 @@ import { LanguageSelector } from "@/features/language";
 import { Logo } from "./header/Logo";
 import { Navigation } from "./header/Navigation";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ThemeToggle } from "./theme/ThemeToggle";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -16,7 +17,8 @@ export function Header() {
             <div className="flex-1 flex justify-center">
               <Navigation />
             </div>
-            <div>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
               <LanguageSelector />
             </div>
           </>
@@ -27,6 +29,7 @@ export function Header() {
             </div>
             <div className="flex items-center space-x-4">
               <Navigation />
+              <ThemeToggle />
               <LanguageSelector />
             </div>
           </>
@@ -35,4 +38,3 @@ export function Header() {
     </header>
   );
 }
-

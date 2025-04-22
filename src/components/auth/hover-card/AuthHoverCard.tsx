@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { UserCircle } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
@@ -6,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { LoginForm } from "@/components/auth/forms/LoginForm";
 import { RegistrationForm } from "@/components/auth/forms/RegistrationForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ThemeModeToggle } from "../theme/ThemeModeToggle";
 import { useTheme } from "@/components/theme/ThemeProvider";
 
 interface AuthHoverCardProps {
@@ -16,7 +14,7 @@ interface AuthHoverCardProps {
 
 export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardProps) {
   const [isAuthCardOpen, setIsAuthCardOpen] = useState(false);
-  const { theme } = useTheme(); // Get current theme
+  const { theme } = useTheme();
 
   useEffect(() => {
     const handleAutoFill = () => {
@@ -100,10 +98,6 @@ export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardPr
           }
         }}
       >
-        <div className="flex justify-end mb-2">
-          <ThemeModeToggle />
-        </div>
-        
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">{translations.login}</TabsTrigger>

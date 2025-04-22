@@ -1,11 +1,9 @@
-
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Link } from "react-router-dom";
 import { UserCircle, Ticket, Wallet, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { User } from "@/types/users";
-import { ThemeModeToggle } from "../theme/ThemeModeToggle";
 import { useTheme } from "@/components/theme/ThemeProvider";
 
 interface UserHoverCardProps {
@@ -16,7 +14,7 @@ interface UserHoverCardProps {
 }
 
 export function UserHoverCard({ user, translations, onLogout, onLinkClick }: UserHoverCardProps) {
-  const { theme } = useTheme(); // Get current theme
+  const { theme } = useTheme();
 
   return (
     <HoverCard>
@@ -67,10 +65,6 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
             <Wallet size={16} />
             {translations.myPayments}
           </Link>
-          
-          <div className="flex justify-end px-4 py-3 border-t">
-            <ThemeModeToggle />
-          </div>
           
           <div className="border-t">
             <Button
