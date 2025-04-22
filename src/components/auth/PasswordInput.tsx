@@ -5,20 +5,26 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { UseFormReturn } from "react-hook-form";
-import { LoginFormData } from "./schema";
 
 interface PasswordInputProps {
-  form: UseFormReturn<LoginFormData>;
+  form: UseFormReturn<any>;
   label: string;
+  name?: string;
+  placeholder?: string;
 }
 
-export function PasswordInput({ form, label }: PasswordInputProps) {
+export function PasswordInput({ 
+  form, 
+  label, 
+  name = "password",
+  placeholder
+}: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <FormField
       control={form.control}
-      name="password"
+      name={name}
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
@@ -28,6 +34,7 @@ export function PasswordInput({ form, label }: PasswordInputProps) {
               <Input
                 type={showPassword ? "text" : "password"}
                 className="pl-10 pr-10"
+                placeholder={placeholder}
                 {...field}
               />
               <Button
