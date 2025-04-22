@@ -1,5 +1,5 @@
 
 project_id = "bljjkzgswgeqswuuryvm"
 
-[functions.send-contact-email]
-verify_jwt = false
+[functions.send-user-email]
+verify_jwt = true

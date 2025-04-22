@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "./LanguageContext";
 import { languages } from "./languages";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Globe } from "lucide-react";
 
+// Component to display the country flag using ISO country code
 const FlagIcon = ({ countryCode }: { countryCode: string }) => {
   return (
     <div className="w-6 h-4 inline-flex items-center justify-center mr-2 overflow-hidden">
@@ -34,58 +34,20 @@ export const LanguageSelector = memo(function LanguageSelector() {
     <div className={`language-selector ${isMobile ? 'pr-0' : ''}`}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size={isMobile ? "sm" : "default"}
-            className={`
-              rounded-full
-              bg-white/10
-              text-white
-              border-white/20
-              shadow
-              backdrop-blur-md
-              hover:bg-white/20
-              focus:bg-white/30
-              transition
-              px-3 py-1
-              min-w-[110px]
-              gap-2
-            `}
-            aria-label="Select language"
+          <Button 
+            variant="outline" 
+            className="rounded-full bg-white/10 backdrop-blur-sm text-white border-white/20 hover:bg-white/20"
           >
-            <Globe size={18} className="mr-1 opacity-70" />
             <FlagIcon countryCode={currentLanguage.flag} />
-            <span className="font-medium">{currentLanguage.name}</span>
+            <span>{currentLanguage.name}</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          className={`
-            min-w-[160px]
-            bg-white/90
-            text-black
-            border-white/20
-            shadow-lg
-            backdrop-blur-md
-            rounded-xl
-            mt-2
-          `}
-        >
+        <DropdownMenuContent align="end" className="bg-white/90 backdrop-blur-sm border-white/20">
           {languages.map((language) => (
             <DropdownMenuItem
               key={language.code}
               onClick={() => setLanguage(language)}
-              className={`
-                cursor-pointer
-                flex items-center
-                gap-2 px-3 py-2
-                rounded-md
-                transition
-                hover:bg-white/20
-                focus:bg-white/30
-                font-medium
-                text-black
-              `}
+              className="cursor-pointer hover:bg-orange-100"
             >
               <FlagIcon countryCode={language.flag} />
               {language.name}

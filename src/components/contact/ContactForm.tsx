@@ -59,27 +59,26 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     try {
-      // Sūtīt uz jauno edge funkciju
-      const response = await fetch(
-        "https://bljjkzgswgeqswuuryvm.functions.supabase.co/send-contact-email",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: data.name,
-            email: data.email,
-            message: data.message,
-          }),
+      // Sūta e-pastu caur Supabase Edge funkciju (send-user-email)
+      const { error } = await supabase.functions.invoke('send-user-email', {
+        body: {
+          to: "info@netieku.es",
+          subject: `Netieku.es | Ziņa no kontaktformas (${data.name}, ${data.email})`,
+          message: `
+            <h2>Saņemta jauna ziņa no netieku.es kontaktformas!</h2>
+            <b>No:</b> ${data.name} (${data.email})<br/>
+            <b>Ziņojums:</b><br/>
+            <div style="white-space: pre-wrap">${data.message}</div>
+          `
         }
-      );
-      const result = await response.json();
-      if (!response.ok || result.error) {
-        throw new Error(result.error || "Failed to send email");
+      });
+      if (error) {
+        throw error;
       }
       toast.success(t.successMessage);
       form.reset();
     } catch (error) {
-      console.error("Error sending contact email:", error);
+      console.error('Error sending message:', error);
       toast.error(t.errorMessage);
     } finally {
       setIsSubmitting(false);
