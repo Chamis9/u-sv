@@ -1,4 +1,3 @@
-
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -61,17 +60,11 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
     try {
       console.log("Sending contact form data:", data);
       
-      // Calling Supabase Edge function (send-user-email)
-      const { data: response, error } = await supabase.functions.invoke('send-user-email', {
+      const { data: response, error } = await supabase.functions.invoke('contact-form-email', {
         body: {
-          to: "info@netieku.es",
-          subject: `Netieku.es | Ziņa no kontaktformas (${data.name}, ${data.email})`,
-          message: `
-            <h2>Saņemta jauna ziņa no netieku.es kontaktformas!</h2>
-            <b>No:</b> ${data.name} (${data.email})<br/>
-            <b>Ziņojums:</b><br/>
-            <div style="white-space: pre-wrap">${data.message}</div>
-          `
+          name: data.name,
+          email: data.email,
+          message: data.message
         }
       });
       
