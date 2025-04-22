@@ -7,8 +7,8 @@ import { RegistrationFormData } from "@/components/auth/schema";
 interface PhoneFieldProps {
   form: UseFormReturn<RegistrationFormData>;
   translations: any;
-  countryCodeName?: string;
-  phoneNumberName?: string;
+  countryCodeName?: keyof RegistrationFormData;
+  phoneNumberName?: keyof RegistrationFormData;
 }
 
 export function PhoneField({ 
