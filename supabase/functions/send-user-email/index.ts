@@ -13,6 +13,7 @@ interface EmailRequest {
   to: string;
   subject: string;
   message: string;
+  fromContact?: boolean; // Jauns lauks, kas norāda, vai e-pasts ir no kontaktformas
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -22,9 +23,9 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { to, subject, message }: EmailRequest = await req.json();
+    const { to, subject, message, fromContact }: EmailRequest = await req.json();
 
-    console.log(`Sending email to ${to} with subject: ${subject}`);
+    console.log(`Sending email ${fromContact ? "from contact form to" : "to"} ${to} with subject: ${subject}`);
     console.log(`Using API key: ${Deno.env.get("RESEND_API_KEY") ? "API key exists" : "API key is missing"}`);
 
     // Verify email address format
@@ -51,12 +52,23 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    const emailResponse = await resend.emails.send({
-      from: "netieku.es <onboarding@resend.dev>", // Atjaunojam nosaukumu
-      to: [to],
+    // Atšķirīga konfigurācija atkarībā vai e-pasts nāk no kontaktformas vai no admin paneļa
+    const emailConfig = fromContact ? {
+      from: "Kontaktforma <onboarding@resend.dev>", // Kontaktformas gadījumā
+      to: ["info@netieku.es"], // Vienmēr sūtām uz info@netieku.es no kontaktformas
+      reply_to: to, // Atvieglojam atbildēšanu, iestatot reply_to uz sūtītāja e-pastu
       subject: subject,
       html: message,
-    });
+    } : {
+      from: "netieku.es <onboarding@resend.dev>", // Admin e-pasts lietotājam
+      to: [to], // Sūtām uz norādīto e-pastu
+      subject: subject,
+      html: message,
+    };
+
+    console.log("Email configuration:", JSON.stringify(emailConfig));
+
+    const emailResponse = await resend.emails.send(emailConfig);
 
     console.log("Email send response:", JSON.stringify(emailResponse));
 

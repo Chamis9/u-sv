@@ -61,6 +61,7 @@ export function SendEmailDialog({ user, open, onClose }: SendEmailDialogProps) {
         to: user.email,
         subject: values.subject,
         message: values.message,
+        fromContact: false // Norādam, ka šis NAV no kontaktformas
       });
       
       const { data: response, error } = await supabase.functions.invoke('send-user-email', {
@@ -68,6 +69,7 @@ export function SendEmailDialog({ user, open, onClose }: SendEmailDialogProps) {
           to: user.email,
           subject: values.subject,
           message: values.message,
+          fromContact: false // Norādam, ka šis NAV no kontaktformas
         },
       });
 
