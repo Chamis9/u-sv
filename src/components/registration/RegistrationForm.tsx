@@ -34,7 +34,6 @@ const RegistrationForm = () => {
                   message: t('Ievadiet derīgu e-pasta adresi', 'Enter a valid email address')
                 }
               })}
-              placeholder={t('Ievadiet e-pastu', 'Enter your email')}
             />
             {errors.email && (
               <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -56,7 +55,6 @@ const RegistrationForm = () => {
             onPhoneNumberChange={(number) => setValue('phoneNumber', number)}
             error={errors.phoneNumber?.message}
             required={false}
-            placeholder="12345678"
           />
 
           <Button type="submit" className="w-full">

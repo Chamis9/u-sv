@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -78,7 +77,6 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
     }
   };
 
-  // Translation helper function
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
   return (
@@ -94,9 +92,8 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
                 <div className="relative">
                   <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input 
-                    placeholder="admin@netieku.es" 
-                    className="pl-10" 
                     {...field} 
+                    className="pl-10" 
                   />
                 </div>
               </FormControl>
