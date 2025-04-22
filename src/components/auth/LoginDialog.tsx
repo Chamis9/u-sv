@@ -16,9 +16,10 @@ import { RegistrationForm } from "./forms/RegistrationForm";
 interface LoginDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  defaultTab?: "login" | "register";
 }
 
-export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
+export function LoginDialog({ isOpen, onClose, defaultTab = "login" }: LoginDialogProps) {
   const { currentLanguage } = useLanguage();
   const translations = getLoginTranslations(currentLanguage.code);
 
@@ -32,7 +33,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
           </DialogDescription>
         </DialogHeader>
         
-        <Tabs defaultValue="login" className="w-full">
+        <Tabs defaultValue={defaultTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">{translations.login}</TabsTrigger>
             <TabsTrigger value="register">{translations.register}</TabsTrigger>

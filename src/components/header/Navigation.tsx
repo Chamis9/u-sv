@@ -13,6 +13,7 @@ export function Navigation() {
   const { currentLanguage } = useLanguage();
   const { isAuthenticated, user, logout } = useAuth();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const [initialTab, setInitialTab] = useState<"login" | "register">("login");
   
   const translations = {
     lv: {
@@ -68,6 +69,11 @@ export function Navigation() {
     } catch (error) {
       console.error("Logout error:", error);
     }
+  };
+
+  const openLoginDialog = (tab: "login" | "register" = "login") => {
+    setInitialTab(tab);
+    setShowLoginDialog(true);
   };
 
   return (
@@ -160,18 +166,14 @@ export function Navigation() {
                   <Button
                     variant="ghost"
                     className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 w-full justify-start text-sm"
-                    onClick={() => setShowLoginDialog(true)}
+                    onClick={() => openLoginDialog("login")}
                   >
                     {t.login}
                   </Button>
                   <Button
                     variant="ghost"
                     className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 w-full justify-start text-sm"
-                    onClick={() => {
-                      setShowLoginDialog(true);
-                      // Open registration tab directly
-                      document.querySelector('[value="register"]')?.click();
-                    }}
+                    onClick={() => openLoginDialog("register")}
                   >
                     {t.register}
                   </Button>
@@ -185,6 +187,7 @@ export function Navigation() {
       <LoginDialog 
         isOpen={showLoginDialog} 
         onClose={() => setShowLoginDialog(false)}
+        defaultTab={initialTab}
       />
     </nav>
   );
