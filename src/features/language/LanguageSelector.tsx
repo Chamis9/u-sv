@@ -1,3 +1,4 @@
+
 import { memo } from "react";
 import { 
   DropdownMenu,
@@ -39,7 +40,7 @@ export const LanguageSelector = memo(function LanguageSelector() {
             className={`
               rounded-full
               bg-white/10
-              text-foreground
+              text-white
               border-white/20
               shadow
               backdrop-blur-md
@@ -62,7 +63,7 @@ export const LanguageSelector = memo(function LanguageSelector() {
           className={`
             min-w-[160px]
             bg-white/90
-            text-foreground
+            text-black
             border-white/20
             shadow-lg
             backdrop-blur-md
@@ -83,6 +84,7 @@ export const LanguageSelector = memo(function LanguageSelector() {
                 hover:bg-white/20
                 focus:bg-white/30
                 font-medium
+                text-black
               `}
             >
               <FlagIcon countryCode={language.flag} />
