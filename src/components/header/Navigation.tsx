@@ -1,9 +1,9 @@
+
 import { Link } from "react-router-dom";
 import { Mail, UserCircle, LogOut, Ticket, Wallet } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { LoginForm } from "@/components/auth/forms/LoginForm";
@@ -38,7 +38,7 @@ export function Navigation() {
             className="text-white hover:text-orange-400 transition-colors flex items-center gap-1.5 relative z-10 text-sm md:text-base"
           >
             <Mail size={16} />
-            {translations.contact}
+            Contact
           </Link>
         </li>
         <li>
@@ -49,7 +49,7 @@ export function Navigation() {
                   to={`/profile/${user.id}/account`}
                   onClick={handleLinkClick}
                   className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors relative z-10"
-                  title={t.myProfile}
+                  title="My Profile"
                 >
                   <UserAvatar user={user} size="sm" />
                 </Link>
@@ -70,7 +70,7 @@ export function Navigation() {
                     className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
                   >
                     <UserCircle size={16} />
-                    {t.myAccount}
+                    My Account
                   </Link>
                   
                   <Link
@@ -78,7 +78,7 @@ export function Navigation() {
                     className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
                   >
                     <Ticket size={16} />
-                    {t.myTickets}
+                    My Tickets
                   </Link>
                   
                   <Link
@@ -86,7 +86,7 @@ export function Navigation() {
                     className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 block w-full text-left text-sm flex items-center gap-2"
                   >
                     <Wallet size={16} />
-                    {t.myPayments}
+                    My Payments
                   </Link>
                   
                   <div className="border-t">
@@ -96,7 +96,7 @@ export function Navigation() {
                       onClick={handleLogout}
                     >
                       <LogOut size={16} />
-                      {t.logout}
+                      Logout
                     </Button>
                   </div>
                 </div>
@@ -121,14 +121,14 @@ export function Navigation() {
                   </TabsList>
                   
                   <TabsContent value="login" className="space-y-4 mt-4">
-                    <LoginForm onSuccess={() => {}} translations={translations} />
+                    <LoginForm onClose={() => {}} translations={translations} />
                   </TabsContent>
                   
                   <TabsContent value="register" className="space-y-4 mt-4">
                     <RegistrationForm 
                       translations={translations} 
                       languageCode={currentLanguage.code}
-                      onSuccess={() => {}}
+                      onClose={() => {}}
                     />
                   </TabsContent>
                 </Tabs>
