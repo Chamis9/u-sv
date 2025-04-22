@@ -1,22 +1,21 @@
 
-import React from "react";
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/features/language";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@/types/users";
-
-const formSchema = z.object({
-  subject: z.string().min(1, "Subject is required"),
-  message: z.string().min(1, "Message is required"),
-});
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SendEmailDialogProps {
   user: User;
@@ -26,120 +25,126 @@ interface SendEmailDialogProps {
 
 export function SendEmailDialog({ user, open, onClose }: SendEmailDialogProps) {
   const { currentLanguage } = useLanguage();
-  const { toast } = useToast();
-  const [isSending, setIsSending] = React.useState(false);
-
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      subject: "",
-      message: "",
-    },
-  });
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!user.email) {
-      toast({
-        variant: "destructive",
-        description: t(
-          "Lietotājam nav e-pasta adreses",
-          "User has no email address"
-        ),
-      });
+  const handleSend = async () => {
+    if (!subject || !message) {
+      toast.error(t("Lūdzu, aizpildiet visus laukus", "Please fill in all fields"));
       return;
     }
 
     setIsSending(true);
-    
     try {
-      const { data: response, error } = await supabase.functions.invoke('send-user-email', {
+      console.log(`Sending email to ${user.email} with subject: ${subject}`);
+      
+      const { error } = await supabase.functions.invoke('send-user-email', {
         body: {
           to: user.email,
-          subject: values.subject,
-          message: values.message,
-        },
+          subject,
+          message: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #333;">${subject}</h2>
+              <div style="white-space: pre-wrap; line-height: 1.5; color: #555;">
+                ${message.replace(/\n/g, '<br>')}
+              </div>
+              <hr style="border: 1px solid #eee; margin: 20px 0;" />
+              <p style="color: #777; font-size: 12px;">
+                Šis e-pasts nosūtīts no Netieku.es administrācijas.
+              </p>
+            </div>
+          `,
+          from: "Netieku.es <info@netieku.es>"
+        }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error sending email:', error);
+        throw error;
+      }
 
-      toast({
-        description: t(
-          "E-pasts veiksmīgi nosūtīts",
-          "Email sent successfully"
-        ),
-      });
+      toast.success(t(
+        "E-pasts veiksmīgi nosūtīts lietotājam", 
+        "Email successfully sent to the user"
+      ));
       
+      setSubject("");
+      setMessage("");
       onClose();
-    } catch (error) {
-      console.error("Error sending email:", error);
-      toast({
-        variant: "destructive",
-        description: t(
-          "Kļūda sūtot e-pastu",
-          "Error sending email"
-        ),
-      });
+    } catch (error: any) {
+      console.error('Error sending email:', error);
+      toast.error(t(
+        `Kļūda sūtot e-pastu: ${error.message || 'Nezināma kļūda'}`,
+        `Error sending email: ${error.message || 'Unknown error'}`
+      ));
     } finally {
       setIsSending(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={() => !isSending && onClose()}>
-      <DialogContent className="max-w-md">
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
-            {t("Sūtīt e-pastu", "Send Email")} - {user.email}
+            {t("Sūtīt e-pastu lietotājam", "Send Email to User")}
           </DialogTitle>
+          <DialogDescription>
+            {t(
+              `Sūtīt e-pastu uz ${user.email}`, 
+              `Send email to ${user.email}`
+            )}
+          </DialogDescription>
         </DialogHeader>
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="subject"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("Tēma", "Subject")}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+        
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="subject">
+              {t("Tēma", "Subject")}
+            </Label>
+            <Input
+              id="subject"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              placeholder={t("E-pasta tēma", "Email subject")}
             />
-
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("Ziņojums", "Message")}</FormLabel>
-                  <FormControl>
-                    <Textarea rows={5} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="message">
+              {t("Ziņojums", "Message")}
+            </Label>
+            <Textarea
+              id="message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder={t("Jūsu ziņojums...", "Your message...")}
+              rows={8}
             />
-
-            <div className="flex justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                disabled={isSending}
-              >
-                {t("Atcelt", "Cancel")}
-              </Button>
-              <Button type="submit" disabled={isSending}>
-                {isSending ? t("Sūta...", "Sending...") : t("Sūtīt", "Send")}
-              </Button>
-            </div>
-          </form>
-        </Form>
+          </div>
+        </div>
+        
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            {t("Atcelt", "Cancel")}
+          </Button>
+          <Button onClick={handleSend} disabled={isSending || !subject || !message}>
+            {isSending ? (
+              <span className="flex items-center gap-2">
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                {t("Nosūta...", "Sending...")}
+              </span>
+            ) : (
+              t("Nosūtīt", "Send")
+            )}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
