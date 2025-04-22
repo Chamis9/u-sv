@@ -1,20 +1,18 @@
+
 import { Link } from "react-router-dom";
 import { Mail, UserCircle, LogOut, Ticket, Wallet } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { LoginDialog } from "@/components/auth/LoginDialog";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { useTheme } from "@/components/theme/ThemeProvider";
 
 export function Navigation() {
   const { currentLanguage } = useLanguage();
   const { isAuthenticated, user, logout } = useAuth();
-  const { theme, setTheme } = useTheme();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
   
   const translations = {
     lv: {
@@ -26,7 +24,9 @@ export function Navigation() {
       myAccount: "Mans konts",
       logout: "Iziet",
       settings: "Iestatījumi",
-      darkMode: "Tumšais režīms"
+      darkMode: "Tumšais režīms",
+      login: "Pieslēgties",
+      register: "Reģistrēties"
     },
     en: {
       contact: "Contact",
@@ -37,7 +37,9 @@ export function Navigation() {
       myAccount: "My Account",
       logout: "Logout",
       settings: "Settings",
-      darkMode: "Dark Mode"
+      darkMode: "Dark Mode",
+      login: "Login",
+      register: "Register"
     },
     ru: {
       contact: "Контакты",
@@ -48,7 +50,9 @@ export function Navigation() {
       myAccount: "Мой аккаунт",
       logout: "Выйти",
       settings: "Настройки",
-      darkMode: "Тёмный режим"
+      darkMode: "Тёмный режим",
+      login: "Войти",
+      register: "Регистрация"
     }
   };
 
@@ -57,10 +61,6 @@ export function Navigation() {
   const handleLinkClick = () => {
     window.scrollTo(0, 0);
   };
-
-  const handleLoginClick = () => {
-    setShowLoginDialog(true);
-  };
   
   const handleLogout = async () => {
     try {
@@ -68,10 +68,6 @@ export function Navigation() {
     } catch (error) {
       console.error("Logout error:", error);
     }
-  };
-
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
   };
 
   return (
@@ -149,15 +145,39 @@ export function Navigation() {
               </HoverCardContent>
             </HoverCard>
           ) : (
-            <Button
-              ref={buttonRef}
-              variant="ghost"
-              size="icon"
-              className="text-white hover:text-orange-400"
-              onClick={handleLoginClick}
-            >
-              <UserCircle size={20} />
-            </Button>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:text-orange-400"
+                >
+                  <UserCircle size={20} />
+                </Button>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-64 p-0 overflow-hidden">
+                <div className="flex flex-col">
+                  <Button
+                    variant="ghost"
+                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 w-full justify-start text-sm"
+                    onClick={() => setShowLoginDialog(true)}
+                  >
+                    {t.login}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 w-full justify-start text-sm"
+                    onClick={() => {
+                      setShowLoginDialog(true);
+                      // Open registration tab directly
+                      document.querySelector('[value="register"]')?.click();
+                    }}
+                  >
+                    {t.register}
+                  </Button>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
           )}
         </li>
       </ul>
