@@ -1,4 +1,3 @@
-
 import { Language } from "@/features/language/types";
 
 export const getLoginTranslations = (code: string) => {
@@ -23,6 +22,9 @@ export const getLoginTranslations = (code: string) => {
       confirmPasswordPlaceholder: "Ievadiet paroli vēlreiz",
       registrationError: "Kļūda reģistrējoties. Lūdzu mēģiniet vēlreiz.",
       registrationSuccess: "Reģistrācija veiksmīga! Lūdzu pārbaudiet savu e-pastu.",
+      phoneNumber: "Telefona numurs",
+      phoneNumberPlaceholder: "Ievadiet telefona numuru",
+      phoneOptional: "(nav obligāts)",
     },
     en: {
       title: "Login",
@@ -44,6 +46,9 @@ export const getLoginTranslations = (code: string) => {
       confirmPasswordPlaceholder: "Re-enter your password",
       registrationError: "Registration error. Please try again.",
       registrationSuccess: "Registration successful! Please check your email.",
+      phoneNumber: "Phone Number",
+      phoneNumberPlaceholder: "Enter phone number",
+      phoneOptional: "(optional)",
     },
     ru: {
       title: "Войти",
@@ -65,6 +70,9 @@ export const getLoginTranslations = (code: string) => {
       confirmPasswordPlaceholder: "Введите пароль ещё раз",
       registrationError: "Ошибка при регистрации. Пожалуйста, попробуйте ещё раз.",
       registrationSuccess: "Регистрация успешна! Пожалуйста, проверьте свою почту.",
+      phoneNumber: "Номер телефона",
+      phoneNumberPlaceholder: "Введите номер телефона",
+      phoneOptional: "(не обязательно)",
     },
   };
 

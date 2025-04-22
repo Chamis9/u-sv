@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +20,7 @@ import { EmailInput } from "./EmailInput";
 import { PasswordInput } from "./PasswordInput";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import PhoneInputWithCountry from "@/components/admin/users/PhoneInputWithCountry";
 
 interface LoginDialogProps {
   isOpen: boolean;
@@ -49,6 +49,8 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
       confirmPassword: "",
       firstName: "",
       lastName: "",
+      countryCode: "+371",
+      phoneNumber: "",
     },
   });
 
@@ -90,6 +92,10 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
 
   const onRegisterSubmit = async (values: RegistrationFormData) => {
     setIsLoading(true);
+    const phoneNumber = values.phoneNumber 
+      ? `${values.countryCode || '+371'}${values.phoneNumber}` 
+      : null;
+
     const { error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
@@ -97,8 +103,9 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
         data: {
           first_name: values.firstName,
           last_name: values.lastName,
-        },
-      },
+          phone: phoneNumber,
+        }
+      }
     });
 
     if (error) {
@@ -124,6 +131,7 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
             {translations.loginDescription}
           </DialogDescription>
         </DialogHeader>
+        
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">{translations.login}</TabsTrigger>
@@ -200,11 +208,20 @@ export function LoginDialog({ isOpen, onClose }: LoginDialogProps) {
                     </p>
                   )}
                 </div>
-                <div className="flex justify-end">
-                  <Button type="submit" disabled={isLoading}>
-                    {isLoading ? translations.registrationLoading : translations.register}
-                  </Button>
-                </div>
+
+                <PhoneInputWithCountry
+                  label={`${translations.phoneNumber} ${translations.phoneOptional}`}
+                  countryCode={registrationForm.watch('countryCode') || '+371'}
+                  phoneNumber={registrationForm.watch('phoneNumber') || ''}
+                  onCountryCodeChange={(code) => registrationForm.setValue('countryCode', code)}
+                  onPhoneNumberChange={(number) => registrationForm.setValue('phoneNumber', number)}
+                  required={false}
+                  placeholder={translations.phoneNumberPlaceholder}
+                />
+
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? translations.registrationLoading : translations.register}
+                </Button>
               </form>
             </Form>
           </TabsContent>
