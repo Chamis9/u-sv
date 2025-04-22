@@ -32,7 +32,7 @@ export function CookiePreferencesDialog({
   cookieConsent
 }: CookiePreferencesDialogProps) {
   const handlePrivacyPolicyClick = () => {
-    onOpenChange(false); // Close the dialog
+    onOpenChange(false);
     setTimeout(() => {
       window.location.href = '/privacy-policy';
       window.scrollTo(0, 0);
