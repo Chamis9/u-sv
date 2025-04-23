@@ -37,23 +37,27 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response(JSON.stringify({ error: "Ziņojums ir obligāts un jābūt vismaz 10 simboliem." }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders }});
     }
 
-    // Since we can't directly email to plannection@gmail.com due to Resend restrictions,
-    // we'll store the message details in the response but simulate success
-    // In a production environment with a verified domain, you would send to the actual recipient
-    
-    console.log(`Would send email to plannection@gmail.com with subject: Contact Form (${name}, ${email})`);
-    console.log(`Message content: ${message}`);
-    
-    // Store the message in a structured format to return to client
-    const messageDetails = {
+    // Send email to the specified address
+    const emailResponse = await resend.emails.send({
       from: "Netieku.es <onboarding@resend.dev>", 
-      recipient: "plannection@gmail.com",
+      to: ["raivis.ogorodovs@gmail.com"],
       subject: `Netieku.es | Kontaktformas ziņa (${name}, ${email})`,
-      content: message,
-      timestamp: new Date().toISOString()
-    };
+      html: `
+        <h2>Jauna ziņa no kontaktformas!</h2>
+        <b>No:</b> ${name} (${email})<br/>
+        <b>Ziņa:</b><br/>
+        <div style="white-space: pre-wrap">${message}</div>
+      `
+    });
 
-    return new Response(JSON.stringify({ ok: true, data: messageDetails }), {
+    console.log("Email send response:", JSON.stringify(emailResponse));
+
+    if (emailResponse.error) {
+      console.error("Email send error:", JSON.stringify(emailResponse.error));
+      throw new Error("Neizdevās nosūtīt epastu: " + (emailResponse.error.message || JSON.stringify(emailResponse.error)));
+    }
+
+    return new Response(JSON.stringify({ ok: true, data: emailResponse.data }), {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
