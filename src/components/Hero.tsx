@@ -20,14 +20,13 @@ export const Hero = memo(function Hero() {
     }
   };
 
-  // Light mode bg image
-  const bgLight = "url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80')";
-  // Dark mode bg image
-  const bgDark = "url('https://images.unsplash.com/photo-1522158637959-30385a09e0da?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')";
+  // Vienīgais fona attēls abos režīmos
+  const backgroundImage =
+    "url('https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/backgrounds//netieku_bilesu_pardosana_fons_1.jpeg')";
 
   return (
-    <section 
-      id="hero" 
+    <section
+      id="hero"
       className="relative h-[80vh] flex items-center justify-center overflow-hidden"
     >
       <Helmet>
@@ -36,25 +35,18 @@ export const Hero = memo(function Hero() {
         </script>
       </Helmet>
       
-      {/* Overlay ONLY in light mode */}
-      <div className="absolute inset-0 bg-black/40 z-0 dark:hidden"></div>
-      
+      {/* Vienmēr tumšais pārklājums — Hero fons vienmēr viens attēls */}
+      <div className="absolute inset-0 bg-black/40 z-0"></div>
+
       <FallingTickets />
-      
-      {/* Light mode background image */}
+
+      {/* Vienīgais fona attēls (abiem režīmiem) */}
       <div
-        className="absolute inset-0 z-[-1] bg-cover bg-center transition-all duration-700 block dark:hidden"
-        style={{ backgroundImage: bgLight }}
+        className="absolute inset-0 z-[-1] bg-cover bg-center transition-all duration-700"
+        style={{ backgroundImage: backgroundImage }}
         aria-hidden="true"
       ></div>
-      
-      {/* Dark mode background image */}
-      <div
-        className="absolute inset-0 z-[-1] bg-cover bg-center transition-all duration-700 hidden dark:block"
-        style={{ backgroundImage: bgDark }}
-        aria-hidden="true"
-      ></div>
-      
+
       <div className="container mx-auto px-4 z-10 text-center py-20">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
@@ -75,8 +67,8 @@ export const Hero = memo(function Hero() {
           </div>
           
           <div className="pt-12">
-            <a 
-              href="#how-it-works" 
+            <a
+              href="#how-it-works"
               className="inline-flex items-center text-white hover:text-orange-300 transition-colors"
               aria-label="Learn more about how it works"
             >
