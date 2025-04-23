@@ -1,3 +1,4 @@
+import { Translations } from './types';
 
 export interface Translations {
   hero: {
@@ -43,6 +44,7 @@ export interface Translations {
     location: string;
     cookieSettings: string;
     privacyPolicy: string;
+    contactLink: string;
   };
   admin?: {
     title?: string;
@@ -54,7 +56,7 @@ export interface Translations {
     tabs?: {
       dashboard?: string;
       users?: string;
-      admins?: string; // Added this property
+      admins?: string;
       subscribers?: string;
       settings?: string;
     };
