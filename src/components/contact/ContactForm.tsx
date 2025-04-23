@@ -15,7 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { sendContactFormEmail } from "@/utils/operations/emailOperations";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ContactFormProps {
   translations: {
@@ -59,11 +59,18 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     try {
-      await sendContactFormEmail({
-        name: data.name,
-        email: data.email,
-        message: data.message
+      const { data: responseData, error } = await supabase.functions.invoke('send-user-email', {
+        body: {
+          name: data.name,
+          email: data.email,
+          message: data.message
+        }
       });
+      
+      if (error) {
+        console.error('Error sending message:', error);
+        throw new Error(error.message || t.errorMessage);
+      }
       
       toast.success(t.successMessage);
       form.reset();

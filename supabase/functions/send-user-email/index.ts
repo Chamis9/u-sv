@@ -1,5 +1,8 @@
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { Resend } from "npm:resend@2.0.0";
+
+const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,7 +26,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Received contact form submission from ${name} (${email})`);
 
-    // Basic validation
+    // Pamata validācija
     if (!name || name.length < 2) {
       return new Response(JSON.stringify({ error: "Vārds ir obligāts un jābūt vismaz 2 simboliem." }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders }});
     }
@@ -34,54 +37,27 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response(JSON.stringify({ error: "Ziņojums ir obligāts un jābūt vismaz 10 simboliem." }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders }});
     }
 
-    // SendGrid configuration
-    const SENDGRID_API_KEY = Deno.env.get("SENDGRID_API_KEY");
-    
-    if (!SENDGRID_API_KEY) {
-      throw new Error("SendGrid API key is not configured");
-    }
-
-    // Prepare the email request to SendGrid
-    const sendgridData = {
-      personalizations: [
-        {
-          to: [{ email: "info@netieku.es" }],
-          subject: `Netieku.es | Kontaktformas ziņa (${name}, ${email})`,
-        },
-      ],
-      from: { email: "noreply@netieku.es", name: "Netieku.es" },
-      content: [
-        {
-          type: "text/html",
-          value: `
-            <h2>Jauna ziņa no kontaktformas!</h2>
-            <b>No:</b> ${name} (${email})<br/>
-            <b>Ziņa:</b><br/>
-            <div style="white-space: pre-wrap">${message}</div>
-          `,
-        },
-      ],
-    };
-
-    // Send the email using SendGrid API
-    const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${SENDGRID_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(sendgridData),
+    // Izmantojam Resend test adresi, lai būtu bez domēnu verifikācijas prasībām
+    const emailResponse = await resend.emails.send({
+      from: "Netieku.es <onboarding@resend.dev>",
+      to: ["info@netieku.es"],
+      subject: `Netieku.es | Kontaktformas ziņa (${name}, ${email})`,
+      html: `
+        <h2>Jauna ziņa no kontaktformas!</h2>
+        <b>No:</b> ${name} (${email})<br/>
+        <b>Ziņa:</b><br/>
+        <div style="white-space: pre-wrap">${message}</div>
+      `
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
-      console.error("SendGrid API error:", response.status, errorData);
-      throw new Error(`SendGrid API error: ${response.status}`);
+    console.log("Email send response:", JSON.stringify(emailResponse));
+
+    if (emailResponse.error) {
+      console.error("Email send error:", JSON.stringify(emailResponse.error));
+      throw new Error("Neizdevās nosūtīt epastu: " + (emailResponse.error.message || JSON.stringify(emailResponse.error)));
     }
 
-    console.log("Email sent successfully via SendGrid");
-
-    return new Response(JSON.stringify({ ok: true }), {
+    return new Response(JSON.stringify({ ok: true, data: emailResponse.data }), {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
@@ -95,3 +71,4 @@ const handler = async (req: Request): Promise<Response> => {
 };
 
 serve(handler);
+

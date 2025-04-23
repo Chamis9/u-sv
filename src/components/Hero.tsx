@@ -1,4 +1,3 @@
-
 import { memo } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
@@ -31,11 +30,10 @@ export const Hero = memo(function Hero() {
         </script>
       </Helmet>
       
-      {/* Pārklājums caurspīdīgs abās mode */}
-      <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none" />
+      <div className="absolute inset-0 bg-black/40 z-0"></div>
       
       <FallingTickets />
-          
+      
       <div 
         className="absolute inset-0 z-[-1] bg-cover bg-center will-change-transform"
         style={{ 
