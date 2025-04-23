@@ -7,7 +7,7 @@ export type FooterTranslations = {
   location: string;
   cookieSettings: string;
   privacyPolicy: string;
-  contactLink?: string;
+  contactLink: string; // Added contactLink property
 };
 
 export const footerTranslations: Record<string, FooterTranslations> = {
