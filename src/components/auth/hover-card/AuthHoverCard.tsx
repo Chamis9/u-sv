@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { UserCircle } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ interface AuthHoverCardProps {
 export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardProps) {
   const [isAuthCardOpen, setIsAuthCardOpen] = useState(false);
   const { theme } = useTheme();
+  const triggerButtonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const handleAutoFill = () => {
@@ -42,6 +44,11 @@ export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardPr
     }
   }, [isAuthCardOpen]);
 
+  // "onClick" atvērs kartīti arī pēc klikšķa uz ikonas
+  const handleIconClick = () => {
+    setIsAuthCardOpen(true);
+  };
+
   return (
     <HoverCard 
       open={isAuthCardOpen} 
@@ -62,9 +69,11 @@ export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardPr
     >
       <HoverCardTrigger asChild>
         <Button
+          ref={triggerButtonRef}
           variant="ghost"
           size="icon"
           className="text-white hover:text-orange-400 transition-colors duration-300 hover:bg-transparent"
+          onClick={handleIconClick}
         >
           <UserCircle size={20} className="hover:text-orange-400" />
         </Button>
