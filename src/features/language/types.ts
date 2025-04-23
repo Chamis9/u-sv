@@ -1,4 +1,5 @@
-import { Translations } from './types';
+// Remove the circular import
+// import { Translations } from './types';
 
 export interface Translations {
   hero: {
