@@ -1,4 +1,15 @@
 
+import { Language } from '../../types';
+
+export type FooterTranslations = {
+  allRightsReserved: string;
+  madeWith: string;
+  location: string;
+  cookieSettings: string;
+  privacyPolicy: string;
+  contactLink: string;
+};
+
 export const footerTranslations: Record<Language['code'], FooterTranslations> = {
   lv: {
     allRightsReserved: "© 2025 netieku.es",
