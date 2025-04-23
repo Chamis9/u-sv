@@ -41,19 +41,17 @@ export const Hero = memo(function Hero() {
       
       <FallingTickets />
       
-      {/* Background image - switches based on dark mode */}
+      {/* Light mode background image */}
       <div
-        className="absolute inset-0 z-[-1] bg-cover bg-center will-change-transform transition-all duration-200"
-        style={{
-          backgroundImage: bgLight,
-        }}
+        className="absolute inset-0 z-[-1] bg-cover bg-center transition-all duration-700 block dark:hidden"
+        style={{ backgroundImage: bgLight }}
         aria-hidden="true"
       ></div>
+      
+      {/* Dark mode background image */}
       <div
-        className="absolute inset-0 z-[-1] bg-cover bg-center will-change-transform transition-all duration-200 hidden dark:block"
-        style={{
-          backgroundImage: bgDark,
-        }}
+        className="absolute inset-0 z-[-1] bg-cover bg-center transition-all duration-700 hidden dark:block"
+        style={{ backgroundImage: bgDark }}
         aria-hidden="true"
       ></div>
       
