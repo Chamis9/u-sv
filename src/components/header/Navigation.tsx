@@ -5,13 +5,14 @@ import { getLoginTranslations } from "@/components/auth/translations";
 import { useLanguage } from "@/features/language";
 import { AuthHoverCard } from "@/components/auth/hover-card/AuthHoverCard";
 import { UserHoverCard } from "@/components/auth/user-menu/UserHoverCard";
+import { navigationTranslations } from "@/features/language/translations/features";
 
 export function Navigation() {
   const { currentLanguage } = useLanguage();
   const { isAuthenticated, user, logout } = useAuth();
   const translations = getLoginTranslations(currentLanguage.code);
   
-  const navTranslations = navigationTranslations[currentLanguage.code as keyof typeof navigationTranslations] || navigationTranslations.en;
+  const navTranslations = navigationTranslations[currentLanguage.code] || navigationTranslations.en;
   
   const handleLinkClick = () => {
     window.scrollTo(0, 0);

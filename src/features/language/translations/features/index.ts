@@ -5,3 +5,4 @@ export { footerTranslations, type FooterTranslations } from './footer';
 export { cookieConsentTranslations, type CookieConsentTranslations } from './cookieConsent';
 export { adminTranslations, type AdminTranslations } from './admin';
 export { contactTranslations } from './contact';
+export { navigationTranslations, type NavigationTranslations } from './navigation';

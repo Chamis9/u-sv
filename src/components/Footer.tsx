@@ -4,10 +4,17 @@ import { useLanguage } from "@/features/language";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { ContactInfo } from "@/components/contact/ContactInfo";
+import { navigationTranslations, contactTranslations } from "@/features/language/translations/features";
 
 export function Footer() {
-  const { translations } = useLanguage();
-  const { footer, ...contactTranslations } = translations;
+  const { translations, currentLanguage } = useLanguage();
+  const { footer } = translations;
+  
+  // Get the contact translations directly from the imported contactTranslations
+  const contactT = contactTranslations[currentLanguage.code];
+
+  // Get navigation translations
+  const navTranslations = navigationTranslations[currentLanguage.code] || navigationTranslations.en;
 
   const handleOpenCookieSettings = () => {
     if (window.openCookieSettings) {
@@ -28,7 +35,7 @@ export function Footer() {
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="w-full md:w-1/2 mb-4 md:mb-0">
-            <ContactInfo translations={contactTranslations} />
+            <ContactInfo translations={contactT} />
           </div>
           <div className="flex flex-col md:w-1/2 items-end gap-4">
             <div>
@@ -43,7 +50,7 @@ export function Footer() {
                 className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1.5 text-sm"
               >
                 <Mail size={16} />
-                {navigationTranslations[translations.currentLanguage.code].contact}
+                {navTranslations.contact}
               </Link>
               <Button 
                 variant="ghost" 
