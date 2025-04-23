@@ -1,5 +1,5 @@
 
-import { Heart, Cookie, Shield } from "lucide-react";
+import { Heart, Cookie, Shield, Mail } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
@@ -19,16 +19,17 @@ export function Footer() {
     window.scrollTo(0, 0);
   };
 
+  const handleLinkClick = () => {
+    window.scrollTo(0, 0);
+  };
+
   return (
     <footer className="bg-gradient-to-b from-gray-900 to-black py-8 px-4 text-gray-300 border-t border-gray-800">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-          {/* Kontaktinformācija kā atsevišķs bloks */}
           <div className="w-full md:w-1/2 mb-4 md:mb-0">
-            {/* Izmantojam contactTranslations atslēgas, kas atbilst ContactInfo props */}
             <ContactInfo translations={contactTranslations} />
           </div>
-          {/* Saites un meta-info */}
           <div className="flex flex-col md:w-1/2 items-end gap-4">
             <div>
               <p className="text-sm text-gray-400">
@@ -36,6 +37,14 @@ export function Footer() {
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-4">
+              <Link 
+                to="/contact" 
+                onClick={handleLinkClick}
+                className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1.5 text-sm"
+              >
+                <Mail size={16} />
+                {navigationTranslations[translations.currentLanguage.code].contact}
+              </Link>
               <Button 
                 variant="ghost" 
                 size="sm" 
