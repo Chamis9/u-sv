@@ -7,6 +7,7 @@ export type FooterTranslations = {
   location: string;
   cookieSettings: string;
   privacyPolicy: string;
+  contactLink?: string;
 };
 
 export const footerTranslations: Record<string, FooterTranslations> = {
@@ -15,20 +16,23 @@ export const footerTranslations: Record<string, FooterTranslations> = {
     madeWith: "Radīts ar",
     location: "Latvijā",
     cookieSettings: "Sīkdatņu iestatījumi",
-    privacyPolicy: "Privātuma politika"
+    privacyPolicy: "Privātuma politika",
+    contactLink: "Kontakti"
   },
   en: {
     allRightsReserved: "All rights reserved.",
     madeWith: "Made with",
     location: "in Latvia",
     cookieSettings: "Cookie Settings",
-    privacyPolicy: "Privacy Policy"
+    privacyPolicy: "Privacy Policy",
+    contactLink: "Contact"
   },
   ru: {
     allRightsReserved: "Все права защищены.",
     madeWith: "Создано с",
     location: "в Латвии",
     cookieSettings: "Настройки файлов cookie",
-    privacyPolicy: "Политика конфиденциальности"
+    privacyPolicy: "Политика конфиденциальности",
+    contactLink: "Контакты"
   }
 };

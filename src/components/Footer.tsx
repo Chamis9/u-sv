@@ -1,11 +1,11 @@
 
-import { Heart, Cookie, Shield } from "lucide-react";
+import { Heart, Cookie, Shield, Mail } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 
 export function Footer() {
-  const { translations } = useLanguage();
+  const { translations, currentLanguage } = useLanguage();
   const { footer } = translations;
 
   const handleOpenCookieSettings = () => {
@@ -14,7 +14,7 @@ export function Footer() {
     }
   };
 
-  const handlePrivacyPolicyClick = () => {
+  const handleLinkClick = () => {
     window.scrollTo(0, 0);
   };
 
@@ -28,6 +28,14 @@ export function Footer() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-4">
+            <Link 
+              to="/contact" 
+              onClick={handleLinkClick}
+              className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1.5 text-sm"
+            >
+              <Mail size={16} />
+              {footer.contactLink || "Kontakti"}
+            </Link>
             <Button 
               variant="ghost" 
               size="sm" 
@@ -43,7 +51,7 @@ export function Footer() {
               className="text-gray-400 hover:text-orange-500"
               asChild
             >
-              <Link to="/privacy-policy" onClick={handlePrivacyPolicyClick}>
+              <Link to="/privacy-policy" onClick={handleLinkClick}>
                 <Shield className="h-4 w-4 mr-2" />
                 <span className="text-xs">{footer.privacyPolicy}</span>
               </Link>
