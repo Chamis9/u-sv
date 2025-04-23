@@ -34,8 +34,8 @@ export const Hero = memo(function Hero() {
         </script>
       </Helmet>
       
-      {/* Pielāgojam overlay slāni atkarībā no tēmas režīma */}
-      <div className={`absolute inset-0 ${isDarkMode ? 'bg-black/10' : 'bg-black/40'} z-0`}></div>
+      {/* Noņemam overlay tumšajā režīmā */}
+      {!isDarkMode && <div className="absolute inset-0 bg-black/40 z-0"></div>}
       
       <FallingTickets />
       
