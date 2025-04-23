@@ -7,10 +7,10 @@ export type FooterTranslations = {
   location: string;
   cookieSettings: string;
   privacyPolicy: string;
-  contactLink: string; // Added contactLink property
+  contactLink: string; // Ensure this is a required property
 };
 
-export const footerTranslations: Record<string, FooterTranslations> = {
+export const footerTranslations: Record<Language['code'], FooterTranslations> = {
   lv: {
     allRightsReserved: "© 2025 netieku.es",
     madeWith: "Radīts ar",
