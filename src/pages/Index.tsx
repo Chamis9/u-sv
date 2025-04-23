@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 const Index = () => {
   return (
-    <ThemeProvider>
+    <ThemeProvider defaultTheme="light" disableToggle={true}>
       <div className="min-h-screen flex flex-col dark:bg-gray-900">
         <SEO />
         <Header />
