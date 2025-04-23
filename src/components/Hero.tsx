@@ -1,4 +1,5 @@
-import { memo, useState, useEffect } from "react";
+
+import { memo } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
 import { FallingTickets } from "@/components/FallingTickets";
