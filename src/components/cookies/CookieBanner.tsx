@@ -99,7 +99,7 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
                   variant="destructive"
                   size="sm"
                   onClick={handleDeclineAll}
-                  className="bg-red-600 hover:bg-red-700 text-white"
+                  className="bg-orange-600 hover:bg-orange-700 text-white"
                 >
                   {cookieConsent.decline}
                 </Button>
@@ -125,3 +125,4 @@ export function CookieBanner({ cookieConsent, onLearnMore, onAccept }: CookieBan
     </div>
   );
 }
+

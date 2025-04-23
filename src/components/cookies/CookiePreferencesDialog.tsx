@@ -125,7 +125,10 @@ export function CookiePreferencesDialog({
           </p>
 
           <div className="mt-4">
-            <Button onClick={() => onSave(cookiePreferences)} className="bg-orange-500 hover:bg-orange-600 text-white">
+            <Button 
+              onClick={() => onSave(cookiePreferences)} 
+              className="bg-orange-500 hover:bg-orange-600 text-white"
+            >
               {cookieConsent.savePreferences || cookieConsent.accept}
             </Button>
           </div>
@@ -134,3 +137,4 @@ export function CookiePreferencesDialog({
     </Dialog>
   );
 }
+
