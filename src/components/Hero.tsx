@@ -1,16 +1,12 @@
-
 import { memo } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
 import { FallingTickets } from "@/components/FallingTickets";
 import { Helmet } from "react-helmet-async";
-import { useTheme } from "./theme/ThemeProvider";
 
 export const Hero = memo(function Hero() {
   const { translations } = useLanguage();
   const { hero } = translations;
-  const { theme } = useTheme();
-  const isDarkMode = theme === "dark";
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -34,8 +30,7 @@ export const Hero = memo(function Hero() {
         </script>
       </Helmet>
       
-      {/* Noņemam overlay tumšajā režīmā */}
-      {!isDarkMode && <div className="absolute inset-0 bg-black/40 z-0"></div>}
+      <div className="absolute inset-0 bg-black/40 z-0"></div>
       
       <FallingTickets />
       
