@@ -1,3 +1,4 @@
+
 import { memo } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
@@ -19,6 +20,11 @@ export const Hero = memo(function Hero() {
     }
   };
 
+  // Light mode bg image
+  const bgLight = "url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80')";
+  // Dark mode bg image
+  const bgDark = "url('https://images.unsplash.com/photo-1522158637959-30385a09e0da?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')";
+
   return (
     <section 
       id="hero" 
@@ -30,14 +36,23 @@ export const Hero = memo(function Hero() {
         </script>
       </Helmet>
       
-      <div className="absolute inset-0 bg-black/40 z-0"></div>
+      {/* Overlay ONLY in light mode */}
+      <div className="absolute inset-0 bg-black/40 z-0 dark:hidden"></div>
       
       <FallingTickets />
       
-      <div 
-        className="absolute inset-0 z-[-1] bg-cover bg-center will-change-transform"
-        style={{ 
-          backgroundImage: "url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80')"
+      {/* Background image - switches based on dark mode */}
+      <div
+        className="absolute inset-0 z-[-1] bg-cover bg-center will-change-transform transition-all duration-200"
+        style={{
+          backgroundImage: bgLight,
+        }}
+        aria-hidden="true"
+      ></div>
+      <div
+        className="absolute inset-0 z-[-1] bg-cover bg-center will-change-transform transition-all duration-200 hidden dark:block"
+        style={{
+          backgroundImage: bgDark,
         }}
         aria-hidden="true"
       ></div>
