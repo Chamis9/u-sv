@@ -1,4 +1,3 @@
-
 import { memo } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
@@ -23,7 +22,7 @@ export const Hero = memo(function Hero() {
   return (
     <section 
       id="hero" 
-      className="relative h-[80vh] flex items-center justify-center overflow-hidden bg-white dark:bg-gray-100"
+      className="relative h-[80vh] flex items-center justify-center overflow-hidden"
     >
       <Helmet>
         <script type="application/ld+json">
@@ -31,7 +30,7 @@ export const Hero = memo(function Hero() {
         </script>
       </Helmet>
       
-      <div className="absolute inset-0 bg-black/40 dark:bg-white/10 z-0"></div>
+      <div className="absolute inset-0 bg-black/40 z-0"></div>
       
       <FallingTickets />
       
@@ -45,16 +44,16 @@ export const Hero = memo(function Hero() {
       
       <div className="container mx-auto px-4 z-10 text-center py-20">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold text-black dark:text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
             {hero.title} <span className="text-gradient">{hero.titleHighlight}</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-black/90 dark:text-gray-800 mb-8">
+          <p className="text-xl md:text-2xl text-white/90 mb-8">
             {hero.subtitle}
           </p>
           
           <div className="flex flex-col items-center space-y-6">
-            <p className="text-black dark:text-gray-900 text-lg">
+            <p className="text-white text-lg">
               {hero.subscribeText}
             </p>
             <div className="w-full max-w-md mx-auto">
@@ -65,7 +64,7 @@ export const Hero = memo(function Hero() {
           <div className="pt-12">
             <a 
               href="#how-it-works" 
-              className="inline-flex items-center text-black dark:text-gray-900 hover:text-orange-300 transition-colors"
+              className="inline-flex items-center text-white hover:text-orange-300 transition-colors"
               aria-label="Learn more about how it works"
             >
               <span className="mr-2">{hero.learnMoreBtn}</span>
