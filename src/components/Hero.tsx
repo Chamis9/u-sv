@@ -1,5 +1,5 @@
 
-import { memo } from "react";
+import { memo, useState, useEffect } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
 import { FallingTickets } from "@/components/FallingTickets";
@@ -8,6 +8,7 @@ import { Helmet } from "react-helmet-async";
 export const Hero = memo(function Hero() {
   const { translations } = useLanguage();
   const { hero } = translations;
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -20,9 +21,30 @@ export const Hero = memo(function Hero() {
     }
   };
 
-  // Vienīgais fona attēls abos režīmos
-  const backgroundImage =
-    "url('https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/backgrounds//netieku_bilesu_pardosana_fons_1.jpeg')";
+  // Corrected Supabase URL (removed double slash)
+  const primaryImage = "url('https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/backgrounds/netieku_bilesu_pardosana_fons_1.jpeg')";
+  
+  // Fallback image in case Supabase storage is not accessible
+  const fallbackImage = "url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=2074&q=80')";
+  
+  const [backgroundImage, setBackgroundImage] = useState(fallbackImage);
+
+  // Check if the Supabase image exists and can be loaded
+  useEffect(() => {
+    const img = new Image();
+    img.src = "https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/backgrounds/netieku_bilesu_pardosana_fons_1.jpeg";
+    
+    img.onload = () => {
+      setBackgroundImage(primaryImage);
+      setImageLoaded(true);
+    };
+    
+    img.onerror = () => {
+      console.error("Supabase image failed to load, using fallback");
+      setBackgroundImage(fallbackImage);
+      setImageLoaded(true);
+    };
+  }, []);
 
   return (
     <section
@@ -40,12 +62,14 @@ export const Hero = memo(function Hero() {
 
       <FallingTickets />
 
-      {/* Vienīgais fona attēls (abiem režīmiem) */}
-      <div
-        className="absolute inset-0 z-[-1] bg-cover bg-center transition-all duration-700"
-        style={{ backgroundImage: backgroundImage }}
-        aria-hidden="true"
-      ></div>
+      {/* Fona attēls ar ielādes pārbaudi */}
+      {imageLoaded && (
+        <div
+          className="absolute inset-0 z-[-1] bg-cover bg-center transition-all duration-700"
+          style={{ backgroundImage: backgroundImage }}
+          aria-hidden="true"
+        ></div>
+      )}
 
       <div className="container mx-auto px-4 z-10 text-center py-20">
         <div className="max-w-4xl mx-auto">
