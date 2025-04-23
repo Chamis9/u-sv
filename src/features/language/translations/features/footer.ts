@@ -1,15 +1,4 @@
 
-import { Language } from '../../types';
-
-export type FooterTranslations = {
-  allRightsReserved: string;
-  madeWith: string;
-  location: string;
-  cookieSettings: string;
-  privacyPolicy: string;
-  contactLink: string; // Ensure this is a required property
-};
-
 export const footerTranslations: Record<Language['code'], FooterTranslations> = {
   lv: {
     allRightsReserved: "© 2025 netieku.es",
@@ -20,7 +9,7 @@ export const footerTranslations: Record<Language['code'], FooterTranslations> = 
     contactLink: "Kontakti"
   },
   en: {
-    allRightsReserved: "All rights reserved.",
+    allRightsReserved: "© 2025 netieku.es",
     madeWith: "Made with",
     location: "in Latvia",
     cookieSettings: "Cookie Settings",
@@ -28,7 +17,7 @@ export const footerTranslations: Record<Language['code'], FooterTranslations> = 
     contactLink: "Contact"
   },
   ru: {
-    allRightsReserved: "Все права защищены.",
+    allRightsReserved: "© 2025 netieku.es",
     madeWith: "Создано с",
     location: "в Латвии",
     cookieSettings: "Настройки файлов cookie",
