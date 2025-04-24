@@ -12,7 +12,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { FlagIcon } from "./FlagIcon";
 import { LanguageDropdownItem } from "./LanguageDropdownItem";
 
-export const LanguageSelector = memo(function LanguageSelector() {
+interface LanguageSelectorProps {
+  className?: string;
+}
+
+export const LanguageSelector = memo(function LanguageSelector({ className }: LanguageSelectorProps) {
   const { currentLanguage, setLanguage } = useLanguage();
   const isMobile = useIsMobile();
 
@@ -22,7 +26,7 @@ export const LanguageSelector = memo(function LanguageSelector() {
         <DropdownMenuTrigger asChild>
           <Button 
             variant="outline" 
-            className="rounded-full bg-white/10 backdrop-blur-sm text-white dark:text-foreground dark:bg-secondary/20 border-white/20 hover:bg-white/20 dark:hover:bg-secondary/30"
+            className={`rounded-full bg-white/10 backdrop-blur-sm text-black border-black hover:bg-white/20 ${className || ''}`}
           >
             <FlagIcon countryCode={currentLanguage.flag} />
             <span>{currentLanguage.name}</span>
@@ -30,7 +34,7 @@ export const LanguageSelector = memo(function LanguageSelector() {
         </DropdownMenuTrigger>
         <DropdownMenuContent 
           align="end" 
-          className="bg-white/90 dark:bg-background/90 backdrop-blur-sm border-white/20 dark:border-border"
+          className="bg-white/90 backdrop-blur-sm border-black"
         >
           {languages.map((language) => (
             <LanguageDropdownItem
