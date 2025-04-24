@@ -23,6 +23,7 @@ export function getLoginTranslations(language: string) {
       invalidEmail: 'Lūdzu, ievadiet derīgu e-pasta adresi',
       requiredField: 'Šis lauks ir obligāts',
       passwordTooShort: 'Parolei jābūt vismaz 6 simbolus garai',
+      passwordMinLength: 'Parolei jābūt vismaz 8 simbolus garai',
       phoneOptional: '(neobligāts)',
       countryCode: 'Valsts kods',
       loginSuccess: 'Veiksmīga ielogošanās!'
@@ -52,6 +53,7 @@ export function getLoginTranslations(language: string) {
       invalidEmail: 'Пожалуйста, введите корректный email',
       requiredField: 'Это поле обязательно',
       passwordTooShort: 'Пароль должен содержать не менее 6 символов',
+      passwordMinLength: 'Пароль должен содержать не менее 8 символов',
       phoneOptional: '(необязательно)',
       countryCode: 'Код страны',
       loginSuccess: 'Вход выполнен успешно!'
@@ -81,6 +83,7 @@ export function getLoginTranslations(language: string) {
     invalidEmail: 'Please enter a valid email address',
     requiredField: 'This field is required',
     passwordTooShort: 'Password must be at least 6 characters long',
+    passwordMinLength: 'Password must be at least 8 characters long',
     phoneOptional: '(optional)',
     countryCode: 'Country Code',
     loginSuccess: 'Successfully logged in!'
