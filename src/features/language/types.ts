@@ -1,4 +1,3 @@
-
 // Remove the circular import
 // import { Translations } from './types';
 
@@ -99,7 +98,7 @@ export interface Translations {
   // Added missing properties
   navigation?: {
     home?: string;
-    about?: string;
+    events?: string;
     tickets?: string;
     contact?: string;
   };
