@@ -1,4 +1,5 @@
-import { Landmark, Cookie, Shield, Mail, Building2 } from "lucide-react";
+
+import { Landmark, Cookie, Shield, Mail, Building2, Heart } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
