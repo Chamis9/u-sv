@@ -22,9 +22,9 @@ export function Header() {
         <Navigation />
         
         <div className="flex items-center gap-2 md:gap-4 text-white">
-          <LanguageSelector />
           <ThemeToggle />
           <AuthHoverCard translations={translations} currentLanguage={currentLanguage} />
+          <LanguageSelector />
         </div>
       </div>
     </header>
