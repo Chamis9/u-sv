@@ -5,10 +5,7 @@ import {
   howItWorksTranslations, 
   footerTranslations, 
   cookieConsentTranslations,
-  adminTranslations,
-  navigationTranslations,
-  themeTranslations,
-  languageSelectorTranslations
+  adminTranslations
 } from './features';
 
 export const ruTranslations: Translations = {
@@ -16,9 +13,5 @@ export const ruTranslations: Translations = {
   howItWorks: howItWorksTranslations.ru,
   cookieConsent: cookieConsentTranslations.ru,
   footer: footerTranslations.ru,
-  admin: adminTranslations.ru,
-  // Add the new translations
-  navigation: navigationTranslations.ru,
-  theme: themeTranslations.ru,
-  language: languageSelectorTranslations.ru
+  admin: adminTranslations.ru
 };

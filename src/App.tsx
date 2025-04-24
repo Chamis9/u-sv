@@ -14,9 +14,6 @@ import { AuthProvider } from "./contexts/AuthContext";
 // Import directly instead of lazy loading to fix dynamic import issues
 import Index from "./pages/Index";
 import Contact from "./pages/Contact";
-import Events from "./pages/Events";
-import Tickets from "./pages/Tickets";
-import AboutUs from "./pages/AboutUs";
 
 // Lazy load other pages for better performance
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -80,9 +77,6 @@ const App = () => {
                 <Suspense fallback={<PageLoader />}>
                   <Routes>
                     <Route path="/" element={<Index />} />
-                    <Route path="/events" element={<Events />} />
-                    <Route path="/tickets" element={<Tickets />} />
-                    <Route path="/about-us" element={<AboutUs />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/admin/*" element={<Admin />} />

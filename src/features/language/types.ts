@@ -95,27 +95,6 @@ export interface Translations {
       sendMessage?: string;
     };
   };
-  aboutUs?: {
-    title: string;
-    content: string[];
-  };
-  navigation?: {
-    home?: string;
-    events?: string;
-    tickets?: string;
-    contact?: string;
-    aboutUs?: string;
-  };
-  theme?: {
-    label?: string;
-    light?: string;
-    dark?: string;
-    system?: string;
-  };
-  language?: {
-    label?: string;
-    selector?: string;
-  };
 }
 
 export interface Language {

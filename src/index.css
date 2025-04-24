@@ -109,11 +109,6 @@
   .hardware-accelerated {
     transform: translateZ(0);
   }
-
-  /* Auth card tab styles */
-  .auth-tab[data-state="active"] {
-    @apply bg-orange-500 text-white;
-  }
 }
 
 @keyframes fall {
