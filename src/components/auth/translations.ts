@@ -26,6 +26,10 @@ export const getLoginTranslations = (code: string) => {
       phoneNumberPlaceholder: "Ievadiet telefona numuru",
       phoneOptional: "",
       passwordMinLength: "Parolei jābūt vismaz 8 rakstzīmes garai",
+      myAccount: "Mans konts",
+      myTickets: "Manas biļetes",
+      logout: "Iziet",
+      loginSuccess: "Veiksmīga pieslēgšanās",
     },
     en: {
       title: "Login",
@@ -51,6 +55,10 @@ export const getLoginTranslations = (code: string) => {
       phoneNumberPlaceholder: "Enter phone number",
       phoneOptional: "",
       passwordMinLength: "Password must be at least 8 characters long",
+      myAccount: "My Account",
+      myTickets: "My Tickets",
+      logout: "Logout",
+      loginSuccess: "Successfully logged in",
     },
     ru: {
       title: "Войти",
@@ -76,6 +84,10 @@ export const getLoginTranslations = (code: string) => {
       phoneNumberPlaceholder: "Введите номер телефона",
       phoneOptional: "",
       passwordMinLength: "Пароль должен содержать не менее 8 символов",
+      myAccount: "Мой аккаунт",
+      myTickets: "Мои билеты",
+      logout: "Выйти",
+      loginSuccess: "Успешный вход в систему",
     },
   };
 
