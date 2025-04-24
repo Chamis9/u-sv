@@ -11,6 +11,7 @@ import { LoginDialog } from "./auth/LoginDialog";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserHoverCard } from "./auth/user-menu/UserHoverCard";
+import { getLoginTranslations } from "./auth/translations";
 
 export function Header() {
   const navigationLinks = getNavigationLinks();

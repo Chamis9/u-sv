@@ -1,3 +1,4 @@
+
 // Remove the circular import
 // import { Translations } from './types';
 
@@ -115,6 +116,11 @@ export interface Translations {
   language?: {
     label?: string;
     selector?: string;
+  };
+  auth?: {
+    myAccount?: string;
+    myTickets?: string;
+    logout?: string;
   };
 }
 

@@ -6,16 +6,25 @@ import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { User } from "@/types/users";
 import { useTheme } from "@/components/theme/ThemeProvider";
+import { Translations } from "@/features/language";
 
+// Update the interface to accept the entire translations object
 interface UserHoverCardProps {
   user: User;
-  translations: Record<string, string>;
+  translations: Translations; // Changed from Record<string, string> to Translations
   onLogout: () => void;
   onLinkClick: () => void;
 }
 
 export function UserHoverCard({ user, translations, onLogout, onLinkClick }: UserHoverCardProps) {
   const { theme } = useTheme();
+  
+  // Get the auth translations using the getLoginTranslations function
+  const authTranslations = {
+    myAccount: translations.auth?.myAccount || "My Account",
+    myTickets: translations.auth?.myTickets || "My Tickets",
+    logout: translations.auth?.logout || "Logout"
+  };
 
   return (
     <HoverCard>
@@ -24,7 +33,7 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
           variant="ghost"
           size="icon"
           className="text-white hover:text-orange-400 transition-colors relative z-10"
-          title={translations.myAccount}
+          title={authTranslations.myAccount}
         >
           <UserAvatar user={user} size="sm" />
         </Button>
@@ -49,7 +58,7 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
             onClick={onLinkClick}
           >
             <Settings className="h-4 w-4" />
-            <span className="text-sm">{translations.myAccount}</span>
+            <span className="text-sm">{authTranslations.myAccount}</span>
           </Link>
           
           <Link
@@ -58,7 +67,7 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
             onClick={onLinkClick}
           >
             <Mail className="h-4 w-4" />
-            <span className="text-sm">{translations.myTickets}</span>
+            <span className="text-sm">{authTranslations.myTickets}</span>
           </Link>
           
           <div className="border-t">
@@ -68,7 +77,7 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
               className="flex items-center gap-2 w-full px-4 py-3 justify-start hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <LogOut className="h-4 w-4" />
-              <span className="text-sm">{translations.logout}</span>
+              <span className="text-sm">{authTranslations.logout}</span>
             </Button>
           </div>
         </div>
