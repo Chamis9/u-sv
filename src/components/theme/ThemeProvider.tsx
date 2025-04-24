@@ -24,6 +24,16 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
+// Create a global variable to store the theme state
+let globalThemeState: Theme | null = null;
+let globalThemeSetters: ((theme: Theme) => void)[] = [];
+
+// Function to update all theme instances
+const updateAllThemeInstances = (newTheme: Theme) => {
+  globalThemeState = newTheme;
+  globalThemeSetters.forEach(setter => setter(newTheme));
+};
+
 export function ThemeProvider({
   children,
   defaultTheme = "system",
@@ -31,14 +41,24 @@ export function ThemeProvider({
   disableToggle = false,
   ...props
 }: ThemeProviderProps) {
-  // If toggle is disabled, always use the defaultTheme
-  const initialTheme = disableToggle 
-    ? defaultTheme 
-    : (localStorage.getItem(storageKey) as Theme) || defaultTheme;
+  // Initialize from global state or localStorage
+  const initialTheme = globalThemeState || localStorage.getItem(storageKey) as Theme || defaultTheme;
   
   const [theme, setThemeState] = useState<Theme>(initialTheme);
 
+  // Register this setter with the global list
   useEffect(() => {
+    const setter = (newTheme: Theme) => setThemeState(newTheme);
+    globalThemeSetters.push(setter);
+    return () => {
+      globalThemeSetters = globalThemeSetters.filter(s => s !== setter);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Update the global theme state
+    globalThemeState = theme;
+    
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
 
@@ -56,9 +76,11 @@ export function ThemeProvider({
   }, [theme]);
 
   const setTheme = useCallback((newTheme: Theme) => {
-    // Always allow theme changes, regardless of disableToggle setting
+    // Store in localStorage
     localStorage.setItem(storageKey, newTheme);
-    setThemeState(newTheme);
+    
+    // Update all instances
+    updateAllThemeInstances(newTheme);
   }, [storageKey]);
 
   const value = useMemo(
