@@ -22,7 +22,7 @@ export const LanguageSelector = memo(function LanguageSelector() {
         <DropdownMenuTrigger asChild>
           <Button 
             variant="outline" 
-            className="rounded-full bg-white/10 backdrop-blur-sm text-white dark:text-foreground dark:bg-secondary/20 border-white/20 hover:bg-white/20 dark:hover:bg-secondary/30"
+            className="rounded-full bg-white/80 backdrop-blur-sm text-black dark:text-foreground dark:bg-secondary/20 border-gray-200 dark:border-white/20 hover:bg-white/90 dark:hover:bg-secondary/30"
           >
             <FlagIcon countryCode={currentLanguage.flag} />
             <span>{currentLanguage.name}</span>
@@ -30,7 +30,7 @@ export const LanguageSelector = memo(function LanguageSelector() {
         </DropdownMenuTrigger>
         <DropdownMenuContent 
           align="end" 
-          className="bg-white/90 dark:bg-background/90 backdrop-blur-sm border-white/20 dark:border-border"
+          className="bg-white/90 dark:bg-background/90 backdrop-blur-sm border-gray-200 dark:border-border"
         >
           {languages.map((language) => (
             <LanguageDropdownItem
