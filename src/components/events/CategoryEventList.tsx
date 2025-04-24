@@ -1,8 +1,9 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin } from "lucide-react";
+import { Calendar, MapPin, ArrowLeft } from "lucide-react";
+import { useLanguage } from "@/features/language";
 
 interface Event {
   id: number;
@@ -113,6 +114,7 @@ export function CategoryEventList() {
   const { category } = useParams<{ category: string }>();
   const events = category ? categoryEvents[category] : [];
   const categoryTitle = category ? categoryTitles[category] : "";
+  const { translations } = useLanguage();
 
   if (!events) {
     return <div className="text-center p-8">Kategorija nav atrasta</div>;
@@ -123,9 +125,17 @@ export function CategoryEventList() {
       <main className="flex-grow pt-24 pb-12">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              <span className="text-orange-500">{categoryTitle}</span>
-            </h1>
+            <div className="mb-6">
+              <Link to="/events">
+                <Button variant="ghost" className="mb-4">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Atpakaļ uz pasākumiem
+                </Button>
+              </Link>
+              <h1 className="text-4xl md:text-5xl font-bold">
+                <span className="text-orange-500">{categoryTitle}</span>
+              </h1>
+            </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {events.map((event) => (
                 <Card key={event.id} className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
