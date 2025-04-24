@@ -2,8 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/features/language";
 import { useSubscribeForm } from "@/hooks/useSubscribeForm";
-import { usePreviousEmails } from "@/hooks/usePreviousEmails";
-import { EmailDropdown } from "@/components/subscribe/EmailDropdown";
 
 export function SubscribeForm() {
   const { currentLanguage } = useLanguage();
@@ -15,34 +13,22 @@ export function SubscribeForm() {
     setFormError, 
     handleSubmit 
   } = useSubscribeForm();
-  
-  const { 
-    previousEmails, 
-    showDropdown, 
-    setShowDropdown 
-  } = usePreviousEmails();
 
   const texts = getTranslations(currentLanguage.code);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    setShowDropdown(e.target.value.length > 0);
     if (formError) setFormError("");
   };
 
-  const handleEmailSelect = (selectedEmail: string) => {
-    setEmail(selectedEmail);
-    setShowDropdown(false);
-  };
-
-  const checkForAutofill = (e: React.FocusEvent<HTMLInputElement>) => {
-    if (e.target.classList.contains('using-autofill')) {
-      setShowDropdown(false);
-      return;
-    }
-    
-    if (previousEmails.length > 0) {
-      setShowDropdown(true);
+  const getPlaceholder = () => {
+    switch (currentLanguage.code) {
+      case 'lv':
+        return "E-pasts";
+      case 'ru':
+        return "Электронная почта";
+      default:
+        return "Email";
     }
   };
 
@@ -54,11 +40,10 @@ export function SubscribeForm() {
       <div className="relative flex-grow">
         <Input
           type="email"
-          placeholder={texts.placeholder}
+          placeholder={getPlaceholder()}
           value={email}
           onChange={handleEmailChange}
-          onFocus={checkForAutofill}
-          onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+          autoComplete="email"
           required
           aria-invalid={formError ? "true" : "false"}
           className="flex-grow h-12 text-base font-playfair placeholder-orange-500/70 bg-white dark:bg-gray-800 dark:text-white border-orange-300/50" 
@@ -67,12 +52,6 @@ export function SubscribeForm() {
         {formError && (
           <div className="text-red-500 text-sm mt-1">{formError}</div>
         )}
-        
-        <EmailDropdown 
-          showDropdown={showDropdown}
-          previousEmails={previousEmails}
-          onEmailSelect={handleEmailSelect}
-        />
       </div>
       
       <Button 
