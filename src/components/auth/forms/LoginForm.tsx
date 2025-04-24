@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { EmailInput } from "../EmailInput";
 import { PasswordInput } from "../PasswordInput";
 import { loginFormSchema, type LoginFormData } from "../schema";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface LoginFormProps {
   translations: any;
@@ -18,6 +19,7 @@ interface LoginFormProps {
 export function LoginForm({ translations, onClose }: LoginFormProps) {
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
+  const { refreshUserData } = useAuth();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginFormSchema),
@@ -42,6 +44,11 @@ export function LoginForm({ translations, onClose }: LoginFormProps) {
       toast({
         description: translations.resetPasswordSent,
       });
+    } else {
+      toast({
+        variant: "destructive",
+        description: error.message,
+      });
     }
   };
 
@@ -57,10 +64,16 @@ export function LoginForm({ translations, onClose }: LoginFormProps) {
         variant: "destructive",
         description: translations.invalidCredentials,
       });
+      setIsLoading(false);
     } else {
+      // Refresh user data and display success message
+      await refreshUserData();
+      toast({
+        description: translations.loginSuccess || "Successfully logged in",
+      });
       onClose();
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
