@@ -1,11 +1,9 @@
-
 import React from 'react';
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
-import { Building2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const AboutUs = () => {
@@ -66,10 +64,9 @@ const AboutUs = () => {
         <Header />
         <main className="flex-grow container mx-auto px-4 py-8 mt-20">
           <section className="max-w-4xl mx-auto">
-            <div className="flex items-center gap-3 mb-8">
-              <Building2 className="h-8 w-8 text-orange-500" />
+            <div className="mb-8">
               <h1 className="text-4xl font-bold dark:text-white">
-                {translations.aboutUs?.title}
+                {translations.aboutUs?.title || "Par mums"}
               </h1>
             </div>
             
