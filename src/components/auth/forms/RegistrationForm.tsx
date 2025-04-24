@@ -37,35 +37,71 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
 
   const onSubmit = async (values: RegistrationFormData) => {
     setIsLoading(true);
-    const phoneNumber = values.phoneNumber 
-      ? `${values.countryCode}${values.phoneNumber}` 
-      : null;
+    
+    try {
+      const phoneNumber = values.phoneNumber 
+        ? `${values.countryCode}${values.phoneNumber}` 
+        : null;
 
-    const { error } = await supabase.auth.signUp({
-      email: values.email,
-      password: values.password,
-      options: {
-        data: {
-          first_name: values.firstName,
-          last_name: values.lastName,
-          phone: phoneNumber,
+      const { error } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+        options: {
+          data: {
+            first_name: values.firstName,
+            last_name: values.lastName,
+            phone: phoneNumber,
+          }
         }
-      }
-    });
+      });
 
-    if (error) {
+      if (error) {
+        toast({
+          variant: "destructive",
+          description: translations.registrationError,
+        });
+      } else {
+        toast({
+          description: translations.registrationSuccess,
+        });
+        // Only close after successful registration
+        if (onClose) onClose();
+      }
+    } catch (err) {
+      console.error("Registration error:", err);
       toast({
         variant: "destructive",
         description: translations.registrationError,
       });
-    } else {
-      toast({
-        description: translations.registrationSuccess,
-      });
-      onClose();
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
+
+  // Handle autofill events
+  React.useEffect(() => {
+    const handleAutoFill = () => {
+      // Wait for the browser to populate the fields
+      setTimeout(() => {
+        const formFields = form.getValues();
+        // Update each field that may have been autofilled
+        Object.keys(formFields).forEach((key) => {
+          if (formFields[key]) {
+            form.setValue(key as any, formFields[key]);
+          }
+        });
+      }, 100);
+    };
+    
+    // Listen for autofill events
+    document.addEventListener('DOMContentLoaded', handleAutoFill);
+    document.addEventListener('input', handleAutoFill);
+    
+    return () => {
+      document.removeEventListener('DOMContentLoaded', handleAutoFill);
+      document.removeEventListener('input', handleAutoFill);
+    };
+  }, [form]);
 
   return (
     <Form {...form}>

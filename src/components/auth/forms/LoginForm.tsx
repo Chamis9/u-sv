@@ -47,21 +47,58 @@ export function LoginForm({ translations, onClose }: LoginFormProps) {
 
   const onSubmit = async (values: LoginFormData) => {
     setIsLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: values.email,
-      password: values.password,
-    });
+    
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      });
 
-    if (error) {
+      if (error) {
+        toast({
+          variant: "destructive",
+          description: translations.invalidCredentials,
+        });
+      } else {
+        // Only close on successful login
+        if (onClose) onClose();
+      }
+    } catch (err) {
+      console.error("Login error:", err);
       toast({
         variant: "destructive",
         description: translations.invalidCredentials,
       });
-    } else {
-      onClose();
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
+
+  // Prevent form submission on autofill
+  React.useEffect(() => {
+    const handleAutoFill = () => {
+      // Wait for the browser to populate the fields
+      setTimeout(() => {
+        const emailValue = form.getValues("email");
+        const passwordValue = form.getValues("password");
+        
+        // Only update if values were actually filled
+        if (emailValue || passwordValue) {
+          form.setValue("email", emailValue);
+          form.setValue("password", passwordValue);
+        }
+      }, 100);
+    };
+    
+    // Listen for autofill events
+    document.addEventListener('DOMContentLoaded', handleAutoFill);
+    document.addEventListener('input', handleAutoFill);
+    
+    return () => {
+      document.removeEventListener('DOMContentLoaded', handleAutoFill);
+      document.removeEventListener('input', handleAutoFill);
+    };
+  }, [form]);
 
   return (
     <Form {...form}>

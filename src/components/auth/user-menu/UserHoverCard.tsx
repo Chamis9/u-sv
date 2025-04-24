@@ -24,6 +24,22 @@ export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProp
     return enText;
   };
 
+  // Format email for display to prevent overflow
+  const formatEmail = (email: string) => {
+    if (email.length > 20) {
+      const parts = email.split('@');
+      if (parts.length === 2) {
+        const username = parts[0];
+        const domain = parts[1];
+        
+        if (username.length > 8) {
+          return `${username.substring(0, 8)}...@${domain}`;
+        }
+      }
+    }
+    return email;
+  };
+
   const menuItems = [
     {
       icon: <Settings className="h-4 w-4" />,
@@ -66,11 +82,16 @@ export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProp
         <div className="flex flex-col">
           <div className="flex items-center gap-3 p-4 border-b">
             <UserAvatar user={user} size="md" />
-            <div>
-              <p className="font-medium text-sm">
+            <div className="flex flex-col min-w-0">
+              <p className="font-medium text-sm whitespace-nowrap">
                 {user.first_name} {user.last_name}
               </p>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
+              <p 
+                className="text-sm text-muted-foreground truncate max-w-[180px]" 
+                title={user.email}
+              >
+                {user.email}
+              </p>
             </div>
           </div>
           
