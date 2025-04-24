@@ -7,7 +7,7 @@ import { MobileMenu } from "./header/MobileMenu";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "./ui/hover-card";
-import { UserCircle, Mail, Lock } from "lucide-react";
+import { UserCircle } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserHoverCard } from "./auth/user-menu/UserHoverCard";
@@ -110,7 +110,11 @@ export function Header() {
                   <UserCircle size={20} className="hover:text-orange-400" />
                 </Button>
               </HoverCardTrigger>
-              <HoverCardContent className="w-80 p-0 overflow-hidden">
+              <HoverCardContent 
+                className="w-80 p-0 overflow-hidden"
+                onFocus={(e) => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Tabs 
                   defaultValue={activeTab} 
                   className="w-full" 

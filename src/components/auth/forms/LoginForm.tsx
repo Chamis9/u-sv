@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { EmailInput } from "../EmailInput";
 import { PasswordInput } from "../PasswordInput";
 import { loginFormSchema, type LoginFormData } from "../schema";
+import { usePreviousEmails } from "@/hooks/usePreviousEmails";
 
 interface LoginFormProps {
   translations: any;
@@ -18,6 +18,7 @@ interface LoginFormProps {
 export function LoginForm({ translations, onClose }: LoginFormProps) {
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
+  const { previousEmails, showDropdown, setShowDropdown } = usePreviousEmails();
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginFormSchema),
@@ -49,6 +50,16 @@ export function LoginForm({ translations, onClose }: LoginFormProps) {
     setIsLoading(true);
     
     try {
+      // Save email to localStorage for future autofill suggestions
+      const savedEmails = localStorage.getItem('globalPreviousEmails');
+      const emails = savedEmails ? JSON.parse(savedEmails) : [];
+      if (!emails.includes(values.email)) {
+        emails.unshift(values.email);
+        // Keep only the last 5 emails
+        const updatedEmails = emails.slice(0, 5);
+        localStorage.setItem('globalPreviousEmails', JSON.stringify(updatedEmails));
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
@@ -74,35 +85,63 @@ export function LoginForm({ translations, onClose }: LoginFormProps) {
     }
   };
 
-  // Prevent form submission on autofill
+  // Modified autofill handling to prevent premature form closing
   React.useEffect(() => {
+    let observer: MutationObserver | null = null;
+    
     const handleAutoFill = () => {
-      // Wait for the browser to populate the fields
-      setTimeout(() => {
-        const emailValue = form.getValues("email");
-        const passwordValue = form.getValues("password");
+      // Use mutation observer to detect when autofill happens
+      const formElement = document.querySelector('form');
+      
+      if (formElement && !observer) {
+        observer = new MutationObserver((mutations) => {
+          // Check for autofilled inputs by looking at their background color
+          const autofilled = document.querySelectorAll('input:-webkit-autofill');
+          if (autofilled.length > 0) {
+            // Get the values without triggering form submission
+            setTimeout(() => {
+              const emailValue = form.getValues("email");
+              const passwordValue = form.getValues("password");
+              
+              if (emailValue) form.setValue("email", emailValue);
+              if (passwordValue) form.setValue("password", passwordValue);
+            }, 100);
+          }
+        });
         
-        // Only update if values were actually filled
-        if (emailValue || passwordValue) {
-          form.setValue("email", emailValue);
-          form.setValue("password", passwordValue);
-        }
-      }, 100);
+        // Observe changes to the form
+        observer.observe(formElement, {
+          subtree: true,
+          childList: true,
+          attributeFilter: ['style', 'class'],
+          attributes: true
+        });
+      }
     };
     
-    // Listen for autofill events
-    document.addEventListener('DOMContentLoaded', handleAutoFill);
-    document.addEventListener('input', handleAutoFill);
+    handleAutoFill();
     
     return () => {
-      document.removeEventListener('DOMContentLoaded', handleAutoFill);
-      document.removeEventListener('input', handleAutoFill);
+      if (observer) {
+        observer.disconnect();
+      }
     };
   }, [form]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form 
+        onSubmit={form.handleSubmit(onSubmit)} 
+        className="space-y-4"
+        onFocus={(e) => {
+          // Prevent autofill from bubbling up and closing hover cards
+          e.stopPropagation();
+        }}
+        onClick={(e) => {
+          // Prevent clicks from bubbling up and closing hover cards
+          e.stopPropagation();
+        }}
+      >
         <EmailInput form={form} label={translations.email} />
         <PasswordInput form={form} label={translations.password} />
         <div className="flex items-center justify-between">

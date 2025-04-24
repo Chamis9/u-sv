@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,6 +42,14 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
         ? `${values.countryCode}${values.phoneNumber}` 
         : null;
 
+      const savedEmails = localStorage.getItem('globalPreviousEmails');
+      const emails = savedEmails ? JSON.parse(savedEmails) : [];
+      if (!emails.includes(values.email)) {
+        emails.unshift(values.email);
+        const updatedEmails = emails.slice(0, 5);
+        localStorage.setItem('globalPreviousEmails', JSON.stringify(updatedEmails));
+      }
+
       const { error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
@@ -64,7 +71,6 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
         toast({
           description: translations.registrationSuccess,
         });
-        // Only close after successful registration
         if (onClose) onClose();
       }
     } catch (err) {
@@ -78,34 +84,57 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
     }
   };
 
-  // Handle autofill events
   React.useEffect(() => {
+    let observer: MutationObserver | null = null;
+    
     const handleAutoFill = () => {
-      // Wait for the browser to populate the fields
-      setTimeout(() => {
-        const formFields = form.getValues();
-        // Update each field that may have been autofilled
-        Object.keys(formFields).forEach((key) => {
-          if (formFields[key]) {
-            form.setValue(key as any, formFields[key]);
+      const formElement = document.querySelector('form');
+      
+      if (formElement && !observer) {
+        observer = new MutationObserver((mutations) => {
+          const autofilled = document.querySelectorAll('input:-webkit-autofill');
+          if (autofilled.length > 0) {
+            setTimeout(() => {
+              const formFields = form.getValues();
+              Object.keys(formFields).forEach((key) => {
+                if (formFields[key]) {
+                  form.setValue(key as any, formFields[key]);
+                }
+              });
+            }, 100);
           }
         });
-      }, 100);
+        
+        observer.observe(formElement, {
+          subtree: true,
+          childList: true,
+          attributeFilter: ['style', 'class'],
+          attributes: true
+        });
+      }
     };
     
-    // Listen for autofill events
-    document.addEventListener('DOMContentLoaded', handleAutoFill);
-    document.addEventListener('input', handleAutoFill);
+    handleAutoFill();
     
     return () => {
-      document.removeEventListener('DOMContentLoaded', handleAutoFill);
-      document.removeEventListener('input', handleAutoFill);
+      if (observer) {
+        observer.disconnect();
+      }
     };
   }, [form]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form 
+        onSubmit={form.handleSubmit(onSubmit)} 
+        className="space-y-4"
+        onFocus={(e) => {
+          e.stopPropagation();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <NameFields form={form} translations={translations} />
         <EmailInput form={form} label={translations.email} />
         <PhoneField form={form} translations={translations} />
