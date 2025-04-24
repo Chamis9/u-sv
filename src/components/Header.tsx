@@ -4,9 +4,12 @@ import { Logo } from "./header/Logo";
 import { Navigation, getNavigationLinks } from "./header/Navigation";
 import { ThemeToggle } from "./theme/ThemeToggle";
 import { MobileMenu } from "./header/MobileMenu";
+import { AuthHoverCard } from "./auth/hover-card/AuthHoverCard";
+import { useLanguage } from "@/features/language";
 
 export function Header() {
   const navigationLinks = getNavigationLinks();
+  const { translations, currentLanguage } = useLanguage();
   
   return (
     <header className="fixed top-0 left-0 right-0 z-50 py-3 md:py-4 px-4 md:px-6 bg-black/40 backdrop-blur-sm">
@@ -21,6 +24,7 @@ export function Header() {
         <div className="flex items-center gap-2 md:gap-4 text-white">
           <ThemeToggle />
           <LanguageSelector />
+          <AuthHoverCard translations={translations} currentLanguage={currentLanguage} />
         </div>
       </div>
     </header>

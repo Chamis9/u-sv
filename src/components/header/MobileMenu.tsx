@@ -28,7 +28,7 @@ export function MobileMenu({ links }: MobileMenuProps) {
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[280px] sm:w-[350px] bg-white dark:bg-gray-800">
+      <SheetContent side="left" className="w-[280px] sm:w-[350px] bg-gradient-to-br from-orange-100 to-orange-200 border-none">
         <div className="flex flex-col h-full">
           <div className="mb-6">
             <Logo />
@@ -39,7 +39,7 @@ export function MobileMenu({ links }: MobileMenuProps) {
               <Link
                 key={index}
                 to={link.href}
-                className="px-2 py-3 text-lg font-medium text-gray-800 hover:bg-orange-100 dark:text-white dark:hover:bg-gray-700 rounded-md transition-colors"
+                className="px-2 py-3 text-lg font-medium text-gray-800 hover:bg-orange-300/50 rounded-md transition-colors"
                 onClick={() => setOpen(false)}
               >
                 {link.label}
@@ -49,13 +49,13 @@ export function MobileMenu({ links }: MobileMenuProps) {
           
           <div className="mt-auto space-y-4">
             <div className="flex items-center justify-between px-2">
-              <span className="text-sm font-medium text-gray-800 dark:text-white">
+              <span className="text-sm font-medium text-gray-800">
                 {translations.theme?.label}
               </span>
-              <ThemeToggle />
+              <ThemeToggle className="text-gray-800 hover:text-orange-500" />
             </div>
             <div className="flex items-center justify-between px-2">
-              <span className="text-sm font-medium text-gray-800 dark:text-white">
+              <span className="text-sm font-medium text-gray-800">
                 {translations.language?.label}
               </span>
               <LanguageSelector />

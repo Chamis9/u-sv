@@ -38,7 +38,7 @@ const Tickets = () => {
       <div className="min-h-screen flex flex-col dark:bg-gray-900">
         <SEO />
         <Header />
-        <main className="flex-grow container mx-auto px-4 py-8">
+        <main className="flex-grow container mx-auto px-4 py-8 mt-20">
           <h1 className="text-4xl font-bold mb-8 dark:text-white">Biļetes</h1>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {ticketCategories.map((category, index) => (
