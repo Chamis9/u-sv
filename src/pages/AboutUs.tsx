@@ -64,7 +64,7 @@ const AboutUs = () => {
       <div className="min-h-screen flex flex-col dark:bg-gray-900">
         <SEO />
         <Header />
-        <main className="flex-grow container mx-auto px-4 py-8">
+        <main className="flex-grow container mx-auto px-4 py-8 mt-20">
           <section className="max-w-4xl mx-auto">
             <div className="flex items-center gap-3 mb-8">
               <Building2 className="h-8 w-8 text-orange-500" />
