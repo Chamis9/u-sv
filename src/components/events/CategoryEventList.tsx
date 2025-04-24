@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -112,7 +113,7 @@ const categoryTitles: Record<string, string> = {
   cinema: "Kino",
   children: "Bērniem",
   "gift-cards": "Dāvanu kartes",
-  other: "Citi"
+  other: "Citi pasākumi"
 };
 
 export function CategoryEventList() {
