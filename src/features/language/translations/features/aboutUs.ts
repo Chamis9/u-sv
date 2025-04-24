@@ -1,4 +1,6 @@
 
+import { Language } from '../../types';
+
 export interface AboutUsTranslations {
   title: string;
   content: string[];

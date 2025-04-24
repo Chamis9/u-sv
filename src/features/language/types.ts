@@ -12,7 +12,7 @@ import {
 } from './translations/features';
 
 export interface TranslationObject {
-  [key: string]: string;
+  [key: string]: string | TranslationObject | undefined;
 }
 
 export interface Language {
@@ -31,6 +31,7 @@ export interface Translations {
   theme?: ThemeTranslations;
   language?: LanguageSelectorTranslations;
   events?: EventsTranslations;
+  aboutUs?: { title: string; }; // Added this property
 }
 
 export type { 

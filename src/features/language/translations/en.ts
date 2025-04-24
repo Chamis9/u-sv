@@ -9,7 +9,8 @@ import {
   navigationTranslations,
   themeTranslations,
   languageSelectorTranslations,
-  eventsTranslations
+  eventsTranslations,
+  aboutUsTranslations
 } from './features';
 
 export const enTranslations: Translations = {
@@ -21,5 +22,6 @@ export const enTranslations: Translations = {
   navigation: navigationTranslations.en,
   theme: themeTranslations.en,
   language: languageSelectorTranslations.en,
-  events: eventsTranslations.en
+  events: eventsTranslations.en,
+  aboutUs: aboutUsTranslations.en
 };

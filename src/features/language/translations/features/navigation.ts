@@ -3,6 +3,7 @@ export interface NavigationTranslations {
   events: string;
   tickets: string;
   contact: string;
+  aboutUs: string;
 }
 
 export interface ThemeTranslations {
@@ -22,19 +23,22 @@ export const navigationTranslations = {
     home: "Sākumlapa",
     events: "Pasākumi",
     tickets: "Biļetes",
-    contact: "Kontakti"
+    contact: "Kontakti",
+    aboutUs: "Par mums"
   },
   en: {
     home: "Home",
     events: "Events",
     tickets: "Tickets",
-    contact: "Contact"
+    contact: "Contact",
+    aboutUs: "About Us"
   },
   ru: {
     home: "Главная",
     events: "События",
     tickets: "Билеты",
-    contact: "Контакты"
+    contact: "Контакты",
+    aboutUs: "О нас"
   }
 };
 

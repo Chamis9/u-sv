@@ -14,35 +14,40 @@ export const getNavItems = (
   userCount: number, 
   subscriberCount: number
 ) => {
+  // Extract admin translations safely
+  const adminTranslations = translations.admin as TranslationObject | undefined;
+  const tabs = adminTranslations?.tabs as TranslationObject | undefined;
+  const logout = adminTranslations?.logout as string || 'Logout';
+
   const items = [
     {
       id: 'dashboard',
       icon: <Home />,
-      label: translations.admin?.tabs?.dashboard || 'Dashboard',
+      label: tabs?.dashboard as string || 'Dashboard',
       badge: undefined  // Remove badge for dashboard
     },
     {
       id: 'users',
       icon: <Users />,
-      label: translations.admin?.tabs?.users || 'Users',
+      label: tabs?.users as string || 'Users',
       badge: userCount
     },
     {
       id: 'subscribers',
       icon: <Inbox />,
-      label: translations.admin?.tabs?.subscribers || 'Subscribers',
+      label: tabs?.subscribers as string || 'Subscribers',
       badge: subscriberCount
     },
     {
       id: 'settings',
       icon: <Settings />,
-      label: translations.admin?.tabs?.settings || 'Settings',
+      label: tabs?.settings as string || 'Settings',
       badge: undefined  // Remove badge for settings
     },
     {
       id: 'logout',
       icon: <LogOut />,
-      label: translations.admin?.logout || 'Logout',
+      label: logout,
       badge: undefined  // Remove the badge for logout
     }
   ];

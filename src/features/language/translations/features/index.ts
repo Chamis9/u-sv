@@ -6,6 +6,7 @@ export { cookieConsentTranslations, type CookieConsentTranslations } from './coo
 export { adminTranslations, type AdminTranslations } from './admin';
 export { contactTranslations } from './contact';
 export { eventsTranslations, type EventsTranslations } from './events';
+export { aboutUsTranslations, type AboutUsTranslations } from './aboutUs';
 export { 
   navigationTranslations, 
   themeTranslations, 

@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Navigation } from "./sidebar/Navigation";
 import { useSubscriberCount } from "./sidebar/useSubscriberCount";
 import { useUserCount } from "@/hooks/useUserCount";
+import { TranslationObject } from "@/features/language/types";
 
 interface AdminSidebarProps {
   activeTab: string;
@@ -32,6 +33,9 @@ export const AdminSidebar = memo(function AdminSidebar({
     }
   };
 
+  // Convert Translations to TranslationObject
+  const translationsObject: TranslationObject = translations as unknown as TranslationObject;
+
   return (
     <aside className="hidden md:flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm">
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -44,7 +48,7 @@ export const AdminSidebar = memo(function AdminSidebar({
         userCount={userCount}
         subscriberCount={subscriberCount}
         adminCount={initialAdminCount}
-        translations={translations}
+        translations={translationsObject}
       />
     </aside>
   );
