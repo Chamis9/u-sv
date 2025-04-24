@@ -48,7 +48,7 @@ export function Footer() {
               variant="ghost" 
               size="sm" 
               onClick={handleOpenCookieSettings}
-              className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1 h-7 px-2 text-xs"
+              className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1 h-7 px-2 text-xs bg-transparent hover:bg-transparent"
             >
               <Cookie className="h-3 w-3 mr-1 sm:h-4 sm:w-4 sm:mr-2" />
               <span>{footer.cookieSettings}</span>
@@ -56,7 +56,7 @@ export function Footer() {
             <Button 
               variant="ghost" 
               size="sm"
-              className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1 h-7 px-2 text-xs"
+              className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1 h-7 px-2 text-xs bg-transparent hover:bg-transparent"
               asChild
             >
               <Link to="/privacy-policy" onClick={handleLinkClick}>
