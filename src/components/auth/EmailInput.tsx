@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   FormControl,
@@ -20,21 +21,8 @@ export function EmailInput({ form, label }: EmailInputProps) {
   const [inputFocused, setInputFocused] = useState(false);
   
   const handleEmailSelect = (email: string) => {
-    setTimeout(() => {
-      form.setValue("email", email);
-      setShowDropdown(false);
-      
-      const inputElement = document.getElementById('email-input');
-      if (inputElement) {
-        inputElement.focus();
-      }
-      
-      event?.stopPropagation();
-    }, 0);
-  };
-  
-  const stopPropagation = (e: React.MouseEvent | React.FocusEvent) => {
-    e.stopPropagation();
+    form.setValue("email", email);
+    setShowDropdown(false);
   };
 
   return (
@@ -42,31 +30,23 @@ export function EmailInput({ form, label }: EmailInputProps) {
       control={form.control}
       name="email"
       render={({ field }) => (
-        <FormItem className="relative" onClick={stopPropagation} onFocus={stopPropagation}>
+        <FormItem className="relative">
           <FormLabel>{label}</FormLabel>
           <FormControl>
             <Input
-              id="email-input"
               type="email"
               autoComplete="email"
+              placeholder="example@email.com"
               {...field}
-              onFocus={(e) => {
+              onFocus={() => {
                 setInputFocused(true);
                 setShowDropdown(true);
-                stopPropagation(e);
               }}
-              onBlur={(e) => {
+              onBlur={() => {
                 setTimeout(() => {
                   setInputFocused(false);
-                  if (!e.relatedTarget || !e.relatedTarget.closest('.dropdown-option')) {
-                    setShowDropdown(false);
-                  }
+                  setShowDropdown(false);
                 }, 200);
-                stopPropagation(e);
-              }}
-              onClick={(e) => {
-                setShowDropdown(true);
-                stopPropagation(e);
               }}
               className="focus:ring-2 focus:ring-offset-1 focus:ring-orange-400/50"
             />
