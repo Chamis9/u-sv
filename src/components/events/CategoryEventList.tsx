@@ -133,7 +133,7 @@ const categoryTitles: Record<string, { lv: string, en: string, ru: string }> = {
   children: {
     lv: "Bērniem",
     en: "For Children",
-    ru: "Для детей"
+    ru: "Детские мероприятия"
   },
   "gift-cards": {
     lv: "Dāvanu kartes",
@@ -143,7 +143,7 @@ const categoryTitles: Record<string, { lv: string, en: string, ru: string }> = {
   other: {
     lv: "Citi pasākumi",
     en: "Other Events",
-    ru: "Другие мероприятия"
+    ru: "Разные события"
   }
 };
 
