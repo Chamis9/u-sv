@@ -7,37 +7,33 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/features/language";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { PasswordInput } from "@/components/auth/PasswordInput";
 
 export function SecurityCard() {
   const { currentLanguage } = useLanguage();
   const { toast } = useToast();
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  });
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
-  };
+  const form = useForm({
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    }
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (formData.newPassword !== formData.confirmPassword) {
+    if (form.getValues('newPassword') !== form.getValues('confirmPassword')) {
       toast({
         variant: "destructive",
         title: t("Kļūda!", "Error!"),
@@ -52,7 +48,7 @@ export function SecurityCard() {
     setIsLoading(true);
     try {
       const { error } = await supabase.auth.updateUser({
-        password: formData.newPassword
+        password: form.getValues('newPassword')
       });
 
       if (error) throw error;
@@ -66,11 +62,7 @@ export function SecurityCard() {
       });
       
       setIsChangingPassword(false);
-      setFormData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-      });
+      form.reset();
     } catch (error) {
       console.error('Error updating password:', error);
       toast({
@@ -108,49 +100,26 @@ export function SecurityCard() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="currentPassword">
-                {t("Pašreizējā parole", "Current Password")}
-              </Label>
-              <Input
-                id="currentPassword"
-                name="currentPassword"
-                type="password"
-                value={formData.currentPassword}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            <PasswordInput
+              form={form}
+              name="currentPassword"
+              label={t("Pašreizējā parole", "Current Password")}
+              placeholder={t("Ievadiet pašreizējo paroli", "Enter current password")}
+            />
             
-            <div className="space-y-2">
-              <Label htmlFor="newPassword">
-                {t("Jaunā parole", "New Password")}
-              </Label>
-              <Input
-                id="newPassword"
-                name="newPassword"
-                type="password"
-                value={formData.newPassword}
-                onChange={handleChange}
-                required
-                minLength={6}
-              />
-            </div>
+            <PasswordInput
+              form={form}
+              name="newPassword"
+              label={t("Jaunā parole", "New Password")}
+              placeholder={t("Ievadiet jauno paroli", "Enter new password")}
+            />
             
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">
-                {t("Apstiprināt jauno paroli", "Confirm New Password")}
-              </Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                minLength={6}
-              />
-            </div>
+            <PasswordInput
+              form={form}
+              name="confirmPassword"
+              label={t("Apstiprināt jauno paroli", "Confirm New Password")}
+              placeholder={t("Apstiprināt jauno paroli", "Confirm new password")}
+            />
             
             <div className="flex gap-2">
               <Button 
@@ -164,11 +133,7 @@ export function SecurityCard() {
                 variant="outline"
                 onClick={() => {
                   setIsChangingPassword(false);
-                  setFormData({
-                    currentPassword: '',
-                    newPassword: '',
-                    confirmPassword: ''
-                  });
+                  form.reset();
                 }}
                 disabled={isLoading}
               >
