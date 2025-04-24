@@ -80,7 +80,9 @@ export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardPr
       </HoverCardTrigger>
       <HoverCardContent 
         className={`w-[400px] p-4 hover-card-content 
-          ${theme === 'dark' ? 'dark:bg-gray-800 dark:border-gray-700' : ''}`}
+          ${theme === 'dark' 
+            ? 'dark:bg-gray-800/95 dark:border-gray-700 text-white' 
+            : 'bg-white/95 border-gray-200 text-gray-900'}`}
         onPointerDownOutside={(e) => {
           if (e.target && (
             (e.target as HTMLElement).tagName === 'INPUT' || 
@@ -109,8 +111,18 @@ export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardPr
       >
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">{translations.login}</TabsTrigger>
-            <TabsTrigger value="register">{translations.register}</TabsTrigger>
+            <TabsTrigger 
+              value="login"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white"
+            >
+              {translations.login}
+            </TabsTrigger>
+            <TabsTrigger 
+              value="register"
+              className="data-[state=active]:bg-orange-500 data-[state=active]:text-white"
+            >
+              {translations.register}
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="login" className="space-y-4 mt-4">
