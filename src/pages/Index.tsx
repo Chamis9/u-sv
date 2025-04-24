@@ -5,11 +5,10 @@ import { Footer } from "@/components/Footer";
 import { HowItWorks } from "@/components/HowItWorks";
 import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
-import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 
 const Index = () => {
   return (
-    <ThemeProvider defaultTheme="light" disableToggle={false}>
+    <ThemeProvider defaultTheme="light" disableToggle={true}>
       <div className="min-h-screen flex flex-col dark:bg-gray-900">
         <SEO />
         <Header />
@@ -18,7 +17,6 @@ const Index = () => {
           <HowItWorks />
         </main>
         <Footer />
-        <GlobalThemeToggle />
       </div>
     </ThemeProvider>
   );
