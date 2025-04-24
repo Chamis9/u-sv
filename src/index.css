@@ -109,6 +109,18 @@
   .hardware-accelerated {
     transform: translateZ(0);
   }
+  
+  /* HoverCard menu improvements */
+  .hover-card-menu-link {
+    @apply flex items-center gap-2 px-4 py-3 transition-colors duration-150;
+    @apply hover:bg-gray-100 dark:hover:bg-gray-700;
+    @apply text-gray-800 dark:text-gray-100;
+    @apply font-medium text-sm;
+  }
+  
+  .hover-card-menu-icon {
+    @apply text-gray-700 dark:text-gray-300 flex-shrink-0;
+  }
 }
 
 @keyframes fall {
