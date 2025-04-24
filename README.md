@@ -24,6 +24,13 @@ netieku.es is a ticket exchange platform for Latvia, allowing users to buy, sell
 - Newsletter subscription system
 - User authentication and profile management
 - Admin panel for user and subscriber management
+- Responsive design for all device sizes
+
+## Mobile Support
+- Responsive UI for all screen sizes
+- Mobile-first approach with Tailwind CSS
+- Custom device detection hooks
+- Optimized components for touch interfaces
 
 ## Development
 1. Clone the repository
@@ -32,3 +39,4 @@ netieku.es is a ticket exchange platform for Latvia, allowing users to buy, sell
 
 ## Deployment
 The application is configured for deployment on Vercel.
+

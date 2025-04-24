@@ -109,28 +109,6 @@
   .hardware-accelerated {
     transform: translateZ(0);
   }
-  
-  /* HoverCard menu improvements */
-  .hover-card-menu-link {
-    @apply flex items-center gap-2 px-4 py-3 transition-colors duration-150;
-    @apply hover:bg-gray-100 dark:hover:bg-gray-700;
-    @apply text-gray-800 dark:text-gray-100;
-    @apply font-medium text-sm;
-  }
-  
-  .hover-card-menu-icon {
-    @apply text-gray-700 dark:text-gray-300 flex-shrink-0;
-  }
-  
-  /* User menu styles */
-  .menu-item {
-    @apply flex items-center justify-center p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors;
-    @apply text-gray-700 dark:text-gray-200;
-  }
-  
-  .menu-icon {
-    @apply h-5 w-5;
-  }
 }
 
 @keyframes fall {

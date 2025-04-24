@@ -1,11 +1,10 @@
-
 import { Heart, Cookie, Shield, Mail } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 
 export function Footer() {
-  const { translations, currentLanguage } = useLanguage();
+  const { translations } = useLanguage();
   const { footer } = translations;
 
   const handleOpenCookieSettings = () => {
@@ -19,48 +18,55 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-gradient-to-b from-gray-900 to-black py-8 px-4 text-gray-300 border-t border-gray-800">
+    <footer className="bg-gradient-to-b from-gray-900 to-black py-6 md:py-8 px-4 text-gray-300 border-t border-gray-800">
       <div className="container mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-4 md:mb-0">
-            <p className="text-sm text-gray-400">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
+          <div className="text-center md:text-left mb-4 md:mb-0">
+            <p className="text-xs sm:text-sm text-gray-400">
               {footer.allRightsReserved}
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap justify-center md:justify-end items-center gap-2 sm:gap-4">
+            <Link 
+              to="/about-us"
+              onClick={handleLinkClick}
+              className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1 text-xs sm:text-sm"
+            >
+              <span>{translations.navigation?.aboutUs || "Par mums"}</span>
+            </Link>
             <Link 
               to="/contact" 
               onClick={handleLinkClick}
-              className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1.5 text-sm"
+              className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1 text-xs sm:text-sm"
             >
-              <Mail size={16} />
-              {footer.contactLink || "Kontakti"}
+              <Mail size={14} className="hidden sm:inline" />
+              <span>{footer.contactLink || "Kontakti"}</span>
             </Link>
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={handleOpenCookieSettings}
-              className="text-gray-400 hover:text-orange-500"
+              className="text-gray-400 hover:text-orange-500 h-7 px-2 text-xs"
             >
-              <Cookie className="h-4 w-4 mr-2" />
-              <span className="text-xs">{footer.cookieSettings}</span>
+              <Cookie className="h-3 w-3 mr-1 sm:h-4 sm:w-4 sm:mr-2" />
+              <span>{footer.cookieSettings}</span>
             </Button>
             <Button 
               variant="ghost" 
               size="sm"
-              className="text-gray-400 hover:text-orange-500"
+              className="text-gray-400 hover:text-orange-500 h-7 px-2 text-xs"
               asChild
             >
               <Link to="/privacy-policy" onClick={handleLinkClick}>
-                <Shield className="h-4 w-4 mr-2" />
-                <span className="text-xs">{footer.privacyPolicy}</span>
+                <Shield className="h-3 w-3 mr-1 sm:h-4 sm:w-4 sm:mr-2" />
+                <span>{footer.privacyPolicy}</span>
               </Link>
             </Button>
-            <div className="flex items-center text-sm text-gray-400">
+            <div className="hidden sm:flex items-center text-xs sm:text-sm text-gray-400">
               <span className="flex items-center">
                 {footer.madeWith} 
                 <Heart 
-                  className="mx-1 h-4 w-4" 
+                  className="mx-1 h-3 w-3 sm:h-4 sm:w-4" 
                   fill="#F97316" 
                   strokeWidth={0}
                 />

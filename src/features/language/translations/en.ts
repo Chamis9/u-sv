@@ -5,7 +5,10 @@ import {
   howItWorksTranslations, 
   footerTranslations, 
   cookieConsentTranslations,
-  adminTranslations
+  adminTranslations,
+  navigationTranslations,
+  themeTranslations,
+  languageSelectorTranslations
 } from './features';
 
 export const enTranslations: Translations = {
@@ -13,5 +16,9 @@ export const enTranslations: Translations = {
   howItWorks: howItWorksTranslations.en,
   cookieConsent: cookieConsentTranslations.en,
   footer: footerTranslations.en,
-  admin: adminTranslations.en
+  admin: adminTranslations.en,
+  // Add the new translations
+  navigation: navigationTranslations.en,
+  theme: themeTranslations.en,
+  language: languageSelectorTranslations.en
 };

@@ -12,7 +12,7 @@ export const Hero = memo(function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-300 via-orange-400 to-orange-500 dark:from-orange-950 dark:via-orange-900 dark:to-orange-800"
+      className="relative min-h-[90vh] md:min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-300 via-orange-400 to-orange-500 dark:from-orange-950 dark:via-orange-900 dark:to-orange-800"
     >
       <Helmet>
         <script type="application/ld+json">
@@ -33,21 +33,21 @@ export const Hero = memo(function Hero() {
 
       <FallingTickets />
 
-      <div className="container mx-auto px-4 z-10 text-center py-20">
+      <div className="container mx-auto px-4 z-10 text-center py-12 md:py-20">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-md">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4 md:mb-6 drop-shadow-md">
             {hero.title}{" "}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-100 to-white dark:from-orange-200 dark:to-orange-100">
               {hero.titleHighlight}
             </span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-white mb-12 drop-shadow">
+          <p className="text-lg sm:text-xl md:text-2xl text-white mb-8 md:mb-12 drop-shadow">
             {hero.subtitle}
           </p>
           
-          <div className="flex flex-col items-center space-y-6 bg-white/10 dark:bg-gray-950/20 rounded-xl p-8">
-            <p className="text-white text-lg">
+          <div className="flex flex-col items-center space-y-6 bg-white/10 dark:bg-gray-950/20 rounded-xl p-4 sm:p-6 md:p-8">
+            <p className="text-white text-base md:text-lg">
               {hero.subscribeText}
             </p>
             <div className="w-full max-w-md mx-auto">
@@ -55,7 +55,7 @@ export const Hero = memo(function Hero() {
             </div>
           </div>
           
-          <div className="pt-12">
+          <div className="pt-8 md:pt-12">
             <a
               href="#how-it-works"
               className="inline-flex items-center text-white hover:text-orange-100 transition-colors"
