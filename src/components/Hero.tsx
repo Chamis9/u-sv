@@ -21,7 +21,7 @@ export const Hero = memo(function Hero() {
             "@context": "https://schema.org",
             "@type": "WebPage",
             "name": "netieku.es - biļešu apmaiņas platforma",
-            "description": "Pirmā Latvijas C2C biļešu apmaiņas platforma",
+            "description": "Pirmā biļešu apmaiņas platforma Latvijā",
             "offers": {
               "@type": "Offer",
               "availability": "https://schema.org/ComingSoon"
