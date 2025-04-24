@@ -97,7 +97,7 @@ export function Header() {
       <LoginDialog 
         isOpen={isAuthDialogOpen} 
         onClose={() => setIsAuthDialogOpen(false)}
-        defaultView={authMode}
+        defaultTab={authMode}
       />
     </header>
   );
