@@ -23,6 +23,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Profile = lazy(() => import("./pages/Profile"));
+const EventCategory = lazy(() => import("./pages/EventCategory"));
 
 // Create a loading component
 const PageLoader = () => (
@@ -82,6 +83,7 @@ const App = () => {
                     <Routes>
                       <Route path="/" element={<Navigate to="/events" />} />
                       <Route path="/events" element={<Events />} />
+                      <Route path="/events/:category" element={<EventCategory />} />
                       <Route path="/about-us" element={<AboutUs />} />
                       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                       <Route path="/admin/*" element={<Admin />} />
