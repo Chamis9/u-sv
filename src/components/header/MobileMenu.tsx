@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { LanguageSelector } from "@/features/language";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -30,11 +30,8 @@ export function MobileMenu({ links }: MobileMenuProps) {
       </SheetTrigger>
       <SheetContent side="left" className="bg-orange-50 dark:bg-gray-800 w-[280px] sm:w-[350px]">
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between mb-6">
+          <div className="mb-6">
             <Logo />
-            <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
-              <X className="h-6 w-6" />
-            </Button>
           </div>
           
           <nav className="flex flex-col space-y-4 mb-8">
@@ -50,13 +47,13 @@ export function MobileMenu({ links }: MobileMenuProps) {
             ))}
           </nav>
           
-          <div className="flex flex-col space-y-4 mt-auto mb-6">
+          <div className="mt-auto space-y-4">
             <div className="flex items-center justify-between px-2">
-              <span className="text-sm font-medium">{translations.theme?.label || "Theme"}</span>
+              <span className="text-sm font-medium">{translations.theme?.label}</span>
               <ThemeToggle />
             </div>
             <div className="flex items-center justify-between px-2">
-              <span className="text-sm font-medium">{translations.language?.label || "Language"}</span>
+              <span className="text-sm font-medium">{translations.language?.label}</span>
               <LanguageSelector />
             </div>
           </div>

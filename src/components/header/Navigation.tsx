@@ -7,7 +7,7 @@ export function Navigation() {
   
   const navigationLinks = [
     { href: "/", label: translations.navigation?.home || "Home" },
-    { href: "/about", label: translations.navigation?.about || "About" },
+    { href: "/events", label: translations.navigation?.events || "Events" },
     { href: "/tickets", label: translations.navigation?.tickets || "Tickets" },
     { href: "/contact", label: translations.navigation?.contact || "Contact" }
   ];
@@ -27,13 +27,12 @@ export function Navigation() {
   );
 }
 
-// Export the navigation links for reuse in mobile menu
 export const getNavigationLinks = () => {
   const { translations } = useLanguage();
   
   return [
     { href: "/", label: translations.navigation?.home || "Home" },
-    { href: "/about", label: translations.navigation?.about || "About" },
+    { href: "/events", label: translations.navigation?.events || "Events" },
     { href: "/tickets", label: translations.navigation?.tickets || "Tickets" },
     { href: "/contact", label: translations.navigation?.contact || "Contact" }
   ];
