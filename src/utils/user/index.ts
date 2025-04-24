@@ -1,7 +1,10 @@
 
-// Re-export all user utilities for backward compatibility
+// Export functions with unique names to avoid conflicts
 export * from './fetchUsers';
 export * from './filterUsers';
-export * from './exportUsers';
-export * from './userOperations';
-export * from '../userManagement';
+
+// Use named exports to avoid ambiguity
+export { 
+  downloadUsersCSV as exportUsersCSV,
+  downloadBlob as exportBlob 
+} from './exportUsers';

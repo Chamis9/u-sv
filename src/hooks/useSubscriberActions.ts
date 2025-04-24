@@ -3,7 +3,12 @@ import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import type { Subscriber } from '@/types/subscribers';
 import { useLanguage } from '@/features/language';
-import { deleteSubscriber, updateSubscriber, createDownloadableCSV, downloadBlob } from '@/utils/subscriberManagement';
+import { 
+  deleteSubscriber, 
+  updateSubscriber, 
+  createDownloadableCSV, 
+  downloadSubscriberBlob 
+} from '@/utils';
 
 export function useSubscriberActions() {
   const { toast } = useToast();
@@ -100,7 +105,7 @@ export function useSubscriberActions() {
 
     try {
       const { blob, filename } = createDownloadableCSV(subscribers);
-      downloadBlob(blob, filename);
+      downloadSubscriberBlob(blob, filename);
       
       toast({
         description: t('CSV fails veiksmīgi lejupielādēts', 'CSV file downloaded successfully'),

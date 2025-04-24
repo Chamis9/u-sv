@@ -1,5 +1,6 @@
 
-// Export all base operations and other operations for backward compatibility
+// Export only baseOperations from here
 export * from './baseOperations';
-export * from '../userManagement';
-export * from '../subscriberManagement';
+
+// Don't re-export these, they should be imported directly from their source files
+// to avoid duplication with the main index.ts exports
