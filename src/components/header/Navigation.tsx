@@ -6,7 +6,10 @@ export function Navigation() {
   const { translations } = useLanguage();
   
   const navigationLinks = [
+    { href: "/", label: translations.navigation?.home || "Home" },
     { href: "/events", label: translations.navigation?.events || "Events" },
+    { href: "/tickets", label: translations.navigation?.tickets || "Tickets" },
+    { href: "/contact", label: translations.navigation?.contact || "Contact" }
   ];
   
   return (
@@ -28,6 +31,9 @@ export const getNavigationLinks = () => {
   const { translations } = useLanguage();
   
   return [
+    { href: "/", label: translations.navigation?.home || "Home" },
     { href: "/events", label: translations.navigation?.events || "Events" },
+    { href: "/tickets", label: translations.navigation?.tickets || "Tickets" },
+    { href: "/contact", label: translations.navigation?.contact || "Contact" }
   ];
 };

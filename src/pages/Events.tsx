@@ -5,54 +5,38 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Theater, Music, Globe, Trophy, Film } from "lucide-react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "lucide-react";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
-import { Link } from "react-router-dom";
 
 const Events = () => {
   const { translations } = useLanguage();
 
-  const categories = [
+  const sampleEvents = [
     {
-      title: "Teātris",
-      urlPath: "teatris",
-      description: "Dramaturģija, opera, balets",
-      venues: ["Latvijas Nacionālā opera", "Dailes teātris", "JRT"],
-      iconColor: "text-purple-500",
-      icon: Theater
+      title: "Liepājas Simfoniskā orķestra koncerts",
+      date: "2025-05-15",
+      time: "19:00",
+      location: "Lielais dzintars",
+      description: "Klasiskās mūzikas koncerts ar pasaules līmeņa solistiem",
+      price: "25-45"
     },
     {
-      title: "Koncerti",
-      urlPath: "koncerti",
-      description: "Klasiskā mūzika, džezs, populārā mūzika",
-      venues: ["Dzintaru koncertzāle", "Arēna Rīga", "Lielais dzintars"],
-      iconColor: "text-orange-500",
-      icon: Music
+      title: "Rīgas Ritmi 2025",
+      date: "2025-06-20",
+      time: "20:00",
+      location: "Arēna Rīga",
+      description: "Starptautiskais džeza festivāls",
+      price: "30-60"
     },
     {
-      title: "Festivāli",
-      urlPath: "festivali",
-      description: "Mūzikas, mākslas un kultūras festivāli",
-      venues: ["Lucavsala", "Mežaparks", "Līvu laukums"],
-      iconColor: "text-green-500",
-      icon: Globe
-    },
-    {
-      title: "Sports",
-      urlPath: "sports",
-      description: "Basketbols, hokejs, futbols",
-      venues: ["Arena Riga", "Skonto stadions", "Daugavas stadions"],
-      iconColor: "text-blue-500",
-      icon: Trophy
-    },
-    {
-      title: "Kino",
-      urlPath: "kino",
-      description: "Filmu seansi un festivāli",
-      venues: ["Splendid Palace", "K.Suns", "Cinamon"],
-      iconColor: "text-red-500",
-      icon: Film
+      title: "Latvijas Nacionālās operas izrāde",
+      date: "2025-07-10",
+      time: "18:30",
+      location: "LNO",
+      description: "G. Pučīni 'Turandota'",
+      price: "20-80"
     }
   ];
 
@@ -68,33 +52,34 @@ const Events = () => {
                 <span className="text-orange-500">Pasākumi</span>
               </h1>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {categories.map((category, index) => (
-                  <Link 
-                    to={`/events/${category.urlPath}`} 
-                    key={index}
-                    className="transition-transform hover:scale-[1.02]"
-                  >
-                    <Card className="h-full bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <category.icon className={`h-6 w-6 ${category.iconColor}`} />
-                          {category.title}
-                        </CardTitle>
-                        <CardDescription>
-                          {category.description}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          {category.venues.map((venue, vIndex) => (
-                            <div key={vIndex} className="text-gray-600 dark:text-gray-400">
-                              {venue}
-                            </div>
-                          ))}
+                {sampleEvents.map((event, index) => (
+                  <Card key={index} className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
+                    <CardHeader>
+                      <CardTitle>{event.title}</CardTitle>
+                      <CardDescription>
+                        <div className="flex items-center gap-2 text-orange-500">
+                          <Calendar className="h-4 w-4" />
+                          {event.date} | {event.time}
                         </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
+                        <div className="mt-1 text-gray-600 dark:text-gray-400">
+                          {event.location}
+                        </div>
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        {event.description}
+                      </p>
+                    </CardContent>
+                    <CardFooter className="mt-auto">
+                      <div className="flex justify-between items-center w-full">
+                        <span className="text-lg font-semibold">
+                          {event.price} €
+                        </span>
+                        <Button variant="outline">Pirkt biļeti</Button>
+                      </div>
+                    </CardFooter>
+                  </Card>
                 ))}
               </div>
             </div>

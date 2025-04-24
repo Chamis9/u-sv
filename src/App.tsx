@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -23,7 +24,6 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Profile = lazy(() => import("./pages/Profile"));
-const EventCategory = lazy(() => import("./pages/EventCategory"));
 
 // Create a loading component
 const PageLoader = () => (
@@ -81,11 +81,12 @@ const App = () => {
                 <BrowserRouter>
                   <Suspense fallback={<PageLoader />}>
                     <Routes>
-                      <Route path="/" element={<Navigate to="/events" />} />
+                      <Route path="/" element={<Index />} />
                       <Route path="/events" element={<Events />} />
-                      <Route path="/events/:category" element={<EventCategory />} />
+                      <Route path="/tickets" element={<Tickets />} />
                       <Route path="/about-us" element={<AboutUs />} />
                       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                      <Route path="/contact" element={<Contact />} />
                       <Route path="/admin/*" element={<Admin />} />
                       <Route path="/profile/*" element={<Profile />} />
                       <Route path="*" element={<NotFound />} />
