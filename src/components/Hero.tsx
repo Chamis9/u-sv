@@ -12,7 +12,7 @@ export const Hero = memo(function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#ffc3a0] via-[#ffafbd] to-[#ff5e62]"
+      className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-200 via-orange-300 to-orange-400"
     >
       <Helmet>
         <script type="application/ld+json">
@@ -46,7 +46,7 @@ export const Hero = memo(function Hero() {
             {hero.subtitle}
           </p>
           
-          <div className="flex flex-col items-center space-y-6 bg-[#ffffff1a] rounded-xl p-8">
+          <div className="flex flex-col items-center space-y-6 bg-white/10 rounded-xl p-8">
             <p className="text-white text-lg">
               {hero.subscribeText}
             </p>
