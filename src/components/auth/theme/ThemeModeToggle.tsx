@@ -30,7 +30,10 @@ export function ThemeModeToggle() {
       variant="ghost"
       size="sm"
       className="px-2"
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+      onClick={() => {
+        const newTheme = theme === "light" ? "dark" : "light";
+        setTheme(newTheme);
+      }}
     >
       {theme === "dark" ? (
         <>

@@ -55,20 +55,11 @@ export function ThemeProvider({
     root.classList.add(theme);
   }, [theme]);
 
-  const setTheme = useCallback((theme: Theme) => {
-    // Only allow theme changes if toggle is not disabled
-    if (!disableToggle) {
-      localStorage.setItem(storageKey, theme);
-      setThemeState(theme);
-    }
-  }, [storageKey, disableToggle]);
-
-  // Force theme to defaultTheme if disableToggle becomes true
-  useEffect(() => {
-    if (disableToggle) {
-      setThemeState(defaultTheme);
-    }
-  }, [disableToggle, defaultTheme]);
+  const setTheme = useCallback((newTheme: Theme) => {
+    // Always allow theme changes, regardless of disableToggle setting
+    localStorage.setItem(storageKey, newTheme);
+    setThemeState(newTheme);
+  }, [storageKey]);
 
   const value = useMemo(
     () => ({

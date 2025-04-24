@@ -9,13 +9,12 @@ interface ThemeToggleProps {
 }
 
 export const ThemeToggle = memo(function ThemeToggle({ className }: ThemeToggleProps) {
-  const { theme, setTheme, isToggleDisabled } = useTheme();
+  const { theme, setTheme } = useTheme();
 
-  const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
-
-  if (isToggleDisabled) {
-    return null;
-  }
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+  };
 
   return (
     <Button

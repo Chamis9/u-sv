@@ -63,29 +63,52 @@ export function Header() {
                 </Button>
               </HoverCardTrigger>
               <HoverCardContent className="w-64 p-4">
-                <div className="flex flex-col gap-3">
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start gap-2"
-                    onClick={() => {
-                      setAuthMode('login');
-                      setIsAuthDialogOpen(true);
-                    }}
-                  >
-                    <LogIn className="h-4 w-4" />
-                    {t("Ieiet", "Login", "Войти")}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start gap-2"
-                    onClick={() => {
-                      setAuthMode('register');
-                      setIsAuthDialogOpen(true);
-                    }}
-                  >
-                    <UserPlus className="h-4 w-4" />
-                    {t("Reģistrēties", "Register", "Регистрация")}
-                  </Button>
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium">{t("Pieslēgties", "Login", "Войти")}</h4>
+                  <div className="grid gap-3">
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-background px-2 text-muted-foreground">
+                          {t("vai", "or", "или")}
+                        </span>
+                      </div>
+                    </div>
+                    <form>
+                      <div className="grid gap-2">
+                        <div className="grid gap-1">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                              setAuthMode('login');
+                              setIsAuthDialogOpen(true);
+                            }}
+                            className="w-full"
+                          >
+                            <LogIn className="mr-2 h-4 w-4" />
+                            {t("Ieiet", "Login", "Войти")}
+                          </Button>
+                        </div>
+                        <div className="grid gap-1">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                              setAuthMode('register');
+                              setIsAuthDialogOpen(true);
+                            }}
+                            className="w-full"
+                          >
+                            <UserPlus className="mr-2 h-4 w-4" />
+                            {t("Reģistrēties", "Register", "Регистрация")}
+                          </Button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
                 </div>
               </HoverCardContent>
             </HoverCard>
