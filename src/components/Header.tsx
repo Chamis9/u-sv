@@ -1,4 +1,3 @@
-
 import { LanguageSelector } from "@/features/language";
 import { Logo } from "./header/Logo";
 import { Navigation, getNavigationLinks } from "./header/Navigation";
@@ -35,7 +34,6 @@ export function Header() {
     navigate('/');
   };
   
-  // Get translations for auth forms
   const translations = {
     login: t("Ieiet", "Login", "Войти"),
     loginLoading: t("Ieeja...", "Logging in...", "Вход..."),
@@ -114,6 +112,11 @@ export function Header() {
               </HoverCardTrigger>
               <HoverCardContent 
                 className="w-80 p-0 overflow-hidden"
+                onKeyDown={(e) => {
+                  if (e.key === 'Tab') {
+                    e.stopPropagation();
+                  }
+                }}
                 onFocus={(e) => {
                   e.stopPropagation();
                   setKeepHoverOpen(true);
@@ -123,7 +126,6 @@ export function Header() {
                   setKeepHoverOpen(true);
                 }}
                 onInteractOutside={(e) => {
-                  // Don't close if interacting with autofill dropdown
                   if (e.target instanceof Element) {
                     const isAutofillOption = e.target.closest('[role="option"]') || 
                                             e.target.closest('[role="listbox"]') ||
