@@ -1,6 +1,7 @@
+
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Link } from "react-router-dom";
-import { UserCircle, Ticket, Wallet, LogOut } from "lucide-react";
+import { UserCircle, Mail, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { User } from "@/types/users";
@@ -19,14 +20,14 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <Link
-          to={`/profile/${user.id}/account`}
-          onClick={onLinkClick}
-          className="flex items-center gap-2 text-white hover:text-orange-400 transition-colors relative z-10"
-          title="My Profile"
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-white hover:text-orange-400 transition-colors relative z-10"
+          title={translations.myAccount}
         >
           <UserAvatar user={user} size="sm" />
-        </Link>
+        </Button>
       </HoverCardTrigger>
       <HoverCardContent 
         className={`w-64 p-0 overflow-hidden 
@@ -44,36 +45,30 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
           
           <Link
             to={`/profile/${user.id}/account`}
-            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 block w-full text-left text-sm flex items-center gap-2"
+            className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+            onClick={onLinkClick}
           >
-            <UserCircle size={16} />
-            {translations.myAccount}
+            <Settings className="h-4 w-4" />
+            <span className="text-sm">{translations.myAccount}</span>
           </Link>
           
           <Link
             to={`/profile/${user.id}/tickets`}
-            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 block w-full text-left text-sm flex items-center gap-2"
+            className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+            onClick={onLinkClick}
           >
-            <Ticket size={16} />
-            {translations.myTickets}
-          </Link>
-          
-          <Link
-            to={`/profile/${user.id}/payments`}
-            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 block w-full text-left text-sm flex items-center gap-2"
-          >
-            <Wallet size={16} />
-            {translations.myPayments}
+            <Mail className="h-4 w-4" />
+            <span className="text-sm">{translations.myTickets}</span>
           </Link>
           
           <div className="border-t">
             <Button
               variant="ghost"
-              className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 w-full justify-start text-sm flex items-center gap-2"
               onClick={onLogout}
+              className="flex items-center gap-2 w-full px-4 py-3 justify-start hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              <LogOut size={16} />
-              {translations.logout}
+              <LogOut className="h-4 w-4" />
+              <span className="text-sm">{translations.logout}</span>
             </Button>
           </div>
         </div>
