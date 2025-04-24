@@ -7,7 +7,7 @@ import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Theater, Music, Film, Calendar, Sports } from "lucide-react";
+import { Theater, Music, Film, Calendar, Activity } from "lucide-react";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 
 const Events = () => {
@@ -38,7 +38,7 @@ const Events = () => {
     {
       title: "Sports",
       route: "sports",
-      icon: Sports,
+      icon: Activity,
       description: "Basketbols, hokejs, futbols",
       venues: ["Arēna Rīga", "Daugavas stadions", "Skonto stadions"]
     },
