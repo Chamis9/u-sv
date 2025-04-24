@@ -5,6 +5,6 @@ export * from './filterUsers';
 
 // Use named exports to avoid ambiguity
 export { 
-  downloadUsersCSV as exportUsersCSV,
-  downloadBlob as exportBlob 
+  downloadUsersCSV,
+  downloadBlob 
 } from './exportUsers';
