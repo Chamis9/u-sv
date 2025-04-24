@@ -7,7 +7,7 @@ interface AvatarUploadOptions {
   file: File;
   user: User;
   toast: ReturnType<typeof useToast>["toast"];
-  t: (lvText: string, enText: string, ruText?: string) => string;
+  t: (lvText: string, enText: string) => string;
 }
 
 export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUploadOptions) {
@@ -73,8 +73,7 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
     toast({
       description: t(
         "Profila attēls veiksmīgi atjaunināts",
-        "Profile picture successfully updated",
-        "Изображение профиля успешно обновлено"
+        "Profile picture successfully updated"
       )
     });
     
@@ -85,29 +84,26 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
     
     let errorMessage = t(
       "Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz.",
-      "Failed to upload image. Please try again.",
-      "Не удалось загрузить изображение. Пожалуйста, попробуйте еще раз."
+      "Failed to upload image. Please try again."
     );
     
     if (error instanceof Error) {
       if (error.message.includes("storage") || error.message.includes("bucket")) {
         errorMessage = t(
           "Failu glabātava nav pieejama. Lūdzu, sazinieties ar administrātoru.",
-          "File storage is unavailable. Please contact the administrator.",
-          "Хранилище файлов недоступно. Пожалуйста, свяжитесь с администратором."
+          "File storage is unavailable. Please contact the administrator."
         );
       } else if (error.message.includes("auth") || error.message.includes("logged in")) {
         errorMessage = t(
           "Jums jāpiesakās, lai augšupielādētu attēlu.",
-          "You must be logged in to upload an image.",
-          "Вы должны быть авторизованы, чтобы загрузить изображение."
+          "You must be logged in to upload an image."
         );
       }
     }
     
     toast({
       variant: "destructive",
-      title: t("Kļūda", "Error", "Ошибка"),
+      title: t("Kļūda", "Error"),
       description: errorMessage
     });
     
@@ -115,7 +111,7 @@ export async function uploadAvatarToSupabase({ file, user, toast, t }: AvatarUpl
   }
 }
 
-export async function handleDemoUserAvatar(file: File, onAvatarUpdate: (url: string) => void, toast: ReturnType<typeof useToast>["toast"], t: (lvText: string, enText: string, ruText?: string) => string) {
+export async function handleDemoUserAvatar(file: File, onAvatarUpdate: (url: string) => void, toast: ReturnType<typeof useToast>["toast"], t: (lvText: string, enText: string) => string) {
   try {
     // Convert file to data URL
     const reader = new FileReader();
@@ -132,8 +128,7 @@ export async function handleDemoUserAvatar(file: File, onAvatarUpdate: (url: str
         toast({
           description: t(
             "Profila attēls veiksmīgi atjaunināts",
-            "Profile picture successfully updated",
-            "Изображение профиля успешно обновлено"
+            "Profile picture successfully updated"
           )
         });
       }
@@ -144,27 +139,25 @@ export async function handleDemoUserAvatar(file: File, onAvatarUpdate: (url: str
     console.error("Error handling demo user avatar:", error);
     toast({
       variant: "destructive",
-      title: t("Kļūda", "Error", "Ошибка"),
+      title: t("Kļūda", "Error"),
       description: t(
         "Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz.",
-        "Failed to upload image. Please try again.",
-        "Не удалось загрузить изображение. Пожалуйста, попробуйте еще раз."
+        "Failed to upload image. Please try again."
       )
     });
     return false;
   }
 }
 
-export function validateAvatarFile(file: File, toast: ReturnType<typeof useToast>["toast"], t: (lvText: string, enText: string, ruText?: string) => string): boolean {
+export function validateAvatarFile(file: File, toast: ReturnType<typeof useToast>["toast"], t: (lvText: string, enText: string) => string): boolean {
   // Check file type
   if (!file.type.startsWith('image/')) {
     toast({
       variant: "destructive",
-      title: t("Kļūda", "Error", "Ошибка"),
+      title: t("Kļūda", "Error"),
       description: t(
         "Lūdzu, izvēlieties attēla failu",
-        "Please select an image file",
-        "Пожалуйста, выберите файл изображения"
+        "Please select an image file"
       )
     });
     return false;
@@ -174,11 +167,10 @@ export function validateAvatarFile(file: File, toast: ReturnType<typeof useToast
   if (file.size > 2 * 1024 * 1024) {
     toast({
       variant: "destructive",
-      title: t("Kļūda", "Error", "Ошибка"),
+      title: t("Kļūda", "Error"),
       description: t(
         "Attēls ir pārāk liels. Maksimālais izmērs ir 2MB",
-        "Image is too large. Maximum size is 2MB",
-        "Изображение слишком большое. Максимальный размер - 2МБ"
+        "Image is too large. Maximum size is 2MB"
       )
     });
     return false;

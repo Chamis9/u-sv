@@ -12,9 +12,8 @@ export function useActivityLog(pageSize = 10, enabled = true) {
   const [error, setError] = useState<string | null>(null);
   const { currentLanguage } = useLanguage();
   
-  const t = (lvText: string, enText: string, ruText?: string) => {
+  const t = (lvText: string, enText: string) => {
     if (currentLanguage.code === 'lv') return lvText;
-    if (currentLanguage.code === 'ru') return ruText || enText;
     return enText;
   };
   
@@ -55,8 +54,7 @@ export function useActivityLog(pageSize = 10, enabled = true) {
       console.error('Error fetching activities:', err);
       setError(t(
         'Neizdevās ielādēt aktivitātes. Lūdzu, mēģiniet vēlreiz.', 
-        'Failed to load activities. Please try again.',
-        'Не удалось загрузить действия. Пожалуйста, попробуйте еще раз.'
+        'Failed to load activities. Please try again.'
       ));
     } finally {
       setIsLoading(false);

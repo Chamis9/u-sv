@@ -100,7 +100,7 @@ export function RecentActivitiesCard({
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium">{t('Jauns e-pasta abonents', 'New email subscriber')}</p>
-              <p className="text-xs text-muted-foreground">{isLoading ? t('Ielādē...', 'Loading...', 'Загрузка...') : t('Nav abonentu', 'No subscribers', 'Нет подписчиков')}</p>
+              <p className="text-xs text-muted-foreground">{isLoading ? t('Ielādē...', 'Loading...') : t('Nav abonentu', 'No subscribers')}</p>
             </div>
           </div>
         )}

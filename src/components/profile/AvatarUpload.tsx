@@ -76,11 +76,10 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
           console.error("Avatar upload failed - no URL returned");
           toast({
             variant: "destructive",
-            title: t("Kļūda", "Error", "Ошибка"),
+            title: t("Kļūda", "Error"),
             description: t(
               "Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz.",
-              "Failed to upload image. Please try again.",
-              "Не удалось загрузить изображение. Пожалуйста, попробуйте еще раз."
+              "Failed to upload image. Please try again."
             )
           });
         }
@@ -89,11 +88,10 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
       console.error("Error in avatar upload process:", err);
       toast({
         variant: "destructive",
-        title: t("Kļūda", "Error", "Ошибка"),
+        title: t("Kļūda", "Error"),
         description: t(
           "Neizdevās augšupielādēt attēlu. Lūdzu, mēģiniet vēlreiz.",
-          "Failed to upload image. Please try again.",
-          "Не удалось загрузить изображение. Пожалуйста, попробуйте еще раз."
+          "Failed to upload image. Please try again."
         )
       });
     } finally {
@@ -121,8 +119,8 @@ export function AvatarUpload({ user, onAvatarUpdate, size = "lg" }: AvatarUpload
         <UploadButton
           isUploading={isUploading}
           onClick={handleUploadClick}
-          label={t("Augšupielādēt attēlu", "Upload Image", "Загрузить изображение")}
-          loadingLabel={t("Augšupielādē...", "Uploading...", "Загрузка...")}
+          label={t("Augšupielādēt attēlu", "Upload Image")}
+          loadingLabel={t("Augšupielādē...", "Uploading...")}
         />
       </div>
     </div>
