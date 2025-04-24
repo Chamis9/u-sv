@@ -24,17 +24,17 @@ export function MobileMenu({ links }: MobileMenuProps) {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="md:hidden">
-          <Menu className="h-6 w-6 text-white" />
+          <Menu className="h-6 w-6 text-white dark:text-foreground" />
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent 
         side="left" 
-        className="w-[280px] sm:w-[350px] bg-gradient-to-br from-orange-50 to-orange-100 border-none"
+        className="w-[280px] sm:w-[350px] bg-white dark:bg-background dark:bg-gradient-to-br dark:from-background/80 dark:to-background/50 border-none"
       >
         <div className="flex flex-col h-full">
           <div className="mb-6">
-            <Logo className="text-black" />
+            <Logo className="text-black dark:text-white" />
           </div>
           
           <nav className="flex flex-col space-y-4 mb-8">
@@ -42,7 +42,7 @@ export function MobileMenu({ links }: MobileMenuProps) {
               <Link
                 key={index}
                 to={link.href}
-                className="px-2 py-3 text-lg font-medium text-black hover:bg-orange-300/50 rounded-md transition-colors"
+                className="px-2 py-3 text-lg font-medium text-black dark:text-white hover:bg-orange-300/50 rounded-md transition-colors"
                 onClick={() => setOpen(false)}
               >
                 {link.label}
@@ -52,15 +52,15 @@ export function MobileMenu({ links }: MobileMenuProps) {
           
           <div className="mt-auto space-y-4">
             <div className="flex items-center justify-between px-2">
-              <span className="text-sm font-medium text-black">
+              <span className="text-sm font-medium text-black dark:text-white">
                 {translations.theme?.label}
               </span>
               <ThemeToggle 
-                className="text-black hover:text-orange-500 focus:text-orange-500" 
+                className="text-black dark:text-white hover:text-orange-500 dark:hover:text-orange-400 focus:text-orange-500 dark:focus:text-orange-400" 
               />
             </div>
             <div className="flex items-center justify-between px-2">
-              <span className="text-sm font-medium text-black">
+              <span className="text-sm font-medium text-black dark:text-white">
                 {translations.language?.label}
               </span>
               <LanguageSelector />
