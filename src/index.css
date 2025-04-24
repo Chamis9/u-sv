@@ -121,6 +121,16 @@
   .hover-card-menu-icon {
     @apply text-gray-700 dark:text-gray-300 flex-shrink-0;
   }
+  
+  /* User menu styles */
+  .menu-item {
+    @apply flex items-center justify-center p-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors;
+    @apply text-gray-700 dark:text-gray-200;
+  }
+  
+  .menu-icon {
+    @apply h-5 w-5;
+  }
 }
 
 @keyframes fall {

@@ -30,53 +30,57 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
         </Link>
       </HoverCardTrigger>
       <HoverCardContent 
-        className={`w-64 p-0 overflow-hidden 
+        className={`w-64 p-0 overflow-hidden rounded-md shadow-lg
           ${theme === 'dark' 
             ? 'dark:bg-gray-800 dark:border-gray-700' 
             : 'bg-white border-gray-200'}`}
       >
         <div className="flex flex-col">
+          {/* User Header */}
           <div className="flex items-center gap-3 p-4 border-b dark:border-gray-700 border-gray-200">
             <UserAvatar user={user} size="md" />
             <div>
-              <p className="font-medium text-sm dark:text-white text-gray-900">
+              <p className="font-medium text-base dark:text-white text-gray-900">
                 {user.first_name} {user.last_name}
               </p>
             </div>
           </div>
           
-          <Link
-            to={`/profile/${user.id}/account`}
-            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 block w-full text-left text-sm flex items-center gap-2 dark:text-white text-gray-800"
-          >
-            <UserCircle size={16} className="flex-shrink-0" />
-            <span className="font-medium">{translations.myAccount}</span>
-          </Link>
-          
-          <Link
-            to={`/profile/${user.id}/tickets`}
-            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 block w-full text-left text-sm flex items-center gap-2 dark:text-white text-gray-800"
-          >
-            <Ticket size={16} className="flex-shrink-0" />
-            <span className="font-medium">{translations.myTickets}</span>
-          </Link>
-          
-          <Link
-            to={`/profile/${user.id}/payments`}
-            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 block w-full text-left text-sm flex items-center gap-2 dark:text-white text-gray-800"
-          >
-            <Wallet size={16} className="flex-shrink-0" />
-            <span className="font-medium">{translations.myPayments}</span>
-          </Link>
+          {/* Menu Links */}
+          <div className="py-2">
+            <Link
+              to={`/profile/${user.id}/account`}
+              className="menu-item"
+              title={translations.myAccount}
+            >
+              <UserCircle className="menu-icon" />
+            </Link>
+            
+            <Link
+              to={`/profile/${user.id}/tickets`}
+              className="menu-item"
+              title={translations.myTickets}
+            >
+              <Ticket className="menu-icon" />
+            </Link>
+            
+            <Link
+              to={`/profile/${user.id}/payments`}
+              className="menu-item"
+              title={translations.myPayments}
+            >
+              <Wallet className="menu-icon" />
+            </Link>
+          </div>
           
           <div className="border-t dark:border-gray-700 border-gray-200">
             <Button
               variant="ghost"
-              className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 w-full justify-start text-sm flex items-center gap-2 dark:text-white text-gray-800"
+              className="menu-item w-full justify-center"
               onClick={onLogout}
+              title={translations.logout}
             >
-              <LogOut size={16} className="flex-shrink-0" />
-              <span className="font-medium">{translations.logout}</span>
+              <LogOut className="menu-icon" />
             </Button>
           </div>
         </div>
