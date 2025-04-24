@@ -6,18 +6,32 @@ import { ThemeToggle } from "./theme/ThemeToggle";
 import { MobileMenu } from "./header/MobileMenu";
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { UserCircle } from "lucide-react";
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "./ui/hover-card";
+import { UserCircle, LogIn, UserPlus } from "lucide-react";
 import { LoginDialog } from "./auth/LoginDialog";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserHoverCard } from "./auth/user-menu/UserHoverCard";
-import { getLoginTranslations } from "./auth/translations";
+import { useNavigate } from "react-router-dom";
 
 export function Header() {
   const navigationLinks = getNavigationLinks();
-  const { translations, currentLanguage } = useLanguage();
+  const { currentLanguage } = useLanguage();
   const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const { user, isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const t = (lvText: string, enText: string, ruText?: string) => {
+    if (currentLanguage.code === 'lv') return lvText;
+    if (currentLanguage.code === 'ru') return ruText || enText;
+    return enText;
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
   
   return (
     <header className="fixed top-0 left-0 right-0 z-50 py-3 md:py-4 px-4 md:px-6 bg-black/40 backdrop-blur-sm">
@@ -33,20 +47,48 @@ export function Header() {
           <ThemeToggle />
           {isAuthenticated && user ? (
             <UserHoverCard 
-              user={user} 
-              translations={translations}
-              onLogout={logout}
+              user={user}
+              onLogout={handleLogout}
               onLinkClick={() => {}}
             />
           ) : (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white hover:text-orange-400 transition-colors duration-300 hover:bg-transparent"
-              onClick={() => setIsAuthDialogOpen(true)}
-            >
-              <UserCircle size={20} className="hover:text-orange-400" />
-            </Button>
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:text-orange-400 transition-colors hover:bg-transparent"
+                >
+                  <UserCircle size={20} className="hover:text-orange-400" />
+                </Button>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-64 p-4">
+                <div className="flex flex-col gap-3">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2"
+                    onClick={() => {
+                      setAuthMode('login');
+                      setIsAuthDialogOpen(true);
+                    }}
+                  >
+                    <LogIn className="h-4 w-4" />
+                    {t("Ieiet", "Login", "Войти")}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2"
+                    onClick={() => {
+                      setAuthMode('register');
+                      setIsAuthDialogOpen(true);
+                    }}
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    {t("Reģistrēties", "Register", "Регистрация")}
+                  </Button>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
           )}
           <LanguageSelector />
         </div>
@@ -54,7 +96,8 @@ export function Header() {
 
       <LoginDialog 
         isOpen={isAuthDialogOpen} 
-        onClose={() => setIsAuthDialogOpen(false)} 
+        onClose={() => setIsAuthDialogOpen(false)}
+        defaultView={authMode}
       />
     </header>
   );
