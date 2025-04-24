@@ -90,31 +90,6 @@
     height: auto;
     width: 100%;
   }
-  
-  /* Improved form styling for dark/light modes */
-  input, textarea, select {
-    @apply bg-background border-input dark:text-white;
-  }
-  
-  /* Auth form improvements */
-  .hover-card-content .TabsTrigger[data-state="active"] {
-    @apply bg-white dark:bg-gray-600 text-black dark:text-white font-medium;
-  }
-  
-  .hover-card-content input {
-    @apply bg-white/80 dark:bg-gray-700/80 border border-gray-300 dark:border-gray-600;
-  }
-  
-  .hover-card-content button {
-    @apply text-black dark:text-white;
-  }
-  
-  /* Mobile menu improvements */
-  @media (max-width: 768px) {
-    .language-selector button {
-      @apply p-1.5;
-    }
-  }
 }
 
 @layer utilities {
@@ -147,14 +122,6 @@
 
 .animate-fall {
   animation: fall 15s linear infinite;
-}
-
-/* Mobile responsiveness improvements */
-@media (max-width: 640px) {
-  .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
 }
 
 /* Optimize animations for battery and performance */
