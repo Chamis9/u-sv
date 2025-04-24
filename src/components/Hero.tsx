@@ -35,9 +35,9 @@ export const Hero = memo(function Hero() {
 
       <div className="container mx-auto px-4 z-10 text-center py-20">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-md">
+          <h1 className="text-4xl md:text-6xl font-bold text-white/90 mb-6 drop-shadow-md">
             {hero.title}{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-100 to-white dark:from-orange-200 dark:to-orange-100">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-white/90 to-white/80">
               {hero.titleHighlight}
             </span>
           </h1>
