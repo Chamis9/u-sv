@@ -38,7 +38,7 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
   const onSubmit = async (values: RegistrationFormData) => {
     setIsLoading(true);
     const phoneNumber = values.phoneNumber 
-      ? `${values.countryCode || '+371'}${values.phoneNumber}` 
+      ? `${values.countryCode}${values.phoneNumber}` 
       : null;
 
     const { error } = await supabase.auth.signUp({
