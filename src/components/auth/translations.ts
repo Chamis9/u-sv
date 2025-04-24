@@ -4,7 +4,7 @@ export const getLoginTranslations = (code: string) => {
   const t = {
     lv: {
       title: "Pieslēgties",
-      email: "E-pasta adrese",
+      email: "E-pasts",
       password: "Parole",
       login: "Ienākt",
       register: "Reģistrēties",
@@ -33,7 +33,7 @@ export const getLoginTranslations = (code: string) => {
     },
     en: {
       title: "Login",
-      email: "Email address",
+      email: "Email",
       password: "Password",
       login: "Login",
       register: "Register",

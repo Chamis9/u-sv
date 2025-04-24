@@ -62,7 +62,7 @@ export function SubscribeForm() {
           onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
           required
           aria-invalid={formError ? "true" : "false"}
-          className="flex-grow h-12 text-base font-playfair placeholder-orange-500/70 bg-white border-orange-300/50" 
+          className="flex-grow h-12 text-base font-playfair placeholder-orange-500/70 bg-white dark:bg-gray-800 dark:text-white border-orange-300/50" 
         />
         
         {formError && (
