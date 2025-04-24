@@ -12,7 +12,7 @@ export const Hero = memo(function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-200 via-orange-300 to-orange-400"
+      className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-200 via-orange-300 to-orange-400 dark:from-orange-950 dark:via-orange-900 dark:to-orange-800"
     >
       <Helmet>
         <script type="application/ld+json">
@@ -29,7 +29,7 @@ export const Hero = memo(function Hero() {
         </script>
       </Helmet>
       
-      <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-transparent dark:from-black/20 dark:to-transparent"></div>
 
       <FallingTickets />
 
@@ -37,7 +37,7 @@ export const Hero = memo(function Hero() {
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-md">
             {hero.title}{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-100 to-white">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-100 to-white dark:from-orange-200 dark:to-orange-100">
               {hero.titleHighlight}
             </span>
           </h1>
@@ -46,7 +46,7 @@ export const Hero = memo(function Hero() {
             {hero.subtitle}
           </p>
           
-          <div className="flex flex-col items-center space-y-6 bg-white/10 rounded-xl p-8">
+          <div className="flex flex-col items-center space-y-6 bg-white/10 dark:bg-gray-950/20 rounded-xl p-8">
             <p className="text-white text-lg">
               {hero.subscribeText}
             </p>
