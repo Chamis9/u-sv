@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -54,9 +53,8 @@ export function AppearanceAndLanguage({
   const { theme, setTheme } = useTheme();
   
   // Translation helper
-  const t = (lvText: string, enText: string, ruText?: string) => {
+  const t = (lvText: string, enText: string) => {
     if (currentLanguage.code === 'lv') return lvText;
-    if (currentLanguage.code === 'ru') return ruText || enText;
     return enText;
   };
   
@@ -79,8 +77,7 @@ export function AppearanceAndLanguage({
     toast({
       description: t(
         "Izskats un valodas iestatījumi ir veiksmīgi saglabāti", 
-        "Appearance and language settings saved successfully",
-        "Настройки внешнего вида и языка успешно сохранены"
+        "Appearance and language settings saved successfully"
       ),
     });
   };
@@ -91,8 +88,8 @@ export function AppearanceAndLanguage({
     
     toast({
       description: checked 
-        ? t("Tumšais motīvs ieslēgts", "Dark mode enabled", "Тёмный режим включен") 
-        : t("Gaišais motīvs ieslēgts", "Light mode enabled", "Светлый режим включен"),
+        ? t("Tumšais motīvs ieslēgts", "Dark mode enabled")
+        : t("Gaišais motīvs ieslēgts", "Light mode enabled"),
     });
   };
 
@@ -100,25 +97,23 @@ export function AppearanceAndLanguage({
     <Card>
       <CardHeader>
         <CardTitle>
-          {cardTitle || t("Izskats un valoda", "Appearance and Language", "Внешний вид и язык")}
+          {cardTitle || t("Izskats un valoda", "Appearance and Language")}
         </CardTitle>
         <CardDescription>
           {cardDescription || t(
             "Pārvaldiet lietotāja saskarnes izskatu un valodu", 
-            "Manage the user interface appearance and language",
-            "Управляйте внешним видом и языком пользовательского интерфейса"
+            "Manage the user interface appearance and language"
           )}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
-            <FormLabel>{t("Tumšais motīvs", "Dark Mode", "Темный режим")}</FormLabel>
+            <FormLabel>{t("Tumšais motīvs", "Dark Mode")}</FormLabel>
             <p className="text-sm text-muted-foreground">
               {t(
                 "Ieslēdziet tumšo motīvu, lai samazinātu acu slodzi", 
-                "Turn on dark mode to reduce eye strain",
-                "Включите темный режим, чтобы уменьшить нагрузку на глаза"
+                "Turn on dark mode to reduce eye strain"
               )}
             </p>
           </div>
@@ -139,7 +134,7 @@ export function AppearanceAndLanguage({
               name="language"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("Valoda", "Language", "Язык")}</FormLabel>
+                  <FormLabel>{t("Valoda", "Language")}</FormLabel>
                   <FormControl>
                     <Select 
                       onValueChange={(value) => {
@@ -150,8 +145,7 @@ export function AppearanceAndLanguage({
                           toast({
                             description: t(
                               `Valoda nomainīta uz: ${newLanguage.name}`, 
-                              `Language changed to: ${newLanguage.name}`,
-                              `Язык изменен на: ${newLanguage.name}`
+                              `Language changed to: ${newLanguage.name}`
                             ),
                           });
                         }
@@ -159,7 +153,7 @@ export function AppearanceAndLanguage({
                       defaultValue={field.value}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder={t("Izvēlēties valodu", "Select language", "Выбрать язык")} />
+                        <SelectValue placeholder={t("Izvēlēties valodu", "Select language")} />
                       </SelectTrigger>
                       <SelectContent>
                         {languages.map(language => (
@@ -176,8 +170,7 @@ export function AppearanceAndLanguage({
                   <FormDescription>
                     {formDescriptionText || t(
                       "Izvēlieties valodu", 
-                      "Choose the language",
-                      "Выберите язык"
+                      "Choose the language"
                     )}
                   </FormDescription>
                 </FormItem>
@@ -191,11 +184,11 @@ export function AppearanceAndLanguage({
                 onClick={() => appearanceForm.reset()}
               >
                 <RefreshCw className="mr-2 h-4 w-4" />
-                {t("Atiestatīt", "Reset", "Сбросить")}
+                {t("Atiestatīt", "Reset")}
               </Button>
               <Button type="submit">
                 <Save className="mr-2 h-4 w-4" />
-                {t("Saglabāt izmaiņas", "Save changes", "Сохранить изменения")}
+                {t("Saglabāt izmaiņas", "Save changes")}
               </Button>
             </div>
           </form>

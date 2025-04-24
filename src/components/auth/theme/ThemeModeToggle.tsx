@@ -16,10 +16,6 @@ export function ThemeModeToggle() {
     en: {
       darkMode: "Dark Mode",
       lightMode: "Light Mode"
-    },
-    ru: {
-      darkMode: "Темный режим",
-      lightMode: "Светлый режим"
     }
   };
 

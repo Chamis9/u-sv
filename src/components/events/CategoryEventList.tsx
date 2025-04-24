@@ -104,53 +104,44 @@ const categoryEvents: Record<string, Event[]> = {
   ]
 };
 
-const categoryTitles: Record<string, { lv: string, en: string, ru: string }> = {
+const categoryTitles: Record<string, { lv: string, en: string }> = {
   theatre: {
     lv: "Teātris",
-    en: "Theatre",
-    ru: "Театр"
+    en: "Theatre"
   },
   concerts: {
     lv: "Koncerti",
-    en: "Concerts",
-    ru: "Концерты"
+    en: "Concerts"
   },
   festivals: {
     lv: "Festivāli",
-    en: "Festivals",
-    ru: "Фестивали"
+    en: "Festivals"
   },
   sports: {
     lv: "Sports",
-    en: "Sports",
-    ru: "Спорт"
+    en: "Sports"
   },
   cinema: {
     lv: "Kino",
-    en: "Cinema",
-    ru: "Кино"
+    en: "Cinema"
   },
   children: {
     lv: "Bērniem",
-    en: "For Children",
-    ru: "Детские мероприятия"
+    en: "For Children"
   },
   "gift-cards": {
     lv: "Dāvanu kartes",
-    en: "Gift Cards",
-    ru: "Подарочные карты"
+    en: "Gift Cards"
   },
   other: {
     lv: "Citi pasākumi",
-    en: "Other Events",
-    ru: "Разные события"
+    en: "Other Events"
   }
 };
 
 const backButtonText = {
   lv: "Atpakaļ uz pasākumiem",
-  en: "Back to events",
-  ru: "Назад к мероприятиям"
+  en: "Back to events"
 };
 
 export function CategoryEventList() {
@@ -162,8 +153,7 @@ export function CategoryEventList() {
   if (!events) {
     const notFoundText = {
       lv: "Kategorija nav atrasta",
-      en: "Category not found",
-      ru: "Категория не найдена"
+      en: "Category not found"
     };
     return <div className="text-center p-8">{notFoundText[currentLanguage.code as keyof typeof notFoundText]}</div>;
   }

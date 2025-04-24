@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/features/language";
@@ -127,22 +126,8 @@ const getTranslations = (langCode: string) => {
       selectEmail: "Select email...",
       invalidEmail: "Please enter a valid email address",
       rateLimit: "Too many attempts. Please try again later."
-    },
-    ru: {
-      placeholder: "Электронная почта",
-      button: "Подписаться",
-      sending: "Отправка...",
-      successTitle: "Спасибо за подписку!",
-      successMessage: "Мы будем держать вас в курсе всех новостей.",
-      errorTitle: "Ошибка!",
-      errorMessage: "Не удалось сохранить адрес электронной почты. Пожалуйста, попробуйте еще раз.",
-      previousEmails: "Ранее использованные адреса",
-      selectEmail: "Выберите адрес...",
-      invalidEmail: "Пожалуйста, введите действительный адрес электронной почты",
-      rateLimit: "Слишком много попыток. Пожалуйста, попробуйте позже."
     }
   };
 
   return translations[langCode as keyof typeof translations] || translations.en;
 };
-
