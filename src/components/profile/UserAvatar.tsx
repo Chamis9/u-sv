@@ -7,9 +7,10 @@ import { useLanguage } from "@/features/language";
 interface UserAvatarProps {
   user: User;
   size?: "sm" | "md" | "lg";
+  forceRefresh?: boolean;
 }
 
-export function UserAvatar({ user, size = "md" }: UserAvatarProps) {
+export function UserAvatar({ user, size = "md", forceRefresh = false }: UserAvatarProps) {
   const { currentLanguage } = useLanguage();
   
   const t = (lvText: string, enText: string) => 
@@ -34,11 +35,16 @@ export function UserAvatar({ user, size = "md" }: UserAvatarProps) {
     return user.email ? user.email.substring(0, 2).toUpperCase() : "?";
   };
 
+  // Add cache busting if forceRefresh is true
+  const avatarUrl = user.avatar_url && forceRefresh 
+    ? `${user.avatar_url}?t=${Date.now()}` 
+    : user.avatar_url;
+
   return (
     <Avatar className={`${sizeClasses[size]} border-2 border-primary/10`}>
-      {user.avatar_url && (
+      {avatarUrl && (
         <AvatarImage 
-          src={user.avatar_url}
+          src={avatarUrl}
           alt={t("Lietotāja attēls", "User avatar")} 
           className="object-cover"
         />
