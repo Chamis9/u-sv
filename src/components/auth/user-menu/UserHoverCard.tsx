@@ -47,40 +47,40 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
           </div>
           
           {/* Menu Links */}
-          <div className="py-2">
+          <div>
             <Link
               to={`/profile/${user.id}/account`}
-              className="menu-item"
-              title={translations.myAccount}
+              className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 block w-full text-left text-sm flex items-center gap-2 dark:text-white text-gray-800"
             >
-              <UserCircle className="menu-icon" />
+              <UserCircle size={16} className="flex-shrink-0" />
+              <span className="font-medium">{translations.myAccount}</span>
             </Link>
             
             <Link
               to={`/profile/${user.id}/tickets`}
-              className="menu-item"
-              title={translations.myTickets}
+              className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 block w-full text-left text-sm flex items-center gap-2 dark:text-white text-gray-800"
             >
-              <Ticket className="menu-icon" />
+              <Ticket size={16} className="flex-shrink-0" />
+              <span className="font-medium">{translations.myTickets}</span>
             </Link>
             
             <Link
               to={`/profile/${user.id}/payments`}
-              className="menu-item"
-              title={translations.myPayments}
+              className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 block w-full text-left text-sm flex items-center gap-2 dark:text-white text-gray-800"
             >
-              <Wallet className="menu-icon" />
+              <Wallet size={16} className="flex-shrink-0" />
+              <span className="font-medium">{translations.myPayments}</span>
             </Link>
           </div>
           
           <div className="border-t dark:border-gray-700 border-gray-200">
             <Button
               variant="ghost"
-              className="menu-item w-full justify-center"
+              className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 w-full justify-start text-sm flex items-center gap-2 dark:text-white text-gray-800"
               onClick={onLogout}
-              title={translations.logout}
             >
-              <LogOut className="menu-icon" />
+              <LogOut size={16} className="flex-shrink-0" />
+              <span className="font-medium">{translations.logout}</span>
             </Button>
           </div>
         </div>
