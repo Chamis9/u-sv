@@ -15,10 +15,8 @@ export function UserAvatar({ user, size = "md", forceRefresh = false }: UserAvat
   const [avatarUrl, setAvatarUrl] = useState<string | null>(user.avatar_url || null);
   const [refreshKey, setRefreshKey] = useState(Date.now());
   
-  const t = (lvText: string, enText: string, ruText?: string) => 
-    currentLanguage.code === 'lv' ? lvText : 
-    currentLanguage.code === 'ru' ? (ruText || enText) : 
-    enText;
+  const t = (lvText: string, enText: string) => 
+    currentLanguage.code === 'lv' ? lvText : enText;
   
   const sizeClasses = {
     sm: "h-10 w-10",
@@ -28,12 +26,14 @@ export function UserAvatar({ user, size = "md", forceRefresh = false }: UserAvat
   
   // For demo users, check localStorage for avatar
   useEffect(() => {
+    // Check for demo user avatar in localStorage first
     if (user.id.startsWith('mock-user-id')) {
       const storedAvatar = localStorage.getItem('demo_user_avatar');
       if (storedAvatar) {
         setAvatarUrl(storedAvatar);
       }
     } else {
+      // For regular users, use the avatar_url from the user object
       // Add cache busting to force reload
       if (user.avatar_url) {
         const cacheBuster = forceRefresh ? `?t=${refreshKey}` : '';
@@ -66,7 +66,7 @@ export function UserAvatar({ user, size = "md", forceRefresh = false }: UserAvat
     <Avatar className={`${sizeClasses[size]} border-2 border-primary/10`}>
       <AvatarImage 
         src={avatarUrl || ""} 
-        alt={t("Lietotāja attēls", "User avatar", "Изображение пользователя")} 
+        alt={t("Lietotāja attēls", "User avatar")} 
         className="object-cover"
         key={refreshKey} // Add key to force refresh when avatar changes
       />
