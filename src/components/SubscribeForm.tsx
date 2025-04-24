@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/features/language";
@@ -91,12 +90,12 @@ export function SubscribeForm() {
 const getTranslations = (langCode: string) => {
   const translations = {
     lv: {
-      placeholder: "E-pasta adrese",
+      placeholder: "E-pasts",
       button: "Pieteikties",
       sending: "Sūta..."
     },
     en: {
-      placeholder: "Email address",
+      placeholder: "Email",
       button: "Subscribe",
       sending: "Sending..."
     },
