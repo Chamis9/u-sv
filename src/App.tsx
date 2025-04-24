@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -81,12 +80,10 @@ const App = () => {
                 <BrowserRouter>
                   <Suspense fallback={<PageLoader />}>
                     <Routes>
-                      <Route path="/" element={<Index />} />
+                      <Route path="/" element={<Navigate to="/events" />} />
                       <Route path="/events" element={<Events />} />
-                      <Route path="/tickets" element={<Tickets />} />
                       <Route path="/about-us" element={<AboutUs />} />
                       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                      <Route path="/contact" element={<Contact />} />
                       <Route path="/admin/*" element={<Admin />} />
                       <Route path="/profile/*" element={<Profile />} />
                       <Route path="*" element={<NotFound />} />
