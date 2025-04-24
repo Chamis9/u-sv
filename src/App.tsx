@@ -27,6 +27,9 @@ const Profile = lazy(() => import("./pages/Profile"));
 // Import the CategoryEventList component
 import { CategoryEventList } from "./components/events/CategoryEventList";
 
+// Import the EventTickets component
+import { EventTickets } from "./components/events/EventTickets";
+
 // Create a loading component
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -86,6 +89,7 @@ const App = () => {
                       <Route path="/" element={<Index />} />
                       <Route path="/events" element={<Events />} />
                       <Route path="/events/:category" element={<CategoryEventList />} />
+                      <Route path="/events/:category/:eventId" element={<EventTickets />} />
                       <Route path="/tickets" element={<Tickets />} />
                       <Route path="/about-us" element={<AboutUs />} />
                       <Route path="/privacy-policy" element={<PrivacyPolicy />} />

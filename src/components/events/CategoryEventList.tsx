@@ -9,6 +9,7 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
+import { Ticket } from "@/components/ui/ticket";
 
 interface Event {
   id: number;
@@ -203,7 +204,12 @@ export function CategoryEventList() {
                         <span className="text-lg font-semibold">
                           {event.price} €
                         </span>
-                        <Button variant="outline">Pirkt biļeti</Button>
+                        <Link to={`/events/${category}/${event.id}`}>
+                          <Button variant="outline">
+                            <Ticket className="mr-2 h-4 w-4" />
+                            {currentLanguage.code === 'lv' ? 'Biļetes' : 'Tickets'}
+                          </Button>
+                        </Link>
                       </div>
                     </CardFooter>
                   </Card>
