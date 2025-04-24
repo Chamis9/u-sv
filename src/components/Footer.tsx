@@ -1,4 +1,4 @@
-import { Heart, Cookie, Shield, Mail } from "lucide-react";
+import { Heart, Cookie, Shield, Mail, Building2 } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
@@ -32,6 +32,7 @@ export function Footer() {
               onClick={handleLinkClick}
               className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1 text-xs sm:text-sm"
             >
+              <Building2 size={14} className="hidden sm:inline" />
               <span>{translations.navigation?.aboutUs || "Par mums"}</span>
             </Link>
             <Link 
