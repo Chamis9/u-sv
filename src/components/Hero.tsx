@@ -1,4 +1,3 @@
-
 import { memo } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
@@ -12,7 +11,7 @@ export const Hero = memo(function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-400/90 via-pink-500/80 to-purple-600/90"
+      className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-400 via-orange-500 to-pink-500"
     >
       <Helmet>
         <script type="application/ld+json">
@@ -29,11 +28,7 @@ export const Hero = memo(function Hero() {
         </script>
       </Helmet>
       
-      {/* Gradients overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-transparent mix-blend-overlay"></div>
-      
-      {/* Glass effect background */}
-      <div className="absolute inset-0 backdrop-blur-[2px]"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-transparent"></div>
 
       <FallingTickets />
 
@@ -41,16 +36,16 @@ export const Hero = memo(function Hero() {
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-md">
             {hero.title}{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-200 to-orange-100">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-100 to-white">
               {hero.titleHighlight}
             </span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-white/90 mb-8 drop-shadow">
+          <p className="text-xl md:text-2xl text-white/90 mb-12 drop-shadow">
             {hero.subtitle}
           </p>
           
-          <div className="flex flex-col items-center space-y-6 backdrop-blur-sm bg-white/5 rounded-xl p-8 border border-white/10">
+          <div className="flex flex-col items-center space-y-6 bg-white/10 rounded-xl p-8">
             <p className="text-white text-lg">
               {hero.subscribeText}
             </p>
@@ -62,7 +57,7 @@ export const Hero = memo(function Hero() {
           <div className="pt-12">
             <a
               href="#how-it-works"
-              className="inline-flex items-center text-white hover:text-orange-200 transition-colors"
+              className="inline-flex items-center text-white hover:text-orange-100 transition-colors"
               aria-label="Learn more about how it works"
             >
               <span className="mr-2">{hero.learnMoreBtn}</span>
