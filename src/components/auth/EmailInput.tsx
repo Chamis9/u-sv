@@ -48,7 +48,6 @@ export function EmailInput({ form, label }: EmailInputProps) {
             <Input
               id="email-input"
               type="email"
-              placeholder="your-email@example.com"
               autoComplete="email"
               {...field}
               onFocus={(e) => {
