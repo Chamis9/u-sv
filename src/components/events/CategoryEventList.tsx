@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -75,6 +74,27 @@ const categoryEvents: Record<string, Event[]> = {
     { id: 8, title: "Manhattan Short", date: "2025-11-30", time: "19:00", location: "K.Suns", description: "Īsfilmu festivāls", price: "10-20" },
     { id: 9, title: "Francijas kino nedēļa", date: "2025-12-05", time: "18:30", location: "Splendid Palace", description: "Franču filmu programma", price: "12-25" },
     { id: 10, title: "Berlināles laureāti", date: "2025-12-10", time: "19:00", location: "Kino Citadele", description: "Berlīnes kinofestivāla labākās filmas", price: "15-30" }
+  ],
+  children: [
+    { id: 1, title: "Peppa pig", date: "2025-09-15", time: "11:00", location: "Latvijas Leļļu teātris", description: "Interaktīva izrāde bērniem", price: "10-25" },
+    { id: 2, title: "Karlsons", date: "2025-09-20", time: "12:00", location: "VEF Kultūras pils", description: "Muzikāla izrāde", price: "12-28" },
+    { id: 3, title: "Cirks uz ledus", date: "2025-09-25", time: "14:00", location: "Rīgas Cirks", description: "Ledus izrāde visai ģimenei", price: "15-35" },
+    { id: 4, title: "Maša un Lācis", date: "2025-09-30", time: "11:00", location: "Latvijas Leļļu teātris", description: "Muzikāla pasaka", price: "10-25" },
+    { id: 5, title: "Burunduku piedzīvojumi", date: "2025-10-05", time: "12:00", location: "VEF Kultūras pils", description: "Lielā burunduku šovprogramma", price: "15-30" }
+  ],
+  "gift-cards": [
+    { id: 1, title: "Universālā dāvanu karte", date: "2025-12-31", time: "23:59", location: "Biļešu serviss", description: "Derīga visiem pasākumiem", price: "25-100" },
+    { id: 2, title: "Teātra dāvanu karte", date: "2025-12-31", time: "23:59", location: "Biļešu paradīze", description: "Derīga teātra izrādēm", price: "20-80" },
+    { id: 3, title: "Koncertu dāvanu karte", date: "2025-12-31", time: "23:59", location: "Biļešu serviss", description: "Derīga koncertiem", price: "30-150" },
+    { id: 4, title: "Festivālu dāvanu karte", date: "2025-12-31", time: "23:59", location: "Biļešu paradīze", description: "Derīga festivāliem", price: "50-200" },
+    { id: 5, title: "VIP dāvanu karte", date: "2025-12-31", time: "23:59", location: "Biļešu serviss", description: "VIP pieredze pasākumos", price: "100-500" }
+  ],
+  other: [
+    { id: 1, title: "Kulinārijas meistarklase", date: "2025-10-10", time: "18:00", location: "Restorāns 3", description: "Ēdienu gatavošanas meistarklase", price: "45" },
+    { id: 2, title: "Vīna degustācija", date: "2025-10-15", time: "19:00", location: "Vīna studija", description: "Iepazīsti pasaules vīnus", price: "35" },
+    { id: 3, title: "Gleznošanas vakars", date: "2025-10-20", time: "18:30", location: "Mākslas telpa", description: "Radošā gleznošanas nodarbība", price: "30" },
+    { id: 4, title: "Jogas nometne", date: "2025-10-25", time: "10:00", location: "Jūrmala", description: "Veselīga dzīvesveida pasākums", price: "50" },
+    { id: 5, title: "Astroloģijas lekcija", date: "2025-10-30", time: "19:00", location: "Zinātnes centrs", description: "Ievads astroloģijā", price: "25" }
   ]
 };
 
@@ -83,7 +103,10 @@ const categoryTitles: Record<string, string> = {
   concerts: "Koncerti",
   festivals: "Festivāli",
   sports: "Sports",
-  cinema: "Kino"
+  cinema: "Kino",
+  children: "Bērniem",
+  "gift-cards": "Dāvanu kartes",
+  other: "Citi"
 };
 
 export function CategoryEventList() {

@@ -1,4 +1,3 @@
-
 export interface EventsTranslations {
   theatre: string;
   theatreDesc: string;
@@ -10,6 +9,12 @@ export interface EventsTranslations {
   sportsDesc: string;
   cinema: string;
   cinemaDesc: string;
+  children: string;
+  childrenDesc: string;
+  giftCards: string;
+  giftCardsDesc: string;
+  other: string;
+  otherDesc: string;
 }
 
 export const eventsTranslations = {
@@ -23,7 +28,13 @@ export const eventsTranslations = {
     sports: "Sports",
     sportsDesc: "Basketbols, hokejs, futbols",
     cinema: "Kino",
-    cinemaDesc: "Filmu festivāli, pirmizrādes, kinoteātri"
+    cinemaDesc: "Filmu festivāli, pirmizrādes, kinoteātri",
+    children: "Bērniem",
+    childrenDesc: "Izrādes un pasākumi bērniem",
+    giftCards: "Dāvanu kartes",
+    giftCardsDesc: "Dāvanu kartes pasākumiem",
+    other: "Citi",
+    otherDesc: "Citi pasākumi"
   },
   en: {
     theatre: "Theatre",
@@ -35,7 +46,13 @@ export const eventsTranslations = {
     sports: "Sports",
     sportsDesc: "Basketball, hockey, football",
     cinema: "Cinema",
-    cinemaDesc: "Film festivals, premieres, cinemas"
+    cinemaDesc: "Film festivals, premieres, cinemas",
+    children: "For Children",
+    childrenDesc: "Shows and events for children",
+    giftCards: "Gift Cards",
+    giftCardsDesc: "Event gift cards",
+    other: "Other",
+    otherDesc: "Other events"
   },
   ru: {
     theatre: "Театр",
@@ -47,6 +64,12 @@ export const eventsTranslations = {
     sports: "Спорт",
     sportsDesc: "Баскетбол, хоккей, футбол",
     cinema: "Кино",
-    cinemaDesc: "Кинофестивали, премьеры, кинотеатры"
+    cinemaDesc: "Кинофестивали, премьеры, кинотеатры",
+    children: "Для детей",
+    childrenDesc: "Представления и мероприятия для детей",
+    giftCards: "Подарочные карты",
+    giftCardsDesc: "Подарочные карты на мероприятия",
+    other: "Другие",
+    otherDesc: "Другие мероприятия"
   }
 };

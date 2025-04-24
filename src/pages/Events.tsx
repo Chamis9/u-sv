@@ -7,7 +7,7 @@ import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Drama, Music, Film, Trophy, PartyPopper } from "lucide-react";
+import { Drama, Music, Film, Trophy, PartyPopper, Baby, Gift, MoreHorizontal } from "lucide-react";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 
 const Events = () => {
@@ -48,6 +48,27 @@ const Events = () => {
       icon: Film,
       description: translations.events?.cinemaDesc || "Filmu festivāli, pirmizrādes, kinoteātri",
       venues: ["Splendid Palace", "K.Suns", "Kino Citadele"]
+    },
+    {
+      title: translations.events?.children || "Bērniem",
+      route: "children",
+      icon: Baby,
+      description: translations.events?.childrenDesc || "Izrādes un pasākumi bērniem",
+      venues: ["Latvijas Leļļu teātris", "VEF Kultūras pils", "Rīgas Cirks"]
+    },
+    {
+      title: translations.events?.giftCards || "Dāvanu kartes",
+      route: "gift-cards",
+      icon: Gift,
+      description: translations.events?.giftCardsDesc || "Dāvanu kartes pasākumiem",
+      venues: ["Biļešu serviss", "Biļešu paradīze"]
+    },
+    {
+      title: translations.events?.other || "Citi",
+      route: "other",
+      icon: MoreHorizontal,
+      description: translations.events?.otherDesc || "Citi pasākumi",
+      venues: ["Dažādas norises vietas"]
     }
   ];
 
