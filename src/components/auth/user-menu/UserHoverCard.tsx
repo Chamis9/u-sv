@@ -88,3 +88,4 @@ export function UserHoverCard({ user, translations, onLogout, onLinkClick }: Use
     </HoverCard>
   );
 }
+
