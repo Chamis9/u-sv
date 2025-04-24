@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from "@/components/Header";
@@ -18,14 +17,14 @@ const Events = () => {
       title: translations.events?.theatre || "Teātris",
       route: "theatre",
       icon: Drama,
-      description: translations.events?.theatreDesc || "Dramaturģija, opera, balets",
+      description: translations.events?.theatreDesc || "Teātris, opera, balets",
       venues: ["Latvijas Nacionālā opera", "Dailes teātris", "JRT"]
     },
     {
       title: translations.events?.concerts || "Koncerti",
       route: "concerts",
       icon: Music,
-      description: translations.events?.concertsDesc || "Klasiskā mūzika, džezs, populārā mūzika",
+      description: translations.events?.concertsDesc || "Dažādu izpildītāju mūzika",
       venues: ["Dzintaru koncertzāle", "Arēna Rīga", "Lielais dzintars"]
     },
     {
@@ -39,32 +38,32 @@ const Events = () => {
       title: translations.events?.sports || "Sports",
       route: "sports",
       icon: Trophy,
-      description: translations.events?.sportsDesc || "Basketbols, hokejs, futbols",
+      description: translations.events?.sportsDesc || "Dažādi sporta veidi",
       venues: ["Arēna Rīga", "Daugavas stadions", "Skonto stadions"]
     },
     {
       title: translations.events?.cinema || "Kino",
       route: "cinema",
       icon: Film,
-      description: translations.events?.cinemaDesc || "Filmu festivāli, pirmizrādes, kinoteātri",
+      description: translations.events?.cinemaDesc || "Kinoteātri, kino seansi",
       venues: ["Splendid Palace", "K.Suns", "Kino Citadele"]
     },
     {
       title: translations.events?.children || "Bērniem",
       route: "children",
       icon: Baby,
-      description: translations.events?.childrenDesc || "Izrādes un pasākumi bērniem",
+      description: translations.events?.childrenDesc || "Pasākumi bērniem",
       venues: ["Latvijas Leļļu teātris", "VEF Kultūras pils", "Rīgas Cirks"]
     },
     {
       title: translations.events?.giftCards || "Dāvanu kartes",
       route: "gift-cards",
       icon: Gift,
-      description: translations.events?.giftCardsDesc || "Dāvanu kartes pasākumiem",
-      venues: ["Biļešu serviss", "Biļešu paradīze"]
+      description: translations.events?.giftCardsDesc || "Dažādas dāvanu kartes",
+      venues: ["Dažādas norises vietas"]
     },
     {
-      title: translations.events?.other || "Citi",
+      title: translations.events?.other || "Citi pasākumi",
       route: "other",
       icon: MoreHorizontal,
       description: translations.events?.otherDesc || "Citi pasākumi",
