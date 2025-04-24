@@ -4,7 +4,6 @@ import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
 import { FallingTickets } from "@/components/FallingTickets";
 import { Helmet } from "react-helmet-async";
-import backgroundImage from "@/fons/netieku_bilesu_pardosana_fons_1.jpeg";
 
 export const Hero = memo(function Hero() {
   const { translations } = useLanguage();
@@ -13,7 +12,7 @@ export const Hero = memo(function Hero() {
   return (
     <section
       id="hero"
-      className="relative h-[80vh] flex items-center justify-center overflow-hidden"
+      className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-400/90 via-pink-500/80 to-purple-600/90"
     >
       <Helmet>
         <script type="application/ld+json">
@@ -30,29 +29,28 @@ export const Hero = memo(function Hero() {
         </script>
       </Helmet>
       
-      {/* Vienmēr tumšais pārklājums — Hero fons vienmēr viens attēls */}
-      <div className="absolute inset-0 bg-black/40 z-0"></div>
+      {/* Gradients overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-transparent mix-blend-overlay"></div>
+      
+      {/* Glass effect background */}
+      <div className="absolute inset-0 backdrop-blur-[2px]"></div>
 
       <FallingTickets />
 
-      {/* Fona attēls */}
-      <div
-        className="absolute inset-0 z-[-1] bg-cover bg-center transition-all duration-700"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
-        aria-hidden="true"
-      ></div>
-
       <div className="container mx-auto px-4 z-10 text-center py-20">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            {hero.title} <span className="text-gradient">{hero.titleHighlight}</span>
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-md">
+            {hero.title}{" "}
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-200 to-orange-100">
+              {hero.titleHighlight}
+            </span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-white/90 mb-8">
+          <p className="text-xl md:text-2xl text-white/90 mb-8 drop-shadow">
             {hero.subtitle}
           </p>
           
-          <div className="flex flex-col items-center space-y-6">
+          <div className="flex flex-col items-center space-y-6 backdrop-blur-sm bg-white/5 rounded-xl p-8 border border-white/10">
             <p className="text-white text-lg">
               {hero.subscribeText}
             </p>
@@ -64,11 +62,23 @@ export const Hero = memo(function Hero() {
           <div className="pt-12">
             <a
               href="#how-it-works"
-              className="inline-flex items-center text-white hover:text-orange-300 transition-colors"
+              className="inline-flex items-center text-white hover:text-orange-200 transition-colors"
               aria-label="Learn more about how it works"
             >
               <span className="mr-2">{hero.learnMoreBtn}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="animate-bounce"
+                aria-hidden="true"
+              >
                 <path d="M12 5v14M5 12l7 7 7-7"/>
               </svg>
             </a>
