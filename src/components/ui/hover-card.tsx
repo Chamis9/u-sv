@@ -22,13 +22,15 @@ const HoverCardContent = React.forwardRef<
     )}
     onInteractOutside={(e) => {
       // Only close if the interaction is outside the hover card content
-      // and not from an autofill menu or similar browser UI
+      // and not from an autofill menu, dropdown or similar browser UI
       if (e.target instanceof Element) {
         const isFormElement = e.target.closest('form');
         const isAutofillOption = e.target.closest('[role="option"]') || 
                                 e.target.closest('[role="listbox"]') ||
-                                e.target.closest('.autofill-suggestion');
+                                e.target.closest('.autofill-suggestion') ||
+                                e.target.closest('.dropdown-option');
         
+        // Do not close if clicking on form elements or autofill options
         if (isFormElement || isAutofillOption) {
           e.preventDefault();
         }

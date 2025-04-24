@@ -22,6 +22,7 @@ export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>("login");
+  const [keepHoverOpen, setKeepHoverOpen] = useState(false);
 
   const t = (lvText: string, enText: string, ruText?: string) => {
     if (currentLanguage.code === 'lv') return lvText;
@@ -100,20 +101,43 @@ export function Header() {
               onLinkClick={() => {}}
             />
           ) : (
-            <HoverCard>
+            <HoverCard open={keepHoverOpen}>
               <HoverCardTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="text-white hover:text-orange-400 transition-colors hover:bg-transparent"
+                  onClick={() => setKeepHoverOpen(true)}
                 >
                   <UserCircle size={20} className="hover:text-orange-400" />
                 </Button>
               </HoverCardTrigger>
               <HoverCardContent 
                 className="w-80 p-0 overflow-hidden"
-                onFocus={(e) => e.stopPropagation()}
-                onClick={(e) => e.stopPropagation()}
+                onFocus={(e) => {
+                  e.stopPropagation();
+                  setKeepHoverOpen(true);
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setKeepHoverOpen(true);
+                }}
+                onInteractOutside={(e) => {
+                  // Don't close if interacting with autofill dropdown
+                  if (e.target instanceof Element) {
+                    const isAutofillOption = e.target.closest('[role="option"]') || 
+                                            e.target.closest('[role="listbox"]') ||
+                                            e.target.closest('.autofill-suggestion') ||
+                                            e.target.closest('.dropdown-option');
+                    if (!isAutofillOption) {
+                      setKeepHoverOpen(false);
+                    } else {
+                      e.preventDefault();
+                    }
+                  } else {
+                    setKeepHoverOpen(false);
+                  }
+                }}
               >
                 <Tabs 
                   defaultValue={activeTab} 
@@ -128,7 +152,7 @@ export function Header() {
                   <TabsContent value="login" className="p-4">
                     <LoginForm 
                       translations={translations} 
-                      onClose={() => {}} 
+                      onClose={() => setKeepHoverOpen(false)} 
                     />
                   </TabsContent>
                   
@@ -136,7 +160,7 @@ export function Header() {
                     <RegistrationForm 
                       translations={translations} 
                       languageCode={currentLanguage.code} 
-                      onClose={() => {}} 
+                      onClose={() => setKeepHoverOpen(false)} 
                     />
                   </TabsContent>
                 </Tabs>

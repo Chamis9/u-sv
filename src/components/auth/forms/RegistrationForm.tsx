@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -101,6 +102,19 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
                   form.setValue(key as any, formFields[key]);
                 }
               });
+              
+              // Stop propagation of all events to prevent the hover card from closing
+              const stopEvents = (e: Event) => {
+                e.stopPropagation();
+              };
+              
+              formElement.addEventListener('click', stopEvents as EventListener, true);
+              formElement.addEventListener('focus', stopEvents as EventListener, true);
+              
+              setTimeout(() => {
+                formElement.removeEventListener('click', stopEvents as EventListener, true);
+                formElement.removeEventListener('focus', stopEvents as EventListener, true);
+              }, 1000);
             }, 100);
           }
         });
