@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Edit, Save, X as Cancel } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { AvatarUpload } from "../../AvatarUpload";
+import { UserAvatar } from "../../UserAvatar";
 import { PersonalInfoForm } from "./PersonalInfoForm";
 import { PersonalInfoDisplay } from "./PersonalInfoDisplay";
 
@@ -40,7 +40,6 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
   };
   
   const handleSave = () => {
-    // Create updated user object
     const updatedUser: User = {
       ...user,
       first_name: formData.first_name,
@@ -50,18 +49,15 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
       updated_at: new Date().toISOString()
     };
     
-    // Update user data
     onUserUpdate(updatedUser);
     setIsEditing(false);
     
-    // Show success notification
     toast({
       description: t("Konta informācija veiksmīgi atjaunināta", "Account information successfully updated"),
     });
   };
   
   const handleCancel = () => {
-    // Reset to original data
     setFormData({
       first_name: user.first_name || "",
       last_name: user.last_name || "",
@@ -69,15 +65,6 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
       phone: user.phone || ""
     });
     setIsEditing(false);
-  };
-  
-  const handleAvatarUpdate = (url: string) => {
-    const updatedUser: User = {
-      ...user,
-      avatar_url: url,
-      updated_at: new Date().toISOString()
-    };
-    onUserUpdate(updatedUser);
   };
   
   return (
@@ -107,11 +94,7 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
       <CardContent>
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex flex-col items-center space-y-4">
-            <AvatarUpload 
-              user={user} 
-              onAvatarUpdate={handleAvatarUpdate} 
-              size="lg" 
-            />
+            <UserAvatar user={user} size="lg" />
           </div>
           
           <div className="flex-1 space-y-4">
