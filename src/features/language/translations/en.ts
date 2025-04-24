@@ -8,7 +8,8 @@ import {
   adminTranslations,
   navigationTranslations,
   themeTranslations,
-  languageSelectorTranslations
+  languageSelectorTranslations,
+  eventsTranslations
 } from './features';
 
 export const enTranslations: Translations = {
@@ -17,8 +18,8 @@ export const enTranslations: Translations = {
   cookieConsent: cookieConsentTranslations.en,
   footer: footerTranslations.en,
   admin: adminTranslations.en,
-  // Add the new translations
   navigation: navigationTranslations.en,
   theme: themeTranslations.en,
-  language: languageSelectorTranslations.en
+  language: languageSelectorTranslations.en,
+  events: eventsTranslations.en
 };

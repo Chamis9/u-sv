@@ -5,6 +5,7 @@ export { footerTranslations, type FooterTranslations } from './footer';
 export { cookieConsentTranslations, type CookieConsentTranslations } from './cookieConsent';
 export { adminTranslations, type AdminTranslations } from './admin';
 export { contactTranslations } from './contact';
+export { eventsTranslations, type EventsTranslations } from './events';
 export { 
   navigationTranslations, 
   themeTranslations, 

@@ -7,7 +7,7 @@ import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Theater, Music, Film, Calendar, Activity } from "lucide-react";
+import { Drama, Music, Film, Trophy, PartyPopper } from "lucide-react";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 
 const Events = () => {
@@ -15,38 +15,38 @@ const Events = () => {
 
   const categories = [
     {
-      title: "Teātris",
+      title: translations.events?.theatre || "Teātris",
       route: "theatre",
-      icon: Theater,
-      description: "Dramaturģija, opera, balets",
+      icon: Drama,
+      description: translations.events?.theatreDesc || "Dramaturģija, opera, balets",
       venues: ["Latvijas Nacionālā opera", "Dailes teātris", "JRT"]
     },
     {
-      title: "Koncerti",
+      title: translations.events?.concerts || "Koncerti",
       route: "concerts",
       icon: Music,
-      description: "Klasiskā mūzika, džezs, populārā mūzika",
+      description: translations.events?.concertsDesc || "Klasiskā mūzika, džezs, populārā mūzika",
       venues: ["Dzintaru koncertzāle", "Arēna Rīga", "Lielais dzintars"]
     },
     {
-      title: "Festivāli",
+      title: translations.events?.festivals || "Festivāli",
       route: "festivals",
-      icon: Calendar,
-      description: "Mūzikas, mākslas un kultūras festivāli",
+      icon: PartyPopper,
+      description: translations.events?.festivalsDesc || "Mūzikas, mākslas un kultūras festivāli",
       venues: ["Lucavsala", "Mežaparks", "Līvu laukums"]
     },
     {
-      title: "Sports",
+      title: translations.events?.sports || "Sports",
       route: "sports",
-      icon: Activity,
-      description: "Basketbols, hokejs, futbols",
+      icon: Trophy,
+      description: translations.events?.sportsDesc || "Basketbols, hokejs, futbols",
       venues: ["Arēna Rīga", "Daugavas stadions", "Skonto stadions"]
     },
     {
-      title: "Kino",
+      title: translations.events?.cinema || "Kino",
       route: "cinema",
       icon: Film,
-      description: "Filmu festivāli, pirmizrādes, kinoteātri",
+      description: translations.events?.cinemaDesc || "Filmu festivāli, pirmizrādes, kinoteātri",
       venues: ["Splendid Palace", "K.Suns", "Kino Citadele"]
     }
   ];

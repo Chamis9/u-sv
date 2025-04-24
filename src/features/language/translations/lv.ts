@@ -8,7 +8,8 @@ import {
   adminTranslations,
   navigationTranslations,
   themeTranslations,
-  languageSelectorTranslations
+  languageSelectorTranslations,
+  eventsTranslations
 } from './features';
 
 export const lvTranslations: Translations = {
@@ -17,8 +18,8 @@ export const lvTranslations: Translations = {
   cookieConsent: cookieConsentTranslations.lv,
   footer: footerTranslations.lv,
   admin: adminTranslations.lv,
-  // Add the new translations
   navigation: navigationTranslations.lv,
   theme: themeTranslations.lv,
-  language: languageSelectorTranslations.lv
+  language: languageSelectorTranslations.lv,
+  events: eventsTranslations.lv
 };
