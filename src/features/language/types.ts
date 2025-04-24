@@ -1,3 +1,4 @@
+
 // Remove the circular import
 // import { Translations } from './types';
 
@@ -94,6 +95,23 @@ export interface Translations {
       exportCsv?: string;
       sendMessage?: string;
     };
+  };
+  // Added missing properties
+  navigation?: {
+    home?: string;
+    about?: string;
+    tickets?: string;
+    contact?: string;
+  };
+  theme?: {
+    label?: string;
+    light?: string;
+    dark?: string;
+    system?: string;
+  };
+  language?: {
+    label?: string;
+    selector?: string;
   };
 }
 
