@@ -12,7 +12,7 @@ interface UserAvatarProps {
 
 export function UserAvatar({ user, size = "md", forceRefresh = false }: UserAvatarProps) {
   const { currentLanguage } = useLanguage();
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(user.avatar_url || null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null); // Initialize as null and set in useEffect
   const [refreshKey, setRefreshKey] = useState(Date.now());
   
   const t = (lvText: string, enText: string) => 
@@ -24,29 +24,41 @@ export function UserAvatar({ user, size = "md", forceRefresh = false }: UserAvat
     lg: "h-24 w-24"
   };
   
-  // For demo users, check localStorage for avatar
+  // Effect to set the avatar URL with proper handling
   useEffect(() => {
-    // Check for demo user avatar in localStorage first
+    console.log("Avatar useEffect running, user:", user.id);
+    console.log("User avatar_url:", user.avatar_url);
+    
+    // For demo users, check localStorage first
     if (user.id.startsWith('mock-user-id')) {
       const storedAvatar = localStorage.getItem('demo_user_avatar');
       if (storedAvatar) {
+        console.log("Using localStorage avatar for demo user");
         setAvatarUrl(storedAvatar);
+      } else {
+        console.log("No localStorage avatar found for demo user");
+        setAvatarUrl(null);
       }
     } else {
-      // For regular users, use the avatar_url from the user object
-      // Add cache busting to force reload
+      // For regular users, use avatar_url with cache busting
       if (user.avatar_url) {
-        const cacheBuster = forceRefresh ? `?t=${refreshKey}` : '';
-        setAvatarUrl(`${user.avatar_url}${cacheBuster}`);
+        const cacheBuster = forceRefresh || refreshKey ? `?t=${refreshKey}` : '';
+        const url = `${user.avatar_url}${cacheBuster}`;
+        console.log("Setting avatar URL with cache buster:", url);
+        setAvatarUrl(url);
       } else {
+        console.log("No avatar_url available for user");
         setAvatarUrl(null);
       }
     }
   }, [user.id, user.avatar_url, forceRefresh, refreshKey]);
   
-  // Force update when avatar_url changes
+  // Force refresh when avatar_url changes
   useEffect(() => {
-    setRefreshKey(Date.now());
+    if (user.avatar_url) {
+      console.log("Avatar URL changed, updating refresh key");
+      setRefreshKey(Date.now());
+    }
   }, [user.avatar_url]);
   
   const getInitials = () => {
@@ -64,12 +76,14 @@ export function UserAvatar({ user, size = "md", forceRefresh = false }: UserAvat
 
   return (
     <Avatar className={`${sizeClasses[size]} border-2 border-primary/10`}>
-      <AvatarImage 
-        src={avatarUrl || ""} 
-        alt={t("Lietotāja attēls", "User avatar")} 
-        className="object-cover"
-        key={refreshKey} // Add key to force refresh when avatar changes
-      />
+      {avatarUrl ? (
+        <AvatarImage 
+          src={avatarUrl} 
+          alt={t("Lietotāja attēls", "User avatar")} 
+          className="object-cover"
+          key={refreshKey} // Add key to force refresh when avatar changes
+        />
+      ) : null}
       <AvatarFallback className="bg-primary/10 text-primary">
         {getInitials()}
       </AvatarFallback>
