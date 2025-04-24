@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -105,25 +104,68 @@ const categoryEvents: Record<string, Event[]> = {
   ]
 };
 
-const categoryTitles: Record<string, string> = {
-  theatre: "Teātris",
-  concerts: "Koncerti",
-  festivals: "Festivāli",
-  sports: "Sports",
-  cinema: "Kino",
-  children: "Bērniem",
-  "gift-cards": "Dāvanu kartes",
-  other: "Citi pasākumi"
+const categoryTitles: Record<string, { lv: string, en: string, ru: string }> = {
+  theatre: {
+    lv: "Teātris",
+    en: "Theatre",
+    ru: "Театр"
+  },
+  concerts: {
+    lv: "Koncerti",
+    en: "Concerts",
+    ru: "Концерты"
+  },
+  festivals: {
+    lv: "Festivāli",
+    en: "Festivals",
+    ru: "Фестивали"
+  },
+  sports: {
+    lv: "Sports",
+    en: "Sports",
+    ru: "Спорт"
+  },
+  cinema: {
+    lv: "Kino",
+    en: "Cinema",
+    ru: "Кино"
+  },
+  children: {
+    lv: "Bērniem",
+    en: "For Children",
+    ru: "Для детей"
+  },
+  "gift-cards": {
+    lv: "Dāvanu kartes",
+    en: "Gift Cards",
+    ru: "Подарочные карты"
+  },
+  other: {
+    lv: "Citi pasākumi",
+    en: "Other Events",
+    ru: "Другие мероприятия"
+  }
+};
+
+const backButtonText = {
+  lv: "Atpakaļ uz pasākumiem",
+  en: "Back to events",
+  ru: "Назад к мероприятиям"
 };
 
 export function CategoryEventList() {
   const { category } = useParams<{ category: string }>();
   const events = category ? categoryEvents[category] : [];
-  const categoryTitle = category ? categoryTitles[category] : "";
-  const { translations } = useLanguage();
+  const { currentLanguage } = useLanguage();
+  const categoryTitle = category ? categoryTitles[category][currentLanguage.code] : "";
 
   if (!events) {
-    return <div className="text-center p-8">Kategorija nav atrasta</div>;
+    const notFoundText = {
+      lv: "Kategorija nav atrasta",
+      en: "Category not found",
+      ru: "Категория не найдена"
+    };
+    return <div className="text-center p-8">{notFoundText[currentLanguage.code as keyof typeof notFoundText]}</div>;
   }
 
   return (
@@ -138,7 +180,7 @@ export function CategoryEventList() {
                 <Link to="/events">
                   <Button variant="ghost" className="mb-4">
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Atpakaļ uz pasākumiem
+                    {backButtonText[currentLanguage.code as keyof typeof backButtonText]}
                   </Button>
                 </Link>
                 <h1 className="text-4xl md:text-5xl font-bold">
