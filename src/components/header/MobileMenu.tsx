@@ -30,7 +30,7 @@ export function MobileMenu({ links }: MobileMenuProps) {
       </SheetTrigger>
       <SheetContent 
         side="left" 
-        className="w-[280px] sm:w-[350px] bg-gradient-to-br from-orange-50 to-orange-100/80 dark:from-background dark:to-background border-none"
+        className="w-[280px] sm:w-[350px] bg-gradient-to-br from-orange-100 to-orange-50 dark:from-background dark:to-background/90 border-none"
       >
         <div className="flex flex-col h-full backdrop-blur-sm">
           <div className="mb-6">
@@ -42,7 +42,7 @@ export function MobileMenu({ links }: MobileMenuProps) {
               <Link
                 key={index}
                 to={link.href}
-                className="px-2 py-3 text-lg font-medium text-black dark:text-white hover:bg-orange-200/50 dark:hover:bg-secondary/20 rounded-md transition-colors"
+                className="px-2 py-3 text-lg font-medium text-black/90 dark:text-white hover:bg-orange-200/50 dark:hover:bg-orange-500/10 rounded-md transition-colors"
                 onClick={() => setOpen(false)}
               >
                 {link.label}
@@ -52,15 +52,15 @@ export function MobileMenu({ links }: MobileMenuProps) {
           
           <div className="mt-auto space-y-4">
             <div className="flex items-center justify-between px-2">
-              <span className="text-sm font-medium text-black dark:text-white">
+              <span className="text-sm font-medium text-black/90 dark:text-white">
                 {translations.theme?.label}
               </span>
               <ThemeToggle 
-                className="text-black dark:text-white hover:text-orange-500 dark:hover:text-orange-400" 
+                className="text-black/90 dark:text-white hover:text-orange-500 dark:hover:text-orange-400" 
               />
             </div>
             <div className="flex items-center justify-between px-2">
-              <span className="text-sm font-medium text-black dark:text-white">
+              <span className="text-sm font-medium text-black/90 dark:text-white">
                 {translations.language?.label}
               </span>
               <LanguageSelector />
