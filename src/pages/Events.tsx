@@ -1,42 +1,53 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "lucide-react";
+import { Theater, Music, Film, Calendar, Sports } from "lucide-react";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 
 const Events = () => {
   const { translations } = useLanguage();
 
-  const sampleEvents = [
+  const categories = [
     {
-      title: "Liepājas Simfoniskā orķestra koncerts",
-      date: "2025-05-15",
-      time: "19:00",
-      location: "Lielais dzintars",
-      description: "Klasiskās mūzikas koncerts ar pasaules līmeņa solistiem",
-      price: "25-45"
+      title: "Teātris",
+      route: "theatre",
+      icon: Theater,
+      description: "Dramaturģija, opera, balets",
+      venues: ["Latvijas Nacionālā opera", "Dailes teātris", "JRT"]
     },
     {
-      title: "Rīgas Ritmi 2025",
-      date: "2025-06-20",
-      time: "20:00",
-      location: "Arēna Rīga",
-      description: "Starptautiskais džeza festivāls",
-      price: "30-60"
+      title: "Koncerti",
+      route: "concerts",
+      icon: Music,
+      description: "Klasiskā mūzika, džezs, populārā mūzika",
+      venues: ["Dzintaru koncertzāle", "Arēna Rīga", "Lielais dzintars"]
     },
     {
-      title: "Latvijas Nacionālās operas izrāde",
-      date: "2025-07-10",
-      time: "18:30",
-      location: "LNO",
-      description: "G. Pučīni 'Turandota'",
-      price: "20-80"
+      title: "Festivāli",
+      route: "festivals",
+      icon: Calendar,
+      description: "Mūzikas, mākslas un kultūras festivāli",
+      venues: ["Lucavsala", "Mežaparks", "Līvu laukums"]
+    },
+    {
+      title: "Sports",
+      route: "sports",
+      icon: Sports,
+      description: "Basketbols, hokejs, futbols",
+      venues: ["Arēna Rīga", "Daugavas stadions", "Skonto stadions"]
+    },
+    {
+      title: "Kino",
+      route: "cinema",
+      icon: Film,
+      description: "Filmu festivāli, pirmizrādes, kinoteātri",
+      venues: ["Splendid Palace", "K.Suns", "Kino Citadele"]
     }
   ];
 
@@ -52,34 +63,29 @@ const Events = () => {
                 <span className="text-orange-500">Pasākumi</span>
               </h1>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {sampleEvents.map((event, index) => (
-                  <Card key={index} className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
-                    <CardHeader>
-                      <CardTitle>{event.title}</CardTitle>
-                      <CardDescription>
-                        <div className="flex items-center gap-2 text-orange-500">
-                          <Calendar className="h-4 w-4" />
-                          {event.date} | {event.time}
+                {categories.map((category, index) => (
+                  <Link to={`/events/${category.route}`} key={index}>
+                    <Card className="h-full transition-transform hover:scale-105 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <category.icon className="h-6 w-6 text-orange-500" />
+                          {category.title}
+                        </CardTitle>
+                        <CardDescription>
+                          {category.description}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          {category.venues.map((venue, vIndex) => (
+                            <div key={vIndex} className="text-sm text-gray-600 dark:text-gray-400">
+                              {venue}
+                            </div>
+                          ))}
                         </div>
-                        <div className="mt-1 text-gray-600 dark:text-gray-400">
-                          {event.location}
-                        </div>
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        {event.description}
-                      </p>
-                    </CardContent>
-                    <CardFooter className="mt-auto">
-                      <div className="flex justify-between items-center w-full">
-                        <span className="text-lg font-semibold">
-                          {event.price} €
-                        </span>
-                        <Button variant="outline">Pirkt biļeti</Button>
-                      </div>
-                    </CardFooter>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             </div>
