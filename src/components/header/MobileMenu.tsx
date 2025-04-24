@@ -59,11 +59,11 @@ export function MobileMenu({ links }: MobileMenuProps) {
                 className="text-black hover:text-orange-500 focus:text-orange-500" 
               />
             </div>
-            <div className="flex items-center justify-between px-2 border border-black rounded-md p-2">
-              <span className="text-sm font-medium text-black mr-2">
+            <div className="flex items-center justify-between px-2">
+              <span className="text-sm font-medium text-black">
                 {translations.language?.label}
               </span>
-              <LanguageSelector className="border-black text-black" />
+              <LanguageSelector />
             </div>
           </div>
         </div>
