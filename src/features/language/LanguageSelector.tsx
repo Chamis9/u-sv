@@ -17,15 +17,16 @@ export const LanguageSelector = memo(function LanguageSelector() {
   const isMobile = useIsMobile();
 
   return (
-    <div className={`language-selector ${isMobile ? 'pr-0' : ''}`}>
+    <div className="language-selector">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button 
             variant="outline" 
+            size={isMobile ? "sm" : "default"}
             className="rounded-full bg-white/10 backdrop-blur-sm text-white dark:text-foreground dark:bg-secondary/20 border-white/20 hover:bg-white/20 dark:hover:bg-secondary/30"
           >
             <FlagIcon countryCode={currentLanguage.flag} />
-            <span>{currentLanguage.name}</span>
+            {!isMobile && <span>{currentLanguage.name}</span>}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent 

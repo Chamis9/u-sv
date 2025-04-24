@@ -7,6 +7,7 @@ import { LoginForm } from "@/components/auth/forms/LoginForm";
 import { RegistrationForm } from "@/components/auth/forms/RegistrationForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTheme } from "@/components/theme/ThemeProvider";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AuthHoverCardProps {
   translations: any;
@@ -16,6 +17,7 @@ interface AuthHoverCardProps {
 export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardProps) {
   const [isAuthCardOpen, setIsAuthCardOpen] = useState(false);
   const { theme } = useTheme();
+  const isMobile = useIsMobile();
   const triggerButtonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
@@ -79,8 +81,8 @@ export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardPr
         </Button>
       </HoverCardTrigger>
       <HoverCardContent 
-        className={`w-[400px] p-4 hover-card-content 
-          ${theme === 'dark' ? 'dark:bg-gray-800 dark:border-gray-700' : ''}`}
+        className={`w-[${isMobile ? '300px' : '400px'}] p-4 hover-card-content 
+          bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border border-gray-200 dark:border-gray-700 shadow-lg`}
         onPointerDownOutside={(e) => {
           if (e.target && (
             (e.target as HTMLElement).tagName === 'INPUT' || 
@@ -108,19 +110,29 @@ export function AuthHoverCard({ translations, currentLanguage }: AuthHoverCardPr
         }}
       >
         <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">{translations.login}</TabsTrigger>
-            <TabsTrigger value="register">{translations.register}</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 bg-gray-100/80 dark:bg-gray-700/80">
+            <TabsTrigger 
+              value="login" 
+              className="text-gray-700 dark:text-gray-200 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 data-[state=active]:text-black dark:data-[state=active]:text-white"
+            >
+              {translations.login}
+            </TabsTrigger>
+            <TabsTrigger 
+              value="register"
+              className="text-gray-700 dark:text-gray-200 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-600 data-[state=active]:text-black dark:data-[state=active]:text-white"
+            >
+              {translations.register}
+            </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="login" className="space-y-4 mt-4">
+          <TabsContent value="login" className="space-y-4 mt-4 text-black dark:text-white">
             <LoginForm 
               onClose={() => setIsAuthCardOpen(false)} 
               translations={translations} 
             />
           </TabsContent>
           
-          <TabsContent value="register" className="space-y-4 mt-4">
+          <TabsContent value="register" className="space-y-4 mt-4 text-black dark:text-white">
             <RegistrationForm 
               translations={translations} 
               languageCode={currentLanguage.code}

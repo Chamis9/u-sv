@@ -4,6 +4,7 @@ import { Logo } from "./header/Logo";
 import { Navigation } from "./header/Navigation";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ThemeToggle } from "./theme/ThemeToggle";
+import { MobileMenu } from "./header/MobileMenu";
 
 export function Header() {
   const isMobile = useIsMobile();
@@ -14,12 +15,10 @@ export function Header() {
         {isMobile ? (
           <>
             <Logo />
-            <div className="flex-1 flex justify-center">
-              <Navigation />
-            </div>
             <div className="flex items-center gap-2 text-white">
-              <ThemeToggle />
+              <Navigation />
               <LanguageSelector />
+              <MobileMenu />
             </div>
           </>
         ) : (
