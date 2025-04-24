@@ -12,7 +12,7 @@ export const Hero = memo(function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-200 via-orange-300 to-orange-400 dark:from-orange-950 dark:via-orange-900 dark:to-orange-800"
+      className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-50 via-orange-100 to-orange-200 dark:from-orange-950 dark:via-orange-900 dark:to-orange-800"
     >
       <Helmet>
         <script type="application/ld+json">
