@@ -1,4 +1,3 @@
-
 import { Heart, Cookie, Shield, Mail } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "./ui/button";
@@ -28,6 +27,13 @@ export function Footer() {
             </p>
           </div>
           <div className="flex flex-wrap justify-center md:justify-end items-center gap-2 sm:gap-4">
+            <Link 
+              to="/about-us"
+              onClick={handleLinkClick}
+              className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1 text-xs sm:text-sm"
+            >
+              <span>{translations.navigation?.aboutUs || "Par mums"}</span>
+            </Link>
             <Link 
               to="/contact" 
               onClick={handleLinkClick}

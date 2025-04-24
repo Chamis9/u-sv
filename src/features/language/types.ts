@@ -95,12 +95,16 @@ export interface Translations {
       sendMessage?: string;
     };
   };
-  // Added missing properties
+  aboutUs?: {
+    title: string;
+    content: string[];
+  };
   navigation?: {
     home?: string;
     events?: string;
     tickets?: string;
     contact?: string;
+    aboutUs?: string;
   };
   theme?: {
     label?: string;
