@@ -1,11 +1,9 @@
 
 import { useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import type { Subscriber } from '@/types/subscribers';
 import { useLanguage } from '@/features/language';
-import { filterSubscribers, createDownloadableCSV, downloadBlob } from '@/utils/subscriberUtils';
-import { logActivity } from '@/utils/activityLogger';
+import { deleteSubscriber, updateSubscriber, createDownloadableCSV, downloadBlob } from '@/utils/subscriberManagement';
 
 export function useSubscriberActions() {
   const { toast } = useToast();
@@ -28,28 +26,15 @@ export function useSubscriberActions() {
 
     try {
       const subscriber = subscribers.find(sub => sub.id === id);
-      const subscriberEmail = subscriber?.email;
-
-      const { error } = await supabase
-        .from('newsletter_subscribers')
-        .delete()
-        .eq('id', id);
-
-      if (error) {
-        throw error;
-      }
+      if (!subscriber) throw new Error('Subscriber not found');
+      
+      const { success, error } = await deleteSubscriber(id, subscriber.email);
+      
+      if (!success) throw new Error(error || 'Unknown error');
       
       const newSubscribers = subscribers.filter(sub => sub.id !== id);
       updateCache(newSubscribers);
       updateFilteredSubscribers(newSubscribers);
-      
-      if (subscriberEmail) {
-        logActivity({
-          activityType: 'subscriber',
-          description: `Subscriber deleted`,
-          email: subscriberEmail
-        });
-      }
       
       toast({
         description: t('Abonents veiksmīgi dzēsts', 'Subscriber deleted successfully')
@@ -78,31 +63,17 @@ export function useSubscriberActions() {
     
     try {
       const oldSubscriber = subscribers.find(sub => sub.id === id);
-      const oldEmail = oldSubscriber?.email;
+      if (!oldSubscriber) throw new Error('Subscriber not found');
       
-      const { data, error } = await supabase
-        .from('newsletter_subscribers')
-        .update({ email })
-        .eq('id', id)
-        .select()
-        .single();
-        
-      if (error) {
-        throw error;
-      }
+      const { success, error } = await updateSubscriber(id, email, oldSubscriber.email);
+      
+      if (!success) throw new Error(error || 'Unknown error');
       
       const newSubscribers = subscribers.map(sub => 
         sub.id === id ? { ...sub, email } : sub
       );
       updateCache(newSubscribers);
       updateFilteredSubscribers(newSubscribers);
-      
-      logActivity({
-        activityType: 'subscriber',
-        description: `Subscriber email updated`,
-        email: email,
-        metadata: { oldEmail }
-      });
       
       toast({
         description: t('Abonents veiksmīgi atjaunināts', 'Subscriber updated successfully')

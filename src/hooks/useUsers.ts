@@ -1,26 +1,25 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useUserCache } from '@/hooks/useUserCache';
-import { useUserActions } from '@/hooks/useUserActions';
 import { useUserSearch } from '@/hooks/useUserSearch';
 import { useUserLoading } from '@/hooks/useUserLoading';
 import { useLanguage } from '@/features/language';
-import type { User } from '@/types/users';
 import { useToast } from '@/hooks/use-toast';
-import { updateUser, deleteUser, toggleUserStatus } from '@/utils/user/userOperations';
+import { updateUser, deleteUser, toggleUserStatus, downloadUsersCSV, downloadBlob } from '@/utils/userManagement';
+import type { User } from '@/types/users';
 
 export type { User };
 
 export function useUsers() {
   const { users, updateCache } = useUserCache();
   const { isLoading, error, isAuth, loadUsers } = useUserLoading();
-  const { handleDownloadCSV } = useUserActions();
   const { searchTerm, filteredUsers, handleSearch, updateFilteredUsers } = useUserSearch(users);
   const { currentLanguage } = useLanguage();
   const { toast } = useToast();
   
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
+  // Load users data
   const getUsers = useCallback(async () => {
     const { data, error } = await loadUsers();
     
@@ -31,16 +30,31 @@ export function useUsers() {
     }
   }, [loadUsers, updateCache]);
 
-  // When the users list is updated, we need to update the filtered list as well
+  // When the users list is updated, update the filtered list as well
   useEffect(() => {
     updateFilteredUsers(users);
   }, [users, updateFilteredUsers]);
 
-  const wrappedHandleDownloadCSV = () => {
-    handleDownloadCSV(users, currentLanguage);
+  // Handle downloading CSV
+  const handleDownloadCSV = () => {
+    try {
+      const { blob, filename } = downloadUsersCSV(users, currentLanguage);
+      downloadBlob(blob, filename);
+      
+      toast({
+        description: t('CSV fails veiksmīgi lejupielādēts', 'CSV file downloaded successfully'),
+      });
+    } catch (err) {
+      console.error("Error downloading CSV:", err);
+      toast({
+        variant: "destructive",
+        title: t('Kļūda', 'Error'),
+        description: t('Neizdevās lejupielādēt failu', 'Failed to download file')
+      });
+    }
   };
   
-  // Update a user in the list
+  // Update a user in the database
   const updateUserData = async (updatedUser: User) => {
     try {
       const { success, error } = await updateUser(updatedUser);
@@ -75,7 +89,7 @@ export function useUsers() {
     }
   };
   
-  // Remove a user from the list
+  // Delete a user from the database
   const deleteUserData = async (userId: string) => {
     try {
       const { success, error } = await deleteUser(userId);
@@ -108,7 +122,7 @@ export function useUsers() {
     }
   };
   
-  // Toggle user status
+  // Toggle user status (active/inactive)
   const toggleStatus = async (user: User) => {
     try {
       const { success, error } = await toggleUserStatus(user);
@@ -158,7 +172,7 @@ export function useUsers() {
     error,
     isAuth,
     handleSearch,
-    handleDownloadCSV: wrappedHandleDownloadCSV,
+    handleDownloadCSV,
     refreshUsers: getUsers,
     totalUsers: users.length,
     updateUser: updateUserData,
