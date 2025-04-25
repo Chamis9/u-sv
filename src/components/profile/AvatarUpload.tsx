@@ -31,7 +31,8 @@ export function AvatarUpload({ user, onAvatarUpdate }: AvatarUploadProps) {
 
       const file = event.target.files[0];
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      // Use a fixed file name pattern: userId.extension
+      const fileName = `${user.id}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
         .from('avatars')
@@ -80,7 +81,6 @@ export function AvatarUpload({ user, onAvatarUpdate }: AvatarUploadProps) {
     }
   }, [user.id, onAvatarUpdate, toast, t]);
 
-  // Handle button click to trigger file input click
   const handleButtonClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
