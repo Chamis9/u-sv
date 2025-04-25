@@ -31,14 +31,23 @@ export function AvatarUpload({ user, onAvatarUpdate }: AvatarUploadProps) {
 
       const file = event.target.files[0];
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${user.id}.${fileExt}`;
+      const folderPath = `${user.id}`;
+      const fileName = `${folderPath}/${user.id}.${fileExt}`;
       
-      // First, delete the existing avatar for this user if it exists
-      await supabase.storage
+      // First, list existing files to delete them
+      const { data: existingFiles } = await supabase.storage
         .from('avatars')
-        .remove([fileName]);
+        .list(folderPath);
       
-      // Then upload the new avatar
+      // Delete all existing files in the user's folder
+      if (existingFiles && existingFiles.length > 0) {
+        const filesToRemove = existingFiles.map(file => `${folderPath}/${file.name}`);
+        await supabase.storage
+          .from('avatars')
+          .remove(filesToRemove);
+      }
+      
+      // Upload the new avatar
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(fileName, file, { upsert: true });
@@ -82,7 +91,7 @@ export function AvatarUpload({ user, onAvatarUpdate }: AvatarUploadProps) {
         ),
       });
     } finally {
-      setIsUploading(false);
+      setIsLoading(false);
     }
   }, [user.id, onAvatarUpdate, toast, t]);
 

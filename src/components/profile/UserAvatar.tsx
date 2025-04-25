@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "@/types/users";
 import { useLanguage } from "@/features/language";
@@ -12,6 +12,13 @@ interface UserAvatarProps {
 
 export function UserAvatar({ user, size = "md", forceRefresh = false }: UserAvatarProps) {
   const { currentLanguage } = useLanguage();
+  const [cacheKey, setCacheKey] = useState<string>(Date.now().toString());
+  
+  useEffect(() => {
+    if (forceRefresh) {
+      setCacheKey(Date.now().toString());
+    }
+  }, [user.avatar_url, forceRefresh]);
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
@@ -35,10 +42,8 @@ export function UserAvatar({ user, size = "md", forceRefresh = false }: UserAvat
     return user.email ? user.email.substring(0, 2).toUpperCase() : "?";
   };
 
-  // Add cache busting if forceRefresh is true
-  const avatarUrl = user.avatar_url && forceRefresh 
-    ? `${user.avatar_url}?t=${Date.now()}` 
-    : user.avatar_url;
+  // Add cache busting if forceRefresh is true or avatarUrl has changed
+  const avatarUrl = user.avatar_url ? `${user.avatar_url}?t=${cacheKey}` : undefined;
 
   return (
     <Avatar className={`${sizeClasses[size]} border-2 border-primary/10`}>
