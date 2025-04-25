@@ -1,7 +1,7 @@
 
 import { LayoutDashboard, Users, Mail, Settings, Calendar } from "lucide-react";
 
-export const getNavItems = (translations: any) => [
+export const getNavItems = (translations: any, userCount?: number, subscriberCount?: number) => [
   {
     id: "dashboard",
     label: translations.admin?.tabs?.dashboard || "Dashboard",
@@ -12,7 +12,8 @@ export const getNavItems = (translations: any) => [
     id: "users",
     label: translations.admin?.tabs?.users || "Users",
     icon: <Users className="mr-2 h-4 w-4" />,
-    href: "/admin/users"
+    href: "/admin/users",
+    badge: userCount
   },
   {
     id: "events",
@@ -24,7 +25,8 @@ export const getNavItems = (translations: any) => [
     id: "subscribers",
     label: translations.admin?.tabs?.subscribers || "Subscribers",
     icon: <Mail className="mr-2 h-4 w-4" />,
-    href: "/admin/subscribers"
+    href: "/admin/subscribers",
+    badge: subscriberCount
   },
   {
     id: "settings",
