@@ -6,6 +6,7 @@ export interface Category {
   id: string;
   name: string;
   description: string | null;
+  priority?: number;
 }
 
 export const useCategories = () => {
@@ -15,7 +16,7 @@ export const useCategories = () => {
       const { data, error } = await supabase
         .from('categories')
         .select('*')
-        .order('name');
+        .order('priority', { ascending: true });
       
       if (error) {
         console.error('Error fetching categories:', error);
