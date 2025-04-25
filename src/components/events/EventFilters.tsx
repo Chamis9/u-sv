@@ -51,7 +51,7 @@ export function EventFilters({
             <SelectValue placeholder={currentLanguage.code === 'lv' ? "Visas kategorijas" : "All categories"} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">
+            <SelectItem value="all">
               {currentLanguage.code === 'lv' ? "Visas kategorijas" : "All categories"}
             </SelectItem>
             {categories?.map((category) => (

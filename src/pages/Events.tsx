@@ -29,12 +29,12 @@ const Events = () => {
   const { translations, currentLanguage } = useLanguage();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
 
   const { data: events, isLoading: eventsLoading } = useFilteredEvents({
-    category: selectedCategory,
+    category: selectedCategory === 'all' ? undefined : selectedCategory,
     startDate,
     endDate,
     searchQuery
@@ -64,7 +64,7 @@ const Events = () => {
     );
   }
 
-  if (events && (selectedCategory || searchQuery || startDate)) {
+  if (events && (selectedCategory !== 'all' || searchQuery || startDate)) {
     return (
       <ThemeProvider>
         <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-gray-50 to-gray-100 dark:from-black dark:via-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
