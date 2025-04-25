@@ -37,9 +37,17 @@ export function AdminCategoriesList() {
         throw new Error('Category name is required');
       }
       
+      // Convert to the required format for Supabase insert
+      const categoryData = {
+        name: newCategory.name,
+        description: newCategory.description || null,
+        priority: newCategory.priority !== undefined ? newCategory.priority : 999,
+        status: newCategory.status || 'active'
+      };
+      
       const { error } = await supabase
         .from('categories')
-        .insert([newCategory]);
+        .insert([categoryData]);
       if (error) throw error;
     },
     onSuccess: () => {
