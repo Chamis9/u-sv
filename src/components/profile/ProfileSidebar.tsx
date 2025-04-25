@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useLanguage } from "@/features/language";
 import { UserAvatar } from "./UserAvatar";
@@ -107,7 +108,11 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
     <aside className="hidden md:flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm">
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex flex-col items-center space-y-2">
-          <UserAvatar user={completeUserObject} size="lg" forceRefresh={true} />
+          <UserAvatar 
+            user={completeUserObject} 
+            size="lg" 
+            forceRefresh={lastAvatarUpdate ? true : false} 
+          />
           <h2 className="text-xl font-semibold mt-2">
             {fullName}
           </h2>

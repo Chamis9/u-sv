@@ -17,6 +17,7 @@ export function UserAvatar({ user, size = "md", forceRefresh = false }: UserAvat
   useEffect(() => {
     if (forceRefresh) {
       setCacheKey(Date.now().toString());
+      console.log("Forcing avatar refresh with cache key:", cacheKey);
     }
   }, [user.avatar_url, forceRefresh]);
   
@@ -44,6 +45,8 @@ export function UserAvatar({ user, size = "md", forceRefresh = false }: UserAvat
 
   // Add cache busting if forceRefresh is true or avatarUrl has changed
   const avatarUrl = user.avatar_url ? `${user.avatar_url}?t=${cacheKey}` : undefined;
+
+  console.log("UserAvatar rendering with URL:", avatarUrl);
 
   return (
     <Avatar className={`${sizeClasses[size]} border-2 border-primary/10`}>

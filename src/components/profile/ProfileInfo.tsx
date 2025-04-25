@@ -7,6 +7,7 @@ import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
 import { Edit, Mail, Phone, Calendar, Clock } from "lucide-react";
 import { format } from "date-fns";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ProfileInfoProps {
   user: User;
@@ -15,6 +16,8 @@ interface ProfileInfoProps {
 
 export function ProfileInfo({ user, onEdit }: ProfileInfoProps) {
   const { currentLanguage } = useLanguage();
+  const { lastAvatarUpdate } = useAuth();
+  
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
 
@@ -43,7 +46,11 @@ export function ProfileInfo({ user, onEdit }: ProfileInfoProps) {
       <CardContent>
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex flex-col items-center gap-2">
-            <UserAvatar user={user} size="lg" />
+            <UserAvatar 
+              user={user} 
+              size="lg"
+              forceRefresh={lastAvatarUpdate ? true : false}
+            />
             <h3 className="font-medium text-lg mt-2">{fullName}</h3>
             <span className="text-sm text-muted-foreground">{user.role || "user"}</span>
           </div>

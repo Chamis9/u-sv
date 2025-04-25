@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AvatarUpload } from "../../AvatarUpload";
 import { PersonalInfoForm } from "./PersonalInfoForm";
 import { PersonalInfoDisplay } from "./PersonalInfoDisplay";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface PersonalInfoCardProps {
   user: User;
@@ -23,6 +24,7 @@ interface PersonalInfoCardProps {
 export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) {
   const { currentLanguage } = useLanguage();
   const { toast } = useToast();
+  const { lastAvatarUpdate } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     first_name: user.first_name || "",
@@ -66,6 +68,11 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
     });
     setIsEditing(false);
   };
+
+  const handleAvatarUpdate = () => {
+    // Force a refresh when the avatar is updated
+    onUserUpdate(user);
+  };
   
   return (
     <Card>
@@ -96,7 +103,7 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
           <div className="flex flex-col items-center space-y-4">
             <AvatarUpload 
               user={user} 
-              onAvatarUpdate={() => onUserUpdate(user)} 
+              onAvatarUpdate={handleAvatarUpdate} 
             />
           </div>
           
