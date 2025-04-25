@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/features/language";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,7 @@ interface AvatarUploadProps {
 
 export function AvatarUpload({ user, onAvatarUpdate }: AvatarUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { currentLanguage } = useLanguage();
   
@@ -79,25 +80,32 @@ export function AvatarUpload({ user, onAvatarUpdate }: AvatarUploadProps) {
     }
   }, [user.id, onAvatarUpdate, toast, t]);
 
+  // Handle button click to trigger file input click
+  const handleButtonClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   return (
     <div className="flex flex-col items-center gap-4">
       <UserAvatar user={user} size="lg" forceRefresh />
       
-      <label className="w-full">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={uploadAvatar}
-          className="hidden"
-          disabled={isUploading}
-        />
-        <UploadButton
-          isUploading={isUploading}
-          onClick={() => {}} // handled by label click
-          label={t('Mainīt profila attēlu', 'Change profile picture')}
-          loadingLabel={t('Augšupielādē...', 'Uploading...')}
-        />
-      </label>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={uploadAvatar}
+        className="hidden"
+        disabled={isUploading}
+      />
+      
+      <UploadButton
+        isUploading={isUploading}
+        onClick={handleButtonClick}
+        label={t('Mainīt profila attēlu', 'Change profile picture')}
+        loadingLabel={t('Augšupielādē...', 'Uploading...')}
+      />
     </div>
   );
 }
