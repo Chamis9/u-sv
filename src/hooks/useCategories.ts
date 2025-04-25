@@ -7,6 +7,7 @@ export interface Category {
   name: string;
   description: string | null;
   priority?: number;
+  status: 'active' | 'hidden';
 }
 
 export const useCategories = () => {
@@ -16,6 +17,7 @@ export const useCategories = () => {
       const { data, error } = await supabase
         .from('categories')
         .select('*')
+        .eq('status', 'active')
         .order('priority', { ascending: true });
       
       if (error) {
