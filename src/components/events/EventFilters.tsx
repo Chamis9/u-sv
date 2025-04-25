@@ -37,14 +37,14 @@ export function EventFilters({
   return (
     <div className="space-y-4 mb-6">
       <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1">
+        <div className="flex-1 relative">
           <Input
             type="search"
             placeholder={currentLanguage.code === 'lv' ? "Meklēt pasākumus..." : "Search events..."}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full"
-            icon={<Search className="h-4 w-4" />}
+            className="w-full pl-10"
           />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
         </div>
         <Select value={selectedCategory} onValueChange={onCategoryChange}>
           <SelectTrigger className="w-full sm:w-[200px]">

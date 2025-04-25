@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from "@/components/Header";
@@ -25,7 +26,7 @@ const categoryIcons = {
 };
 
 const Events = () => {
-  const { translations } = useLanguage();
+  const { translations, currentLanguage } = useLanguage();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
