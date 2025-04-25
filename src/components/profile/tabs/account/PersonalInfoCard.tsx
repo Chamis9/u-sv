@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Edit, Save, X as Cancel } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { UserAvatar } from "../../UserAvatar";
+import { useToast } from "@/hooks/use-toast";
+import { AvatarUpload } from "../../AvatarUpload";
 import { PersonalInfoForm } from "./PersonalInfoForm";
 import { PersonalInfoDisplay } from "./PersonalInfoDisplay";
 
@@ -94,7 +94,10 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
       <CardContent>
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex flex-col items-center space-y-4">
-            <UserAvatar user={user} size="lg" />
+            <AvatarUpload 
+              user={user} 
+              onAvatarUpdate={() => onUserUpdate(user)} 
+            />
           </div>
           
           <div className="flex-1 space-y-4">
