@@ -1,56 +1,30 @@
 
-import React from 'react';
-import { 
-  Home, 
-  Users, 
-  Inbox, 
-  Settings, 
-  LogOut
-} from 'lucide-react';
-import { TranslationObject } from '@/features/language/types';
+import { LayoutDashboard, Users, Mail, Settings, Calendar } from "lucide-react";
 
-export const getNavItems = (
-  translations: TranslationObject, 
-  userCount: number, 
-  subscriberCount: number
-) => {
-  // Extract admin translations safely
-  const adminTranslations = translations.admin as TranslationObject | undefined;
-  const tabs = adminTranslations?.tabs as TranslationObject | undefined;
-  const logout = adminTranslations?.logout as string || 'Logout';
-
-  const items = [
-    {
-      id: 'dashboard',
-      icon: <Home />,
-      label: tabs?.dashboard as string || 'Dashboard',
-      badge: undefined  // Remove badge for dashboard
-    },
-    {
-      id: 'users',
-      icon: <Users />,
-      label: tabs?.users as string || 'Users',
-      badge: userCount
-    },
-    {
-      id: 'subscribers',
-      icon: <Inbox />,
-      label: tabs?.subscribers as string || 'Subscribers',
-      badge: subscriberCount
-    },
-    {
-      id: 'settings',
-      icon: <Settings />,
-      label: tabs?.settings as string || 'Settings',
-      badge: undefined  // Remove badge for settings
-    },
-    {
-      id: 'logout',
-      icon: <LogOut />,
-      label: logout,
-      badge: undefined  // Remove the badge for logout
-    }
-  ];
-
-  return items;
-};
+export const getNavItems = (translations: any) => [
+  {
+    title: translations.admin?.tabs?.dashboard || "Dashboard",
+    icon: LayoutDashboard,
+    href: "/admin/dashboard"
+  },
+  {
+    title: translations.admin?.tabs?.users || "Users",
+    icon: Users,
+    href: "/admin/users"
+  },
+  {
+    title: "Events",
+    icon: Calendar,
+    href: "/admin/events"
+  },
+  {
+    title: translations.admin?.tabs?.subscribers || "Subscribers",
+    icon: Mail,
+    href: "/admin/subscribers"
+  },
+  {
+    title: translations.admin?.tabs?.settings || "Settings",
+    icon: Settings,
+    href: "/admin/settings"
+  }
+];

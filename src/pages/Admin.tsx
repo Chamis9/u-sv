@@ -12,6 +12,7 @@ import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { RegisteredUsers } from "@/components/admin/RegisteredUsers";
 import { AdminSubscribers } from "@/components/admin/AdminSubscribers";
 import { AdminSettings } from "@/components/admin/AdminSettings";
+import { AdminEventsList } from "@/components/admin/AdminEventsList";
 
 function AdminPage() {
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
@@ -20,18 +21,15 @@ function AdminPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Get the active tab from the current route
   const getActiveTabFromRoute = () => {
     const path = location.pathname.split('/')[2] || 'dashboard';
     return path;
   };
-  
-  // Handle tab change by navigating to the appropriate route
+
   const handleTabChange = (tab: string) => {
     navigate(`/admin/${tab}`);
   };
 
-  // Listen for admin count updates
   useEffect(() => {
     const handleAdminCountUpdate = (event: any) => {
       if (event.detail && typeof event.detail.count === 'number') {
@@ -86,6 +84,7 @@ function AdminPage() {
             <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/dashboard" element={<AdminDashboard />} />
             <Route path="/users" element={<RegisteredUsers />} />
+            <Route path="/events" element={<AdminEventsList />} />
             <Route path="/subscribers" element={<AdminSubscribers />} />
             <Route path="/settings" element={<AdminSettings />} />
             <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />

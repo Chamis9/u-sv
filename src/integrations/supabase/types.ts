@@ -107,6 +107,7 @@ export type Database = {
       }
       events: {
         Row: {
+          admin_id: string | null
           category: string
           created_at: string
           created_by: string | null
@@ -122,6 +123,7 @@ export type Database = {
           venue_id: string | null
         }
         Insert: {
+          admin_id?: string | null
           category: string
           created_at?: string
           created_by?: string | null
@@ -137,6 +139,7 @@ export type Database = {
           venue_id?: string | null
         }
         Update: {
+          admin_id?: string | null
           category?: string
           created_at?: string
           created_by?: string | null
