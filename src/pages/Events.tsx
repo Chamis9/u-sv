@@ -6,78 +6,48 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Drama, Music, Film, Trophy, PartyPopper, Baby, Gift, MoreHorizontal, Plane } from "lucide-react";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
+import { useCategories } from '@/hooks/useCategories';
+
+const categoryIcons = {
+  "Teātris": Drama,
+  "Koncerti": Music,
+  "Festivāli": PartyPopper,
+  "Sports": Trophy,
+  "Kino": Film,
+  "Bērniem": Baby,
+  "Ceļojumi": Plane,
+  "Dāvanu kartes": Gift,
+  "Citi": MoreHorizontal
+};
 
 const Events = () => {
   const { translations } = useLanguage();
+  const { data: categories, isLoading } = useCategories();
 
-  const categories = [
-    {
-      title: translations.events?.theatre || "Teātris",
-      route: "theatre",
-      icon: Drama,
-      description: translations.events?.theatreDesc || "Teātris, opera, balets",
-      venues: ["Latvijas Nacionālā opera", "Dailes teātris", "JRT"]
-    },
-    {
-      title: translations.events?.concerts || "Koncerti",
-      route: "concerts",
-      icon: Music,
-      description: translations.events?.concertsDesc || "Dažādu izpildītāju mūzika",
-      venues: ["Dzintaru koncertzāle", "Arēna Rīga", "Lielais dzintars"]
-    },
-    {
-      title: translations.events?.festivals || "Festivāli",
-      route: "festivals",
-      icon: PartyPopper,
-      description: translations.events?.festivalsDesc || "Mūzikas, mākslas un kultūras festivāli",
-      venues: ["Lucavsala", "Mežaparks", "Līvu laukums"]
-    },
-    {
-      title: translations.events?.sports || "Sports",
-      route: "sports",
-      icon: Trophy,
-      description: translations.events?.sportsDesc || "Dažādi sporta veidi",
-      venues: ["Arēna Rīga", "Daugavas stadions", "Skonto stadions"]
-    },
-    {
-      title: translations.events?.cinema || "Kino",
-      route: "cinema",
-      icon: Film,
-      description: translations.events?.cinemaDesc || "Kinoteātri, kino seansi",
-      venues: ["Splendid Palace", "K.Suns", "Kino Citadele"]
-    },
-    {
-      title: translations.events?.children || "Bērniem",
-      route: "children",
-      icon: Baby,
-      description: translations.events?.childrenDesc || "Pasākumi bērniem",
-      venues: ["Latvijas Leļļu teātris", "VEF Kultūras pils", "Rīgas Cirks"]
-    },
-    {
-      title: translations.events?.travel || "Ceļojumi",
-      route: "travel",
-      icon: Plane,
-      description: translations.events?.travelDesc || "Ceļojumu pakalpojumi",
-      venues: ["Rīgas lidosta", "Tūrisma aģentūras", "Ceļojumu biroji"]
-    },
-    {
-      title: translations.events?.giftCards || "Dāvanu kartes",
-      route: "gift-cards",
-      icon: Gift,
-      description: translations.events?.giftCardsDesc || "Dažādas dāvanu kartes",
-      venues: ["Dažādas norises vietas"]
-    },
-    {
-      title: translations.events?.other || "Citi pasākumi",
-      route: "other",
-      icon: MoreHorizontal,
-      description: translations.events?.otherDesc || "Citi pasākumi",
-      venues: ["Dažādas norises vietas"]
-    }
-  ];
+  if (isLoading) {
+    return (
+      <ThemeProvider>
+        <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-gray-50 to-gray-100 dark:from-black dark:via-gray-900 dark:to-gray-800">
+          <SEO />
+          <Header />
+          <main className="flex-grow pt-24 pb-12">
+            <div className="container mx-auto px-4">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 animate-pulse">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="h-48 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
+                ))}
+              </div>
+            </div>
+          </main>
+          <Footer />
+          <GlobalThemeToggle />
+        </div>
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider>
@@ -88,33 +58,31 @@ const Events = () => {
           <div className="container mx-auto px-4 sm:px-6">
             <div className="max-w-7xl mx-auto">
               <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                <span className="text-orange-500">Pasākumi</span>
+                <span className="text-orange-500">
+                  {translations.events?.title || "Pasākumi"}
+                </span>
               </h1>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {categories.map((category, index) => (
-                  <Link to={`/events/${category.route}`} key={index}>
-                    <Card className="h-full transition-transform hover:scale-105 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <category.icon className="h-6 w-6 text-orange-500" />
-                          {category.title}
-                        </CardTitle>
-                        <CardDescription>
-                          {category.description}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          {category.venues.map((venue, vIndex) => (
-                            <div key={vIndex} className="text-sm text-gray-600 dark:text-gray-400">
-                              {venue}
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
+                {categories?.map((category) => {
+                  const IconComponent = categoryIcons[category.name as keyof typeof categoryIcons] || MoreHorizontal;
+                  const route = category.name.toLowerCase().replace(/\s+/g, '-');
+                  
+                  return (
+                    <Link to={`/events/${route}`} key={category.id}>
+                      <Card className="h-full transition-transform hover:scale-105 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2">
+                            <IconComponent className="h-6 w-6 text-orange-500" />
+                            {category.name}
+                          </CardTitle>
+                          <CardDescription>
+                            {category.description}
+                          </CardDescription>
+                        </CardHeader>
+                      </Card>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </div>

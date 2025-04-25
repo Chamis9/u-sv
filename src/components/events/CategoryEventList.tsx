@@ -10,20 +10,24 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
-import { categoryEvents, categoryTitles, backButtonText } from '@/utils/eventData';
+import { useEvents } from '@/hooks/useEvents';
 
 export function CategoryEventList() {
   const { category } = useParams<{ category: string }>();
-  const events = category ? categoryEvents[category] : [];
+  const { data: events, isLoading, error } = useEvents(category);
   const { currentLanguage } = useLanguage();
-  const categoryTitle = category ? categoryTitles[category][currentLanguage.code] : "";
 
-  if (!events) {
-    const notFoundText = {
-      lv: "Kategorija nav atrasta",
-      en: "Category not found"
-    };
-    return <div className="text-center p-8">{notFoundText[currentLanguage.code as keyof typeof notFoundText]}</div>;
+  const backButtonText = {
+    lv: "Atpakaļ",
+    en: "Back"
+  };
+
+  if (error) {
+    return (
+      <div className="text-center p-8">
+        {currentLanguage.code === 'lv' ? 'Kļūda ielādējot datus' : 'Error loading data'}
+      </div>
+    );
   }
 
   return (
@@ -41,47 +45,49 @@ export function CategoryEventList() {
                     {backButtonText[currentLanguage.code as keyof typeof backButtonText]}
                   </Button>
                 </Link>
-                <h1 className="text-4xl md:text-5xl font-bold">
-                  <span className="text-orange-500">{categoryTitle}</span>
-                </h1>
               </div>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {events.map((event) => (
-                  <Card key={event.id} className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
-                    <CardHeader>
-                      <CardTitle>{event.title}</CardTitle>
-                      <CardDescription>
-                        <div className="flex items-center gap-2 text-orange-500">
-                          <Calendar className="h-4 w-4" />
-                          {event.date} | {event.time}
+              
+              {isLoading ? (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 animate-pulse">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-64 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {events?.map((event) => (
+                    <Card key={event.id} className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
+                      <CardHeader>
+                        <CardTitle>{event.title}</CardTitle>
+                        <CardDescription>
+                          <div className="flex items-center gap-2 text-orange-500">
+                            <Calendar className="h-4 w-4" />
+                            {new Date(event.start_date).toLocaleDateString(currentLanguage.code)}
+                          </div>
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          {event.description}
+                        </p>
+                      </CardContent>
+                      <CardFooter className="mt-auto">
+                        <div className="flex justify-between items-center w-full">
+                          <span className="text-lg font-semibold">
+                            {event.price_range ? `${event.price_range[0]} - ${event.price_range[1]} €` : ''}
+                          </span>
+                          <Link to={`/events/${category}/${event.id}`}>
+                            <Button variant="outline">
+                              <Ticket className="mr-2 h-4 w-4" />
+                              {currentLanguage.code === 'lv' ? 'Biļetes' : 'Tickets'}
+                            </Button>
+                          </Link>
                         </div>
-                        <div className="flex items-center gap-2 mt-1 text-gray-600 dark:text-gray-400">
-                          <MapPin className="h-4 w-4" />
-                          {event.location}
-                        </div>
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        {event.description}
-                      </p>
-                    </CardContent>
-                    <CardFooter className="mt-auto">
-                      <div className="flex justify-between items-center w-full">
-                        <span className="text-lg font-semibold">
-                          {event.price} €
-                        </span>
-                        <Link to={`/events/${category}/${event.id}`}>
-                          <Button variant="outline">
-                            <Ticket className="mr-2 h-4 w-4" />
-                            {currentLanguage.code === 'lv' ? 'Biļetes' : 'Tickets'}
-                          </Button>
-                        </Link>
-                      </div>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
+                      </CardFooter>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </main>
