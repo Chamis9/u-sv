@@ -91,7 +91,7 @@ export function AvatarUpload({ user, onAvatarUpdate }: AvatarUploadProps) {
         ),
       });
     } finally {
-      setIsLoading(false);
+      setIsUploading(false);
     }
   }, [user.id, onAvatarUpdate, toast, t]);
 
