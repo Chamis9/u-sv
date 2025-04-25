@@ -26,12 +26,17 @@ export function AdminCategoriesList() {
         .order('priority', { ascending: true });
       
       if (error) throw error;
-      return data;
+      return data as Category[];
     }
   });
 
   const createMutation = useMutation({
     mutationFn: async (newCategory: Partial<Category>) => {
+      // Make sure name is provided for a new category
+      if (!newCategory.name) {
+        throw new Error('Category name is required');
+      }
+      
       const { error } = await supabase
         .from('categories')
         .insert([newCategory]);
@@ -71,7 +76,7 @@ export function AdminCategoriesList() {
   });
 
   const toggleStatusMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: 'active' | 'hidden' }) => {
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase
         .from('categories')
         .update({ status })
@@ -108,7 +113,7 @@ export function AdminCategoriesList() {
     await deleteMutation.mutateAsync(id);
   };
 
-  const handleToggleStatus = async (id: string, newStatus: 'active' | 'hidden') => {
+  const handleToggleStatus = async (id: string, newStatus: string) => {
     await toggleStatusMutation.mutateAsync({ id, status: newStatus });
   };
 

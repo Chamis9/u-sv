@@ -22,7 +22,7 @@ interface AdminCategoryRowProps {
   onUpdate: () => void;
   onEdit: (category: Category) => void;
   onDelete: (id: string) => Promise<void>;
-  onToggleStatus: (id: string, newStatus: 'active' | 'hidden') => Promise<void>;
+  onToggleStatus: (id: string, newStatus: string) => Promise<void>;
 }
 
 export function AdminCategoryRow({ 

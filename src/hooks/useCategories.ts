@@ -7,7 +7,7 @@ export interface Category {
   name: string;
   description: string | null;
   priority?: number;
-  status: 'active' | 'hidden';
+  status: string; // Changed from 'active' | 'hidden' to string
 }
 
 export const useCategories = () => {
