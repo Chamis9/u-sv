@@ -1,4 +1,3 @@
-
 export interface EventsTranslations {
   theatre: string;
   theatreDesc: string;
@@ -12,6 +11,8 @@ export interface EventsTranslations {
   cinemaDesc: string;
   children: string;
   childrenDesc: string;
+  travel: string;
+  travelDesc: string;
   giftCards: string;
   giftCardsDesc: string;
   other: string;
@@ -32,6 +33,8 @@ export const eventsTranslations = {
     cinemaDesc: "Kinoteātri, kino seansi",
     children: "Bērniem",
     childrenDesc: "Pasākumi bērniem",
+    travel: "Ceļojumi",
+    travelDesc: "Ceļojumu pakalpojumi",
     giftCards: "Dāvanu kartes",
     giftCardsDesc: "Dažādas dāvanu kartes",
     other: "Citi pasākumi",
@@ -50,6 +53,8 @@ export const eventsTranslations = {
     cinemaDesc: "Cinemas, movie screenings",
     children: "For Children",
     childrenDesc: "Events for children",
+    travel: "Travel",
+    travelDesc: "Travel services",
     giftCards: "Gift Cards",
     giftCardsDesc: "Various gift cards",
     other: "Other Events",
@@ -68,6 +73,8 @@ export const eventsTranslations = {
     cinemaDesc: "Кинотеатры, кинопоказы",
     children: "Для детей",
     childrenDesc: "Мероприятия для детей",
+    travel: "Путешествия",
+    travelDesc: "Путешествия",
     giftCards: "Подарочные карты",
     giftCardsDesc: "Различные подарочные карты",
     other: "Другие мероприятия",

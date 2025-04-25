@@ -6,7 +6,7 @@ import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Drama, Music, Film, Trophy, PartyPopper, Baby, Gift, MoreHorizontal } from "lucide-react";
+import { Drama, Music, Film, Trophy, PartyPopper, Baby, Gift, MoreHorizontal, Plane } from "lucide-react";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 
 const Events = () => {
@@ -54,6 +54,13 @@ const Events = () => {
       icon: Baby,
       description: translations.events?.childrenDesc || "Pasākumi bērniem",
       venues: ["Latvijas Leļļu teātris", "VEF Kultūras pils", "Rīgas Cirks"]
+    },
+    {
+      title: translations.events?.travel || "Ceļojumi",
+      route: "travel",
+      icon: Plane,
+      description: translations.events?.travelDesc || "Ceļojumu pakalpojumi",
+      venues: ["Rīgas lidosta", "Tūrisma aģentūras", "Ceļojumu biroji"]
     },
     {
       title: translations.events?.giftCards || "Dāvanu kartes",

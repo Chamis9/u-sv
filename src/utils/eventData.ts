@@ -1,4 +1,3 @@
-
 interface Event {
   id: number;
   title: string;
@@ -77,6 +76,13 @@ export const categoryEvents: Record<string, Event[]> = {
     { id: 4, title: "Maša un Lācis", date: "2025-09-30", time: "11:00", location: "Latvijas Leļļu teātris", description: "Muzikāla pasaka", price: "10-25" },
     { id: 5, title: "Burunduku piedzīvojumi", date: "2025-10-05", time: "12:00", location: "VEF Kultūras pils", description: "Lielā burunduku šovprogramma", price: "15-30" }
   ],
+  travel: [
+    { id: 1, title: "Tūre uz Itāliju", date: "2025-10-01", time: "07:00", location: "Rīgas lidosta", description: "10 dienu ceļojums pa Itālijas skaistākajām vietām", price: "899-1299" },
+    { id: 2, title: "Horvātijas piekraste", date: "2025-10-15", time: "06:30", location: "Rīgas lidosta", description: "Adrijas jūras pērles un dabas skaistums", price: "749-999" },
+    { id: 3, title: "Parīzes brīvdienas", date: "2025-11-01", time: "08:00", location: "Rīgas lidosta", description: "Romantisks nedēļas nogales ceļojums", price: "499-699" },
+    { id: 4, title: "Ziemeļu gaismas", date: "2025-11-15", time: "09:00", location: "Rīgas lidosta", description: "Ceļojums uz Islandi ziemeļblāzmas vērošanai", price: "999-1499" },
+    { id: 5, title: "Alpu kalnu tūre", date: "2025-12-01", time: "07:30", location: "Rīgas lidosta", description: "Šveices Alpu dabas un kultūras izziņas ceļojums", price: "849-1199" }
+  ],
   "gift-cards": [
     { id: 1, title: "Universālā dāvanu karte", date: "2025-12-31", time: "23:59", location: "Biļešu serviss", description: "Derīga visiem pasākumiem", price: "25-100" },
     { id: 2, title: "Teātra dāvanu karte", date: "2025-12-31", time: "23:59", location: "Biļešu paradīze", description: "Derīga teātra izrādēm", price: "20-80" },
@@ -117,6 +123,10 @@ export const categoryTitles: Record<string, { lv: string, en: string }> = {
   children: {
     lv: "Bērniem",
     en: "For Children"
+  },
+  travel: {
+    lv: "Ceļojumi",
+    en: "Travel"
   },
   "gift-cards": {
     lv: "Dāvanu kartes",
