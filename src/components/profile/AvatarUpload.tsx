@@ -31,9 +31,14 @@ export function AvatarUpload({ user, onAvatarUpdate }: AvatarUploadProps) {
 
       const file = event.target.files[0];
       const fileExt = file.name.split('.').pop();
-      // Use a fixed file name pattern: userId.extension
-      const fileName = `${user.id}.${fileExt}`;
+      const fileName = `${user.id}/${user.id}.${fileExt}`;
       
+      // First, delete the existing avatar for this user if it exists
+      await supabase.storage
+        .from('avatars')
+        .remove([fileName]);
+      
+      // Then upload the new avatar
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(fileName, file, { upsert: true });
