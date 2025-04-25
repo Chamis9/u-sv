@@ -13,6 +13,7 @@ import { RegisteredUsers } from "@/components/admin/RegisteredUsers";
 import { AdminSubscribers } from "@/components/admin/AdminSubscribers";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AdminEventsList } from "@/components/admin/AdminEventsList";
+import { AdminCategoriesList } from "@/components/admin/categories/AdminCategoriesList";
 
 function AdminPage() {
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
@@ -85,6 +86,7 @@ function AdminPage() {
             <Route path="/dashboard" element={<AdminDashboard />} />
             <Route path="/users" element={<RegisteredUsers />} />
             <Route path="/events" element={<AdminEventsList />} />
+            <Route path="/categories" element={<AdminCategoriesList />} />
             <Route path="/subscribers" element={<AdminSubscribers />} />
             <Route path="/settings" element={<AdminSettings />} />
             <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
