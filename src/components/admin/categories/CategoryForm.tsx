@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useLanguage } from '@/features/language';
@@ -25,7 +24,7 @@ export function CategoryForm({ onSubmit, onCancel, initialData, isSubmitting = f
   const formSchema = z.object({
     name: z.string().min(1, t('Nosaukums ir obligāts', 'Name is required')),
     description: z.string().optional().nullable(),
-    priority: z.string().transform(val => parseInt(val) || 999)
+    priority: z.number().default(999)
   });
 
   type FormValues = z.infer<typeof formSchema>;
@@ -35,33 +34,17 @@ export function CategoryForm({ onSubmit, onCancel, initialData, isSubmitting = f
     defaultValues: {
       name: initialData?.name || '',
       description: initialData?.description || '',
-      priority: initialData?.priority?.toString() || '999' // Convert number to string for form input
+      priority: initialData?.priority ?? 999
     }
   });
 
   const handleFormSubmit = async (data: FormValues) => {
     try {
-      // Transform the data to match the Category type
-      const categoryData: Partial<Category> = {
+      await onSubmit({
         name: data.name,
         description: data.description,
-        priority: parseInt(data.priority?.toString() || '999')
-      };
-
-      // When editing, include the ID
-      if (initialData?.id) {
-        await onSubmit({
-          ...categoryData,
-          id: initialData.id,
-          status: initialData.status,
-        });
-      } else {
-        // For new categories
-        await onSubmit({
-          ...categoryData,
-          status: 'active'
-        });
-      }
+        priority: data.priority
+      });
       form.reset();
     } catch (error) {
       console.error('Form submission error:', error);
@@ -102,11 +85,16 @@ export function CategoryForm({ onSubmit, onCancel, initialData, isSubmitting = f
         <FormField
           control={form.control}
           name="priority"
-          render={({ field }) => (
+          render={({ field: { value, onChange, ...field } }) => (
             <FormItem>
               <FormLabel>{t('Prioritāte', 'Priority')}</FormLabel>
               <FormControl>
-                <Input {...field} type="number" />
+                <Input 
+                  type="number"
+                  value={value}
+                  onChange={e => onChange(Number(e.target.value))}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
