@@ -29,12 +29,12 @@ const Events = () => {
   const { translations, currentLanguage } = useLanguage();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>();
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
 
   const { data: events, isLoading: eventsLoading } = useFilteredEvents({
-    category: selectedCategory === 'all' ? undefined : selectedCategory,
+    categoryId: selectedCategoryId,
     startDate,
     endDate,
     searchQuery
@@ -64,7 +64,7 @@ const Events = () => {
     );
   }
 
-  if (events && (selectedCategory !== 'all' || searchQuery || startDate)) {
+  if (events && (selectedCategoryId || searchQuery || startDate)) {
     return (
       <ThemeProvider>
         <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-gray-50 to-gray-100 dark:from-black dark:via-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
@@ -81,19 +81,19 @@ const Events = () => {
                 
                 <EventFilters
                   onSearchChange={setSearchQuery}
-                  onCategoryChange={setSelectedCategory}
+                  onCategoryChange={setSelectedCategoryId}
                   onDateChange={(start, end) => {
                     setStartDate(start);
                     setEndDate(end);
                   }}
-                  selectedCategory={selectedCategory}
+                  selectedCategoryId={selectedCategoryId}
                   selectedStartDate={startDate}
                   selectedEndDate={endDate}
                 />
 
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {events.map((event) => (
-                    <Link to={`/events/${event.category.toLowerCase()}/${event.id}`} key={event.id}>
+                    <Link to={`/events/${event.category_id}/${event.id}`} key={event.id}>
                       <Card className="h-full transition-transform hover:scale-105 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
                         <CardHeader>
                           <CardTitle>{event.title}</CardTitle>
@@ -144,12 +144,12 @@ const Events = () => {
 
               <EventFilters
                 onSearchChange={setSearchQuery}
-                onCategoryChange={setSelectedCategory}
+                onCategoryChange={setSelectedCategoryId}
                 onDateChange={(start, end) => {
                   setStartDate(start);
                   setEndDate(end);
                 }}
-                selectedCategory={selectedCategory}
+                selectedCategoryId={selectedCategoryId}
                 selectedStartDate={startDate}
                 selectedEndDate={endDate}
               />
@@ -157,10 +157,9 @@ const Events = () => {
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {categories?.map((category) => {
                   const IconComponent = categoryIcons[category.name as keyof typeof categoryIcons] || MoreHorizontal;
-                  const route = category.name.toLowerCase().replace(/\s+/g, '-');
                   
                   return (
-                    <Link to={`/events/${route}`} key={category.id}>
+                    <Link to={`/events/${category.id}`} key={category.id}>
                       <Card className="h-full transition-transform hover:scale-105 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">

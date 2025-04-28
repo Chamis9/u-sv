@@ -13,8 +13,8 @@ import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 import { useEvents } from '@/hooks/useEvents';
 
 export function CategoryEventList() {
-  const { category } = useParams<{ category: string }>();
-  const { data: events, isLoading, error } = useEvents(category);
+  const { categoryId } = useParams<{ categoryId: string }>();
+  const { data: events, isLoading, error } = useEvents(categoryId);
   const { currentLanguage } = useLanguage();
 
   const backButtonText = {
@@ -74,9 +74,9 @@ export function CategoryEventList() {
                       <CardFooter className="mt-auto">
                         <div className="flex justify-between items-center w-full">
                           <span className="text-lg font-semibold">
-                            {event.price_range ? `${event.price_range[0]} - ${event.price_range[1]} €` : ''}
+                            {event.price_range ? `${event.price_range.lower} - ${event.price_range.upper} €` : ''}
                           </span>
-                          <Link to={`/events/${category}/${event.id}`}>
+                          <Link to={`/events/${categoryId}/${event.id}`}>
                             <Button variant="outline">
                               <Ticket className="mr-2 h-4 w-4" />
                               {currentLanguage.code === 'lv' ? 'Biļetes' : 'Tickets'}

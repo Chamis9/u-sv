@@ -6,7 +6,7 @@ export interface Event {
   id: string;
   title: string;
   description: string | null;
-  category: string;
+  category_id: string;
   start_date: string;
   end_date: string | null;
   price_range: any;
@@ -15,14 +15,17 @@ export interface Event {
   status: string | null;
 }
 
-export const useEvents = (category?: string) => {
+export const useEvents = (categoryId?: string) => {
   return useQuery({
-    queryKey: ['events', category],
+    queryKey: ['events', categoryId],
     queryFn: async (): Promise<Event[]> => {
-      let query = supabase.from('events').select('*');
+      let query = supabase.from('events').select(`
+        *,
+        categories:category_id(name)
+      `);
       
-      if (category) {
-        query = query.eq('category', category);
+      if (categoryId) {
+        query = query.eq('category_id', categoryId);
       }
       
       const { data, error } = await query

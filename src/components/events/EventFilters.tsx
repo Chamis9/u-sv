@@ -12,9 +12,9 @@ import { format } from "date-fns";
 
 interface EventFiltersProps {
   onSearchChange: (value: string) => void;
-  onCategoryChange: (value: string) => void;
+  onCategoryChange: (value: string | undefined) => void;
   onDateChange: (startDate: Date | undefined, endDate: Date | undefined) => void;
-  selectedCategory?: string;
+  selectedCategoryId?: string;
   selectedStartDate?: Date;
   selectedEndDate?: Date;
 }
@@ -23,7 +23,7 @@ export function EventFilters({
   onSearchChange,
   onCategoryChange,
   onDateChange,
-  selectedCategory,
+  selectedCategoryId,
   selectedStartDate,
   selectedEndDate
 }: EventFiltersProps) {
@@ -46,7 +46,10 @@ export function EventFilters({
           />
           <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
         </div>
-        <Select value={selectedCategory} onValueChange={onCategoryChange}>
+        <Select 
+          value={selectedCategoryId} 
+          onValueChange={(value) => onCategoryChange(value === 'all' ? undefined : value)}
+        >
           <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue placeholder={currentLanguage.code === 'lv' ? "Visas kategorijas" : "All categories"} />
           </SelectTrigger>
@@ -55,7 +58,7 @@ export function EventFilters({
               {currentLanguage.code === 'lv' ? "Visas kategorijas" : "All categories"}
             </SelectItem>
             {categories?.map((category) => (
-              <SelectItem key={category.id} value={category.name}>
+              <SelectItem key={category.id} value={category.id}>
                 {category.name}
               </SelectItem>
             ))}

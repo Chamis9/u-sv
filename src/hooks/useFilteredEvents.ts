@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Event } from "@/hooks/useEvents";
 
 interface FilterOptions {
-  category?: string;
+  categoryId?: string;
   startDate?: Date;
   endDate?: Date;
   venueId?: string;
@@ -15,11 +15,14 @@ export const useFilteredEvents = (filters: FilterOptions) => {
   return useQuery({
     queryKey: ['filtered-events', filters],
     queryFn: async (): Promise<Event[]> => {
-      let query = supabase.from('events').select('*');
+      let query = supabase.from('events').select(`
+        *,
+        categories:category_id(name)
+      `);
       
       // Apply category filter
-      if (filters.category) {
-        query = query.eq('category', filters.category);
+      if (filters.categoryId) {
+        query = query.eq('category_id', filters.categoryId);
       }
 
       // Apply date filters

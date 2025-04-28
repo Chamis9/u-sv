@@ -111,7 +111,7 @@ export type Database = {
       events: {
         Row: {
           admin_id: string | null
-          category: string
+          category_id: string
           created_at: string
           created_by: string | null
           description: string | null
@@ -127,7 +127,7 @@ export type Database = {
         }
         Insert: {
           admin_id?: string | null
-          category: string
+          category_id: string
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -143,7 +143,7 @@ export type Database = {
         }
         Update: {
           admin_id?: string | null
-          category?: string
+          category_id?: string
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -163,6 +163,13 @@ export type Database = {
             columns: ["venue_id"]
             isOneToOne: false
             referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_category"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
         ]

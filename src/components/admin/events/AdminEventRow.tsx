@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/features/language';
 
 interface AdminEventRowProps {
-  event: Event;
+  event: Event & { categories: { name: string } };
   onUpdate: () => void;
 }
 
@@ -38,7 +38,7 @@ export function AdminEventRow({ event, onUpdate }: AdminEventRowProps) {
   return (
     <TableRow>
       <TableCell>{event.title}</TableCell>
-      <TableCell>{event.category}</TableCell>
+      <TableCell>{event.categories?.name || ''}</TableCell>
       <TableCell>{formatEventDate(event.start_date)}</TableCell>
       <TableCell>
         <Badge className={getStatusColor(event.status)}>
