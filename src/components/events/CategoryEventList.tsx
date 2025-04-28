@@ -10,11 +10,11 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
-import { useEvents } from '@/hooks/useEvents';
+import { useFilteredEvents } from '@/hooks/useFilteredEvents';
 
 export function CategoryEventList() {
   const { categoryId } = useParams<{ categoryId: string }>();
-  const { data: events, isLoading, error } = useEvents(categoryId);
+  const { data: events, isLoading, error } = useFilteredEvents({ categoryId });
   const { currentLanguage } = useLanguage();
 
   const backButtonText = {
