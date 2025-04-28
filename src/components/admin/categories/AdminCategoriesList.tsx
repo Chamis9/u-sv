@@ -17,7 +17,7 @@ export function AdminCategoriesList() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: categories, isLoading, refetch } = useQuery({
+  const { data: categories, isLoading } = useQuery({
     queryKey: ['admin-categories'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -25,7 +25,11 @@ export function AdminCategoriesList() {
         .select('*')
         .order('priority', { ascending: true });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching categories:', error);
+        throw error;
+      }
+      
       return data as Category[];
     }
   });
@@ -41,58 +45,123 @@ export function AdminCategoriesList() {
       const categoryData = {
         name: newCategory.name,
         description: newCategory.description || null,
-        priority: newCategory.priority !== undefined ? newCategory.priority : 999,
+        priority: newCategory.priority !== undefined ? parseInt(newCategory.priority.toString()) : 999,
         status: newCategory.status || 'active'
       };
       
-      const { error } = await supabase
+      console.log('Creating category with data:', categoryData);
+      
+      const { data, error } = await supabase
         .from('categories')
-        .insert([categoryData]);
-      if (error) throw error;
+        .insert([categoryData])
+        .select();
+        
+      if (error) {
+        console.error('Error creating category:', error);
+        throw error;
+      }
+      
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
       toast.success(t('Kategorija pievienota', 'Category added'));
+    },
+    onError: (error) => {
+      console.error('Create mutation error:', error);
+      toast.error(t('Kļūda pievienojot kategoriju', 'Error adding category'));
     }
   });
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Category> & { id: string }) => {
-      const { error } = await supabase
+      if (!id) {
+        throw new Error('Category ID is required for update');
+      }
+      
+      const updateData = {
+        ...(updates.name && { name: updates.name }),
+        ...(updates.description !== undefined && { description: updates.description }),
+        ...(updates.priority !== undefined && { priority: parseInt(updates.priority.toString()) }),
+        ...(updates.status && { status: updates.status }),
+      };
+      
+      console.log('Updating category with ID:', id, 'Data:', updateData);
+      
+      const { data, error } = await supabase
         .from('categories')
-        .update(updates)
-        .eq('id', id);
-      if (error) throw error;
+        .update(updateData)
+        .eq('id', id)
+        .select();
+        
+      if (error) {
+        console.error('Error updating category:', error);
+        throw error;
+      }
+      
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
       toast.success(t('Kategorija atjaunināta', 'Category updated'));
+    },
+    onError: (error) => {
+      console.error('Update mutation error:', error);
+      toast.error(t('Kļūda atjaunojot kategoriju', 'Error updating category'));
     }
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      console.log('Attempting to delete category with ID:', id);
+      
+      const { data, error } = await supabase
         .from('categories')
         .delete()
-        .eq('id', id);
-      if (error) throw error;
+        .eq('id', id)
+        .select();
+        
+      if (error) {
+        console.error('Error deleting category:', error);
+        throw error;
+      }
+      
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      toast.success(t('Kategorija izdzēsta', 'Category deleted'));
+    },
+    onError: (error) => {
+      console.error('Delete mutation error:', error);
+      toast.error(t('Kļūda dzēšot kategoriju', 'Error deleting category'));
     }
   });
 
   const toggleStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await supabase
+      console.log('Toggling status for category ID:', id, 'New status:', status);
+      
+      const { data, error } = await supabase
         .from('categories')
         .update({ status })
-        .eq('id', id);
-      if (error) throw error;
+        .eq('id', id)
+        .select();
+        
+      if (error) {
+        console.error('Error toggling category status:', error);
+        throw error;
+      }
+      
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      toast.success(t('Kategorijas statuss mainīts', 'Category status changed'));
+    },
+    onError: (error) => {
+      console.error('Toggle status mutation error:', error);
+      toast.error(t('Kļūda mainot statusu', 'Error changing status'));
     }
   });
 
@@ -108,6 +177,7 @@ export function AdminCategoriesList() {
       setIsDialogOpen(false);
       setSelectedCategory(undefined);
     } catch (error) {
+      console.error('Error in handleSave:', error);
       toast.error(t('Kļūda saglabājot kategoriju', 'Error saving category'));
     }
   };
@@ -118,11 +188,19 @@ export function AdminCategoriesList() {
   };
 
   const handleDelete = async (id: string) => {
-    await deleteMutation.mutateAsync(id);
+    try {
+      await deleteMutation.mutateAsync(id);
+    } catch (error) {
+      console.error('Error in handleDelete:', error);
+    }
   };
 
   const handleToggleStatus = async (id: string, newStatus: string) => {
-    await toggleStatusMutation.mutateAsync({ id, status: newStatus });
+    try {
+      await toggleStatusMutation.mutateAsync({ id, status: newStatus });
+    } catch (error) {
+      console.error('Error in handleToggleStatus:', error);
+    }
   };
 
   return (
@@ -140,30 +218,40 @@ export function AdminCategoriesList() {
         </Button>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('Nosaukums', 'Name')}</TableHead>
-              <TableHead>{t('Apraksts', 'Description')}</TableHead>
-              <TableHead>{t('Prioritāte', 'Priority')}</TableHead>
-              <TableHead>{t('Darbības', 'Actions')}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {categories?.map((category: Category) => (
-              <AdminCategoryRow 
-                key={category.id} 
-                category={category} 
-                onUpdate={refetch}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                onToggleStatus={handleToggleStatus}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      {isLoading ? (
+        <div className="flex justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      ) : categories && categories.length > 0 ? (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t('Nosaukums', 'Name')}</TableHead>
+                <TableHead>{t('Apraksts', 'Description')}</TableHead>
+                <TableHead>{t('Prioritāte', 'Priority')}</TableHead>
+                <TableHead>{t('Statuss', 'Status')}</TableHead>
+                <TableHead>{t('Darbības', 'Actions')}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {categories.map((category: Category) => (
+                <AdminCategoryRow 
+                  key={category.id} 
+                  category={category}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onToggleStatus={handleToggleStatus}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ) : (
+        <div className="text-center py-8 border rounded-md">
+          <p className="text-gray-500">{t('Nav nevienas kategorijas', 'No categories found')}</p>
+        </div>
+      )}
 
       <CategoryDialog
         isOpen={isDialogOpen}

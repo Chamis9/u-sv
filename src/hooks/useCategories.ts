@@ -6,8 +6,8 @@ export interface Category {
   id: string;
   name: string;
   description: string | null;
-  priority?: number;
-  status: string; // Changed from 'active' | 'hidden' to string
+  priority: number;
+  status: string; // 'active' | 'hidden'
 }
 
 export const useCategories = () => {
