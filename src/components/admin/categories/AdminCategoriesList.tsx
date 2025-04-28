@@ -130,8 +130,6 @@ export function AdminCategoriesList() {
         console.error('Error deleting category:', error);
         throw error;
       }
-      
-      return { success: true, id };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
@@ -147,18 +145,15 @@ export function AdminCategoriesList() {
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       console.log('Toggling status for category ID:', id, 'New status:', status);
       
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('categories')
         .update({ status })
-        .eq('id', id)
-        .select();
+        .eq('id', id);
         
       if (error) {
         console.error('Error toggling category status:', error);
         throw error;
       }
-      
-      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });

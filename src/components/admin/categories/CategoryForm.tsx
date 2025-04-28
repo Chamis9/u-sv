@@ -28,7 +28,9 @@ export function CategoryForm({ onSubmit, onCancel, initialData, isSubmitting = f
     priority: z.string().transform(val => parseInt(val) || 999)
   });
 
-  const form = useForm({
+  type FormValues = z.infer<typeof formSchema>;
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: initialData?.name || '',
@@ -37,19 +39,26 @@ export function CategoryForm({ onSubmit, onCancel, initialData, isSubmitting = f
     }
   });
 
-  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+  const handleFormSubmit = async (data: FormValues) => {
     try {
+      // Transform the data to match the Category type
+      const categoryData: Partial<Category> = {
+        name: data.name,
+        description: data.description,
+        priority: parseInt(data.priority?.toString() || '999')
+      };
+
       // When editing, include the ID
       if (initialData?.id) {
         await onSubmit({
-          ...data,
+          ...categoryData,
           id: initialData.id,
           status: initialData.status,
         });
       } else {
         // For new categories
         await onSubmit({
-          ...data,
+          ...categoryData,
           status: 'active'
         });
       }
@@ -61,7 +70,7 @@ export function CategoryForm({ onSubmit, onCancel, initialData, isSubmitting = f
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="name"
