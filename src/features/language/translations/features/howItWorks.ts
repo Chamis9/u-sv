@@ -16,12 +16,12 @@ export const howItWorksTranslations: Record<string, HowItWorksTranslations> = {
     subtitle: "Vienkāršs un drošs veids, kā pārdot vai iegādāties biļeti uz pasākumiem",
     steps: [
       {
-        title: "Ievieto biļeti",
-        description: "Ievietojiet pasākuma biļeti platformā ātri un vienkārši"
+        title: "Reģistrējies un verificē sevi",
+        description: "Izveido kontu un verificē savu identitāti"
       },
       {
-        title: "Sazinies ar pircēju",
-        description: "Izmantojiet platformas saziņas iespējas"
+        title: "Ievieto biļeti",
+        description: "Ievietojiet pasākuma biļeti platformā ātri un vienkārši"
       },
       {
         title: "Droša apmaiņa",
@@ -38,12 +38,12 @@ export const howItWorksTranslations: Record<string, HowItWorksTranslations> = {
     subtitle: "A simple and secure way to sell or purchase event tickets",
     steps: [
       {
-        title: "List your ticket",
-        description: "List your event ticket on the platform quickly and easily"
+        title: "Register and verify",
+        description: "Create an account and verify your identity"
       },
       {
-        title: "Connect with buyers",
-        description: "Use the platform's communication features"
+        title: "List your ticket",
+        description: "List your event ticket on the platform quickly and easily"
       },
       {
         title: "Secure exchange",
@@ -60,12 +60,12 @@ export const howItWorksTranslations: Record<string, HowItWorksTranslations> = {
     subtitle: "Простой и безопасный способ продать или купить билеты на мероприятия",
     steps: [
       {
-        title: "Разместите билет",
-        description: "Разместите билет на мероприятие на платформе быстро и легко"
+        title: "Зарегистрируйся и верифицируй себя",
+        description: "Создайте аккаунт и подтвердите свою личность"
       },
       {
-        title: "Свяжитесь с покупателем",
-        description: "Используйте возможности общения платформы"
+        title: "Разместите билет",
+        description: "Разместите билет на мероприятие на платформе быстро и легко"
       },
       {
         title: "Безопасный обмен",
