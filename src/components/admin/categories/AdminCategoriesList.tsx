@@ -2,24 +2,19 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import { useLanguage } from '@/features/language';
 import { Category } from '@/hooks/useCategories';
-import { CategoryDialog } from './CategoryDialog';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
 import { EmptyState } from './components/EmptyState';
 import { CategoriesTable } from './components/CategoriesTable';
+import { CategoriesHeader } from './components/CategoriesHeader';
+import { CategoryDialogManager } from './components/CategoryDialogManager';
 import { useCategoryMutations } from './mutations/useCategoryMutations';
 
 export function AdminCategoriesList() {
-  const { currentLanguage } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<Category | undefined>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
   const { data: categories, isLoading, error } = useQuery({
     queryKey: ['admin-categories'],
@@ -84,18 +79,12 @@ export function AdminCategoriesList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">
-          {t('Kategoriju pārvaldība', 'Category Management')}
-        </h2>
-        <Button onClick={() => {
+      <CategoriesHeader 
+        onAddClick={() => {
           setSelectedCategory(undefined);
           setIsDialogOpen(true);
-        }}>
-          <Plus className="h-4 w-4 mr-2" />
-          {t('Pievienot kategoriju', 'Add Category')}
-        </Button>
-      </div>
+        }}
+      />
 
       <CategoriesTable
         categories={categories}
@@ -104,15 +93,14 @@ export function AdminCategoriesList() {
         onToggleStatus={handleToggleStatus}
       />
 
-      <CategoryDialog
+      <CategoryDialogManager
         isOpen={isDialogOpen}
         onClose={() => {
           setIsDialogOpen(false);
           setSelectedCategory(undefined);
         }}
         onSave={handleSave}
-        category={selectedCategory}
-        mode={selectedCategory ? 'edit' : 'create'}
+        selectedCategory={selectedCategory}
         isSubmitting={isSubmitting}
       />
     </div>
