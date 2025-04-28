@@ -267,6 +267,85 @@ export type Database = {
         }
         Relationships: []
       }
+      ticket_purchases: {
+        Row: {
+          buyer_id: string
+          id: string
+          purchase_date: string
+          seller_id: string
+          status: string
+          ticket_id: string
+        }
+        Insert: {
+          buyer_id: string
+          id?: string
+          purchase_date?: string
+          seller_id: string
+          status?: string
+          ticket_id: string
+        }
+        Update: {
+          buyer_id?: string
+          id?: string
+          purchase_date?: string
+          seller_id?: string
+          status?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_purchases_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tickets: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_id: string
+          id: string
+          price: number
+          seat_info: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_id: string
+          id?: string
+          price: number
+          seat_info?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_id?: string
+          id?: string
+          price?: number
+          seat_info?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tickets_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       venues: {
         Row: {
           address: string | null
