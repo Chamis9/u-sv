@@ -8,8 +8,8 @@ export const HowItWorks = memo(function HowItWorks() {
   const { howItWorks } = translations;
 
   const icons = [
-    <TicketIcon className="h-8 w-8 md:h-10 md:w-10 text-orange-500" key="ticket" />,
     <Users className="h-8 w-8 md:h-10 md:w-10 text-orange-500" key="users" />,
+    <TicketIcon className="h-8 w-8 md:h-10 md:w-10 text-orange-500" key="ticket" />,
     <RefreshCw className="h-8 w-8 md:h-10 md:w-10 text-orange-500" key="refresh" />,
     <Check className="h-8 w-8 md:h-10 md:w-10 text-orange-500" key="check" />
   ];
@@ -42,3 +42,4 @@ export const HowItWorks = memo(function HowItWorks() {
     </section>
   );
 });
+
