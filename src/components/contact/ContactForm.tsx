@@ -73,7 +73,22 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
       }
       
       toast.success(t.successMessage);
-      form.reset();
+      
+      // Properly reset the form
+      form.reset({
+        name: "",
+        email: "",
+        message: "",
+      });
+      
+      // Reset the form state completely to ensure validation state is cleared
+      form.clearErrors();
+      
+      // Make sure React Hook Form's internal states are updated
+      Object.keys(form.getValues()).forEach((fieldName) => {
+        form.trigger(fieldName as keyof z.infer<typeof formSchema>);
+      });
+      
     } catch (error: any) {
       console.error('Error sending message:', error);
       toast.error(error.message || t.errorMessage);
