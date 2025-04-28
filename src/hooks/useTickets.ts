@@ -15,6 +15,7 @@ export interface Ticket {
   status: 'available' | 'sold' | 'cancelled';
   created_at: string;
   updated_at: string;
+  file_path?: string | null;
 }
 
 export interface AddTicketData {
@@ -22,6 +23,7 @@ export interface AddTicketData {
   price: number;
   seat_info?: string;
   description?: string;
+  file_path?: string;
 }
 
 export const useTickets = (eventId?: string) => {
@@ -63,7 +65,7 @@ export const useTickets = (eventId?: string) => {
       
       const { data, error } = await supabase
         .from('tickets')
-        .select('*')
+        .select('*, events(title, start_date)')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       
@@ -102,6 +104,27 @@ export const useTickets = (eventId?: string) => {
     enabled: isAuthenticated && !!user
   });
 
+  // Get user's ticket file
+  const getTicketFile = async (filePath: string): Promise<string | null> => {
+    if (!isAuthenticated || !user) return null;
+    
+    try {
+      const { data, error } = await supabase.storage
+        .from('ticket_files')
+        .createSignedUrl(filePath, 3600); // URL expires in 1 hour
+      
+      if (error || !data) {
+        console.error('Error getting signed URL:', error);
+        return null;
+      }
+      
+      return data.signedUrl;
+    } catch (error) {
+      console.error('Exception getting ticket file:', error);
+      return null;
+    }
+  };
+
   // Add a new ticket
   const addTicket = useMutation({
     mutationFn: async (ticketData: AddTicketData): Promise<Ticket> => {
@@ -116,7 +139,8 @@ export const useTickets = (eventId?: string) => {
           user_id: user.id,
           price: ticketData.price,
           seat_info: ticketData.seat_info || null,
-          description: ticketData.description || null
+          description: ticketData.description || null,
+          file_path: ticketData.file_path || null
         })
         .select()
         .single();
@@ -145,6 +169,29 @@ export const useTickets = (eventId?: string) => {
         throw new Error('User not authenticated');
       }
       
+      // First check if the ticket has a file attached
+      const { data: ticketData, error: fetchError } = await supabase
+        .from('tickets')
+        .select('file_path')
+        .eq('id', ticketId)
+        .eq('user_id', user?.id)
+        .single();
+      
+      if (fetchError) {
+        console.error('Error fetching ticket data:', fetchError);
+      } else if (ticketData?.file_path) {
+        // Delete the file first
+        const { error: storageError } = await supabase.storage
+          .from('ticket_files')
+          .remove([ticketData.file_path]);
+          
+        if (storageError) {
+          console.error('Error deleting ticket file:', storageError);
+          // Continue even if file deletion fails
+        }
+      }
+      
+      // Then delete the ticket record
       const { error } = await supabase
         .from('tickets')
         .delete()
@@ -203,6 +250,7 @@ export const useTickets = (eventId?: string) => {
     isLoadingEventTickets: getEventTickets.isLoading,
     isLoadingUserTickets: getUserTickets.isLoading,
     isLoadingUserPurchases: getUserPurchases.isLoading,
+    getTicketFile,
     addTicket,
     deleteTicket,
     purchaseTicket

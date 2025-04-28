@@ -7,11 +7,12 @@ import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Drama, Music, Film, Trophy, PartyPopper, Baby, Gift, MoreHorizontal, Plane } from "lucide-react";
+import { Drama, Music, Film, Trophy, PartyPopper, Baby, Gift, MoreHorizontal, Plane, PlusCircle } from "lucide-react";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 import { useCategories } from '@/hooks/useCategories';
 import { EventFilters } from '@/components/events/EventFilters';
 import { useFilteredEvents } from '@/hooks/useFilteredEvents';
+import { Button } from '@/components/ui/button';
 
 const categoryIcons = {
   "Teātris": Drama,
@@ -41,6 +42,9 @@ const Events = () => {
   });
 
   const isLoading = categoriesLoading || eventsLoading;
+
+  // Translate helper
+  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
   if (isLoading) {
     return (
@@ -73,11 +77,20 @@ const Events = () => {
           <main className="flex-grow pt-24 pb-12">
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-7xl mx-auto">
-                <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                  <span className="text-orange-500">
-                    {translations.events?.title || "Pasākumi"}
-                  </span>
-                </h1>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                  <h1 className="text-4xl md:text-5xl font-bold">
+                    <span className="text-orange-500">
+                      {translations.events?.title || "Pasākumi"}
+                    </span>
+                  </h1>
+                  
+                  <Link to="/events/add">
+                    <Button className="mt-4 sm:mt-0">
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      {t("Pievienot jaunu pasākumu", "Add new event")}
+                    </Button>
+                  </Link>
+                </div>
                 
                 <EventFilters
                   onSearchChange={setSearchQuery}
@@ -91,7 +104,7 @@ const Events = () => {
                   selectedEndDate={endDate}
                 />
 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
                   {events.map((event) => (
                     <Link to={`/events/${event.category_id}/${event.id}`} key={event.id}>
                       <Card className="h-full transition-transform hover:scale-105 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
@@ -136,11 +149,20 @@ const Events = () => {
         <main className="flex-grow pt-24 pb-12">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="max-w-7xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                <span className="text-orange-500">
-                  {translations.events?.title || "Pasākumi"}
-                </span>
-              </h1>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                <h1 className="text-4xl md:text-5xl font-bold">
+                  <span className="text-orange-500">
+                    {translations.events?.title || "Pasākumi"}
+                  </span>
+                </h1>
+                
+                <Link to="/events/add">
+                  <Button className="mt-4 sm:mt-0">
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    {t("Pievienot jaunu pasākumu", "Add new event")}
+                  </Button>
+                </Link>
+              </div>
 
               <EventFilters
                 onSearchChange={setSearchQuery}
@@ -154,7 +176,7 @@ const Events = () => {
                 selectedEndDate={endDate}
               />
 
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
                 {categories?.map((category) => {
                   const IconComponent = categoryIcons[category.name as keyof typeof categoryIcons] || MoreHorizontal;
                   
