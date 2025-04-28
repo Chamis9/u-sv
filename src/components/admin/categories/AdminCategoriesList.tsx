@@ -16,8 +16,12 @@ export function AdminCategoriesList() {
   const [selectedCategory, setSelectedCategory] = useState<Category | undefined>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const queryClient = useQueryClient();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
-  const { data: categories, isLoading } = useQuery({
+  // Fetch all categories including hidden ones
+  const { data: categories, isLoading, error } = useQuery({
     queryKey: ['admin-categories'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -45,7 +49,7 @@ export function AdminCategoriesList() {
       const categoryData = {
         name: newCategory.name,
         description: newCategory.description || null,
-        priority: newCategory.priority !== undefined ? parseInt(newCategory.priority.toString()) : 999,
+        priority: newCategory.priority !== undefined ? newCategory.priority : 999,
         status: newCategory.status || 'active'
       };
       
@@ -65,6 +69,7 @@ export function AdminCategoriesList() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
       toast.success(t('Kategorija pievienota', 'Category added'));
     },
     onError: (error) => {
@@ -82,7 +87,7 @@ export function AdminCategoriesList() {
       const updateData = {
         ...(updates.name && { name: updates.name }),
         ...(updates.description !== undefined && { description: updates.description }),
-        ...(updates.priority !== undefined && { priority: parseInt(updates.priority.toString()) }),
+        ...(updates.priority !== undefined && { priority: updates.priority }),
         ...(updates.status && { status: updates.status }),
       };
       
@@ -103,6 +108,7 @@ export function AdminCategoriesList() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
       toast.success(t('Kategorija atjaunināta', 'Category updated'));
     },
     onError: (error) => {
@@ -115,22 +121,21 @@ export function AdminCategoriesList() {
     mutationFn: async (id: string) => {
       console.log('Attempting to delete category with ID:', id);
       
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('categories')
         .delete()
-        .eq('id', id)
-        .select();
+        .eq('id', id);
         
       if (error) {
         console.error('Error deleting category:', error);
         throw error;
       }
       
-      return data;
+      return { success: true, id };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
-      toast.success(t('Kategorija izdzēsta', 'Category deleted'));
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
     },
     onError: (error) => {
       console.error('Delete mutation error:', error);
@@ -157,7 +162,7 @@ export function AdminCategoriesList() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
-      toast.success(t('Kategorijas statuss mainīts', 'Category status changed'));
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
     },
     onError: (error) => {
       console.error('Toggle status mutation error:', error);
@@ -165,10 +170,9 @@ export function AdminCategoriesList() {
     }
   });
 
-  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
-
   const handleSave = async (data: Partial<Category>) => {
     try {
+      setIsSubmitting(true);
       if (selectedCategory) {
         await updateMutation.mutateAsync({ ...data, id: selectedCategory.id });
       } else {
@@ -179,6 +183,8 @@ export function AdminCategoriesList() {
     } catch (error) {
       console.error('Error in handleSave:', error);
       toast.error(t('Kļūda saglabājot kategoriju', 'Error saving category'));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -188,19 +194,65 @@ export function AdminCategoriesList() {
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      await deleteMutation.mutateAsync(id);
-    } catch (error) {
-      console.error('Error in handleDelete:', error);
-    }
+    return deleteMutation.mutateAsync(id);
   };
 
   const handleToggleStatus = async (id: string, newStatus: string) => {
-    try {
-      await toggleStatusMutation.mutateAsync({ id, status: newStatus });
-    } catch (error) {
-      console.error('Error in handleToggleStatus:', error);
+    return toggleStatusMutation.mutateAsync({ id, status: newStatus });
+  };
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      );
     }
+
+    if (error) {
+      return (
+        <div className="text-center py-8 border rounded-md">
+          <p className="text-destructive">{t('Kļūda ielādējot kategorijas', 'Error loading categories')}</p>
+          <p className="text-sm text-muted-foreground mt-2">{(error as Error).message}</p>
+        </div>
+      );
+    }
+
+    if (!categories || categories.length === 0) {
+      return (
+        <div className="text-center py-8 border rounded-md">
+          <p className="text-gray-500">{t('Nav nevienas kategorijas', 'No categories found')}</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('Nosaukums', 'Name')}</TableHead>
+              <TableHead>{t('Apraksts', 'Description')}</TableHead>
+              <TableHead>{t('Prioritāte', 'Priority')}</TableHead>
+              <TableHead>{t('Statuss', 'Status')}</TableHead>
+              <TableHead>{t('Darbības', 'Actions')}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {categories.map((category: Category) => (
+              <AdminCategoryRow 
+                key={category.id} 
+                category={category}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onToggleStatus={handleToggleStatus}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    );
   };
 
   return (
@@ -218,40 +270,7 @@ export function AdminCategoriesList() {
         </Button>
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-      ) : categories && categories.length > 0 ? (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t('Nosaukums', 'Name')}</TableHead>
-                <TableHead>{t('Apraksts', 'Description')}</TableHead>
-                <TableHead>{t('Prioritāte', 'Priority')}</TableHead>
-                <TableHead>{t('Statuss', 'Status')}</TableHead>
-                <TableHead>{t('Darbības', 'Actions')}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categories.map((category: Category) => (
-                <AdminCategoryRow 
-                  key={category.id} 
-                  category={category}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onToggleStatus={handleToggleStatus}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      ) : (
-        <div className="text-center py-8 border rounded-md">
-          <p className="text-gray-500">{t('Nav nevienas kategorijas', 'No categories found')}</p>
-        </div>
-      )}
+      {renderContent()}
 
       <CategoryDialog
         isOpen={isDialogOpen}
@@ -262,6 +281,7 @@ export function AdminCategoriesList() {
         onSave={handleSave}
         category={selectedCategory}
         mode={selectedCategory ? 'edit' : 'create'}
+        isSubmitting={isSubmitting}
       />
     </div>
   );

@@ -7,18 +7,29 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Category } from '@/hooks/useCategories';
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface CategoryFormProps {
   onSubmit: (data: Partial<Category>) => Promise<void>;
   onCancel: () => void;
   initialData?: Category;
+  isSubmitting?: boolean;
 }
 
-export function CategoryForm({ onSubmit, onCancel, initialData }: CategoryFormProps) {
+export function CategoryForm({ onSubmit, onCancel, initialData, isSubmitting = false }: CategoryFormProps) {
   const { currentLanguage } = useLanguage();
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
+  // Define schema for form validation
+  const formSchema = z.object({
+    name: z.string().min(1, t('Nosaukums ir obligāts', 'Name is required')),
+    description: z.string().optional().nullable(),
+    priority: z.string().transform(val => parseInt(val) || 999)
+  });
+
   const form = useForm({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: initialData?.name || '',
       description: initialData?.description || '',
@@ -26,12 +37,26 @@ export function CategoryForm({ onSubmit, onCancel, initialData }: CategoryFormPr
     }
   });
 
-  const handleSubmit = async (data: any) => {
-    await onSubmit({
-      ...data,
-      priority: parseInt(data.priority)
-    });
-    form.reset();
+  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    try {
+      // When editing, include the ID
+      if (initialData?.id) {
+        await onSubmit({
+          ...data,
+          id: initialData.id,
+          status: initialData.status,
+        });
+      } else {
+        // For new categories
+        await onSubmit({
+          ...data,
+          status: 'active'
+        });
+      }
+      form.reset();
+    } catch (error) {
+      console.error('Form submission error:', error);
+    }
   };
 
   return (
@@ -58,7 +83,7 @@ export function CategoryForm({ onSubmit, onCancel, initialData }: CategoryFormPr
             <FormItem>
               <FormLabel>{t('Apraksts', 'Description')}</FormLabel>
               <FormControl>
-                <Textarea {...field} />
+                <Textarea {...field} value={field.value || ''} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -80,11 +105,13 @@ export function CategoryForm({ onSubmit, onCancel, initialData }: CategoryFormPr
         />
 
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
             {t('Atcelt', 'Cancel')}
           </Button>
-          <Button type="submit">
-            {initialData ? t('Saglabāt', 'Save') : t('Pievienot', 'Add')}
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 
+              (initialData ? t('Saglabā...', 'Saving...') : t('Pievieno...', 'Adding...')) : 
+              (initialData ? t('Saglabāt', 'Save') : t('Pievienot', 'Add'))}
           </Button>
         </div>
       </form>

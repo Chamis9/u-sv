@@ -10,15 +10,22 @@ export interface Category {
   status: string; // 'active' | 'hidden'
 }
 
-export const useCategories = () => {
+export const useCategories = (includeHidden = false) => {
   return useQuery({
-    queryKey: ['categories'],
+    queryKey: ['categories', includeHidden],
     queryFn: async (): Promise<Category[]> => {
-      const { data, error } = await supabase
+      const query = supabase
         .from('categories')
-        .select('*')
-        .eq('status', 'active')
-        .order('priority', { ascending: true });
+        .select('*');
+      
+      // Only filter by active status if we don't want to include hidden categories
+      if (!includeHidden) {
+        query.eq('status', 'active');
+      }
+      
+      query.order('priority', { ascending: true });
+      
+      const { data, error } = await query;
       
       if (error) {
         console.error('Error fetching categories:', error);
