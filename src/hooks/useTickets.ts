@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -31,10 +30,8 @@ export const useTickets = (eventId?: string) => {
   const queryClient = useQueryClient();
   const { currentLanguage } = useLanguage();
   
-  // Translate helper
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
   
-  // Get all available tickets for an event
   const getEventTickets = useQuery({
     queryKey: ['tickets', eventId],
     queryFn: async (): Promise<Ticket[]> => {
@@ -57,7 +54,6 @@ export const useTickets = (eventId?: string) => {
     enabled: !!eventId
   });
 
-  // Get user's tickets (for "My Tickets" section)
   const getUserTickets = useQuery({
     queryKey: ['user-tickets'],
     queryFn: async (): Promise<Ticket[]> => {
@@ -79,7 +75,6 @@ export const useTickets = (eventId?: string) => {
     enabled: isAuthenticated && !!user
   });
 
-  // Get user's purchased tickets
   const getUserPurchases = useQuery({
     queryKey: ['user-purchases'],
     queryFn: async () => {
@@ -104,7 +99,6 @@ export const useTickets = (eventId?: string) => {
     enabled: isAuthenticated && !!user
   });
 
-  // Get user's ticket file
   const getTicketFile = async (filePath: string): Promise<string | null> => {
     if (!isAuthenticated || !user) return null;
     
@@ -125,7 +119,6 @@ export const useTickets = (eventId?: string) => {
     }
   };
 
-  // Add a new ticket
   const addTicket = useMutation({
     mutationFn: async (ticketData: AddTicketData): Promise<Ticket> => {
       if (!isAuthenticated || !user) {
@@ -161,15 +154,13 @@ export const useTickets = (eventId?: string) => {
       toast.error(t('Kļūda pievienojot biļeti', 'Error adding ticket') + ': ' + error.message);
     }
   });
-  
-  // Delete ticket
+
   const deleteTicket = useMutation({
     mutationFn: async (ticketId: string): Promise<void> => {
       if (!isAuthenticated) {
         throw new Error('User not authenticated');
       }
       
-      // First check if the ticket has a file attached
       const { data: ticketData, error: fetchError } = await supabase
         .from('tickets')
         .select('file_path')
@@ -180,18 +171,15 @@ export const useTickets = (eventId?: string) => {
       if (fetchError) {
         console.error('Error fetching ticket data:', fetchError);
       } else if (ticketData?.file_path) {
-        // Delete the file first
         const { error: storageError } = await supabase.storage
           .from('ticket_files')
           .remove([ticketData.file_path]);
           
         if (storageError) {
           console.error('Error deleting ticket file:', storageError);
-          // Continue even if file deletion fails
         }
       }
       
-      // Then delete the ticket record
       const { error } = await supabase
         .from('tickets')
         .delete()
@@ -212,8 +200,7 @@ export const useTickets = (eventId?: string) => {
       toast.error(t('Kļūda dzēšot biļeti', 'Error deleting ticket') + ': ' + error.message);
     }
   });
-  
-  // Purchase a ticket
+
   const purchaseTicket = useMutation({
     mutationFn: async ({ ticketId, sellerId }: { ticketId: string, sellerId: string }): Promise<void> => {
       if (!isAuthenticated || !user) {

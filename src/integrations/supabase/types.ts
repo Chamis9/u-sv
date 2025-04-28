@@ -307,6 +307,7 @@ export type Database = {
           created_at: string
           description: string | null
           event_id: string
+          file_path: string | null
           id: string
           price: number
           seat_info: string | null
@@ -318,6 +319,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           event_id: string
+          file_path?: string | null
           id?: string
           price: number
           seat_info?: string | null
@@ -329,6 +331,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           event_id?: string
+          file_path?: string | null
           id?: string
           price?: number
           seat_info?: string | null
