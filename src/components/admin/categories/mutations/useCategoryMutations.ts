@@ -23,7 +23,6 @@ export const useCategoryMutations = () => {
         status: newCategory.status || 'active'
       };
       
-      // This should now work with our RLS policies for authenticated users
       const { data, error } = await supabase
         .from('categories')
         .insert([categoryData])
@@ -37,6 +36,7 @@ export const useCategoryMutations = () => {
       return data;
     },
     onSuccess: () => {
+      // Invalidate all queries that involve categories
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       toast.success(t('Kategorija pievienota', 'Category added'));
@@ -74,6 +74,7 @@ export const useCategoryMutations = () => {
       return data;
     },
     onSuccess: () => {
+      // Invalidate all queries that involve categories
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       toast.success(t('Kategorija atjaunināta', 'Category updated'));
@@ -95,10 +96,14 @@ export const useCategoryMutations = () => {
         console.error('Error deleting category:', error);
         throw error;
       }
+      
+      return { success: true, id };
     },
     onSuccess: () => {
+      // Invalidate all queries that involve categories
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
       queryClient.invalidateQueries({ queryKey: ['categories'] });
+      toast.success(t('Kategorija izdzēsta', 'Category deleted'));
     },
     onError: (error) => {
       console.error('Delete mutation error:', error);
@@ -117,10 +122,19 @@ export const useCategoryMutations = () => {
         console.error('Error toggling category status:', error);
         throw error;
       }
+      
+      return { success: true, id, status };
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Invalidate all queries that involve categories
       queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
       queryClient.invalidateQueries({ queryKey: ['categories'] });
+      
+      const statusMessage = data.status === 'active' 
+        ? t('Kategorija aktivizēta', 'Category activated')
+        : t('Kategorija paslēpta', 'Category hidden');
+        
+      toast.success(statusMessage);
     },
     onError: (error) => {
       console.error('Toggle status mutation error:', error);

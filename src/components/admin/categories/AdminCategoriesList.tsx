@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,13 +10,19 @@ import { CategoriesTable } from './components/CategoriesTable';
 import { CategoriesHeader } from './components/CategoriesHeader';
 import { CategoryDialogManager } from './components/CategoryDialogManager';
 import { useCategoryMutations } from './mutations/useCategoryMutations';
+import { toast } from 'sonner';
+import { useLanguage } from '@/features/language';
 
 export function AdminCategoriesList() {
   const [selectedCategory, setSelectedCategory] = useState<Category | undefined>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { currentLanguage } = useLanguage();
+  
+  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
-  const { data: categories, isLoading, error } = useQuery({
+  // Use enabled option to prevent automatic refetching when not needed
+  const { data: categories, isLoading, error, refetch } = useQuery({
     queryKey: ['admin-categories'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -29,7 +36,9 @@ export function AdminCategoriesList() {
       }
       
       return data as Category[];
-    }
+    },
+    staleTime: 0, // Consider data stale immediately
+    refetchOnWindowFocus: true, // Refetch when window regains focus
   });
 
   const { createMutation, updateMutation, deleteMutation, toggleStatusMutation } = useCategoryMutations();
@@ -44,6 +53,8 @@ export function AdminCategoriesList() {
       }
       setIsDialogOpen(false);
       setSelectedCategory(undefined);
+      // Explicitly refetch after mutation completes
+      await refetch();
     } catch (error) {
       console.error('Error in handleSave:', error);
     } finally {
@@ -57,11 +68,25 @@ export function AdminCategoriesList() {
   };
 
   const handleDelete = async (id: string) => {
-    await deleteMutation.mutateAsync(id);
+    try {
+      await deleteMutation.mutateAsync(id);
+      // Explicitly refetch after deletion
+      await refetch();
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      toast.error(t('Kļūda dzēšot kategoriju', 'Error deleting category'));
+    }
   };
 
   const handleToggleStatus = async (id: string, newStatus: string) => {
-    await toggleStatusMutation.mutateAsync({ id, status: newStatus });
+    try {
+      await toggleStatusMutation.mutateAsync({ id, status: newStatus });
+      // Explicitly refetch after status change
+      await refetch();
+    } catch (error) {
+      console.error('Error toggling status:', error);
+      toast.error(t('Kļūda mainot statusu', 'Error changing status'));
+    }
   };
 
   if (isLoading) {
