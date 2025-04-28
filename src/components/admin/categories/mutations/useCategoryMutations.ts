@@ -23,6 +23,7 @@ export const useCategoryMutations = () => {
         status: newCategory.status || 'active'
       };
       
+      // This should now work with our RLS policies for authenticated users
       const { data, error } = await supabase
         .from('categories')
         .insert([categoryData])

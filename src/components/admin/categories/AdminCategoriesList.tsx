@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -100,7 +99,6 @@ export function AdminCategoriesList() {
           setSelectedCategory(undefined);
         }}
         onSave={handleSave}
-        selectedCategory={selectedCategory}
         isSubmitting={isSubmitting}
       />
     </div>

@@ -19,6 +19,7 @@ export const useCategories = (includeHidden = false) => {
         .select('*');
       
       // Only filter by active status if we don't want to include hidden categories
+      // This is now enforced by RLS policies for anonymous users
       if (!includeHidden) {
         query.eq('status', 'active');
       }
