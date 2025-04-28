@@ -1,4 +1,3 @@
-
 import { Language } from '../../types';
 
 export type HowItWorksTranslations = {
@@ -12,7 +11,7 @@ export type HowItWorksTranslations = {
 
 export const howItWorksTranslations: Record<string, HowItWorksTranslations> = {
   lv: {
-    title: "Kā tas strādās",
+    title: "Kā tas darbosies",
     subtitle: "Vienkāršs un drošs veids, kā pārdot vai iegādāties biļeti uz pasākumiem",
     steps: [
       {
@@ -78,4 +77,3 @@ export const howItWorksTranslations: Record<string, HowItWorksTranslations> = {
     ]
   }
 };
-
