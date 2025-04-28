@@ -31,7 +31,7 @@ export const useSubscribeForm = () => {
       const now = Date.now();
       const lastSubmit = sessionStorage.getItem('lastEmailSubmit');
       
-      if (lastSubmit && now - parseInt(lastSubmit) < 1000 * 60) {
+      if (lastSubmit && now - parseInt(lastSubmit) < 1000 * 30) { // Reduced from 60s to 30s
         setFormError(getTranslations(currentLanguage.code).rateLimit);
         return;
       }
@@ -50,7 +50,13 @@ export const useSubscribeForm = () => {
         .from('newsletter_subscribers')
         .insert([{ email: email.toLowerCase().trim() }]);
       
-      if (error) throw error;
+      if (error) {
+        if (error.code === '23505') { // Unique violation error code
+          setFormError(getTranslations(currentLanguage.code).emailExists);
+          return;
+        }
+        throw error;
+      }
       
       saveEmailToLocalStorage(email);
       setEmail("");
@@ -113,7 +119,8 @@ const getTranslations = (langCode: string) => {
       previousEmails: "Iepriekš izmantotie e-pasti",
       selectEmail: "Izvēlies e-pastu...",
       invalidEmail: "Lūdzu, ievadiet derīgu e-pasta adresi",
-      rateLimit: "Pārāk daudz mēģinājumu. Lūdzu, mēģiniet vēlāk."
+      rateLimit: "Lūdzu, uzgaidiet 30 sekundes pirms nākamā mēģinājuma.",
+      emailExists: "Šis e-pasts jau ir reģistrēts mūsu jaunumu saņemšanai."
     },
     en: {
       placeholder: "Email address",
@@ -126,7 +133,8 @@ const getTranslations = (langCode: string) => {
       previousEmails: "Previously used emails",
       selectEmail: "Select email...",
       invalidEmail: "Please enter a valid email address",
-      rateLimit: "Too many attempts. Please try again later."
+      rateLimit: "Please wait 30 seconds before trying again.",
+      emailExists: "This email is already subscribed to our newsletter."
     }
   };
 
