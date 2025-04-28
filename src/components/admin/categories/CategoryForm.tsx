@@ -35,7 +35,7 @@ export function CategoryForm({ onSubmit, onCancel, initialData, isSubmitting = f
     defaultValues: {
       name: initialData?.name || '',
       description: initialData?.description || '',
-      priority: initialData?.priority?.toString() || '999'
+      priority: initialData?.priority?.toString() || '999' // Convert number to string for form input
     }
   });
 
