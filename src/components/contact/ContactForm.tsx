@@ -54,6 +54,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
       email: "",
       message: "",
     },
+    mode: "onSubmit", // Only validate on submit
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -74,19 +75,19 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
       
       toast.success(t.successMessage);
       
-      // Properly reset the form
+      // Completely reset the form with clean state
       form.reset({
         name: "",
         email: "",
         message: "",
-      });
-      
-      // Reset the form state completely to ensure validation state is cleared
-      form.clearErrors();
-      
-      // Make sure React Hook Form's internal states are updated
-      Object.keys(form.getValues()).forEach((fieldName) => {
-        form.trigger(fieldName as keyof z.infer<typeof formSchema>);
+      }, {
+        // This is the key part - it prevents showing validation errors
+        keepErrors: false,
+        keepDirty: false,
+        keepIsSubmitted: false,
+        keepTouched: false,
+        keepIsValid: false,
+        keepSubmitCount: false,
       });
       
     } catch (error: any) {
