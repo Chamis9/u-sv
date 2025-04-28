@@ -1,26 +1,26 @@
 
 import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useLanguage } from '@/features/language';
-import { AdminCategoryRow } from './AdminCategoryRow';
 import { Category } from '@/hooks/useCategories';
 import { CategoryDialog } from './CategoryDialog';
-import { toast } from "sonner";
+import { LoadingState } from './components/LoadingState';
+import { ErrorState } from './components/ErrorState';
+import { EmptyState } from './components/EmptyState';
+import { CategoriesTable } from './components/CategoriesTable';
+import { useCategoryMutations } from './mutations/useCategoryMutations';
 
 export function AdminCategoriesList() {
   const { currentLanguage } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<Category | undefined>();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
-  // Fetch all categories including hidden ones
   const { data: categories, isLoading, error } = useQuery({
     queryKey: ['admin-categories'],
     queryFn: async () => {
@@ -38,132 +38,7 @@ export function AdminCategoriesList() {
     }
   });
 
-  const createMutation = useMutation({
-    mutationFn: async (newCategory: Partial<Category>) => {
-      // Make sure name is provided for a new category
-      if (!newCategory.name) {
-        throw new Error('Category name is required');
-      }
-      
-      // Convert to the required format for Supabase insert
-      const categoryData = {
-        name: newCategory.name,
-        description: newCategory.description || null,
-        priority: newCategory.priority !== undefined ? newCategory.priority : 999,
-        status: newCategory.status || 'active'
-      };
-      
-      console.log('Creating category with data:', categoryData);
-      
-      const { data, error } = await supabase
-        .from('categories')
-        .insert([categoryData])
-        .select();
-        
-      if (error) {
-        console.error('Error creating category:', error);
-        throw error;
-      }
-      
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success(t('Kategorija pievienota', 'Category added'));
-    },
-    onError: (error) => {
-      console.error('Create mutation error:', error);
-      toast.error(t('Kļūda pievienojot kategoriju', 'Error adding category'));
-    }
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<Category> & { id: string }) => {
-      if (!id) {
-        throw new Error('Category ID is required for update');
-      }
-      
-      const updateData = {
-        ...(updates.name && { name: updates.name }),
-        ...(updates.description !== undefined && { description: updates.description }),
-        ...(updates.priority !== undefined && { priority: updates.priority }),
-        ...(updates.status && { status: updates.status }),
-      };
-      
-      console.log('Updating category with ID:', id, 'Data:', updateData);
-      
-      const { data, error } = await supabase
-        .from('categories')
-        .update(updateData)
-        .eq('id', id)
-        .select();
-        
-      if (error) {
-        console.error('Error updating category:', error);
-        throw error;
-      }
-      
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success(t('Kategorija atjaunināta', 'Category updated'));
-    },
-    onError: (error) => {
-      console.error('Update mutation error:', error);
-      toast.error(t('Kļūda atjaunojot kategoriju', 'Error updating category'));
-    }
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      console.log('Attempting to delete category with ID:', id);
-      
-      const { error } = await supabase
-        .from('categories')
-        .delete()
-        .eq('id', id);
-        
-      if (error) {
-        console.error('Error deleting category:', error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-    },
-    onError: (error) => {
-      console.error('Delete mutation error:', error);
-      toast.error(t('Kļūda dzēšot kategoriju', 'Error deleting category'));
-    }
-  });
-
-  const toggleStatusMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      console.log('Toggling status for category ID:', id, 'New status:', status);
-      
-      const { error } = await supabase
-        .from('categories')
-        .update({ status })
-        .eq('id', id);
-        
-      if (error) {
-        console.error('Error toggling category status:', error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-categories'] });
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-    },
-    onError: (error) => {
-      console.error('Toggle status mutation error:', error);
-      toast.error(t('Kļūda mainot statusu', 'Error changing status'));
-    }
-  });
+  const { createMutation, updateMutation, deleteMutation, toggleStatusMutation } = useCategoryMutations();
 
   const handleSave = async (data: Partial<Category>) => {
     try {
@@ -177,7 +52,6 @@ export function AdminCategoriesList() {
       setSelectedCategory(undefined);
     } catch (error) {
       console.error('Error in handleSave:', error);
-      toast.error(t('Kļūda saglabājot kategoriju', 'Error saving category'));
     } finally {
       setIsSubmitting(false);
     }
@@ -189,66 +63,24 @@ export function AdminCategoriesList() {
   };
 
   const handleDelete = async (id: string) => {
-    return deleteMutation.mutateAsync(id);
+    await deleteMutation.mutateAsync(id);
   };
 
   const handleToggleStatus = async (id: string, newStatus: string) => {
-    return toggleStatusMutation.mutateAsync({ id, status: newStatus });
+    await toggleStatusMutation.mutateAsync({ id, status: newStatus });
   };
 
-  const renderContent = () => {
-    if (isLoading) {
-      return (
-        <div className="flex justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-      );
-    }
+  if (isLoading) {
+    return <LoadingState />;
+  }
 
-    if (error) {
-      return (
-        <div className="text-center py-8 border rounded-md">
-          <p className="text-destructive">{t('Kļūda ielādējot kategorijas', 'Error loading categories')}</p>
-          <p className="text-sm text-muted-foreground mt-2">{(error as Error).message}</p>
-        </div>
-      );
-    }
+  if (error) {
+    return <ErrorState error={error as Error} />;
+  }
 
-    if (!categories || categories.length === 0) {
-      return (
-        <div className="text-center py-8 border rounded-md">
-          <p className="text-gray-500">{t('Nav nevienas kategorijas', 'No categories found')}</p>
-        </div>
-      );
-    }
-
-    return (
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t('Nosaukums', 'Name')}</TableHead>
-              <TableHead>{t('Apraksts', 'Description')}</TableHead>
-              <TableHead>{t('Prioritāte', 'Priority')}</TableHead>
-              <TableHead>{t('Statuss', 'Status')}</TableHead>
-              <TableHead>{t('Darbības', 'Actions')}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {categories.map((category: Category) => (
-              <AdminCategoryRow 
-                key={category.id} 
-                category={category}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                onToggleStatus={handleToggleStatus}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    );
-  };
+  if (!categories || categories.length === 0) {
+    return <EmptyState />;
+  }
 
   return (
     <div className="space-y-4">
@@ -265,7 +97,12 @@ export function AdminCategoriesList() {
         </Button>
       </div>
 
-      {renderContent()}
+      <CategoriesTable
+        categories={categories}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onToggleStatus={handleToggleStatus}
+      />
 
       <CategoryDialog
         isOpen={isDialogOpen}
