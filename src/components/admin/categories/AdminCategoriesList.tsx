@@ -99,6 +99,7 @@ export function AdminCategoriesList() {
           setSelectedCategory(undefined);
         }}
         onSave={handleSave}
+        selectedCategory={selectedCategory}
         isSubmitting={isSubmitting}
       />
     </div>
