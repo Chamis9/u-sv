@@ -27,6 +27,12 @@ export const getRegistrationFormSchema = (languageCode: string) => {
   });
 };
 
+// Add loginFormSchema that was missing
+export const loginFormSchema = z.object({
+  email: z.string().min(1, { message: "Email is required" }).email({ message: "Email is not valid" }),
+  password: z.string().min(1, { message: "Password is required" }),
+});
+
 export type RegistrationFormData = {
   firstName: string;
   lastName: string;
@@ -38,3 +44,6 @@ export type RegistrationFormData = {
   termsAccepted: boolean;
   newsletter: boolean;
 };
+
+// Add LoginFormData type that was missing
+export type LoginFormData = z.infer<typeof loginFormSchema>;

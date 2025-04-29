@@ -20,8 +20,8 @@ export function PhoneField({
   return (
     <PhoneInputWithCountry
       label={translations.phoneNumber}
-      countryCode={form.watch(countryCodeName)}
-      phoneNumber={form.watch(phoneNumberName) || ""}
+      countryCode={String(form.watch(countryCodeName) || "")}
+      phoneNumber={String(form.watch(phoneNumberName) || "")}
       onCountryCodeChange={(code) => form.setValue(countryCodeName, code)}
       onPhoneNumberChange={(number) => form.setValue(phoneNumberName, number)}
       placeholder={translations.phoneNumberPlaceholder}
