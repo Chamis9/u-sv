@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -66,7 +67,6 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       // Upload file if provided
       if (file) {
         console.log("Uploading file:", file.name);
-        // Fix: Remove the second argument as uploadTicketFile expects only one argument
         const uploadResult = await uploadTicketFile(file);
         if (uploadResult) {
           filePath = uploadResult.path;
@@ -89,13 +89,10 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       }
       
       // Format event date if provided
-      // Fix: Check if eventDate exists but don't use instanceof as it might be a string
       let formattedEventDate = null;
       if (values.eventDate) {
-        // Handle eventDate whether it's a string or a Date object
-        formattedEventDate = typeof values.eventDate === 'object' && values.eventDate !== null ? 
-          values.eventDate.toISOString().split('T')[0] : 
-          String(values.eventDate);
+        // Handle the eventDate safely whether it's a Date or string
+        formattedEventDate = values.eventDate;
       }
       
       // Add the ticket - ensure all details are logged
