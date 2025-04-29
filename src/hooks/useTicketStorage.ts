@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { generateUuid } from "@/utils/uuid-helper";
@@ -33,20 +32,9 @@ export function useTicketStorage() {
           return false;
         }
         
-        // Create public policy directly through SQL
-        const { error: policyError } = await supabase.storage.from('tickets').createPolicy('public-read', {
-          name: 'public-read',
-          definition: {
-            role: '*',
-            action: 'READ'
-          }
-        });
-        
-        if (policyError) {
-          console.error("Error creating bucket policy:", policyError);
-        } else {
-          console.log("Created tickets bucket and policy successfully");
-        }
+        // For the policy, we need to use SQL or RPC, but not the non-existent createPolicy method
+        // Let's just log a message that the bucket is created and assume we'll configure policies elsewhere
+        console.log("Created tickets bucket successfully. Configure policies if needed.");
       } else {
         console.log("Tickets bucket already exists");
       }
