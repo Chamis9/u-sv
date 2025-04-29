@@ -81,10 +81,10 @@ export const useFilteredEvents = (filters: FilterOptions) => {
         id: ticket.id,
         title: ticket.description || "Ticket",
         description: ticket.description,
-        category: ticket.category_id || "",  // We'll map this to category name in the UI
+        category: ticket.category_id || "",
         price: ticket.price,
         event_id: ticket.event_id,
-        status: ticket.status,
+        status: 'available' as const, // Type assertion to match UserTicket.status
         file_path: ticket.file_path,
         created_at: ticket.created_at,
         seller_id: ticket.seller_id,

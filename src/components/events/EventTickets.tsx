@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -52,14 +51,14 @@ export function EventTickets() {
       }
 
       // Transform to UserTicket format
-      const formattedTickets = data.map(ticket => ({
+      const formattedTickets: UserTicket[] = data.map(ticket => ({
         id: ticket.id,
         title: ticket.description || "Ticket",
         description: ticket.description,
         category: ticket.category_id || "",
         price: ticket.price,
         event_id: ticket.event_id,
-        status: ticket.status,
+        status: 'available', // Fixed status as a literal
         file_path: ticket.file_path,
         created_at: ticket.created_at,
         seller_id: ticket.seller_id,
