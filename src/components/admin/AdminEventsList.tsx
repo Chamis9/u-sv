@@ -1,43 +1,16 @@
 
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useLanguage } from '@/features/language';
 import { AdminEventRow } from './events/AdminEventRow';
-import { Event } from '@/hooks/useEvents';
+import { useEvents } from '@/hooks/useEvents';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function AdminEventsList() {
   const { currentLanguage } = useLanguage();
-
-  const { data: eventsData, isLoading, refetch } = useQuery({
-    queryKey: ['admin-events'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('events')
-        .select('*, categories(name)')
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      
-      // Transform to match Event interface
-      return data.map(event => ({
-        id: event.id,
-        title: event.title,
-        description: event.description,
-        category: event.categories?.name || '',
-        category_id: event.category_id,
-        start_date: event.start_date,
-        end_date: event.end_date,
-        price_range: event.price_range,
-        venue_id: event.venue_id,
-        image_url: event.image_url,
-        status: event.status
-      })) as Event[];
-    }
-  });
+  const { data: eventsData, isLoading } = useEvents();
 
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
@@ -65,9 +38,27 @@ export function AdminEventsList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {eventsData?.map((event: Event) => (
-              <AdminEventRow key={event.id} event={event} onUpdate={refetch} />
-            ))}
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={5}>
+                  <div className="flex flex-col gap-2">
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : eventsData && eventsData.length > 0 ? (
+              eventsData.map((event) => (
+                <AdminEventRow key={event.id} event={event} onUpdate={() => {}} />
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                  {t('Nav atrasts neviens pasākums', 'No events found')}
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>

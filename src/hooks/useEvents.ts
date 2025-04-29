@@ -1,6 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { categoryEvents, categoryTitles } from "@/utils/eventData"; 
 
 export interface Event {
   id: string;
@@ -20,39 +20,52 @@ export const useEvents = (category?: string) => {
   return useQuery({
     queryKey: ['events', category],
     queryFn: async (): Promise<Event[]> => {
-      let query = supabase.from('events')
-        .select('*, categories(name)');
+      // Use mock data instead of Supabase query
+      const categoryEventsData = category ? categoryEvents[category] || [] : 
+        Object.values(categoryEvents).flat();
       
-      if (category) {
-        query = query.eq('category_id', category);
-      }
-      
-      const { data, error } = await query
-        .eq('status', 'published')
-        .gte('start_date', new Date().toISOString())
-        .order('start_date', { ascending: true });
-      
-      if (error) {
-        console.error('Error fetching events:', error);
-        throw error;
-      }
-      
-      // Transform data to match Event interface
-      const transformedEvents: Event[] = data.map(event => ({
-        id: event.id,
+      // Transform the mock data to match the Event interface
+      return categoryEventsData.map(event => ({
+        id: String(event.id),
         title: event.title,
         description: event.description,
-        category: event.categories?.name || '',
-        category_id: event.category_id,
-        start_date: event.start_date,
-        end_date: event.end_date,
-        price_range: event.price_range,
-        venue_id: event.venue_id,
-        image_url: event.image_url,
-        status: event.status
+        category: getCategoryName(event.location), // Use location as a proxy for category
+        category_id: getCategoryId(event.location), 
+        start_date: event.date + 'T' + event.time,
+        end_date: null,
+        price_range: event.price,
+        venue_id: null,
+        image_url: null,
+        status: 'published'
       }));
-      
-      return transformedEvents || [];
     }
   });
 };
+
+// Helper function to get a category name from a venue/location
+function getCategoryName(location: string): string {
+  // Map venues to categories as a simple approach
+  if (location.includes('teātris') || location.includes('JRT')) {
+    return categoryTitles.theatre.en;
+  } else if (location.includes('Arēna') || location.includes('stadions')) {
+    return categoryTitles.sports.en;
+  } else if (location.includes('koncertzāle') || location.includes('Ģilde')) {
+    return categoryTitles.concerts.en;
+  } else {
+    return 'Other';
+  }
+}
+
+// Helper function to get a category ID from a venue/location
+function getCategoryId(location: string): string {
+  // Map venues to category IDs
+  if (location.includes('teātris') || location.includes('JRT')) {
+    return 'theatre';
+  } else if (location.includes('Arēna') || location.includes('stadions')) {
+    return 'sports';
+  } else if (location.includes('koncertzāle') || location.includes('Ģilde')) {
+    return 'concerts';
+  } else {
+    return 'other';
+  }
+}

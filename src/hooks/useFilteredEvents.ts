@@ -1,6 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { categoryEvents, categoryTitles } from "@/utils/eventData";
 import { Event } from "@/hooks/useEvents";
 
 interface FilterOptions {
@@ -15,58 +15,81 @@ export const useFilteredEvents = (filters: FilterOptions) => {
   return useQuery({
     queryKey: ['filtered-events', filters],
     queryFn: async (): Promise<Event[]> => {
-      let query = supabase.from('events').select('*, categories(name)');
+      // Get all events from mock data
+      let allEvents = Object.values(categoryEvents).flat();
       
       // Apply category filter
       if (filters.category) {
-        query = query.eq('category_id', filters.category);
+        allEvents = categoryEvents[filters.category] || [];
       }
 
       // Apply date filters
       if (filters.startDate) {
-        query = query.gte('start_date', filters.startDate.toISOString());
+        const startDateStr = filters.startDate.toISOString().split('T')[0];
+        allEvents = allEvents.filter(event => event.date >= startDateStr);
       }
       
       if (filters.endDate) {
-        query = query.lte('start_date', filters.endDate.toISOString());
+        const endDateStr = filters.endDate.toISOString().split('T')[0];
+        allEvents = allEvents.filter(event => event.date <= endDateStr);
       }
 
       // Apply venue filter
       if (filters.venueId) {
-        query = query.eq('venue_id', filters.venueId);
+        allEvents = allEvents.filter(event => event.location.includes(filters.venueId));
       }
 
       // Apply text search on title and description
       if (filters.searchQuery) {
-        query = query.or(`title.ilike.%${filters.searchQuery}%,description.ilike.%${filters.searchQuery}%`);
+        const query = filters.searchQuery.toLowerCase();
+        allEvents = allEvents.filter(event => 
+          event.title.toLowerCase().includes(query) || 
+          event.description.toLowerCase().includes(query)
+        );
       }
 
-      // Always show only published events and order by start date
-      const { data, error } = await query
-        .eq('status', 'published')
-        .order('start_date', { ascending: true });
-      
-      if (error) {
-        console.error('Error fetching filtered events:', error);
-        throw error;
-      }
-      
-      // Transform data to match Event interface
-      const transformedEvents: Event[] = data.map(event => ({
-        id: event.id,
+      // Transform to match Event interface
+      return allEvents.map(event => ({
+        id: String(event.id),
         title: event.title,
         description: event.description,
-        category: event.categories?.name || '',
-        category_id: event.category_id,
-        start_date: event.start_date,
-        end_date: event.end_date,
-        price_range: event.price_range,
-        venue_id: event.venue_id,
-        image_url: event.image_url,
-        status: event.status
+        category: getCategoryName(event.location),
+        category_id: getCategoryId(event.location),
+        start_date: event.date + 'T' + event.time,
+        end_date: null,
+        price_range: event.price,
+        venue_id: null,
+        image_url: null,
+        status: 'published'
       }));
-      
-      return transformedEvents || [];
     }
   });
 };
+
+// Helper function to get a category name from a venue/location
+function getCategoryName(location: string): string {
+  // Map venues to categories as a simple approach
+  if (location.includes('teātris') || location.includes('JRT')) {
+    return categoryTitles.theatre.en;
+  } else if (location.includes('Arēna') || location.includes('stadions')) {
+    return categoryTitles.sports.en;
+  } else if (location.includes('koncertzāle') || location.includes('Ģilde')) {
+    return categoryTitles.concerts.en;
+  } else {
+    return 'Other';
+  }
+}
+
+// Helper function to get a category ID from a venue/location
+function getCategoryId(location: string): string {
+  // Map venues to category IDs
+  if (location.includes('teātris') || location.includes('JRT')) {
+    return 'theatre';
+  } else if (location.includes('Arēna') || location.includes('stadions')) {
+    return 'sports';
+  } else if (location.includes('koncertzāle') || location.includes('Ģilde')) {
+    return 'concerts';
+  } else {
+    return 'other';
+  }
+}
