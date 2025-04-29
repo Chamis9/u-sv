@@ -3,10 +3,10 @@ import React from 'react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash } from 'lucide-react';
+import { Event } from '@/hooks/useEvents';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/features/language';
-import { Event } from '@/hooks/useEvents';
 
 interface AdminEventRowProps {
   event: Event;
@@ -35,13 +35,10 @@ export function AdminEventRow({ event, onUpdate }: AdminEventRowProps) {
     return format(new Date(date), 'dd.MM.yyyy HH:mm');
   };
 
-  // Get category name from the joined categories data or display category_id
-  const categoryName = event.categories?.name || event.category || `Category ID: ${event.category_id}`;
-
   return (
     <TableRow>
       <TableCell>{event.title}</TableCell>
-      <TableCell>{categoryName}</TableCell>
+      <TableCell>{event.category}</TableCell>
       <TableCell>{formatEventDate(event.start_date)}</TableCell>
       <TableCell>
         <Badge className={getStatusColor(event.status)}>

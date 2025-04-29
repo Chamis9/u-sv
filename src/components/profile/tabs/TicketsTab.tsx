@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { User } from "@/types/users";
 import { useLanguage } from "@/features/language";
 import { 
@@ -18,12 +18,16 @@ import {
   Ticket as TicketIcon,
   Tag,
   Calendar,
-  Clock,
-  Plus
+  Clock
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import AddTicketForm from "../tickets/AddTicketForm";
-import UserTicketsList from "../tickets/UserTicketsList";
+import { 
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table";
 
 interface TicketsTabProps {
   user: User;
@@ -31,50 +35,131 @@ interface TicketsTabProps {
 
 export function TicketsTab({ user }: TicketsTabProps) {
   const { currentLanguage } = useLanguage();
-  const [showAddForm, setShowAddForm] = useState(false);
-  
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
   
+  // Demo biļešu dati
+  const myTickets = [
+    {
+      id: "ticket-1",
+      event: "Koncerts Dzintaros",
+      price: "45.00 EUR",
+      date: "2023-07-15",
+      status: "active"
+    },
+    {
+      id: "ticket-2",
+      event: "Teātra izrāde",
+      price: "25.00 EUR",
+      date: "2023-08-20",
+      status: "used"
+    }
+  ];
+  
+  const purchasedTickets = [
+    {
+      id: "purchase-1",
+      event: "Basketbola spēle",
+      price: "30.00 EUR",
+      date: "2023-09-05",
+      status: "active"
+    }
+  ];
+  
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader>
         <CardTitle>{t("Manas biļetes", "My Tickets")}</CardTitle>
-        <Button 
-          onClick={() => setShowAddForm(!showAddForm)}
-          variant={showAddForm ? "outline" : "default"}
-        >
-          {showAddForm ? (
-            t("Atcelt", "Cancel")
-          ) : (
-            <>
-              <Plus className="mr-2 h-4 w-4" />
-              {t("Pievienot biļeti", "Add ticket")}
-            </>
-          )}
-        </Button>
       </CardHeader>
       <CardContent>
-        {showAddForm ? (
-          <div className="mb-6">
-            <h3 className="text-lg font-medium mb-4">
-              {t("Pievienot jaunu biļeti", "Add new ticket")}
-            </h3>
-            <AddTicketForm />
-          </div>
-        ) : (
-          <Tabs defaultValue="my_tickets">
-            <TabsList className="mb-4">
-              <TabsTrigger value="my_tickets">
-                {t("Manas biļetes", "My Tickets")}
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="my_tickets">
-              <UserTicketsList />
-            </TabsContent>
-          </Tabs>
-        )}
+        <Tabs defaultValue="listed">
+          <TabsList className="mb-4">
+            <TabsTrigger value="listed">
+              {t("Pievienotās biļetes", "Listed Tickets")}
+            </TabsTrigger>
+            <TabsTrigger value="purchased">
+              {t("Iegādātās biļetes", "Purchased Tickets")}
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="listed">
+            {myTickets.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("Notikums", "Event")}</TableHead>
+                    <TableHead>{t("Cena", "Price")}</TableHead>
+                    <TableHead>{t("Datums", "Date")}</TableHead>
+                    <TableHead>{t("Statuss", "Status")}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {myTickets.map((ticket) => (
+                    <TableRow key={ticket.id}>
+                      <TableCell className="font-medium">{ticket.event}</TableCell>
+                      <TableCell>{ticket.price}</TableCell>
+                      <TableCell>{ticket.date}</TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs ${
+                          ticket.status === 'active' 
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' 
+                            : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                        }`}>
+                          {ticket.status === 'active' ? t("Aktīva", "Active") : t("Izmantota", "Used")}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="text-center p-8">
+                <TicketIcon className="mx-auto h-12 w-12 text-muted-foreground opacity-50" />
+                <p className="mt-2 text-lg font-medium">{t("Nav pievienotu biļešu", "No listed tickets")}</p>
+                <p className="text-sm text-muted-foreground">{t("Jūs vēl neesat pievienojis nevienu biļeti pārdošanā", "You haven't listed any tickets for sale yet")}</p>
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="purchased">
+            {purchasedTickets.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("Notikums", "Event")}</TableHead>
+                    <TableHead>{t("Cena", "Price")}</TableHead>
+                    <TableHead>{t("Datums", "Date")}</TableHead>
+                    <TableHead>{t("Statuss", "Status")}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {purchasedTickets.map((ticket) => (
+                    <TableRow key={ticket.id}>
+                      <TableCell className="font-medium">{ticket.event}</TableCell>
+                      <TableCell>{ticket.price}</TableCell>
+                      <TableCell>{ticket.date}</TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs ${
+                          ticket.status === 'active' 
+                            ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' 
+                            : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                        }`}>
+                          {ticket.status === 'active' ? t("Aktīva", "Active") : t("Izmantota", "Used")}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="text-center p-8">
+                <Tag className="mx-auto h-12 w-12 text-muted-foreground opacity-50" />
+                <p className="mt-2 text-lg font-medium">{t("Nav iegādātu biļešu", "No purchased tickets")}</p>
+                <p className="text-sm text-muted-foreground">{t("Jūs vēl neesat iegādājies nevienu biļeti", "You haven't purchased any tickets yet")}</p>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   );

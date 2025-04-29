@@ -15,11 +15,11 @@ export const useFilteredEvents = (filters: FilterOptions) => {
   return useQuery({
     queryKey: ['filtered-events', filters],
     queryFn: async (): Promise<Event[]> => {
-      let query = supabase.from('events').select('*, categories(name)');
+      let query = supabase.from('events').select('*');
       
       // Apply category filter
-      if (filters.category && filters.category !== 'all') {
-        query = query.eq('categories.name', filters.category);
+      if (filters.category) {
+        query = query.eq('category', filters.category);
       }
 
       // Apply date filters
@@ -51,23 +51,7 @@ export const useFilteredEvents = (filters: FilterOptions) => {
         throw error;
       }
       
-      // Transform the data to match the Event interface
-      const transformedData: Event[] = data.map(event => ({
-        id: event.id,
-        title: event.title,
-        description: event.description,
-        category_id: event.category_id,
-        category: event.categories?.name || '',
-        start_date: event.start_date,
-        end_date: event.end_date,
-        price_range: event.price_range,
-        venue_id: event.venue_id,
-        image_url: event.image_url,
-        status: event.status,
-        categories: event.categories
-      }));
-      
-      return transformedData || [];
+      return data || [];
     }
   });
 };
