@@ -17,9 +17,7 @@ export const getRegistrationFormSchema = (languageCode: string) => {
     confirmPassword: z.string().min(1, { message: translations.required }),
     countryCode: z.string(),
     phoneNumber: z.string().optional(),
-    termsAccepted: z.boolean().refine(val => val === true, {
-      message: languageCode === 'lv' ? "Jums jāpiekrīt lietošanas noteikumiem" : "You must accept the terms and conditions",
-    }),
+    termsAccepted: z.boolean().optional().default(false),
     newsletter: z.boolean().optional().default(false),
   }).refine((data) => data.password === data.confirmPassword, {
     message: translations.passwordsNotMatch,

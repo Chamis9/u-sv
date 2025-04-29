@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,12 +18,8 @@ interface RegistrationFormProps {
   onClose: () => void;
 }
 
-// Keep track of last signup attempt across component instances
-const lastSignupAttempts = new Map<string, number>();
-
 export function RegistrationForm({ translations, onClose }: RegistrationFormProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [cooldownError, setCooldownError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const schema = getRegistrationFormSchema(translations.languageCode || "en");
@@ -41,33 +38,7 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
     },
   });
 
-  const checkCooldown = (email: string): boolean => {
-    const now = Date.now();
-    const lastAttempt = lastSignupAttempts.get(email);
-    
-    // If no previous attempt or cooldown has passed (60 seconds)
-    if (!lastAttempt || (now - lastAttempt) > 60000) {
-      lastSignupAttempts.set(email, now);
-      setCooldownError(null);
-      return true;
-    }
-    
-    // Calculate remaining cooldown time
-    const remainingSeconds = Math.ceil((60000 - (now - lastAttempt)) / 1000);
-    setCooldownError(
-      translations.languageCode === 'lv' 
-        ? `Lūdzu, uzgaidiet ${remainingSeconds} sekundes pirms jauna mēģinājuma.` 
-        : `Please wait ${remainingSeconds} seconds before trying again.`
-    );
-    
-    return false;
-  };
-
   const onSubmit = async (values: RegistrationFormData) => {
-    if (!checkCooldown(values.email)) {
-      return;
-    }
-    
     setIsLoading(true);
     
     try {
@@ -85,19 +56,10 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
       });
 
       if (error) {
-        if (error.status === 429) {
-          toast({
-            variant: "destructive",
-            description: translations.emailRateLimitExceeded || "Email rate limit exceeded. Please try again later.",
-          });
-          // Force a long cooldown after rate limit error
-          lastSignupAttempts.set(values.email, Date.now());
-        } else {
-          toast({
-            variant: "destructive",
-            description: error.message,
-          });
-        }
+        toast({
+          variant: "destructive",
+          description: error.message,
+        });
         return;
       }
 
@@ -125,10 +87,6 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
         
         <EmailInput form={form} label={translations.email} />
         
-        {cooldownError && (
-          <div className="text-sm font-medium text-destructive">{cooldownError}</div>
-        )}
-        
         <PasswordInput form={form} label={translations.password} />
         <PasswordInput
           form={form}
@@ -138,8 +96,6 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
 
         <PhoneField form={form} translations={translations} />
         
-        <TermsCheckbox form={form} translations={translations} />
-
         <div className="flex justify-end">
           <Button type="submit" disabled={isLoading}>
             {isLoading ? translations.registrationLoading : translations.register}
