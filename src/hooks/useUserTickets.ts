@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/features/language";
+import { useTicketStorage } from "@/hooks/useTicketStorage";
 
 export interface UserTicket {
   id: string;
@@ -19,10 +20,12 @@ export interface UserTicket {
 
 export interface AddTicketData {
   title: string;
-  description?: string;
-  eventId: string;
+  description?: string | null;
+  event_id: string;
   price: number;
-  file?: File;
+  user_id: string;
+  file_path?: string | null;
+  seat_info?: string | null;
 }
 
 export function useUserTickets(userId?: string) {
@@ -30,6 +33,7 @@ export function useUserTickets(userId?: string) {
   const queryClient = useQueryClient();
   const { currentLanguage } = useLanguage();
   const [loading, setLoading] = useState(false);
+  const { deleteTicketFile } = useTicketStorage();
   
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
   
@@ -67,15 +71,7 @@ export function useUserTickets(userId?: string) {
   
   // Add a new ticket
   const addTicketMutation = useMutation({
-    mutationFn: async (ticketData: { 
-      title: string;
-      description: string | null;
-      event_id: string;
-      price: number;
-      user_id: string;
-      file_path: string | null;
-      seat_info?: string;
-    }) => {
+    mutationFn: async (ticketData: AddTicketData) => {
       setLoading(true);
       
       try {
@@ -101,12 +97,12 @@ export function useUserTickets(userId?: string) {
         description: t('Biļete ir veiksmīgi pievienota pārdošanai', 'Your ticket has been successfully added for sale'),
       });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Error adding ticket:', error);
       toast({
         variant: "destructive",
         title: t('Kļūda', 'Error'),
-        description: t('Neizdevās pievienot biļeti', 'Failed to add ticket'),
+        description: error?.message || t('Neizdevās pievienot biļeti', 'Failed to add ticket'),
       });
     }
   });
@@ -117,6 +113,21 @@ export function useUserTickets(userId?: string) {
       setLoading(true);
       
       try {
+        // First get the ticket to check for file_path
+        const { data: ticketData, error: fetchError } = await supabase
+          .from('tickets')
+          .select('file_path')
+          .eq('id', ticketId)
+          .single();
+        
+        if (fetchError) throw fetchError;
+        
+        // If there's a file associated with the ticket, delete it
+        if (ticketData?.file_path) {
+          await deleteTicketFile(ticketData.file_path);
+        }
+        
+        // Now delete the ticket
         const { error } = await supabase
           .from('tickets')
           .delete()
@@ -135,12 +146,12 @@ export function useUserTickets(userId?: string) {
         description: t('Biļete ir veiksmīgi dzēsta', 'Your ticket has been successfully deleted'),
       });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Error deleting ticket:', error);
       toast({
         variant: "destructive",
         title: t('Kļūda', 'Error'),
-        description: t('Neizdevās dzēst biļeti', 'Failed to delete ticket'),
+        description: error?.message || t('Neizdevās dzēst biļeti', 'Failed to delete ticket'),
       });
     }
   });
