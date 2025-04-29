@@ -72,21 +72,22 @@ export function useTicketMutations(userId?: string) {
         throw new Error('No data returned after insertion');
       }
       
+      // Safely create the ticket object using optional chaining and default values
       const ticket: UserTicket = {
-        id: insertedTicket.id || ticketId,
-        title: insertedTicket.description || 'Ticket',
-        description: insertedTicket.description,
+        id: insertedTicket?.id || ticketId,
+        title: insertedTicket?.description || 'Ticket',
+        description: insertedTicket?.description,
         category: data.category_name || 'Other',
-        price: insertedTicket.price,
-        event_id: insertedTicket.event_id || data.event_id || null,
+        price: insertedTicket?.price || data.price,
+        event_id: insertedTicket?.event_id || data.event_id || null,
         status: 'available',
-        file_path: insertedTicket.file_path,
-        created_at: insertedTicket.created_at,
-        seller_id: insertedTicket.seller_id,
-        buyer_id: insertedTicket.buyer_id,
-        owner_id: insertedTicket.owner_id,
-        event_date: insertedTicket.event_date,
-        venue: insertedTicket.venue
+        file_path: insertedTicket?.file_path,
+        created_at: insertedTicket?.created_at || new Date().toISOString(),
+        seller_id: insertedTicket?.seller_id,
+        buyer_id: insertedTicket?.buyer_id,
+        owner_id: insertedTicket?.owner_id || userId,
+        event_date: insertedTicket?.event_date,
+        venue: insertedTicket?.venue
       };
       
       return { success: true, ticket };
