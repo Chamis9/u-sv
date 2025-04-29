@@ -8,7 +8,6 @@ import { LoadingSpinner } from "./LoadingSpinner";
 import { EmptyTicketsList } from "./EmptyTicketsList";
 import { ListedTicketsTable } from "./ListedTicketsTable";
 import { PurchasedTicketsTable } from "./PurchasedTicketsTable";
-import { AddTicketButton } from "./AddTicketButton";
 
 interface TicketsTabContentProps {
   user: User;
@@ -53,17 +52,14 @@ export const TicketsTabContent: React.FC<TicketsTabContentProps> = ({ user }) =>
   
   return (
     <Tabs defaultValue="listed">
-      <div className="flex justify-between items-center">
-        <TabsList className="mb-4">
-          <TabsTrigger value="listed">
-            {t("Pievienotās biļetes", "Listed Tickets")}
-          </TabsTrigger>
-          <TabsTrigger value="purchased">
-            {t("Iegādātās biļetes", "Purchased Tickets")}
-          </TabsTrigger>
-        </TabsList>
-        <AddTicketButton />
-      </div>
+      <TabsList className="mb-4">
+        <TabsTrigger value="listed">
+          {t("Pievienotās biļetes", "Listed Tickets")}
+        </TabsTrigger>
+        <TabsTrigger value="purchased">
+          {t("Iegādātās biļetes", "Purchased Tickets")}
+        </TabsTrigger>
+      </TabsList>
       
       <TabsContent value="listed">
         {renderListedTickets()}

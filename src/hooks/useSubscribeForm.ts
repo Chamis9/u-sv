@@ -44,14 +44,11 @@ export const useSubscribeForm = () => {
     if (!validateEmail(email)) return;
     
     setIsLoading(true);
-    console.log("Submitting subscription for email:", email);
     
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('newsletter_subscribers')
         .insert([{ email: email.toLowerCase().trim() }]);
-      
-      console.log("Subscription response:", { data, error });
       
       if (error) {
         if (error.code === '23505') { // Unique violation error code
@@ -138,20 +135,6 @@ const getTranslations = (langCode: string) => {
       invalidEmail: "Please enter a valid email address",
       rateLimit: "Please wait 30 seconds before trying again.",
       emailExists: "This email is already subscribed to our newsletter."
-    },
-    ru: {
-      placeholder: "Электронная почта",
-      button: "Подписаться",
-      sending: "Отправка...",
-      successTitle: "Спасибо за подписку!",
-      successMessage: "Мы будем держать вас в курсе всех новостей.",
-      errorTitle: "Ошибка!",
-      errorMessage: "Не удалось сохранить адрес электронной почты. Пожалуйста, попробуйте еще раз.",
-      previousEmails: "Ранее использованные адреса",
-      selectEmail: "Выберите адрес...",
-      invalidEmail: "Пожалуйста, введите действительный адрес электронной почты",
-      rateLimit: "Пожалуйста, подождите 30 секунд перед следующей попыткой.",
-      emailExists: "Этот адрес уже подписан на нашу рассылку."
     }
   };
 

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,34 +36,20 @@ export function LoginForm({ translations, onClose }: LoginFormProps) {
     }
 
     setIsLoading(true);
-    try {
-      console.log("Attempting password reset for:", email);
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
-      
-      if (!error) {
-        toast({
-          description: translations.resetPasswordSent,
-        });
-      } else {
-        console.error("Reset password error:", error);
-        toast({
-          variant: "destructive",
-          description: error.message,
-        });
-      }
-    } catch (err) {
-      console.error("Reset password error:", err);
-    } finally {
-      setIsLoading(false);
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    setIsLoading(false);
+
+    if (!error) {
+      toast({
+        description: translations.resetPasswordSent,
+      });
     }
   };
 
   const onSubmit = async (values: LoginFormData) => {
-    console.log("Login form submitted", values);
     setIsLoading(true);
     
     try {
-      // Save email to previous emails
       const savedEmails = localStorage.getItem('globalPreviousEmails');
       const emails = savedEmails ? JSON.parse(savedEmails) : [];
       if (!emails.includes(values.email)) {
@@ -73,24 +58,18 @@ export function LoginForm({ translations, onClose }: LoginFormProps) {
         localStorage.setItem('globalPreviousEmails', JSON.stringify(updatedEmails));
       }
 
-      // Attempt to sign in
-      console.log("Attempting to sign in with email:", values.email);
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
 
       if (error) {
-        console.error("Login error:", error);
         toast({
           variant: "destructive",
           description: translations.invalidCredentials,
         });
       } else {
-        console.log("Login successful:", data);
         if (onClose) onClose();
-        // Force refresh the page to ensure auth state is properly updated
-        window.location.reload();
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -177,10 +156,7 @@ export function LoginForm({ translations, onClose }: LoginFormProps) {
           >
             {translations.forgotPassword}
           </Button>
-          <Button 
-            type="submit"
-            disabled={isLoading}
-          >
+          <Button type="submit" disabled={isLoading}>
             {isLoading ? translations.loginLoading : translations.login}
           </Button>
         </div>
