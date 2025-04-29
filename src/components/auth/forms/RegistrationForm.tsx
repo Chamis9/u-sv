@@ -11,6 +11,9 @@ import { NameFields } from "./components/NameFields";
 import { PhoneField } from "./components/PhoneField";
 import { PasswordFields } from "./components/PasswordFields";
 import { getRegistrationFormSchema, type RegistrationFormData } from "../schema";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { checkEmailExists, checkPhoneExists } from "@/utils/phoneUtils";
 
 interface RegistrationFormProps {
   translations: any;
@@ -32,6 +35,8 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
       lastName: "",
       countryCode: "+371",
       phoneNumber: "",
+      termsAccepted: false,
+      newsletter: false,
     },
   });
 
@@ -42,6 +47,36 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
       const phoneNumber = values.phoneNumber 
         ? `${values.countryCode}${values.phoneNumber}` 
         : null;
+
+      // Check if email exists
+      const emailExists = await checkEmailExists(values.email);
+      if (emailExists) {
+        toast({
+          variant: "destructive",
+          title: languageCode === 'lv' ? "Kļūda" : "Error",
+          description: languageCode === 'lv' 
+            ? "E-pasta adrese jau ir reģistrēta" 
+            : "Email is already registered",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Check if phone exists (if provided)
+      if (phoneNumber) {
+        const phoneExists = await checkPhoneExists(phoneNumber);
+        if (phoneExists) {
+          toast({
+            variant: "destructive",
+            title: languageCode === 'lv' ? "Kļūda" : "Error",
+            description: languageCode === 'lv'
+              ? "Telefona numurs jau ir reģistrēts"
+              : "Phone number is already registered",
+          });
+          setIsLoading(false);
+          return;
+        }
+      }
 
       const savedEmails = localStorage.getItem('globalPreviousEmails');
       const emails = savedEmails ? JSON.parse(savedEmails) : [];
@@ -59,6 +94,7 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
             first_name: values.firstName,
             last_name: values.lastName,
             phone: phoneNumber,
+            newsletter: values.newsletter
           }
         }
       });
@@ -66,7 +102,8 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
       if (error) {
         toast({
           variant: "destructive",
-          description: translations.registrationError,
+          title: languageCode === 'lv' ? "Kļūda" : "Error",
+          description: error.message || translations.registrationError,
         });
       } else {
         toast({
@@ -153,6 +190,55 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
         <EmailInput form={form} label={translations.email} />
         <PhoneField form={form} translations={translations} />
         <PasswordFields form={form} translations={translations} />
+        
+        <div className="flex items-center space-x-2">
+          <Checkbox 
+            id="termsAccepted"
+            checked={form.watch("termsAccepted")} 
+            onCheckedChange={(checked) => {
+              form.setValue("termsAccepted", checked === true);
+            }}
+          />
+          <Label 
+            htmlFor="termsAccepted" 
+            className="text-sm cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              form.setValue("termsAccepted", !form.watch("termsAccepted"));
+            }}
+          >
+            {languageCode === 'lv' ? 
+              'Es piekrītu lietošanas noteikumiem' : 
+              'I agree to the terms and conditions'}
+          </Label>
+        </div>
+        {form.formState.errors.termsAccepted && (
+          <p className="text-sm text-red-500 -mt-2">
+            {form.formState.errors.termsAccepted.message}
+          </p>
+        )}
+        
+        <div className="flex items-center space-x-2">
+          <Checkbox 
+            id="newsletter"
+            checked={form.watch("newsletter")}
+            onCheckedChange={(checked) => {
+              form.setValue("newsletter", checked === true);
+            }}
+          />
+          <Label 
+            htmlFor="newsletter" 
+            className="text-sm cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              form.setValue("newsletter", !form.watch("newsletter"));
+            }}
+          >
+            {languageCode === 'lv' ? 
+              'Es vēlos saņemt jaunumus' : 
+              'I want to receive newsletter'}
+          </Label>
+        </div>
         
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? translations.registrationLoading : translations.register}
