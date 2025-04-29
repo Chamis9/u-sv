@@ -7,11 +7,12 @@ import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Drama, Music, Film, Trophy, PartyPopper, Baby, Gift, MoreHorizontal, Plane } from "lucide-react";
+import { Drama, Music, Film, Trophy, PartyPopper, Baby, Gift, MoreHorizontal, Plane, Ticket } from "lucide-react";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 import { useCategories } from '@/hooks/useCategories';
 import { EventFilters } from '@/components/events/EventFilters';
 import { useFilteredEvents } from '@/hooks/useFilteredEvents';
+import { Badge } from '@/components/ui/badge';
 
 const categoryIcons = {
   "Teātris": Drama,
@@ -33,14 +34,19 @@ const Events = () => {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
 
-  const { data: events, isLoading: eventsLoading } = useFilteredEvents({
+  const { data, isLoading: eventsLoading } = useFilteredEvents({
     category: selectedCategory === 'all' ? undefined : selectedCategory,
     startDate,
     endDate,
     searchQuery
   });
+  
+  const events = data?.events || [];
+  const availableTickets = data?.availableTickets || {};
 
   const isLoading = categoriesLoading || eventsLoading;
+
+  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
   if (isLoading) {
     return (
@@ -104,6 +110,16 @@ const Events = () => {
                             )}
                           </CardDescription>
                         </CardHeader>
+                        
+                        {/* Display available tickets count if any */}
+                        {availableTickets[event.category_id]?.length > 0 && (
+                          <div className="px-6 pb-4 flex items-center gap-1">
+                            <Ticket className="h-4 w-4 text-green-500" />
+                            <Badge variant="outline" className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-200">
+                              {t('Pieejamas biļetes:', 'Available tickets:')} {availableTickets[event.category_id].length}
+                            </Badge>
+                          </div>
+                        )}
                       </Card>
                     </Link>
                   ))}
@@ -127,6 +143,13 @@ const Events = () => {
       </ThemeProvider>
     );
   }
+
+  // Get available tickets for each category to display on the main page
+  const getAvailableTicketsForCategory = (categoryId: string) => {
+    return Object.values(availableTickets).flat().filter(ticket => 
+      ticket.category === categoryId
+    ).length;
+  };
 
   return (
     <ThemeProvider>
@@ -158,6 +181,7 @@ const Events = () => {
                 {categories?.map((category) => {
                   const IconComponent = categoryIcons[category.name as keyof typeof categoryIcons] || MoreHorizontal;
                   const route = category.name.toLowerCase().replace(/\s+/g, '-');
+                  const ticketCount = getAvailableTicketsForCategory(category.id);
                   
                   return (
                     <Link to={`/events/${route}`} key={category.id}>
@@ -170,6 +194,16 @@ const Events = () => {
                           <CardDescription>
                             {category.description}
                           </CardDescription>
+                          
+                          {/* Display available tickets count if any */}
+                          {ticketCount > 0 && (
+                            <div className="mt-2 flex items-center gap-1">
+                              <Ticket className="h-4 w-4 text-green-500" />
+                              <Badge variant="outline" className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-200">
+                                {ticketCount} {t('biļetes pieejamas', 'tickets available')}
+                              </Badge>
+                            </div>
+                          )}
                         </CardHeader>
                       </Card>
                     </Link>

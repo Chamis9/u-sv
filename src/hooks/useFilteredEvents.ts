@@ -2,6 +2,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { categoryEvents, categoryTitles } from "@/utils/eventData";
 import { Event } from "@/hooks/useEvents";
+import { supabase } from "@/integrations/supabase/client";
+import { UserTicket } from "@/hooks/tickets";
 
 interface FilterOptions {
   category?: string;
@@ -14,7 +16,7 @@ interface FilterOptions {
 export const useFilteredEvents = (filters: FilterOptions) => {
   return useQuery({
     queryKey: ['filtered-events', filters],
-    queryFn: async (): Promise<Event[]> => {
+    queryFn: async (): Promise<{events: Event[], availableTickets: Record<string, UserTicket[]>}> => {
       // Get all events from mock data
       let allEvents = Object.values(categoryEvents).flat();
       
@@ -49,7 +51,7 @@ export const useFilteredEvents = (filters: FilterOptions) => {
       }
 
       // Transform to match Event interface
-      return allEvents.map(event => ({
+      const transformedEvents = allEvents.map(event => ({
         id: String(event.id),
         title: event.title,
         description: event.description,
@@ -62,6 +64,49 @@ export const useFilteredEvents = (filters: FilterOptions) => {
         image_url: null,
         status: 'published'
       }));
+      
+      // Fetch all available tickets from Supabase
+      const { data: ticketsData, error } = await supabase
+        .from('tickets')
+        .select('*')
+        .eq('status', 'available');
+        
+      if (error) {
+        console.error('Error fetching available tickets:', error);
+        return { events: transformedEvents, availableTickets: {} };
+      }
+      
+      // Format tickets to match UserTicket interface
+      const availableTickets = ticketsData.map(ticket => ({
+        id: ticket.id,
+        title: ticket.description || "Ticket",
+        description: ticket.description,
+        category: ticket.category_id || "",  // We'll map this to category name in the UI
+        price: ticket.price,
+        event_id: ticket.event_id,
+        status: ticket.status,
+        file_path: ticket.file_path,
+        created_at: ticket.created_at,
+        seller_id: ticket.seller_id,
+        buyer_id: ticket.buyer_id,
+        owner_id: ticket.owner_id
+      }));
+      
+      // Group tickets by category
+      const ticketsByCategory: Record<string, UserTicket[]> = {};
+      
+      availableTickets.forEach(ticket => {
+        const categoryId = ticket.category;
+        if (!ticketsByCategory[categoryId]) {
+          ticketsByCategory[categoryId] = [];
+        }
+        ticketsByCategory[categoryId].push(ticket);
+      });
+
+      return { 
+        events: transformedEvents, 
+        availableTickets: ticketsByCategory 
+      };
     }
   });
 };
