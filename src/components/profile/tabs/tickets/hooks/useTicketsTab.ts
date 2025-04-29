@@ -6,7 +6,6 @@ import { useLanguage } from "@/features/language";
 import { User } from "@/types/users";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { getCategoryTableName } from "@/components/profile/tabs/tickets/services/CategoryService";
 
 export function useTicketsTab(user: User) {
   const { currentLanguage } = useLanguage();
@@ -51,11 +50,10 @@ export function useTicketsTab(user: User) {
       const ticketToDelete = tickets.find(t => t.id === ticketId);
       
       if (ticketToDelete) {
-        // Get the table name based on category
-        const tableName = getCategoryTableName(ticketToDelete.category);
-        deleteTicket(ticketId, tableName);
+        // Pass the category directly rather than getting a table name
+        deleteTicket(ticketId, ticketToDelete.category);
       } else {
-        // Fallback to default table
+        // Fallback to default category
         deleteTicket(ticketId, 'Other');
       }
     }
