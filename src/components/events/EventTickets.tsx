@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Ticket } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -11,123 +11,54 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 import { categoryEvents } from '@/utils/eventData';
 import { EventHeader } from './components/EventHeader';
-import { TicketCard } from './components/TicketCard';
-import { supabase } from "@/integrations/supabase/client";
+import { OrganizerTickets } from './components/OrganizerTickets';
+import { UserTickets } from './components/UserTickets';
+import { PurchaseDialog } from './components/PurchaseDialog';
 import { UserTicket } from "@/hooks/tickets";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { toast } from "@/hooks/use-toast";
-
-interface TicketType {
-  id: number;
-  type: string;
-  price: number;
-  available: number;
-}
-
-const mockTickets: TicketType[] = [
-  { id: 1, type: "VIP", price: 50, available: 10 },
-  { id: 2, type: "Standard", price: 30, available: 50 },
-  { id: 3, type: "Economy", price: 20, available: 100 },
-];
+import { useTicketPurchase } from '@/hooks/useTicketPurchase';
+import { Toaster } from "@/components/ui/toaster";
 
 export function EventTickets() {
   const { category, eventId } = useParams<{ category: string; eventId: string }>();
   const { currentLanguage } = useLanguage();
   const [availableTickets, setAvailableTickets] = useState<UserTicket[]>([]);
-  const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
-  const [isPurchaseDialogOpen, setIsPurchaseDialogOpen] = useState(false);
+  
+  const {
+    selectedTicket,
+    isPurchaseDialogOpen,
+    setIsPurchaseDialogOpen,
+    openPurchaseDialog,
+    purchaseTicket
+  } = useTicketPurchase();
   
   const event = category && eventId 
     ? categoryEvents[category]?.find(e => e.id === Number(eventId))
     : null;
 
   useEffect(() => {
-    const fetchAvailableTickets = async () => {
-      // Get available tickets that match this event
-      const { data, error } = await supabase
-        .from('tickets')
-        .select('*')
-        .eq('status', 'available')
-        .eq('event_id', eventId);
-
-      if (error) {
-        console.error("Error fetching available tickets:", error);
-        return;
+    // Fetching logic is now moved to a separate hook component
+    const fetchTickets = async () => {
+      try {
+        const { data, error } = await import('@/hooks/useEventTickets').then(
+          module => module.useEventTickets(eventId)
+        );
+        
+        if (!error && data) {
+          setAvailableTickets(data);
+        }
+      } catch (err) {
+        console.error("Error loading tickets:", err);
       }
-
-      // Transform to UserTicket format
-      const formattedTickets: UserTicket[] = data.map(ticket => ({
-        id: ticket.id,
-        title: ticket.description || "Ticket",
-        description: ticket.description,
-        category: ticket.category_id || "",
-        price: ticket.price,
-        event_id: ticket.event_id,
-        status: 'available' as const, // Type assertion to match UserTicket.status
-        file_path: ticket.file_path,
-        created_at: ticket.created_at,
-        seller_id: ticket.seller_id,
-        buyer_id: ticket.buyer_id,
-        owner_id: ticket.owner_id
-      }));
-
-      setAvailableTickets(formattedTickets);
     };
 
     if (eventId) {
-      fetchAvailableTickets();
+      fetchTickets();
     }
   }, [eventId]);
 
-  const purchaseTicket = async (ticket: UserTicket) => {
-    try {
-      // Get the current user's ID
-      const { data: userData } = await supabase.auth.getUser();
-      const userId = userData.user?.id;
-      
-      if (!userId) {
-        throw new Error("No authenticated user found");
-      }
-      
-      // Update the ticket status in the database
-      const { error } = await supabase
-        .from('tickets')
-        .update({ 
-          status: 'sold',
-          buyer_id: userId
-        })
-        .eq('id', ticket.id);
-
-      if (error) {
-        throw error;
-      }
-
-      // Remove the purchased ticket from state
-      setAvailableTickets(prev => prev.filter(t => t.id !== ticket.id));
-      setIsPurchaseDialogOpen(false);
-      
-      toast({
-        title: currentLanguage.code === 'lv' ? "Biļete nopirkta!" : "Ticket purchased!",
-        description: currentLanguage.code === 'lv' 
-          ? "Biļete ir veiksmīgi pievienota jūsu kontam" 
-          : "The ticket has been successfully added to your account",
-        variant: "default"
-      });
-    } catch (error) {
-      console.error("Error purchasing ticket:", error);
-      toast({
-        title: currentLanguage.code === 'lv' ? "Kļūda" : "Error",
-        description: currentLanguage.code === 'lv'
-          ? "Neizdevās iegādāties biļeti. Lūdzu, mēģiniet vēlreiz."
-          : "Failed to purchase ticket. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const openPurchaseDialog = (ticket: UserTicket) => {
-    setSelectedTicket(ticket);
-    setIsPurchaseDialogOpen(true);
+  const handlePurchaseSuccess = (ticketId: string) => {
+    // Remove the purchased ticket from state
+    setAvailableTickets(prev => prev.filter(t => t.id !== ticketId));
   };
 
   if (!event) {
@@ -142,8 +73,6 @@ export function EventTickets() {
     lv: "Atpakaļ",
     en: "Back"
   };
-
-  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
   return (
     <ThemeProvider>
@@ -169,105 +98,34 @@ export function EventTickets() {
               />
 
               {/* Standard tickets */}
-              <div className="mt-8 mb-4">
-                <h2 className="text-2xl font-semibold mb-4">
-                  {t("Biļetes no organizatora", "Tickets from organizer")}
-                </h2>
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {mockTickets.map((ticket) => (
-                    <TicketCard
-                      key={ticket.id}
-                      type={ticket.type}
-                      price={ticket.price}
-                      available={ticket.available}
-                    />
-                  ))}
-                </div>
-              </div>
+              <OrganizerTickets />
 
               {/* User posted available tickets */}
-              {availableTickets.length > 0 ? (
-                <div className="mt-8">
-                  <h2 className="text-2xl font-semibold mb-4">
-                    {t("Pieejamās biļetes no lietotājiem", "User submitted tickets")}
-                  </h2>
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {availableTickets.map((ticket) => (
-                      <div key={ticket.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-semibold text-lg">{ticket.title}</h3>
-                            {ticket.description && (
-                              <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">{ticket.description}</p>
-                            )}
-                          </div>
-                          <div className="text-lg font-bold">{ticket.price} €</div>
-                        </div>
-                        
-                        <div className="mt-4 flex justify-end">
-                          <Button onClick={() => openPurchaseDialog(ticket)} variant="orange">
-                            <Ticket className="mr-2 h-4 w-4" />
-                            {t("Pirkt biļeti", "Buy ticket")}
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="mt-8 text-center py-8 bg-gray-100/50 dark:bg-gray-800/50 rounded-lg">
-                  <Ticket className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-medium">
-                    {t("Nav pieejamu biļešu no lietotājiem", "No user submitted tickets available")}
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-400 mt-2">
-                    {t("Šim pasākumam pašlaik nav pārdošanā biļetes no lietotājiem", "There are no user tickets for sale for this event at the moment")}
-                  </p>
-                </div>
-              )}
+              <UserTickets 
+                availableTickets={availableTickets}
+                onPurchase={openPurchaseDialog}
+              />
             </div>
           </div>
         </main>
 
         {/* Purchase Dialog */}
-        <Dialog open={isPurchaseDialogOpen} onOpenChange={setIsPurchaseDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{t("Biļetes pirkšana", "Purchase Ticket")}</DialogTitle>
-              <DialogDescription>
-                {t("Vai vēlaties iegādāties šo biļeti?", "Do you want to purchase this ticket?")}
-              </DialogDescription>
-            </DialogHeader>
-            
-            {selectedTicket && (
-              <div className="py-4">
-                <h3 className="font-medium">{selectedTicket.title}</h3>
-                {selectedTicket.description && (
-                  <p className="text-sm text-gray-500 mt-1">{selectedTicket.description}</p>
-                )}
-                <p className="text-xl font-bold mt-2">{selectedTicket.price} €</p>
-              </div>
-            )}
-            
-            <DialogFooter>
-              <Button 
-                variant="outline" 
-                onClick={() => setIsPurchaseDialogOpen(false)}
-              >
-                {t("Atcelt", "Cancel")}
-              </Button>
-              <Button 
-                onClick={() => selectedTicket && purchaseTicket(selectedTicket)}
-                variant="orange"
-              >
-                {t("Apstiprināt pirkumu", "Confirm Purchase")}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <PurchaseDialog
+          ticket={selectedTicket}
+          isOpen={isPurchaseDialogOpen}
+          onOpenChange={setIsPurchaseDialogOpen}
+          onPurchaseConfirm={(ticket) => {
+            purchaseTicket(ticket).then(success => {
+              if (success && ticket) {
+                handlePurchaseSuccess(ticket.id);
+              }
+            });
+          }}
+        />
         
         <Footer />
         <GlobalThemeToggle />
+        <Toaster />
       </div>
     </ThemeProvider>
   );
