@@ -1,20 +1,27 @@
 
-import { useState, useEffect } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { useUserTickets, UserTicket, AddTicketData } from "@/hooks/tickets";
+import { useEffect } from "react";
+import { useUserTickets } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
 import { User } from "@/types/users";
 import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { useTicketDialogs } from "./useTicketDialogs";
+import { useTicketOperations } from "./useTicketOperations";
+import { useTicketRefresh } from "./useTicketRefresh";
 
 export function useTicketsTab(user: User) {
   const { currentLanguage } = useLanguage();
-  const [addTicketOpen, setAddTicketOpen] = useState(false);
-  const [editTicketOpen, setEditTicketOpen] = useState(false);
-  const [currentEditTicket, setCurrentEditTicket] = useState<UserTicket | null>(null);
-  const queryClient = useQueryClient();
   const { isAuthenticated } = useAuth();
-  const { toast } = useToast();
+  
+  // Custom hooks
+  const { 
+    addTicketOpen, 
+    setAddTicketOpen,
+    editTicketOpen,
+    setEditTicketOpen,
+    currentEditTicket,
+    setCurrentEditTicket,
+    openEditTicketDialog
+  } = useTicketDialogs();
   
   const { 
     tickets, 
@@ -24,8 +31,16 @@ export function useTicketsTab(user: User) {
     updateTicket
   } = useUserTickets(user?.id || '');
   
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
+  const { handleDeleteTicket, handleUpdateTicket, t } = useTicketOperations({
+    userId: user?.id || '',
+    deleteTicket,
+    updateTicket
+  });
+  
+  const { refreshTickets } = useTicketRefresh({ 
+    userId: user?.id, 
+    isAuthenticated 
+  });
   
   // Filter tickets based on seller_id and buyer_id
   const addedTickets = tickets.filter(ticket => 
@@ -43,98 +58,6 @@ export function useTicketsTab(user: User) {
     purchased: purchasedTickets.length,
     ticketDetails: tickets
   });
-  
-  const handleDeleteTicket = async (ticketId: string) => {
-    if (window.confirm(t(
-      "Vai tiešām vēlaties dzēst šo biļeti?", 
-      "Are you sure you want to delete this ticket?"
-    ))) {
-      const success = await deleteTicket(ticketId);
-      
-      if (success) {
-        toast({
-          title: t("Biļete dzēsta", "Ticket deleted"),
-          description: t(
-            "Biļete ir veiksmīgi dzēsta", 
-            "The ticket has been successfully deleted"
-          )
-        });
-        
-        // Refresh tickets list
-        queryClient.invalidateQueries({ queryKey: ['user-tickets', user?.id] });
-      } else {
-        toast({
-          title: t("Kļūda", "Error"),
-          description: t(
-            "Neizdevās dzēst biļeti. Lūdzu mēģiniet vēlreiz.", 
-            "Failed to delete the ticket. Please try again."
-          ),
-          variant: "destructive"
-        });
-      }
-    }
-  };
-
-  const handleUpdateTicket = async (ticketId: string, data: Partial<AddTicketData>) => {
-    try {
-      const { success, ticket, error } = await updateTicket(ticketId, data);
-      
-      if (success && ticket) {
-        toast({
-          title: t("Biļete atjaunināta", "Ticket updated"),
-          description: t(
-            "Biļetes informācija ir veiksmīgi atjaunināta", 
-            "Ticket information has been successfully updated"
-          )
-        });
-        
-        // Refresh tickets list
-        queryClient.invalidateQueries({ queryKey: ['user-tickets', user?.id] });
-        return { success: true };
-      } else {
-        toast({
-          title: t("Kļūda", "Error"),
-          description: error || t(
-            "Neizdevās atjaunināt biļeti. Lūdzu mēģiniet vēlreiz.", 
-            "Failed to update the ticket. Please try again."
-          ),
-          variant: "destructive"
-        });
-        return { success: false, error };
-      }
-    } catch (err: any) {
-      toast({
-        title: t("Kļūda", "Error"),
-        description: err.message || t(
-          "Neizdevās atjaunināt biļeti. Lūdzu mēģiniet vēlreiz.", 
-          "Failed to update the ticket. Please try again."
-        ),
-        variant: "destructive"
-      });
-      return { success: false, error: err.message };
-    }
-  };
-
-  const refreshTickets = () => {
-    console.log("Refreshing tickets for user:", user?.id);
-    if (!isAuthenticated) {
-      console.log("User not authenticated, cannot refresh tickets");
-      toast({
-        title: t("Nav pieslēgts", "Not logged in"),
-        description: t("Lai redzētu biļetes, lūdzu pieslēdzieties", "Please log in to see tickets"),
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (user?.id) {
-      queryClient.invalidateQueries({ queryKey: ['user-tickets', user.id] });
-      toast({
-        title: t("Biļetes atjaunotas", "Tickets refreshed"),
-        description: t("Biļešu saraksts ir atjaunots", "Ticket list has been updated")
-      });
-    }
-  };
   
   // Only refresh tickets once when component mounts
   useEffect(() => {
@@ -162,6 +85,8 @@ export function useTicketsTab(user: User) {
     handleUpdateTicket,
     refreshTickets,
     t,
-    isAuthenticated
+    isAuthenticated,
+    // Helper function to open edit dialog
+    onEdit: openEditTicketDialog
   };
 }
