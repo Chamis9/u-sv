@@ -1,4 +1,3 @@
-
 export const loginFormTranslations = {
   lv: {
     email: "E-pasts",
@@ -35,10 +34,11 @@ export const registrationFormTranslations = {
     registrationSuccessful: "Reģistrācija veiksmīga! Lūdzu pārbaudiet savu e-pastu, lai apstiprinātu to.",
     genericError: "Reģistrācijas kļūda. Lūdzu, mēģiniet vēlreiz.",
     languageCode: "lv",
-    emailRateLimitExceeded: "E-pasta sūtīšanas limits ir pārsniegts. Lūdzu, mēģiniet vēlāk.",
+    emailRateLimitExceeded: "E-pasta sūtīšanas limits ir pārsniegts. Lūdzu, mēģiniet vēlāk vai sazinieties ar atbalsta dienestu.",
     manualConfirmation: "Reģistrācija veiksmīga! Gaidiet apstiprinājumu no administratora.",
     emailSignupsDisabled: "E-pasta reģistrācija ir atspējota. Lūdzu, sazinieties ar administratoru.",
     userAlreadyRegistered: "Šis e-pasts jau ir reģistrēts. Lūdzu, izmantojiet pieslēgšanās formu.",
+    waitToRegister: "Lūdzu, pagaidiet 5 minūtes pirms jauna reģistrācijas mēģinājuma.",
   },
   en: {
     firstName: "First Name",
@@ -54,10 +54,11 @@ export const registrationFormTranslations = {
     registrationSuccessful: "Registration successful! Please check your email to confirm it.",
     genericError: "Registration error. Please try again.",
     languageCode: "en",
-    emailRateLimitExceeded: "Email rate limit exceeded. Please try again later.",
+    emailRateLimitExceeded: "Email rate limit exceeded. Please try again later or contact support.",
     manualConfirmation: "Registration successful! Please wait for admin confirmation.",
     emailSignupsDisabled: "Email registration is disabled. Please contact the administrator.",
     userAlreadyRegistered: "This email is already registered. Please use the login form instead.",
+    waitToRegister: "Please wait 5 minutes before attempting to register again.",
   },
 };
 

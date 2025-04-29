@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { EmailInput } from "../EmailInput";
 import { PasswordInput } from "../PasswordInput";
 import { getRegistrationFormSchema, type RegistrationFormData } from "../schema";
@@ -20,6 +22,7 @@ interface RegistrationFormProps {
 
 export function RegistrationForm({ translations, onClose }: RegistrationFormProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [rateLimitError, setRateLimitError] = useState(false);
   const { toast } = useToast();
 
   const schema = getRegistrationFormSchema(translations.languageCode || "en");
@@ -39,6 +42,14 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
   });
 
   const onSubmit = async (values: RegistrationFormData) => {
+    if (rateLimitError) {
+      toast({
+        variant: "destructive",
+        description: translations.waitToRegister || "Please wait before attempting to register again.",
+      });
+      return;
+    }
+
     setIsLoading(true);
     
     try {
@@ -77,6 +88,13 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
           });
         } 
         else if (error.message.includes('rate limit') || error.message.toLowerCase().includes('rate_limit') || error.message.includes('429')) {
+          setRateLimitError(true);
+          
+          // Set a timer to reset the rate limit error after 5 minutes
+          setTimeout(() => {
+            setRateLimitError(false);
+          }, 5 * 60 * 1000); // 5 minutes
+          
           toast({
             variant: "destructive",
             description: translations.emailRateLimitExceeded || "Email rate limit exceeded. Please try again later.",
@@ -116,6 +134,16 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
 
   return (
     <Form {...form}>
+      {rateLimitError && (
+        <Alert variant="destructive" className="mb-4">
+          <ExclamationTriangleIcon className="h-4 w-4" />
+          <AlertTitle>Rate Limit Exceeded</AlertTitle>
+          <AlertDescription>
+            {translations.emailRateLimitExceeded || "Email rate limit exceeded. Please try again later or contact support."}
+          </AlertDescription>
+        </Alert>
+      )}
+      
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <NameFields form={form} translations={translations} />
         
@@ -136,7 +164,7 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
         />
         
         <div className="flex justify-end">
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading || rateLimitError}>
             {isLoading ? translations.registrationLoading : translations.register}
           </Button>
         </div>
