@@ -159,10 +159,13 @@ export type Database = {
           description: string | null
           event_date: string | null
           event_id: string | null
+          event_time: string | null
           file_path: string | null
           id: string
           owner_id: string
           price: number
+          price_per_unit: number
+          quantity: number
           seat_info: string | null
           seller_id: string
           status: string
@@ -179,10 +182,13 @@ export type Database = {
           description?: string | null
           event_date?: string | null
           event_id?: string | null
+          event_time?: string | null
           file_path?: string | null
           id?: string
           owner_id?: string
           price: number
+          price_per_unit?: number
+          quantity?: number
           seat_info?: string | null
           seller_id?: string
           status?: string
@@ -199,10 +205,13 @@ export type Database = {
           description?: string | null
           event_date?: string | null
           event_id?: string | null
+          event_time?: string | null
           file_path?: string | null
           id?: string
           owner_id?: string
           price?: number
+          price_per_unit?: number
+          quantity?: number
           seat_info?: string | null
           seller_id?: string
           status?: string

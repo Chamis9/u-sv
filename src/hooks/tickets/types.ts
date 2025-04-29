@@ -10,6 +10,9 @@ export interface AddTicketData {
   event_id?: string | null;
   event_date?: string | null;
   venue?: string | null;
+  quantity?: number;
+  price_per_unit?: number;
+  event_time?: string | null;
 }
 
 export interface UserTicket {
@@ -28,4 +31,7 @@ export interface UserTicket {
   owner_id: string;
   event_date?: string | null;
   venue?: string | null;
+  quantity?: number;
+  price_per_unit?: number;
+  event_time?: string | null;
 }

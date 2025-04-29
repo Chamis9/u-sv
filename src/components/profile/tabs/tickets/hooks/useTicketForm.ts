@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ticketFormSchema, TicketFormValues } from "../schema";
@@ -26,11 +26,25 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
     defaultValues: {
       title: "",
       price: "",
+      quantity: "1",
+      pricePerUnit: "",
       description: "",
       category: "",
-      venue: ""
+      venue: "",
+      eventTime: ""
     },
   });
+  
+  // Calculate price per unit when price or quantity changes
+  useEffect(() => {
+    const price = Number(form.watch("price"));
+    const quantity = Number(form.watch("quantity") || "1");
+    
+    if (price > 0 && quantity > 0) {
+      const pricePerUnit = (price / quantity).toFixed(2);
+      form.setValue("pricePerUnit", pricePerUnit);
+    }
+  }, [form.watch("price"), form.watch("quantity")]);
   
   const isLoading = fileUploading || ticketLoading;
   
@@ -88,7 +102,10 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
         category_id: categoryId,
         event_id: null,
         event_date: formattedEventDate,
-        venue: values.venue
+        venue: values.venue,
+        quantity: Number(values.quantity || "1"),
+        price_per_unit: Number(values.pricePerUnit || "0"),
+        event_time: values.eventTime || null
       });
       
       console.log("Add ticket result:", result);

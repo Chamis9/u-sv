@@ -3,7 +3,7 @@ import React from "react";
 import { UserTicket } from "@/hooks/tickets/types";
 import { formatPrice, formatDate } from "@/utils/formatters";
 import { Badge } from "@/components/ui/badge";
-import { Ticket as TicketIcon, Calendar, Tag, Download, Eye, MapPin } from "lucide-react";
+import { Ticket as TicketIcon, Calendar, Tag, Download, Eye, MapPin, Clock } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
 
@@ -45,6 +45,11 @@ export function VisualTicket({ ticket, onView, onDelete, ticketType }: VisualTic
         return t("Nezināms", "Unknown");
     }
   };
+
+  const formatTime = (timeStr: string | null) => {
+    if (!timeStr) return null;
+    return timeStr;
+  };
   
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
@@ -60,6 +65,12 @@ export function VisualTicket({ ticket, onView, onDelete, ticketType }: VisualTic
               {ticket.event_date 
                 ? formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')
                 : formatDate(ticket.created_at, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
+              {ticket.event_time && (
+                <span className="ml-2 flex items-center">
+                  <Clock className="h-3 w-3 mr-1" />
+                  {formatTime(ticket.event_time)}
+                </span>
+              )}
             </div>
             
             {ticket.venue && (
@@ -82,6 +93,12 @@ export function VisualTicket({ ticket, onView, onDelete, ticketType }: VisualTic
             <div className="text-xl font-bold text-primary">
               {formatPrice(ticket.price)}
             </div>
+            
+            {ticket.quantity && ticket.quantity > 1 && (
+              <div className="text-sm text-muted-foreground mt-1">
+                {ticket.quantity} {t("biļetes", "tickets")} × {ticket.price_per_unit && formatPrice(ticket.price_per_unit)}
+              </div>
+            )}
           </div>
           
           <div className="ml-4 mt-1">

@@ -39,7 +39,10 @@ export function useTicketMutations(userId?: string) {
         status: 'available',
         event_id: data.event_id || null,
         category_id: data.category_id,
-        category_name: data.category_name
+        category_name: data.category_name,
+        quantity: data.quantity || 1,
+        price_per_unit: data.price_per_unit || data.price || 0,
+        event_time: data.event_time || null
       };
       
       console.log(`Inserting ticket with ID: ${ticketId}`);
@@ -90,7 +93,10 @@ export function useTicketMutations(userId?: string) {
         owner_id: responseData.owner_id || userId,
         event_date: responseData.event_date || undefined,
         venue: responseData.venue || undefined,
-        category_name: responseData.category_name
+        category_name: responseData.category_name,
+        quantity: responseData.quantity || 1,
+        price_per_unit: responseData.price_per_unit || responseData.price || 0,
+        event_time: responseData.event_time || null
       };
       
       return { success: true, ticket };

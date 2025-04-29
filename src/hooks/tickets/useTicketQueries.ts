@@ -54,7 +54,10 @@ export function useTicketQueries(userId?: string) {
             owner_id: ticket.owner_id,
             event_date: ticket.event_date || null,
             venue: ticket.venue || null,
-            category_name: ticket.category_name
+            category_name: ticket.category_name,
+            quantity: ticket.quantity || 1,
+            price_per_unit: ticket.price_per_unit || ticket.price || 0,
+            event_time: ticket.event_time || null
           }));
           
           return formattedTickets;

@@ -53,7 +53,10 @@ export const useTicketById = () => {
           buyer_id: data.buyer_id || undefined,
           owner_id: data.owner_id || undefined,
           event_date: data.event_date || null,
-          venue: data.venue || null
+          venue: data.venue || null,
+          quantity: data.quantity || 1,
+          price_per_unit: data.price_per_unit || data.price || 0,
+          event_time: data.event_time || null
         };
         
         setTicket(foundTicket);
