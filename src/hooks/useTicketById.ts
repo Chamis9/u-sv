@@ -41,22 +41,26 @@ export const useTicketById = () => {
           if (data) {
             console.log(`Ticket found in ${tableName}:`, data);
             
+            // Make sure we have a valid data object before accessing its properties
+            // Use type assertion to help TypeScript understand what we're working with
+            const validData = data as Record<string, any>;
+            
             // Transform to UserTicket format with proper type handling and type guards
             const foundTicket: UserTicket = {
-              id: data.id ? String(data.id) : id,
-              title: data.description || "Ticket",
-              description: data.description || undefined,
-              category: data.categories?.name || getCategoryNameFromTableName(tableName),
-              price: data.price || 0,
-              event_id: data.event_id || undefined,
-              status: (data.status as 'available' | 'sold') || 'available',
-              file_path: data.file_path || undefined,
-              created_at: data.created_at || new Date().toISOString(),
-              seller_id: data.seller_id || undefined,
-              buyer_id: data.buyer_id || undefined,
-              owner_id: data.owner_id || undefined,
-              event_date: data.event_date || null,
-              venue: data.venue || null
+              id: String(id), // Use the passed id instead of data.id to avoid type errors
+              title: validData.description ? String(validData.description) : "Ticket",
+              description: validData.description ? String(validData.description) : undefined,
+              category: validData.categories?.name || getCategoryNameFromTableName(tableName),
+              price: typeof validData.price === 'number' ? validData.price : 0,
+              event_id: validData.event_id ? String(validData.event_id) : undefined,
+              status: (validData.status as 'available' | 'sold') || 'available',
+              file_path: validData.file_path ? String(validData.file_path) : undefined,
+              created_at: validData.created_at ? String(validData.created_at) : new Date().toISOString(),
+              seller_id: validData.seller_id ? String(validData.seller_id) : undefined,
+              buyer_id: validData.buyer_id ? String(validData.buyer_id) : undefined,
+              owner_id: validData.owner_id ? String(validData.owner_id) : undefined,
+              event_date: validData.event_date || null,
+              venue: validData.venue || null
             };
             
             setTicket(foundTicket);
