@@ -18,6 +18,8 @@ import {
   TicketsHeader,
   TicketsContent
 } from "./components";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface TicketsTabProps {
   user: User;
@@ -33,18 +35,41 @@ export function TicketsTab({ user }: TicketsTabProps) {
     setAddTicketOpen,
     handleDeleteTicket,
     refreshTickets,
-    t
+    t,
+    isAuthenticated
   } = useTicketsTab(user);
   
   // Force refresh on component mount and when user changes
   useEffect(() => {
     console.log("TicketsTab mounted or user changed, forcing refresh");
-    refreshTickets();
-  }, [user.id]);
+    if (isAuthenticated) {
+      refreshTickets();
+    }
+  }, [user.id, isAuthenticated]);
 
   console.log("TicketsTab render - Current user:", user);
+  console.log("TicketsTab render - Authentication state:", isAuthenticated);
   console.log("TicketsTab render - Added tickets:", addedTickets.length);
   console.log("TicketsTab render - Purchased tickets:", purchasedTickets.length);
+  
+  if (!isAuthenticated) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>{t("Nav pieslēgts", "Not logged in")}</AlertTitle>
+            <AlertDescription>
+              {t(
+                "Lai redzētu savas biļetes, lūdzu pieslēdzieties savā kontā", 
+                "Please log in to view your tickets"
+              )}
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
+    );
+  }
   
   return (
     <Card>
