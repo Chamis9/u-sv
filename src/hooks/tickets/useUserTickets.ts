@@ -24,9 +24,10 @@ export const useUserTickets = () => {
       }
       
       // Ensure each ticket has a quantity value, defaulting to 1 if not present
+      // Using type assertion to handle the TypeScript error
       const ticketsWithQuantity = data.map(ticket => ({
         ...ticket,
-        quantity: ticket.quantity || 1
+        quantity: 'quantity' in ticket ? ticket.quantity : 1
       })) as Ticket[];
       
       return ticketsWithQuantity;
