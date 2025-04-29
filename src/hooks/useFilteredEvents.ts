@@ -56,14 +56,15 @@ export const useFilteredEvents = (filters: FilterOptions) => {
         id: event.id,
         title: event.title,
         description: event.description,
-        // Get category from the categories relation
+        category_id: event.category_id,
         category: event.categories?.name || '',
         start_date: event.start_date,
         end_date: event.end_date,
         price_range: event.price_range,
         venue_id: event.venue_id,
         image_url: event.image_url,
-        status: event.status
+        status: event.status,
+        categories: event.categories
       }));
       
       return transformedData || [];

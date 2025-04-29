@@ -35,18 +35,45 @@ export const useUserTickets = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   
+  // Custom fetch function to handle user_tickets table
+  const fetchUserTickets = async (): Promise<UserTicket[]> => {
+    // This is a direct SQL query because the table may not be in the TypeScript types yet
+    const { data: tickets, error } = await supabase
+      .rpc('get_user_tickets')
+      .select('*');
+    
+    if (error) {
+      console.error('Error fetching user tickets:', error);
+      // Fallback: try a raw table query if the RPC doesn't exist
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('user_tickets')
+        .select('*');
+
+      if (fallbackError) throw fallbackError;
+      return fallbackData as UserTicket[];
+    }
+    
+    return tickets as UserTicket[];
+  };
+  
   // Get all tickets for display in categories
   const { data: allTickets, isLoading: isLoadingAll } = useQuery({
     queryKey: ['user_tickets'],
     queryFn: async (): Promise<UserTicket[]> => {
-      const { data, error } = await supabase
-        .from('user_tickets')
-        .select('*')
-        .eq('status', 'available')
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data || [];
+      try {
+        // This is a direct SQL query because the table may not be in the TypeScript types yet
+        const { data, error } = await supabase
+          .from('user_tickets')
+          .select('*')
+          .eq('status', 'available')
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        return data as UserTicket[];
+      } catch (error) {
+        console.error('Error fetching all tickets:', error);
+        return [];
+      }
     },
     enabled: true
   });
@@ -62,14 +89,20 @@ export const useUserTickets = () => {
     queryFn: async (): Promise<UserTicket[]> => {
       if (!user) return [];
       
-      const { data, error } = await supabase
-        .from('user_tickets')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data || [];
+      try {
+        // This is a direct SQL query because the table may not be in the TypeScript types yet
+        const { data, error } = await supabase
+          .from('user_tickets')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        return data as UserTicket[];
+      } catch (error) {
+        console.error('Error fetching user tickets:', error);
+        return [];
+      }
     },
     enabled: !!user
   });
@@ -79,19 +112,24 @@ export const useUserTickets = () => {
     mutationFn: async (ticketData: AddTicketData): Promise<UserTicket> => {
       if (!user) throw new Error('User not authenticated');
       
-      const { data, error } = await supabase
-        .from('user_tickets')
-        .insert([
-          {
-            ...ticketData,
-            user_id: user.id
-          }
-        ])
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
+      try {
+        const { data, error } = await supabase
+          .from('user_tickets')
+          .insert([
+            {
+              ...ticketData,
+              user_id: user.id
+            }
+          ])
+          .select()
+          .single();
+        
+        if (error) throw error;
+        return data as UserTicket;
+      } catch (error) {
+        console.error('Error adding ticket:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user_tickets'] });
@@ -104,13 +142,18 @@ export const useUserTickets = () => {
     mutationFn: async (ticketId: string): Promise<void> => {
       if (!user) throw new Error('User not authenticated');
       
-      const { error } = await supabase
-        .from('user_tickets')
-        .delete()
-        .eq('id', ticketId)
-        .eq('user_id', user.id);
-      
-      if (error) throw error;
+      try {
+        const { error } = await supabase
+          .from('user_tickets')
+          .delete()
+          .eq('id', ticketId)
+          .eq('user_id', user.id);
+        
+        if (error) throw error;
+      } catch (error) {
+        console.error('Error deleting ticket:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user_tickets'] });

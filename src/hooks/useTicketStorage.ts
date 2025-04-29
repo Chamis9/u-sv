@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from '@/utils/uuid-helper';
 
 interface UploadOptions {
   onProgress?: (progress: number) => void;
@@ -26,31 +26,26 @@ export const useTicketStorage = () => {
       const filePath = `${uuidv4()}.${fileExt}`;
       const fullPath = `tickets/${filePath}`;
       
-      // Create a custom event handler for tracking upload progress
-      const handleProgress = (e: ProgressEvent) => {
-        if (e.lengthComputable) {
-          const percent = (e.loaded / e.total) * 100;
-          setUploadProgress(percent);
-          options?.onProgress?.(percent);
-        }
-      };
-      
       // Upload the file
-      const { error } = await supabase.storage
+      const { error: uploadError, data } = await supabase.storage
         .from('tickets')
         .upload(filePath, file, {
           cacheControl: '3600',
           upsert: false
         });
       
-      if (error) throw error;
+      if (uploadError) throw uploadError;
+      
+      // Update progress
+      setUploadProgress(100);
+      options?.onProgress?.(100);
       
       // Get the public URL for the file
-      const { data } = supabase.storage
+      const { data: urlData } = supabase.storage
         .from('tickets')
         .getPublicUrl(filePath);
       
-      return data.publicUrl;
+      return urlData.publicUrl;
     } catch (error: any) {
       setUploadError(error.message || 'Upload failed');
       throw error;

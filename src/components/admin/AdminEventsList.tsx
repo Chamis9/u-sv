@@ -7,6 +7,7 @@ import { Plus } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useLanguage } from '@/features/language';
 import { AdminEventRow } from './events/AdminEventRow';
+import { Event } from '@/hooks/useEvents';
 
 export function AdminEventsList() {
   const { currentLanguage } = useLanguage();
@@ -20,7 +21,24 @@ export function AdminEventsList() {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data;
+      
+      // Transform the data to match the Event interface
+      const transformedData: Event[] = data.map(event => ({
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        category_id: event.category_id,
+        category: event.categories?.name || '',
+        start_date: event.start_date,
+        end_date: event.end_date,
+        price_range: event.price_range,
+        venue_id: event.venue_id,
+        image_url: event.image_url,
+        status: event.status,
+        categories: event.categories
+      }));
+      
+      return transformedData;
     }
   });
 

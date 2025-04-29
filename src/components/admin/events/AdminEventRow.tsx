@@ -6,16 +6,10 @@ import { Edit, Trash } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/features/language';
+import { Event } from '@/hooks/useEvents';
 
 interface AdminEventRowProps {
-  event: {
-    id: string;
-    title: string;
-    category_id: string;
-    start_date: string;
-    status: string | null;
-    categories?: { name: string } | null;
-  };
+  event: Event;
   onUpdate: () => void;
 }
 
@@ -42,7 +36,7 @@ export function AdminEventRow({ event, onUpdate }: AdminEventRowProps) {
   };
 
   // Get category name from the joined categories data or display category_id
-  const categoryName = event.categories?.name || `Category ID: ${event.category_id}`;
+  const categoryName = event.categories?.name || event.category || `Category ID: ${event.category_id}`;
 
   return (
     <TableRow>

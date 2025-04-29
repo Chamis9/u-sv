@@ -6,23 +6,25 @@ export interface Event {
   id: string;
   title: string;
   description: string | null;
-  category: string;
+  category_id: string;
+  category: string; // Transformed from categories relation
   start_date: string;
   end_date: string | null;
   price_range: any;
   venue_id: string | null;
   image_url: string | null;
   status: string | null;
+  categories?: { name: string } | null;
 }
 
-export const useEvents = (category?: string) => {
+export const useEvents = (categoryName?: string) => {
   return useQuery({
-    queryKey: ['events', category],
+    queryKey: ['events', categoryName],
     queryFn: async (): Promise<Event[]> => {
       let query = supabase.from('events').select('*, categories(name)');
       
-      if (category) {
-        query = query.eq('categories.name', category);
+      if (categoryName) {
+        query = query.eq('categories.name', categoryName);
       }
       
       const { data, error } = await query
@@ -40,6 +42,7 @@ export const useEvents = (category?: string) => {
         id: event.id,
         title: event.title,
         description: event.description,
+        category_id: event.category_id,
         // Get category from the categories relation
         category: event.categories?.name || '',
         start_date: event.start_date,
@@ -47,7 +50,8 @@ export const useEvents = (category?: string) => {
         price_range: event.price_range,
         venue_id: event.venue_id,
         image_url: event.image_url,
-        status: event.status
+        status: event.status,
+        categories: event.categories
       }));
       
       return transformedData || [];

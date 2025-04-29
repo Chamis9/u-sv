@@ -17,11 +17,28 @@ export function AdminEventsList() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('events')
-        .select('*')
+        .select('*, categories(name)')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data;
+      
+      // Transform the data to match the Event interface
+      const transformedData: Event[] = data.map(event => ({
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        category_id: event.category_id,
+        category: event.categories?.name || '',
+        start_date: event.start_date,
+        end_date: event.end_date,
+        price_range: event.price_range,
+        venue_id: event.venue_id,
+        image_url: event.image_url,
+        status: event.status,
+        categories: event.categories
+      }));
+      
+      return transformedData;
     }
   });
 
@@ -51,7 +68,7 @@ export function AdminEventsList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {events?.map((event: Event) => (
+            {events?.map((event) => (
               <AdminEventRow key={event.id} event={event} onUpdate={refetch} />
             ))}
           </TableBody>
@@ -60,3 +77,5 @@ export function AdminEventsList() {
     </div>
   );
 }
+
+export default AdminEventsList;
