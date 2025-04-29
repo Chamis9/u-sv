@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { AddTicketData, UserTicket } from "./types";
@@ -35,7 +36,7 @@ export function useTicketMutations(userId?: string) {
         event_date: data.event_date,
         venue: data.venue,
         file_path: data.file_path,
-        status: 'available' as 'available' | 'sold' | 'expired',
+        status: 'available' as 'available' | 'sold' | 'expired', // Fix: Explicitly cast to the union type
         event_id: data.event_id || null,
         category_id: data.category_id,
         category_name: data.category_name,

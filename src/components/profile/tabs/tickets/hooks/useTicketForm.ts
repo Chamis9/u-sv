@@ -67,7 +67,8 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       // Upload file if provided
       if (file) {
         console.log("Uploading file:", file.name);
-        const uploadResult = await uploadTicketFile(file, user.id);
+        // Fix: Remove the second argument as uploadTicketFile expects only one argument
+        const uploadResult = await uploadTicketFile(file);
         if (uploadResult) {
           filePath = uploadResult.path;
           console.log("File uploaded successfully:", filePath);
@@ -89,7 +90,12 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       }
       
       // Format event date if provided
-      const formattedEventDate = values.eventDate ? values.eventDate.toISOString().split('T')[0] : null;
+      // Fix: Check if eventDate exists and is a Date object before calling toISOString()
+      const formattedEventDate = values.eventDate 
+        ? (values.eventDate instanceof Date 
+            ? values.eventDate.toISOString().split('T')[0] 
+            : values.eventDate)
+        : null;
       
       // Add the ticket - ensure all details are logged
       const result = await addTicket({
