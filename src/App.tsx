@@ -12,7 +12,7 @@ import { clearAllCookies } from "./utils/cookieManager";
 import { ThemeProvider } from "./components/theme/ThemeProvider";
 import { AuthProvider } from "./contexts/AuthContext";
 
-// Import directly instead of lazy loading
+// Import pages
 import Index from "./pages/Index";
 import Contact from "./pages/Contact";
 import Events from "./pages/Events";
