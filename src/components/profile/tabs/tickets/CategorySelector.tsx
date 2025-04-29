@@ -19,7 +19,6 @@ import {
 import { UseFormReturn } from "react-hook-form";
 import { TicketFormValues } from "./schema";
 import { getAllCategories } from "./services/CategoryService";
-import { getCategoryTableName } from "@/utils/categoryMapping";
 
 interface CategorySelectorProps {
   form: UseFormReturn<TicketFormValues>;
@@ -38,18 +37,6 @@ export function CategorySelector({ form }: CategorySelectorProps) {
     staleTime: 60000, // Cache for 1 minute
   });
 
-  const handleCategoryChange = (value: string) => {
-    form.setValue("category", value);
-    
-    // Log the table that will be used for this category
-    const tableName = getCategoryTableName(value);
-    console.log(`Selected category: ${value}, will use table: ${tableName}`);
-    
-    // Additionally log the normalized category to help debug mapping issues
-    const normalizedCategory = value.toLowerCase().trim();
-    console.log(`Normalized category name: ${normalizedCategory}`);
-  };
-
   return (
     <FormField
       control={form.control}
@@ -58,10 +45,7 @@ export function CategorySelector({ form }: CategorySelectorProps) {
         <FormItem>
           <FormLabel>{t("Kategorija", "Category")}</FormLabel>
           <Select 
-            onValueChange={(value) => {
-              field.onChange(value);
-              handleCategoryChange(value);
-            }} 
+            onValueChange={field.onChange} 
             defaultValue={field.value}
           >
             <FormControl>

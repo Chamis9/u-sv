@@ -46,16 +46,8 @@ export function useTicketsTab(user: User) {
       "Vai tiešām vēlaties dzēst šo biļeti?", 
       "Are you sure you want to delete this ticket?"
     ))) {
-      // Find the ticket to determine its category
-      const ticketToDelete = tickets.find(t => t.id === ticketId);
-      
-      if (ticketToDelete) {
-        // Pass the category directly rather than getting a table name
-        deleteTicket(ticketId, ticketToDelete.category);
-      } else {
-        // Fallback to default category
-        deleteTicket(ticketId, 'Other');
-      }
+      // With consolidated table, we no longer need to pass category
+      deleteTicket(ticketId);
     }
   };
 

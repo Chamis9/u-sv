@@ -10,34 +10,6 @@ export interface Category {
 }
 
 /**
- * Maps category names to their respective ticket tables
- * @param name The category name
- * @returns The table name for that category
- */
-export function getCategoryTableName(name: string): string {
-  const categoryMap: Record<string, string> = {
-    'Teātris': 'tickets_theatre',
-    'Theatre': 'tickets_theatre',
-    'Koncerti': 'tickets_concerts',
-    'Concerts': 'tickets_concerts',
-    'Sports': 'tickets_sports',
-    'Festivāli': 'tickets_festivals',
-    'Festivals': 'tickets_festivals',
-    'Kino': 'tickets_cinema',
-    'Cinema': 'tickets_cinema',
-    'Bērniem': 'tickets_children',
-    'Children': 'tickets_children',
-    'Ceļojumi': 'tickets_travel',
-    'Travel': 'tickets_travel',
-    'Dāvanu kartes': 'tickets_giftcards',
-    'Gift Cards': 'tickets_giftcards'
-  };
-  
-  // Default to 'tickets_other' if no match is found
-  return categoryMap[name] || 'tickets_other';
-}
-
-/**
  * Fetches a category by its name
  * @param name The name of the category to fetch
  * @returns The category object or null if not found

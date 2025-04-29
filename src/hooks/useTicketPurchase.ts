@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
 import { toast } from "@/hooks/use-toast";
-import { getCategoryTableName } from "@/utils/categoryMapping";
 
 export const useTicketPurchase = () => {
   const { currentLanguage } = useLanguage();
@@ -26,18 +25,11 @@ export const useTicketPurchase = () => {
         throw new Error("No authenticated user found");
       }
       
-      // Use the ticket's table_name property if available, otherwise determine from category
-      const tableName = ticket.table_name || getCategoryTableName(ticket.category);
-      if (!tableName) {
-        throw new Error(`Invalid ticket category: ${ticket.category}`);
-      }
+      console.log(`Purchasing ticket: ${ticket.id}`);
       
-      console.log(`Purchasing ticket from table: ${tableName}`);
-      
-      // Update the ticket status in the specific table
-      // Use type assertion to satisfy TypeScript
+      // Update the ticket status in the tickets table
       const { error } = await supabase
-        .from(tableName as any)
+        .from('tickets')
         .update({ 
           status: 'sold',
           buyer_id: userId

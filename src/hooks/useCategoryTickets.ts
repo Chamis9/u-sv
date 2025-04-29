@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
-import { getCategoryTableName, getCategoryNameFromTableName } from "@/utils/categoryMapping";
 
 export const useCategoryTickets = (category?: string) => {
   const [allCategoryTickets, setAllCategoryTickets] = useState<UserTicket[]>([]);
@@ -23,28 +22,12 @@ export const useCategoryTickets = (category?: string) => {
           return;
         }
         
-        // Determine which table to query based on the category
-        const tableName = getCategoryTableName(category);
-        
-        // Validate table name to match allowed table names in Supabase
-        const validTableNames = [
-          'tickets_theatre', 'tickets_concerts', 'tickets_sports', 
-          'tickets_festivals', 'tickets_cinema', 'tickets_children', 
-          'tickets_travel', 'tickets_giftcards', 'tickets_other'
-        ];
-        
-        if (!validTableNames.includes(tableName)) {
-          console.error(`Invalid table name: ${tableName}`);
-          throw new Error(`Invalid category: ${category}`);
-        }
-        
-        console.log(`Using table ${tableName} for category: ${category}`);
-        
-        // Query ONLY the appropriate table for this category
+        // Query the consolidated tickets table with a filter for category
         const { data: ticketsData, error: fetchError } = await supabase
-          .from(tableName as any)
+          .from('tickets')
           .select('*, categories(name)')
-          .eq('status', 'available');
+          .eq('status', 'available')
+          .eq('category_name', category);
         
         if (fetchError) {
           throw fetchError;
@@ -52,19 +35,16 @@ export const useCategoryTickets = (category?: string) => {
         
         console.log(`Fetched ${ticketsData?.length || 0} tickets for category ${category}`);
         
-        // Transform the data to match UserTicket type, handling potential missing fields
+        // Transform the data to match UserTicket type
         const formattedTickets: UserTicket[] = ((ticketsData || []) as any[]).map((ticket: any) => {
-          const categoryName = ticket.categories?.name || getCategoryNameFromTableName(tableName);
-          
-          // Create a base ticket object with properties that should exist in all tables
-          const baseTicket: UserTicket = {
-            id: String(ticket.id), // Ensure id is a string
-            title: ticket.description || "Ticket",
+          return {
+            id: String(ticket.id),
+            title: ticket.title || ticket.description || "Ticket",
             description: ticket.description || "",
-            category: categoryName, // Use the category name from the database or derived from table name
+            category: ticket.category_name || ticket.categories?.name || 'Other',
             price: ticket.price,
             event_id: ticket.event_id || null,
-            status: 'available' as const,
+            status: 'available',
             file_path: ticket.file_path || undefined,
             created_at: ticket.created_at,
             seller_id: ticket.seller_id || undefined,
@@ -73,8 +53,6 @@ export const useCategoryTickets = (category?: string) => {
             event_date: ticket.event_date || null,
             venue: ticket.venue || null
           };
-          
-          return baseTicket;
         });
         
         setAllCategoryTickets(formattedTickets);

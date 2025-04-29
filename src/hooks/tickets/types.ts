@@ -10,7 +10,6 @@ export interface AddTicketData {
   event_id?: string | null;
   event_date?: string | null;
   venue?: string | null;
-  table_name?: string; // Add table_name property
 }
 
 export interface UserTicket {
@@ -18,6 +17,7 @@ export interface UserTicket {
   title: string;
   description?: string;
   category: string;
+  category_name?: string;
   price: number;
   event_id: string | null;
   status: 'available' | 'sold' | 'expired';
@@ -28,5 +28,4 @@ export interface UserTicket {
   owner_id: string;
   event_date?: string | null;
   venue?: string | null;
-  table_name?: string; // Add table_name property
 }
