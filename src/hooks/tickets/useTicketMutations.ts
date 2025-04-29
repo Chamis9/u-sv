@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/features/language";
 import { AddTicketData } from "./types";
 import { useTicketStorage } from "./useTicketStorage";
+import { getCategoryTableName } from "@/components/profile/tabs/tickets/services/CategoryService";
 
 export function useTicketMutations(userId?: string) {
   const { toast } = useToast();
@@ -41,20 +42,10 @@ export function useTicketMutations(userId?: string) {
         console.log("Adding ticket:", ticketData);
         
         // Determine which ticket table to use based on category
-        let tableName: 'tickets_theatre' | 'tickets_concerts' | 'tickets_sports' | 'tickets_festivals' | 'tickets_other' = 'tickets_other';
+        let tableName: string = 'tickets_other';
         
         if (ticketData.category_name) {
-          const categoryName = ticketData.category_name.toLowerCase();
-          
-          if (categoryName === 'teātris' || categoryName === 'theatre') {
-            tableName = 'tickets_theatre';
-          } else if (categoryName === 'koncerti' || categoryName === 'concerts') {
-            tableName = 'tickets_concerts';
-          } else if (categoryName === 'sports') {
-            tableName = 'tickets_sports';
-          } else if (categoryName === 'festivāli' || categoryName === 'festivals') {
-            tableName = 'tickets_festivals';
-          }
+          tableName = getCategoryTableName(ticketData.category_name);
         }
         
         console.log(`Using table ${tableName} for ticket category: ${ticketData.category_name}`);

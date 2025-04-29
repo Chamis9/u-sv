@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
-import { getCategoryIdFromName } from "@/components/events/utils/categoryUtils";
+import { getCategoryTableName } from "@/components/profile/tabs/tickets/services/CategoryService";
 
 export const useCategoryTickets = (category?: string) => {
   const [allCategoryTickets, setAllCategoryTickets] = useState<UserTicket[]>([]);
@@ -17,22 +17,10 @@ export const useCategoryTickets = (category?: string) => {
         console.log('Fetching tickets for category:', category);
         
         // Determine which table to query based on the category
-        let tableName: 'tickets' | 'tickets_theatre' | 'tickets_concerts' | 'tickets_sports' | 'tickets_festivals' | 'tickets_other' = 'tickets';
+        let tableName = 'tickets';
         
         if (category) {
-          const normalizedCategory = category.toLowerCase();
-          
-          if (normalizedCategory === 'teātris' || normalizedCategory === 'theatre') {
-            tableName = 'tickets_theatre';
-          } else if (normalizedCategory === 'koncerti' || normalizedCategory === 'concerts') {
-            tableName = 'tickets_concerts';
-          } else if (normalizedCategory === 'sports') {
-            tableName = 'tickets_sports';
-          } else if (normalizedCategory === 'festivāli' || normalizedCategory === 'festivals') {
-            tableName = 'tickets_festivals';
-          } else {
-            tableName = 'tickets_other';
-          }
+          tableName = getCategoryTableName(category);
         }
         
         console.log(`Using table ${tableName} for category: ${category}`);
