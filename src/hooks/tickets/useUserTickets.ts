@@ -5,9 +5,12 @@ import { AddTicketData, UserTicket } from "./types";
 import { useTicketStorage } from "./useTicketStorage";
 
 export function useUserTickets(userId?: string) {
-  const { tickets, isLoading, error } = useTicketQueries(userId);
-  const { loading, addTicket, deleteTicket } = useTicketMutations(userId);
-  const { uploadTicketFile, deleteTicketFile, uploading } = useTicketStorage();
+  const { tickets, isLoading, error: queryError } = useTicketQueries(userId);
+  const { loading, addTicket, deleteTicket, error: mutationError } = useTicketMutations(userId);
+  const { uploadTicketFile, deleteTicketFile, uploading, error: storageError } = useTicketStorage();
+  
+  // Combine errors from different sources
+  const error = queryError || mutationError || storageError;
   
   return {
     tickets,

@@ -7,7 +7,7 @@ import { getCategoryTableName } from "@/utils/categoryMapping";
 
 export function useTicketMutations(userId?: string) {
   const [loading, setLoading] = useState(false);
-  const [lastError, setLastError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   
   // Add a new ticket
   const addTicket = async (data: AddTicketData): Promise<{ success: boolean; ticket?: UserTicket; error?: string }> => {
@@ -16,7 +16,7 @@ export function useTicketMutations(userId?: string) {
     }
 
     setLoading(true);
-    setLastError(null);
+    setError(null);
     
     try {
       const ticketId = uuidv4();
@@ -60,7 +60,7 @@ export function useTicketMutations(userId?: string) {
           });
         }
         
-        setLastError(errorMessage);
+        setError(errorMessage);
         throw new Error(errorMessage);
       }
       
@@ -94,7 +94,7 @@ export function useTicketMutations(userId?: string) {
     } catch (err: any) {
       console.error('Error adding ticket:', err);
       const errorMessage = err.message || 'Failed to add ticket';
-      setLastError(errorMessage);
+      setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
@@ -108,7 +108,7 @@ export function useTicketMutations(userId?: string) {
     }
     
     setLoading(true);
-    setLastError(null);
+    setError(null);
     
     try {
       const tableName = getCategoryTableName(category);
@@ -123,7 +123,7 @@ export function useTicketMutations(userId?: string) {
         
       if (error) {
         console.error(`Error deleting ticket from ${tableName}:`, error);
-        setLastError(`Failed to delete ticket: ${error.message}`);
+        setError(`Failed to delete ticket: ${error.message}`);
         throw error;
       }
       
@@ -132,12 +132,12 @@ export function useTicketMutations(userId?: string) {
     } catch (err: any) {
       console.error('Error deleting ticket:', err);
       const errorMessage = err.message || 'Failed to delete ticket';
-      setLastError(errorMessage);
+      setError(errorMessage);
       return false;
     } finally {
       setLoading(false);
     }
   };
   
-  return { addTicket, deleteTicket, loading, lastError };
+  return { addTicket, deleteTicket, loading, error };
 }

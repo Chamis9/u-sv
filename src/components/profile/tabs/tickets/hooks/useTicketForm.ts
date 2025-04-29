@@ -16,7 +16,7 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
   const { user } = useAuth();
   const { toast } = useToast();
   const { uploadTicketFile, uploading: fileUploading } = useTicketStorage();
-  const { addTicket, loading: ticketLoading, lastError } = useUserTickets(user?.id);
+  const { addTicket, loading: ticketLoading, error } = useUserTickets(user?.id);
   const [file, setFile] = useState<File | null>(null);
   
   const t = (lvText: string, enText: string) => 
@@ -133,6 +133,6 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
     isLoading,
     handleSubmit,
     t,
-    lastError
+    error // Return error instead of lastError
   };
 }
