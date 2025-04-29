@@ -55,10 +55,10 @@ export const EventTicketPurchaseContainer: React.FC<EventTicketPurchaseContainer
       {childrenWithProps}
       
       <PurchaseDialog 
-        open={isPurchaseDialogOpen}
-        setOpen={setIsPurchaseDialogOpen}
+        isOpen={isPurchaseDialogOpen}
+        onOpenChange={setIsPurchaseDialogOpen}
         ticket={selectedTicket}
-        onConfirm={handleConfirmPurchase}
+        onPurchaseConfirm={handleConfirmPurchase}
       />
     </>
   );
