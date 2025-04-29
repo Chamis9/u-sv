@@ -23,7 +23,12 @@ export interface Event {
 const fetchEvents = async (category?: string) => {
   // In a real application, this would be a call to a backend API
   // For now, we'll use the mock data from eventData.ts
-  const events = category ? categoryEvents[category] || [] : [];
+  let events = category ? categoryEvents[category] || [] : [];
+  
+  // Remove mock events for sports category
+  if (category === 'sports') {
+    events = [];
+  }
   
   // Map the events to include the category and category_id
   return events.map(event => ({
