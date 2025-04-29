@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
@@ -7,7 +8,7 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Globe, MapPin } from "lucide-react";
+import { Calendar, Globe, MapPin, Trophy, Music, Drama, PartyPopper } from "lucide-react";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 
 const Tickets = () => {
@@ -18,19 +19,33 @@ const Tickets = () => {
       title: "Teātris",
       description: "Dramaturģija, opera, balets",
       venues: ["Latvijas Nacionālā opera", "Dailes teātris", "JRT"],
-      iconColor: "text-purple-500"
+      iconColor: "text-purple-500",
+      icon: Drama,
+      route: "teatris"
     },
     {
       title: "Koncerti",
       description: "Klasiskā mūzika, džezs, populārā mūzika",
       venues: ["Dzintaru koncertzāle", "Arēna Rīga", "Lielais dzintars"],
-      iconColor: "text-orange-500"
+      iconColor: "text-orange-500",
+      icon: Music,
+      route: "koncerti"
     },
     {
       title: "Festivāli",
       description: "Mūzikas, mākslas un kultūras festivāli",
       venues: ["Lucavsala", "Mežaparks", "Līvu laukums"],
-      iconColor: "text-green-500"
+      iconColor: "text-green-500",
+      icon: PartyPopper,
+      route: "festivali"
+    },
+    {
+      title: "Sports",
+      description: "Basketbols, futbols, hokejs, teniss",
+      venues: ["Arēna Rīga", "Daugavas stadions", "Skonto stadions"],
+      iconColor: "text-blue-500",
+      icon: Trophy,
+      route: "sports"
     }
   ];
 
@@ -47,30 +62,32 @@ const Tickets = () => {
               </h1>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {ticketCategories.map((category, index) => (
-                  <Card key={index} className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Globe className={`h-6 w-6 ${category.iconColor}`} />
-                        {category.title}
-                      </CardTitle>
-                      <CardDescription>
-                        {category.description}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        {category.venues.map((venue, vIndex) => (
-                          <div key={vIndex} className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                            <MapPin className="h-4 w-4" />
-                            {venue}
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <Button className="w-full">Skatīt piedāvājumu</Button>
-                    </CardFooter>
-                  </Card>
+                  <Link to={`/events/${category.route}`} key={index}>
+                    <Card className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 hover:shadow-md transition-shadow">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <category.icon className={`h-6 w-6 ${category.iconColor}`} />
+                          {category.title}
+                        </CardTitle>
+                        <CardDescription>
+                          {category.description}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          {category.venues.map((venue, vIndex) => (
+                            <div key={vIndex} className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                              <MapPin className="h-4 w-4" />
+                              {venue}
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                      <CardFooter>
+                        <Button className="w-full">Skatīt piedāvājumu</Button>
+                      </CardFooter>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             </div>

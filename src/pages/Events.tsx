@@ -12,7 +12,7 @@ import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 import { useCategories } from '@/hooks/useCategories';
 import { Badge } from '@/components/ui/badge';
 
-const categoryIcons = {
+const categoryIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   "Teātris": Drama,
   "Koncerti": Music,
   "Festivāli": PartyPopper,

@@ -51,7 +51,10 @@ export const useCategoryTickets = (category?: string) => {
             buyer_id: ticket.buyer_id || undefined,
             owner_id: ticket.owner_id,
             event_date: ticket.event_date || null,
-            venue: ticket.venue || null
+            venue: ticket.venue || null,
+            quantity: ticket.quantity || 1,
+            price_per_unit: ticket.price_per_unit || ticket.price || 0,
+            event_time: ticket.event_time || null
           };
         });
         
