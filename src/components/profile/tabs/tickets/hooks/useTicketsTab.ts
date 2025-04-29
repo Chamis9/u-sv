@@ -56,7 +56,7 @@ export function useTicketsTab(user: User) {
         deleteTicket(ticketId, tableName);
       } else {
         // Fallback to default table
-        deleteTicket(ticketId);
+        deleteTicket(ticketId, 'Other');
       }
     }
   };

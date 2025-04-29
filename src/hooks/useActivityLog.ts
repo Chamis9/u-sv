@@ -1,10 +1,9 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
-import { Activity, JsonActivity, convertJsonToActivity, safeConvertJsonArrayToActivities } from "@/components/admin/activity/types";
+import { Activity, safeConvertJsonArrayToActivities } from "@/components/admin/activity/types";
 import { useLanguage } from "@/features/language";
 import { Json } from "@/integrations/supabase/types";
-import { PostgrestError } from '@supabase/supabase-js';
 
 export function useActivityLog(pageSize = 10, enabled = true) {
   const [activities, setActivities] = useState<Activity[]>([]);

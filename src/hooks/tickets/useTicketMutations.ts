@@ -42,7 +42,7 @@ export function useTicketMutations(userId?: string) {
     setLoading(true);
     try {
       const ticketId = uuidv4();
-      const tableName = getCategoryTableName(data.category);
+      const tableName = getCategoryTableName(data.category_name || 'Other');
       
       // Insert ticket into the right table
       const { data: insertedTicket, error } = await supabase
@@ -54,10 +54,11 @@ export function useTicketMutations(userId?: string) {
           seller_id: userId,
           price: data.price,
           description: data.description,
-          event_date: data.eventDate,
+          event_date: data.event_date,
           venue: data.venue,
-          file_path: data.filePath,
-          status: 'available'
+          file_path: data.file_path,
+          status: 'available',
+          event_id: data.event_id || null
         })
         .select('*')
         .single();
@@ -66,21 +67,26 @@ export function useTicketMutations(userId?: string) {
         throw error;
       }
       
-      // Type cast to UserTicket
+      // Type cast to UserTicket with proper error handling
+      if (!insertedTicket) {
+        throw new Error('No data returned after insertion');
+      }
+      
       const ticket: UserTicket = {
-        id: insertedTicket?.id,
-        title: insertedTicket?.description || 'Ticket',
-        description: insertedTicket?.description,
-        category: data.category,
-        price: insertedTicket?.price,
+        id: insertedTicket.id || ticketId,
+        title: insertedTicket.description || 'Ticket',
+        description: insertedTicket.description,
+        category: data.category_name || 'Other',
+        price: insertedTicket.price,
+        event_id: insertedTicket.event_id || data.event_id || null,
         status: 'available',
-        file_path: insertedTicket?.file_path,
-        created_at: insertedTicket?.created_at,
-        seller_id: insertedTicket?.seller_id,
-        buyer_id: insertedTicket?.buyer_id,
-        owner_id: insertedTicket?.owner_id,
-        event_date: insertedTicket?.event_date,
-        venue: insertedTicket?.venue
+        file_path: insertedTicket.file_path,
+        created_at: insertedTicket.created_at,
+        seller_id: insertedTicket.seller_id,
+        buyer_id: insertedTicket.buyer_id,
+        owner_id: insertedTicket.owner_id,
+        event_date: insertedTicket.event_date,
+        venue: insertedTicket.venue
       };
       
       return { success: true, ticket };
@@ -122,3 +128,6 @@ export function useTicketMutations(userId?: string) {
   
   return { addTicket, deleteTicket, loading };
 }
+
+// Make sure to export the hook
+export { useTicketMutations };

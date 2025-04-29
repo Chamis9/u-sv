@@ -1,11 +1,13 @@
+
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, Mail } from "lucide-react";
-import { Activity, JsonActivity, convertJsonToActivity, safeConvertJsonArrayToActivities } from "@/components/admin/activity/types";
+import { Activity, safeConvertJsonArrayToActivities } from "@/components/admin/activity/types";
 import { useAdminTranslations } from "@/hooks/useAdminTranslations";
 import { supabase } from "@/integrations/supabase/client";
 import { ActivityIcon } from "@/components/admin/activity/ActivityIcon";
+import { Json } from "@/integrations/supabase/types";
 
 interface RecentActivitiesCardProps {
   onShowAllActivities: () => void;
