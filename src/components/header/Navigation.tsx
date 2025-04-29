@@ -1,78 +1,37 @@
 
-import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useLanguage } from "@/features/language";
-import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
 
-export const Navigation = () => {
+export function Navigation() {
   const { translations } = useLanguage();
-
+  
+  const navigationLinks = [
+    { href: "/", label: translations.navigation?.home || "Home" },
+    { href: "/events", label: translations.navigation?.events || "Events" },
+    { href: "/contact", label: translations.navigation?.contact || "Contact" }
+  ];
+  
   return (
-    <nav className="hidden md:flex space-x-4 items-center">
-      <NavLink
-        to="/"
-        className={({ isActive }) =>
-          `text-sm font-medium transition-colors hover:text-orange-500 ${
-            isActive ? "text-orange-500" : "text-gray-900 dark:text-white"
-          }`
-        }
-      >
-        {translations.navigation?.home || "Home"}
-      </NavLink>
-      <NavLink
-        to="/events"
-        className={({ isActive }) =>
-          `text-sm font-medium transition-colors hover:text-orange-500 ${
-            isActive ? "text-orange-500" : "text-gray-900 dark:text-white"
-          }`
-        }
-      >
-        {translations.navigation?.events || "Events"}
-      </NavLink>
-      <NavLink
-        to="/tickets"
-        className={({ isActive }) =>
-          `text-sm font-medium transition-colors hover:text-orange-500 ${
-            isActive ? "text-orange-500" : "text-gray-900 dark:text-white"
-          }`
-        }
-      >
-        {translations.navigation?.tickets || "Tickets"}
-      </NavLink>
-      <NavLink
-        to="/about-us"
-        className={({ isActive }) =>
-          `text-sm font-medium transition-colors hover:text-orange-500 ${
-            isActive ? "text-orange-500" : "text-gray-900 dark:text-white"
-          }`
-        }
-      >
-        {translations.navigation?.aboutUs || "About Us"}
-      </NavLink>
-      <NavLink
-        to="/contact"
-        className={({ isActive }) =>
-          `text-sm font-medium transition-colors hover:text-orange-500 ${
-            isActive ? "text-orange-500" : "text-gray-900 dark:text-white"
-          }`
-        }
-      >
-        {translations.navigation?.contact || "Contact"}
-      </NavLink>
-      <NavLink
-        to="/ticket-search"
-        className={({ isActive }) =>
-          `text-sm font-medium transition-colors hover:text-orange-500 ${
-            isActive ? "text-orange-500" : "text-gray-900 dark:text-white"
-          }`
-        }
-      >
-        <Button variant="ghost" size="sm" className="gap-2">
-          <Search className="h-4 w-4" />
-          {translations.navigation?.search || "Search"}
-        </Button>
-      </NavLink>
+    <nav className="hidden md:flex items-center space-x-6">
+      {navigationLinks.map((link, index) => (
+        <Link
+          key={index}
+          to={link.href}
+          className="text-sm font-medium text-white hover:text-orange-200 transition-colors"
+        >
+          {link.label}
+        </Link>
+      ))}
     </nav>
   );
+}
+
+export const getNavigationLinks = () => {
+  const { translations } = useLanguage();
+  
+  return [
+    { href: "/", label: translations.navigation?.home || "Home" },
+    { href: "/events", label: translations.navigation?.events || "Events" },
+    { href: "/contact", label: translations.navigation?.contact || "Contact" }
+  ];
 };

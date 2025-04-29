@@ -1,90 +1,73 @@
 
-import React from "react";
-import { Link } from "react-router-dom";
-import { useLanguage } from "@/features/language";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import React, { useState } from "react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu, Home, Calendar, Ticket, Users, Mail, Search } from "lucide-react";
+import { Menu } from "lucide-react";
+import { useLanguage } from "@/features/language";
+import { LanguageSelector } from "@/features/language";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { Logo } from "./Logo";
+import { Link } from "react-router-dom";
 
-export const MobileMenu = () => {
+interface MobileMenuProps {
+  links: Array<{
+    href: string;
+    label: string;
+  }>;
+}
+
+export function MobileMenu({ links }: MobileMenuProps) {
+  const [open, setOpen] = useState(false);
   const { translations } = useLanguage();
-  
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="md:hidden">
-          <Menu className="h-6 w-6" />
-          <span className="sr-only">Menu</span>
+          <Menu className="h-6 w-6 text-white dark:text-foreground" />
+          <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-72">
-        <SheetHeader>
-          <SheetTitle>
-            <Link to="/">
-              <span className="text-lg font-bold text-orange-500">
-                netieku.es
+      <SheetContent 
+        side="left" 
+        className="w-[280px] sm:w-[350px] bg-gradient-to-br from-orange-50 to-orange-100/80 dark:from-background dark:to-background border-none"
+      >
+        <div className="flex flex-col h-full backdrop-blur-sm">
+          <div className="mb-6">
+            <Logo className="text-black dark:text-white" />
+          </div>
+          
+          <nav className="flex flex-col space-y-4 mb-8">
+            {links.map((link, index) => (
+              <Link
+                key={index}
+                to={link.href}
+                className="px-2 py-3 text-lg font-medium text-black dark:text-white hover:bg-orange-200/50 dark:hover:bg-secondary/20 rounded-md transition-colors"
+                onClick={() => setOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          
+          <div className="mt-auto space-y-4">
+            <div className="flex items-center justify-between px-2">
+              <span className="text-sm font-medium text-black dark:text-white">
+                {translations.theme?.label}
               </span>
-            </Link>
-          </SheetTitle>
-        </SheetHeader>
-        <div className="flex flex-col space-y-4 mt-6">
-          <SheetClose asChild>
-            <Link to="/">
-              <Button variant="ghost" className="w-full justify-start">
-                <Home className="mr-2 h-5 w-5" />
-                {translations.navigation?.home || "Home"}
-              </Button>
-            </Link>
-          </SheetClose>
-          <SheetClose asChild>
-            <Link to="/events">
-              <Button variant="ghost" className="w-full justify-start">
-                <Calendar className="mr-2 h-5 w-5" />
-                {translations.navigation?.events || "Events"}
-              </Button>
-            </Link>
-          </SheetClose>
-          <SheetClose asChild>
-            <Link to="/tickets">
-              <Button variant="ghost" className="w-full justify-start">
-                <Ticket className="mr-2 h-5 w-5" />
-                {translations.navigation?.tickets || "Tickets"}
-              </Button>
-            </Link>
-          </SheetClose>
-          <SheetClose asChild>
-            <Link to="/about-us">
-              <Button variant="ghost" className="w-full justify-start">
-                <Users className="mr-2 h-5 w-5" />
-                {translations.navigation?.aboutUs || "About Us"}
-              </Button>
-            </Link>
-          </SheetClose>
-          <SheetClose asChild>
-            <Link to="/contact">
-              <Button variant="ghost" className="w-full justify-start">
-                <Mail className="mr-2 h-5 w-5" />
-                {translations.navigation?.contact || "Contact"}
-              </Button>
-            </Link>
-          </SheetClose>
-          <SheetClose asChild>
-            <Link to="/ticket-search">
-              <Button variant="ghost" className="w-full justify-start">
-                <Search className="mr-2 h-5 w-5" />
-                {translations.navigation?.search || "Search Ticket"}
-              </Button>
-            </Link>
-          </SheetClose>
+              <ThemeToggle 
+                className="text-black dark:text-white hover:text-orange-500 dark:hover:text-orange-400" 
+              />
+            </div>
+            <div className="flex items-center justify-between px-2">
+              <span className="text-sm font-medium text-black dark:text-white">
+                {translations.language?.label}
+              </span>
+              <LanguageSelector />
+            </div>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
   );
-};
+}

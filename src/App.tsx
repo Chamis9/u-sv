@@ -20,7 +20,6 @@ import Tickets from "./pages/Tickets";
 import AboutUs from "./pages/AboutUs";
 // Import Profile page directly instead of using dynamic import
 import Profile from "./pages/Profile";
-import TicketSearch from "./pages/TicketSearch";
 
 // Lazy load other pages for better performance
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -94,7 +93,6 @@ const App = () => {
                       <Route path="/events/:category" element={<CategoryEventList />} />
                       <Route path="/events/:category/:eventId" element={<EventTickets />} />
                       <Route path="/tickets" element={<Tickets />} />
-                      <Route path="/ticket-search" element={<TicketSearch />} />
                       <Route path="/about-us" element={<AboutUs />} />
                       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                       <Route path="/contact" element={<Contact />} />
