@@ -12,30 +12,60 @@ export function useTicketQueries(userId?: string) {
       
       console.log("Fetching tickets for user:", userId);
       
-      const { data, error } = await supabase
+      // First get the tickets created by this user (listed and sold)
+      const { data: createdTickets, error: createdError } = await supabase
         .from('tickets')
         .select('*, categories(name)')
         .eq('user_id', userId);
       
-      if (error) {
-        console.error("Error fetching tickets:", error);
-        throw error;
+      if (createdError) {
+        console.error("Error fetching created tickets:", createdError);
+        throw createdError;
       }
       
-      console.log("Tickets fetched:", data?.length || 0, "tickets found");
+      // Then get tickets purchased by this user
+      const { data: purchasedTickets, error: purchasedError } = await supabase
+        .from('tickets')
+        .select('*, categories(name)')
+        .eq('status', 'purchased')
+        .eq('buyer_id', userId);
       
-      // Transform the data to match UserTicket interface
-      return data.map(ticket => ({
-        id: ticket.id,
-        title: ticket.description || "Custom Ticket",
-        description: ticket.description,
-        category: ticket.categories?.name || "Other",
-        price: ticket.price,
-        event_id: ticket.event_id,
-        status: ticket.status as 'available' | 'sold' | 'expired',
-        file_path: ticket.file_path,
-        created_at: ticket.created_at
-      })) || [];
+      if (purchasedError) {
+        console.error("Error fetching purchased tickets:", purchasedError);
+        // Continue with just the created tickets if there's an error
+      }
+      
+      // Combine both sets
+      const allTickets = [
+        ...(createdTickets || []).map(ticket => ({
+          id: ticket.id,
+          title: ticket.description || "Custom Ticket",
+          description: ticket.description,
+          category: ticket.categories?.name || "Other",
+          price: ticket.price,
+          event_id: ticket.event_id,
+          status: ticket.status as 'available' | 'sold' | 'expired' | 'purchased',
+          file_path: ticket.file_path,
+          created_at: ticket.created_at
+        })),
+        ...((purchasedTickets || []).map(ticket => ({
+          id: ticket.id,
+          title: ticket.description || "Custom Ticket",
+          description: ticket.description,
+          category: ticket.categories?.name || "Other",
+          price: ticket.price,
+          event_id: ticket.event_id,
+          status: 'purchased',
+          file_path: ticket.file_path,
+          created_at: ticket.created_at
+        })))
+      ];
+      
+      console.log(`Tickets fetched: ${allTickets.length} total tickets found`);
+      console.log(`- ${createdTickets?.length || 0} created tickets`);
+      console.log(`- ${purchasedTickets?.length || 0} purchased tickets`);
+      
+      return allTickets || [];
     },
     enabled: !!userId,
     staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes

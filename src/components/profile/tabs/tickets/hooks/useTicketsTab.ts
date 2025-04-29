@@ -20,6 +20,7 @@ export function useTicketsTab(user: User) {
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
   
+  // Filter tickets based on status
   const listedTickets = tickets.filter(ticket => 
     ticket.status === 'available' || ticket.status === 'expired'
   );
