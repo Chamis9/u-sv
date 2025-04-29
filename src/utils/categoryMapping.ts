@@ -21,7 +21,7 @@ export const getCategoryTableName = (category?: string): string => {
     // Latvian
     'teatris': 'tickets_theatre',
     'koncerti': 'tickets_concerts',
-    'sports': 'tickets_sports',
+    // Note: 'sports' in Latvian is the same as in English, so not duplicating
     'festivali': 'tickets_festivals',
     'kino': 'tickets_cinema',
     'berniem': 'tickets_children',

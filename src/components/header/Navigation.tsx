@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/features/language";
-import { Search } from "lucide-react";
+import { Search, Ticket } from "lucide-react";
 
 export function Navigation() {
   const { translations } = useLanguage();

@@ -41,20 +41,20 @@ export const useTicketById = () => {
           if (data) {
             console.log(`Ticket found in ${tableName}:`, data);
             
-            // Transform to UserTicket format with proper type handling
+            // Transform to UserTicket format with proper type handling and type guards
             const foundTicket: UserTicket = {
-              id: String(data.id),
+              id: data.id ? String(data.id) : id,
               title: data.description || "Ticket",
               description: data.description || undefined,
               category: data.categories?.name || getCategoryNameFromTableName(tableName),
-              price: data.price,
-              event_id: data.event_id,
+              price: data.price || 0,
+              event_id: data.event_id || undefined,
               status: (data.status as 'available' | 'sold') || 'available',
-              file_path: data.file_path,
-              created_at: data.created_at,
-              seller_id: data.seller_id,
-              buyer_id: data.buyer_id,
-              owner_id: data.owner_id,
+              file_path: data.file_path || undefined,
+              created_at: data.created_at || new Date().toISOString(),
+              seller_id: data.seller_id || undefined,
+              buyer_id: data.buyer_id || undefined,
+              owner_id: data.owner_id || undefined,
               event_date: data.event_date || null,
               venue: data.venue || null
             };
@@ -90,21 +90,4 @@ export const useTicketById = () => {
     error,
     searchTicketById
   };
-};
-
-// Helper function to get category name from table name
-export const getCategoryNameFromTableName = (tableName: string): string => {
-  const categoryMapping: Record<string, string> = {
-    'tickets_theatre': 'Theatre',
-    'tickets_concerts': 'Concerts',
-    'tickets_sports': 'Sports',
-    'tickets_festivals': 'Festivals',
-    'tickets_cinema': 'Cinema',
-    'tickets_children': 'Children',
-    'tickets_travel': 'Travel',
-    'tickets_giftcards': 'Gift Cards',
-    'tickets_other': 'Other'
-  };
-  
-  return categoryMapping[tableName] || 'Other';
 };
