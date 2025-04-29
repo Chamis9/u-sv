@@ -3,6 +3,22 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { categoryEvents, categoryTitles } from '@/utils/eventData';
 
+// Define and export Event type interface
+export interface Event {
+  id: string | number;
+  title: string;
+  description?: string;
+  category: string;
+  category_id: string;
+  start_date: string;
+  end_date?: string | null;
+  price_range?: string | [number, number];
+  venue_id?: string | null;
+  image_url?: string | null;
+  status?: string;
+  location?: string;
+}
+
 // Mock API call using eventData
 const fetchEvents = async (category?: string) => {
   // In a real application, this would be a call to a backend API
@@ -14,8 +30,9 @@ const fetchEvents = async (category?: string) => {
     ...event,
     category: category || '',
     category_id: category || '',
-    start_date: event.date // Make sure start_date exists for compatibility
-  }));
+    start_date: event.date + 'T' + event.time, // Make sure start_date exists for compatibility
+    status: 'published'
+  })) as Event[];
 };
 
 export const useEvents = (category?: string) => {
@@ -23,6 +40,6 @@ export const useEvents = (category?: string) => {
     queryKey: ['events', category],
     queryFn: () => fetchEvents(category),
     staleTime: 1000 * 60, // 1 minute
-    enabled: !!category
+    enabled: category === undefined || !!category
   });
 };
