@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -72,7 +71,7 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
     setIsLoading(true);
     
     try {
-      // Modified to use signUp without email verification
+      // Using signUp with email verification disabled (in Supabase admin)
       const { error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
@@ -82,8 +81,6 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
             last_name: values.lastName,
             phone: values.phoneNumber ? `${values.countryCode}${values.phoneNumber}` : undefined,
           },
-          // Skip email verification
-          emailRedirectTo: undefined,
         },
       });
 
@@ -106,9 +103,7 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
 
       // Success message - updated for manual confirmation flow
       toast({
-        description: translations.languageCode === 'lv' 
-          ? "Reģistrācija veiksmīga! Gaidiet apstiprinājumu no administratora." 
-          : "Registration successful! Please wait for admin confirmation.",
+        description: translations.manualConfirmation || "Registration successful! Please wait for admin confirmation.",
       });
       
       if (onClose) onClose();
@@ -116,7 +111,7 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
       console.error("Registration error:", error);
       toast({
         variant: "destructive",
-        description: translations.genericError,
+        description: translations.genericError || "Registration error. Please try again.",
       });
     } finally {
       setIsLoading(false);
