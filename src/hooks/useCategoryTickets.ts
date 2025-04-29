@@ -17,7 +17,7 @@ export const useCategoryTickets = (category?: string) => {
         console.log('Fetching tickets for category:', category);
         
         // Determine which table to query based on the category
-        let tableName = 'tickets'; // Default table
+        let tableName: 'tickets' | 'tickets_theatre' | 'tickets_concerts' | 'tickets_sports' | 'tickets_festivals' | 'tickets_other' = 'tickets';
         
         if (category) {
           const normalizedCategory = category.toLowerCase();
@@ -51,7 +51,7 @@ export const useCategoryTickets = (category?: string) => {
         
         // Transform the data to match UserTicket type
         const formattedTickets: UserTicket[] = (ticketsData || []).map(ticket => ({
-          id: ticket.id,
+          id: ticket.id as string, // Ensure id is a string
           title: ticket.description || "Ticket",
           description: ticket.description,
           category: ticket.category_id || "",

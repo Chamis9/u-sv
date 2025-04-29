@@ -41,7 +41,7 @@ export function useTicketMutations(userId?: string) {
         console.log("Adding ticket:", ticketData);
         
         // Determine which ticket table to use based on category
-        let tableName = 'tickets'; // Default table
+        let tableName: 'tickets_theatre' | 'tickets_concerts' | 'tickets_sports' | 'tickets_festivals' | 'tickets_other' = 'tickets_other';
         
         if (ticketData.category_name) {
           const categoryName = ticketData.category_name.toLowerCase();
@@ -54,8 +54,6 @@ export function useTicketMutations(userId?: string) {
             tableName = 'tickets_sports';
           } else if (categoryName === 'festivāli' || categoryName === 'festivals') {
             tableName = 'tickets_festivals';
-          } else {
-            tableName = 'tickets_other';
           }
         }
         
