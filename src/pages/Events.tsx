@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from "@/components/Header";
@@ -21,7 +20,7 @@ const categoryIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   "Bērniem": Baby,
   "Ceļojumi": Plane,
   "Dāvanu kartes": Gift,
-  "Citi": MoreHorizontal
+  "Citi pasākumi": MoreHorizontal
 };
 
 // Map category names to URL slugs
@@ -34,7 +33,7 @@ const categorySlugMap: Record<string, string> = {
   "Bērniem": "berniem",
   "Ceļojumi": "celojumi",
   "Dāvanu kartes": "davanu-kartes",
-  "Citi": "citi"
+  "Citi pasākumi": "citi-pasākumi"
 };
 
 const Events = () => {

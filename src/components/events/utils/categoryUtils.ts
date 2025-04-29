@@ -35,6 +35,7 @@ export const getCategoryIdFromName = (name: string): string => {
       return 'Dāvanu kartes';
     case 'citi':
     case 'citi-pasakumi':
+    case 'citi-pasākumi':
     case 'citi pasākumi':
     case 'other':
     case 'other-events':
@@ -71,6 +72,7 @@ export const getCategoryDisplayName = (categoryId: string, languageCode: string)
       case 'other': 
       case 'citi': 
       case 'citi-pasakumi': 
+      case 'citi-pasākumi':
       case 'citi pasākumi': return 'Citi pasākumi';
       default: return categoryId;
     }
@@ -100,6 +102,7 @@ export const getCategoryDisplayName = (categoryId: string, languageCode: string)
       case 'other': 
       case 'citi': 
       case 'citi-pasakumi': 
+      case 'citi-pasākumi':
       case 'citi pasākumi': return 'Other Events';
       default: return categoryId;
     }
