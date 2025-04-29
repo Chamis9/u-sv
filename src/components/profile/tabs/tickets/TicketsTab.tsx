@@ -27,6 +27,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
   const {
     listedTickets,
     soldTickets,
+    purchasedTickets,
     isLoading,
     loading,
     addTicketOpen,
@@ -52,6 +53,9 @@ export function TicketsTab({ user }: TicketsTabProps) {
             <TabsTrigger value="sold">
               {t("Pārdotās biļetes", "Sold Tickets")} {soldTickets.length > 0 && `(${soldTickets.length})`}
             </TabsTrigger>
+            <TabsTrigger value="purchased">
+              {t("Nopirktās biļetes", "Purchased Tickets")} {purchasedTickets.length > 0 && `(${purchasedTickets.length})`}
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="listed">
@@ -71,6 +75,16 @@ export function TicketsTab({ user }: TicketsTabProps) {
               onDelete={handleDeleteTicket}
               loadingDelete={loading}
               ticketType="sold"
+            />
+          </TabsContent>
+          
+          <TabsContent value="purchased">
+            <TicketsContent 
+              tickets={purchasedTickets}
+              isLoading={isLoading}
+              onDelete={handleDeleteTicket}
+              loadingDelete={loading}
+              ticketType="purchased"
             />
           </TabsContent>
         </Tabs>

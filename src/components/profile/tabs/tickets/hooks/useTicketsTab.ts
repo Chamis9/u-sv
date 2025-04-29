@@ -28,6 +28,10 @@ export function useTicketsTab(user: User) {
     ticket.status === 'sold'
   );
   
+  const purchasedTickets = tickets.filter(ticket => 
+    ticket.status === 'purchased'
+  );
+  
   const handleDeleteTicket = (ticketId: string) => {
     if (window.confirm(t(
       "Vai tiešām vēlaties dzēst šo biļeti?", 
@@ -51,6 +55,7 @@ export function useTicketsTab(user: User) {
     tickets,
     listedTickets,
     soldTickets,
+    purchasedTickets,
     isLoading,
     loading,
     addTicketOpen,

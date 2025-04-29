@@ -11,7 +11,7 @@ interface TicketsContentProps {
   isLoading: boolean;
   onDelete: (ticketId: string) => void;
   loadingDelete: boolean;
-  ticketType: "listed" | "sold";
+  ticketType: "listed" | "sold" | "purchased";
 }
 
 export function TicketsContent({ 

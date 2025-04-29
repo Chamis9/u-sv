@@ -8,7 +8,7 @@ export interface UserTicket {
   category: string;
   price: number;
   event_id: string | null;
-  status: 'available' | 'sold' | 'expired';
+  status: 'available' | 'sold' | 'expired' | 'purchased';
   file_path?: string;
   created_at: string;
 }
