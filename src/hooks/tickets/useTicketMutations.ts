@@ -27,24 +27,30 @@ export function useTicketMutations(userId?: string) {
       console.log(`Full ticket data:`, JSON.stringify(data, null, 2));
       console.log(`Current user ID: ${userId}`);
       
-      // Insert ticket into the right table
+      // Create the base insert object with properties common to all ticket tables
+      const insertData = {
+        id: ticketId,
+        user_id: userId,
+        owner_id: userId,
+        seller_id: userId,
+        price: data.price,
+        description: data.description,
+        event_date: data.event_date,
+        venue: data.venue,
+        file_path: data.file_path,
+        status: 'available',
+        event_id: data.event_id || null,
+        category_id: data.category_id
+      };
+      
+      // For some tables, we need to handle the title field differently
+      // Instead of trying to insert a title field which may not exist,
+      // we'll only use the title for the description if needed
+      console.log(`Inserting ticket into ${tableName} with ID: ${ticketId}`);
+      
       const { data: responseData, error } = await supabase
         .from(tableName as any)
-        .insert({
-          id: ticketId,
-          user_id: userId,
-          owner_id: userId,
-          seller_id: userId,
-          price: data.price,
-          description: data.description,
-          event_date: data.event_date,
-          venue: data.venue,
-          file_path: data.file_path,
-          status: 'available',
-          event_id: data.event_id || null,
-          category_id: data.category_id,
-          title: data.title || data.description // Add title field explicitly
-        })
+        .insert(insertData)
         .select('*')
         .single();
         
@@ -59,6 +65,13 @@ export function useTicketMutations(userId?: string) {
             tableName, 
             errorCode: error.code,
             errorMessage: error.message
+          });
+        } else if (error.message.includes('schema cache')) {
+          // This typically happens when trying to insert a column that doesn't exist
+          errorMessage = `Failed to add ticket: Could not find the 'title' column of '${tableName}' in the schema cache`;
+          console.error('Schema error details:', {
+            tableName,
+            data: insertData
           });
         }
         

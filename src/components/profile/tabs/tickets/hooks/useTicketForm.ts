@@ -114,6 +114,11 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
         description: t("Biļete ir pievienota", "Ticket has been added"),
       });
       
+      // Reset the form
+      form.reset();
+      setFile(null);
+      
+      // Close the form
       onClose();
       
     } catch (err: any) {
