@@ -4,6 +4,11 @@ import { UserTicket } from '@/hooks/tickets';
 import { useTicketPurchase } from '@/hooks/useTicketPurchase';
 import { PurchaseDialog } from './PurchaseDialog';
 
+// Define a type for components that can receive the onPurchase prop
+interface WithOnPurchase {
+  onPurchase?: (ticket: UserTicket) => void;
+}
+
 interface EventTicketPurchaseContainerProps {
   removeTicketFromState: (ticketId: string) => void;
   children: React.ReactNode;
@@ -34,7 +39,7 @@ export const EventTicketPurchaseContainer: React.FC<EventTicketPurchaseContainer
     <>
       {React.Children.map(children, child => {
         // Check if the child is a valid React element
-        if (React.isValidElement(child)) {
+        if (React.isValidElement<WithOnPurchase>(child)) {
           // Clone and pass the onPurchase prop
           return React.cloneElement(child, { 
             onPurchase: openPurchaseDialog 

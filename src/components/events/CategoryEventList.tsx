@@ -11,6 +11,7 @@ import { useEventFilters } from '@/hooks/useEventFilters';
 import { EventSearchFilter } from './components/EventSearchFilter';
 import { EventTicketPurchaseContainer } from './components/EventTicketPurchaseContainer';
 import { EventsPageLayout } from './components/EventsPageLayout';
+import { UserTicket } from '@/hooks/tickets';
 
 export function CategoryEventList() {
   const { category } = useParams<{ category: string }>();
@@ -37,6 +38,9 @@ export function CategoryEventList() {
 
   // Filter tickets based on search query
   const filteredTickets = filterTickets(allCategoryTickets);
+
+  // Dummy function to satisfy type checking - this will be replaced by the container
+  const dummyOnPurchase = (ticket: UserTicket) => {};
 
   if (error) {
     return (
@@ -72,6 +76,7 @@ export function CategoryEventList() {
           events={filteredEvents}
           availableTickets={filteredTickets} 
           isLoading={isLoading || ticketsLoading}
+          onPurchase={dummyOnPurchase} // This will be overridden by EventTicketPurchaseContainer
         />
       </EventTicketPurchaseContainer>
     </EventsPageLayout>
