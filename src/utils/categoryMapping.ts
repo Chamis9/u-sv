@@ -23,8 +23,7 @@ export const getCategoryTableName = (category?: string): string => {
     // Latvian
     'teātris': 'tickets_theatre',
     'koncerti': 'tickets_concerts',
-    'koncerts': 'tickets_concerts', // Only one instance of koncerts now
-    'sports': 'tickets_sports',
+    'koncerts': 'tickets_concerts', // Single instance for "koncerts"
     'festivāli': 'tickets_festivals',
     'festivali': 'tickets_festivals',
     'kino': 'tickets_cinema',
