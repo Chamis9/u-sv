@@ -32,6 +32,12 @@ export const useTicketById = () => {
       if (data) {
         console.log(`Ticket found:`, data);
         
+        // Ensure status is one of the allowed values
+        let ticketStatus: 'available' | 'sold' | 'expired' = 'available';
+        if (data.status === 'sold' || data.status === 'expired') {
+          ticketStatus = data.status;
+        }
+        
         // Transform to UserTicket format
         const foundTicket: UserTicket = {
           id: String(id),
@@ -40,7 +46,7 @@ export const useTicketById = () => {
           category: data.category_name || data.categories?.name || 'Other',
           price: typeof data.price === 'number' ? data.price : 0,
           event_id: data.event_id || null,
-          status: data.status || 'available',
+          status: ticketStatus,
           file_path: data.file_path || undefined,
           created_at: data.created_at || new Date().toISOString(),
           seller_id: data.seller_id || undefined,
