@@ -40,11 +40,13 @@ export function useUserTickets(userId?: string) {
   
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
   
-  // Fetch user tickets
+  // Fetch user tickets with enhanced error handling
   const { data: tickets = [], isLoading, error } = useQuery({
     queryKey: ['user-tickets', userId],
     queryFn: async (): Promise<UserTicket[]> => {
       if (!userId) return [];
+      
+      console.log("Fetching tickets for user:", userId);
       
       const { data, error } = await supabase
         .from('tickets')
@@ -55,6 +57,8 @@ export function useUserTickets(userId?: string) {
         console.error("Error fetching tickets:", error);
         throw error;
       }
+      
+      console.log("Tickets fetched:", data?.length || 0, "tickets found");
       
       // Transform the data to match UserTicket interface
       return data.map(ticket => ({
@@ -94,6 +98,8 @@ export function useUserTickets(userId?: string) {
           ticketData.user_id = authenticatedUserId;
         }
         
+        console.log("Adding ticket:", ticketData);
+        
         // Create the ticket (custom tickets don't have event_id)
         const { data, error } = await supabase
           .from('tickets')
@@ -105,7 +111,7 @@ export function useUserTickets(userId?: string) {
             seat_info: ticketData.seat_info,
             status: 'available',
             category_id: ticketData.category_id,
-            event_id: null
+            event_id: ticketData.event_id
           }])
           .select()
           .single();
@@ -115,6 +121,7 @@ export function useUserTickets(userId?: string) {
           throw error;
         }
         
+        console.log("Ticket created successfully:", data);
         return data;
       } finally {
         setLoading(false);
@@ -146,11 +153,16 @@ export function useUserTickets(userId?: string) {
         // First get the ticket to check for file_path
         const { data: ticketData, error: fetchError } = await supabase
           .from('tickets')
-          .select('file_path')
+          .select('file_path, user_id')
           .eq('id', ticketId)
           .single();
         
         if (fetchError) throw fetchError;
+        
+        // Verify ownership
+        if (ticketData.user_id !== userId) {
+          throw new Error(t('Nevar dzēst cita lietotāja biļeti', 'Cannot delete another user\'s ticket'));
+        }
         
         // If there's a file associated with the ticket, delete it
         if (ticketData?.file_path) {
@@ -164,6 +176,8 @@ export function useUserTickets(userId?: string) {
           .eq('id', ticketId);
         
         if (error) throw error;
+        
+        console.log("Ticket deleted successfully:", ticketId);
         return true;
       } finally {
         setLoading(false);

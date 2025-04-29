@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { generateUuid } from "@/utils/uuid-helper";
@@ -32,9 +33,7 @@ export function useTicketStorage() {
           return false;
         }
         
-        // For the policy, we need to use SQL or RPC, but not the non-existent createPolicy method
-        // Let's just log a message that the bucket is created and assume we'll configure policies elsewhere
-        console.log("Created tickets bucket successfully. Configure policies if needed.");
+        console.log("Created tickets bucket successfully");
       } else {
         console.log("Tickets bucket already exists");
       }
@@ -85,6 +84,8 @@ export function useTicketStorage() {
       const fileName = `${generateUuid()}.${fileExt}`;
       const filePath = `${userId}/${fileName}`;
       
+      console.log("Uploading file to path:", filePath);
+      
       // Get the current authenticated user
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !sessionData.session) {
@@ -113,6 +114,8 @@ export function useTicketStorage() {
         title: t("Fails augšupielādēts", "File uploaded"),
         description: t("Biļetes fails veiksmīgi augšupielādēts", "Ticket file successfully uploaded"),
       });
+      
+      console.log("File uploaded successfully", publicUrl);
       
       return {
         path: filePath,

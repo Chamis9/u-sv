@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { User } from "@/types/users";
 import { useLanguage } from "@/features/language";
 import { 
@@ -17,13 +17,15 @@ import {
 import {
   Ticket as TicketIcon,
   Tag,
-  Plus
+  Plus,
+  RefreshCw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AddTicketForm } from "./tickets/AddTicketForm";
 import { TicketsList } from "./tickets/TicketsList";
 import { useUserTickets } from "@/hooks/useUserTickets";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface TicketsTabProps {
   user: User;
@@ -32,6 +34,7 @@ interface TicketsTabProps {
 export function TicketsTab({ user }: TicketsTabProps) {
   const { currentLanguage } = useLanguage();
   const [addTicketOpen, setAddTicketOpen] = useState(false);
+  const queryClient = useQueryClient();
   
   const { 
     tickets, 
@@ -51,29 +54,48 @@ export function TicketsTab({ user }: TicketsTabProps) {
       deleteTicket(ticketId);
     }
   };
+
+  const refreshTickets = () => {
+    queryClient.invalidateQueries({ queryKey: ['user-tickets', user.id] });
+  };
+  
+  // Automatically refresh tickets when component mounts
+  useEffect(() => {
+    refreshTickets();
+  }, []);
   
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{t("Manas biļetes", "My Tickets")}</CardTitle>
-        <Button onClick={() => setAddTicketOpen(true)} size="sm">
-          <Plus className="h-4 w-4 mr-2" />
-          {t("Pievienot biļeti", "Add Ticket")}
-        </Button>
+        <div className="flex space-x-2">
+          <Button onClick={refreshTickets} size="sm" variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            {t("Atsvaidzināt", "Refresh")}
+          </Button>
+          <Button onClick={() => setAddTicketOpen(true)} size="sm">
+            <Plus className="h-4 w-4 mr-2" />
+            {t("Pievienot biļeti", "Add Ticket")}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="listed">
           <TabsList className="mb-4">
             <TabsTrigger value="listed">
-              {t("Pievienotās biļetes", "Listed Tickets")}
+              {t("Pievienotās biļetes", "Listed Tickets")} {listedTickets.length > 0 && `(${listedTickets.length})`}
             </TabsTrigger>
             <TabsTrigger value="sold">
-              {t("Pārdotās biļetes", "Sold Tickets")}
+              {t("Pārdotās biļetes", "Sold Tickets")} {soldTickets.length > 0 && `(${soldTickets.length})`}
             </TabsTrigger>
           </TabsList>
           
           <TabsContent value="listed">
-            {listedTickets.length > 0 ? (
+            {isLoading ? (
+              <div className="flex justify-center p-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+              </div>
+            ) : listedTickets.length > 0 ? (
               <TicketsList 
                 tickets={listedTickets} 
                 onDelete={handleDeleteTicket}
@@ -89,7 +111,11 @@ export function TicketsTab({ user }: TicketsTabProps) {
           </TabsContent>
           
           <TabsContent value="sold">
-            {soldTickets.length > 0 ? (
+            {isLoading ? (
+              <div className="flex justify-center p-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+              </div>
+            ) : soldTickets.length > 0 ? (
               <TicketsList 
                 tickets={soldTickets} 
                 onDelete={handleDeleteTicket}
@@ -112,7 +138,10 @@ export function TicketsTab({ user }: TicketsTabProps) {
           <DialogHeader>
             <DialogTitle>{t("Pievienot biļeti", "Add Ticket")}</DialogTitle>
           </DialogHeader>
-          <AddTicketForm onClose={() => setAddTicketOpen(false)} />
+          <AddTicketForm onClose={() => {
+            setAddTicketOpen(false);
+            refreshTickets();
+          }} />
         </DialogContent>
       </Dialog>
     </Card>

@@ -19,6 +19,15 @@ import { useTicketStorage } from "@/hooks/useTicketStorage";
 import { useUserTickets } from "@/hooks/useUserTickets";
 import { useAuth } from "@/contexts/AuthContext";
 import { LoaderCircle, UploadCloud } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const formSchema = z.object({
   title: z.string().min(3, {
@@ -46,6 +55,25 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
+
+  // Fetch categories
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('status', 'active')
+        .order('priority', { ascending: true });
+
+      if (error) {
+        console.error("Error fetching categories:", error);
+        throw error;
+      }
+
+      return data || [];
+    },
+  });
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,6 +101,16 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
         return;
       }
       
+      // Check file size (max 10MB)
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        setFileError(t(
+          "Faila izmērs nedrīkst pārsniegt 10MB",
+          "File size cannot exceed 10MB"
+        ));
+        setFile(null);
+        return;
+      }
+      
       setFile(selectedFile);
       setFileError(null);
     }
@@ -84,17 +122,24 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
     }
     
     try {
+      console.log("Submitting form with values:", values);
+      
       // First upload the file if provided
       let filePath = null;
       let fileUrl = null;
       
       if (file) {
+        console.log("Uploading file:", file.name);
         const uploadResult = await uploadTicketFile(file, user.id);
         if (uploadResult) {
           filePath = uploadResult.path;
           fileUrl = uploadResult.url;
+          console.log("File uploaded successfully:", filePath);
         }
       }
+      
+      // Find category id if a category was selected
+      const selectedCategory = categories.find(cat => cat.name === values.category);
       
       // Then create the ticket entry
       addTicket({
@@ -104,8 +149,11 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
         user_id: user.id,
         file_path: filePath,
         category_name: values.category,
+        category_id: selectedCategory?.id,
         event_id: null  // Add the missing required property with null value
       });
+      
+      console.log("Ticket added successfully");
       
       // Close the form
       onClose();
@@ -149,6 +197,35 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
               <FormControl>
                 <Input type="number" step="0.01" min="0" placeholder="0.00" {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="category"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("Kategorija", "Category")}</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("Izvēlieties kategoriju", "Select a category")} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {categories.length > 0 ? (
+                    categories.map((category) => (
+                      <SelectItem key={category.id} value={category.name}>
+                        {category.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="other">{t("Cits", "Other")}</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
