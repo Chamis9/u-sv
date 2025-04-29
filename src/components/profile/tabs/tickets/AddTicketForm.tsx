@@ -103,7 +103,8 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
         price: Number(values.price),
         user_id: user.id,
         file_path: filePath,
-        category_name: values.category
+        category_name: values.category,
+        event_id: null  // Add the missing required property with null value
       });
       
       // Close the form
