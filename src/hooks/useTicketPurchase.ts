@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
 import { toast } from "@/hooks/use-toast";
+import { getCategoryTableName } from "@/utils/categoryMapping";
 
 export const useTicketPurchase = () => {
   const { currentLanguage } = useLanguage();
@@ -67,31 +68,6 @@ export const useTicketPurchase = () => {
       });
       return false;
     }
-  };
-  
-  // Helper function to get table name from category
-  const getCategoryTableName = (category: string): string | null => {
-    const categoryMapping: Record<string, string> = {
-      'Theatre': 'tickets_theatre',
-      'Teātris': 'tickets_theatre',
-      'Concerts': 'tickets_concerts',
-      'Koncerti': 'tickets_concerts',
-      'Sports': 'tickets_sports',
-      'Festivals': 'tickets_festivals',
-      'Festivāli': 'tickets_festivals',
-      'Cinema': 'tickets_cinema',
-      'Kino': 'tickets_cinema',
-      'Children': 'tickets_children',
-      'Bērniem': 'tickets_children',
-      'Travel': 'tickets_travel',
-      'Ceļojumi': 'tickets_travel',
-      'Gift Cards': 'tickets_giftcards',
-      'Dāvanu kartes': 'tickets_giftcards',
-      'Other': 'tickets_other',
-      'Citi': 'tickets_other'
-    };
-    
-    return categoryMapping[category] || 'tickets_other';
   };
 
   return {

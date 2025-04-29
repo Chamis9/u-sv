@@ -3,35 +3,10 @@ import { useState } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { AddTicketData, UserTicket } from "./types";
 import { v4 as uuidv4 } from 'uuid';
-import { safeConvertJsonArrayToActivities } from '@/components/admin/activity/types';
-import { Json } from '@/integrations/supabase/types';
+import { getCategoryTableName } from "@/utils/categoryMapping";
 
 export function useTicketMutations(userId?: string) {
   const [loading, setLoading] = useState(false);
-  
-  const getCategoryTableName = (category: string): string => {
-    const categoryMap: Record<string, string> = {
-      'Theatre': 'tickets_theatre',
-      'Teātris': 'tickets_theatre',
-      'Concerts': 'tickets_concerts',
-      'Koncerti': 'tickets_concerts',
-      'Sports': 'tickets_sports',
-      'Festivals': 'tickets_festivals',
-      'Festivāli': 'tickets_festivals',
-      'Cinema': 'tickets_cinema',
-      'Kino': 'tickets_cinema',
-      'Children': 'tickets_children',
-      'Bērniem': 'tickets_children',
-      'Travel': 'tickets_travel',
-      'Ceļojumi': 'tickets_travel',
-      'Gift Cards': 'tickets_giftcards',
-      'Dāvanu kartes': 'tickets_giftcards',
-      'Other': 'tickets_other',
-      'Citi': 'tickets_other'
-    };
-    
-    return categoryMap[category] || 'tickets_other';
-  };
   
   // Add a new ticket
   const addTicket = async (data: AddTicketData): Promise<{ success: boolean; ticket?: UserTicket; error?: string }> => {

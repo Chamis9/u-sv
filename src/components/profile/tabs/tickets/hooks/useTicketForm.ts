@@ -27,7 +27,7 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       title: "",
       price: "",
       description: "",
-      category: "other",
+      category: "",
       venue: ""
     },
   });

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "./types";
 import { useAuth } from "@/contexts/AuthContext";
-import { getCategoryTableName } from "@/components/profile/tabs/tickets/services/CategoryService";
+import { getCategoryNameFromTableName } from "@/utils/categoryMapping";
 
 export function useTicketQueries(userId?: string) {
   const { isAuthenticated } = useAuth();
@@ -84,23 +84,6 @@ export function useTicketQueries(userId?: string) {
     refetchOnMount: true,
     refetchOnWindowFocus: true
   });
-
-  // Helper function to derive category name from table name
-  function getCategoryNameFromTableName(tableName: string): string {
-    const categoryMapping: Record<string, string> = {
-      'tickets_theatre': 'Theatre',
-      'tickets_concerts': 'Concerts',
-      'tickets_sports': 'Sports',
-      'tickets_festivals': 'Festivals',
-      'tickets_cinema': 'Cinema',
-      'tickets_children': 'Children',
-      'tickets_travel': 'Travel',
-      'tickets_giftcards': 'Gift Cards',
-      'tickets_other': 'Other'
-    };
-    
-    return categoryMapping[tableName] || 'Other';
-  }
 
   return {
     tickets,

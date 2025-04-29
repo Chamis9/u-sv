@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
-import { getCategoryTableName } from "@/utils/categoryMapping";
+import { getCategoryTableName, getCategoryNameFromTableName } from "@/utils/categoryMapping";
 
 export const useCategoryTickets = (category?: string) => {
   const [allCategoryTickets, setAllCategoryTickets] = useState<UserTicket[]>([]);
@@ -54,12 +54,14 @@ export const useCategoryTickets = (category?: string) => {
         
         // Transform the data to match UserTicket type, handling potential missing fields
         const formattedTickets: UserTicket[] = ((ticketsData || []) as any[]).map((ticket: any) => {
+          const categoryName = ticket.categories?.name || getCategoryNameFromTableName(tableName);
+          
           // Create a base ticket object with properties that should exist in all tables
           const baseTicket: UserTicket = {
             id: String(ticket.id), // Ensure id is a string
             title: ticket.description || "Ticket",
             description: ticket.description || "",
-            category: category, // Use the provided category parameter
+            category: categoryName, // Use the category name from the database or derived from table name
             price: ticket.price,
             event_id: ticket.event_id || null,
             status: 'available' as const,
@@ -68,14 +70,9 @@ export const useCategoryTickets = (category?: string) => {
             seller_id: ticket.seller_id || undefined,
             buyer_id: ticket.buyer_id || undefined,
             owner_id: ticket.owner_id,
-            event_date: null, // Default value
-            venue: ticket.venue || null // Add venue property
+            event_date: ticket.event_date || null,
+            venue: ticket.venue || null
           };
-          
-          // Handle event_date if available
-          if ('event_date' in ticket) {
-            baseTicket.event_date = ticket.event_date || null;
-          }
           
           return baseTicket;
         });

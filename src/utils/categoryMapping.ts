@@ -5,8 +5,8 @@
 export const getCategoryTableName = (category?: string): string => {
   if (!category) return 'tickets_other';
   
-  // Convert to lowercase and remove non-alphanumeric characters
-  const normalizedCategory = category.toLowerCase().replace(/[^a-z0-9]/g, '');
+  // Convert to lowercase and normalize
+  const normalizedCategory = category.toLowerCase().trim();
   
   const categoryToTable: Record<string, string> = {
     // English
@@ -19,17 +19,37 @@ export const getCategoryTableName = (category?: string): string => {
     'travel': 'tickets_travel',
     'giftcards': 'tickets_giftcards',
     // Latvian
+    'teātris': 'tickets_theatre',
     'teatris': 'tickets_theatre',
     'koncerti': 'tickets_concerts',
-    // Note: 'sports' in Latvian is the same as in English, so not duplicating
+    'sports': 'tickets_sports',
+    'festivāli': 'tickets_festivals',
     'festivali': 'tickets_festivals',
     'kino': 'tickets_cinema',
+    'bērniem': 'tickets_children',
     'berniem': 'tickets_children',
+    'ceļojumi': 'tickets_travel',
     'celojumi': 'tickets_travel',
-    'davanukartes': 'tickets_giftcards'
+    'dāvanu kartes': 'tickets_giftcards',
+    'davanu kartes': 'tickets_giftcards',
+    'citi': 'tickets_other',
+    'other': 'tickets_other'
   };
   
-  return categoryToTable[normalizedCategory] || 'tickets_other';
+  // Try direct match first
+  if (categoryToTable[normalizedCategory]) {
+    return categoryToTable[normalizedCategory];
+  }
+  
+  // If no direct match, look for partial matches
+  for (const [key, value] of Object.entries(categoryToTable)) {
+    if (normalizedCategory.includes(key)) {
+      return value;
+    }
+  }
+  
+  // Default fallback
+  return 'tickets_other';
 };
 
 // Map table name to category name
@@ -51,8 +71,8 @@ export const getCategoryNameFromTableName = (tableName: string): string => {
 
 // Convert URL path to display name
 export const getCategoryDisplayName = (urlPath: string, languageCode: string): string => {
-  // First normalize the path
-  const normalizedPath = urlPath.toLowerCase().replace(/-/g, '');
+  // Normalize the path: remove dashes, spaces, and convert to lowercase
+  const normalizedPath = urlPath.toLowerCase().replace(/[-\s]/g, '');
   
   const displayNames: Record<string, Record<string, string>> = {
     'en': {
@@ -88,5 +108,18 @@ export const getCategoryDisplayName = (urlPath: string, languageCode: string): s
   
   const langMap = displayNames[languageCode] || displayNames['en'];
   
-  return langMap[normalizedPath] || (languageCode === 'lv' ? 'Citi' : 'Other');
+  // Try direct match first
+  if (langMap[normalizedPath]) {
+    return langMap[normalizedPath];
+  }
+  
+  // If no direct match, look for partial matches
+  for (const [key, value] of Object.entries(langMap)) {
+    if (normalizedPath.includes(key)) {
+      return value;
+    }
+  }
+  
+  // Default fallback
+  return languageCode === 'lv' ? 'Citi' : 'Other';
 };
