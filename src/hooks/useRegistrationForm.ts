@@ -58,6 +58,15 @@ export const useRegistrationForm = () => {
 
   const onSubmit = async (data: RegistrationFormData) => {
     try {
+      if (!data.termsAccepted) {
+        toast({
+          title: t('Kļūda', 'Error'),
+          description: t('Jums jāpiekrīt lietošanas noteikumiem', 'You must accept the terms and conditions'),
+          variant: "destructive"
+        });
+        return;
+      }
+      
       const phoneNumber = data.phoneNumber ? `${data.countryCode}${data.phoneNumber}` : "";
       
       // Check if email exists
@@ -84,20 +93,31 @@ export const useRegistrationForm = () => {
         }
       }
 
-      // Proceed with registration if validation passes
-      const { error } = await supabase.auth.signUp({
+      console.log("Registration data:", {
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phone: phoneNumber,
+        newsletter: data.newsletter
+      });
+
+      // Register user with Supabase
+      const { data: authData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
           data: {
             first_name: data.firstName,
             last_name: data.lastName,
-            phone: phoneNumber || null
+            phone: phoneNumber || null,
+            newsletter: data.newsletter
           }
         }
       });
 
       if (error) throw error;
+
+      console.log("Registration successful:", authData);
 
       toast({
         title: t('Veiksmīga reģistrācija', 'Registration successful'),
