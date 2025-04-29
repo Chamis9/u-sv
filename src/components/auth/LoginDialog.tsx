@@ -22,6 +22,14 @@ interface LoginDialogProps {
 export function LoginDialog({ isOpen, onClose, defaultTab = "login" }: LoginDialogProps) {
   const { currentLanguage } = useLanguage();
   const translations = getLoginTranslations(currentLanguage.code);
+  const [activeTab, setActiveTab] = React.useState(defaultTab);
+
+  // Reset to default tab when dialog opens
+  React.useEffect(() => {
+    if (isOpen) {
+      setActiveTab(defaultTab);
+    }
+  }, [isOpen, defaultTab]);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -33,7 +41,7 @@ export function LoginDialog({ isOpen, onClose, defaultTab = "login" }: LoginDial
           </DialogDescription>
         </DialogHeader>
         
-        <Tabs defaultValue={defaultTab} className="w-full">
+        <Tabs value={activeTab} className="w-full" onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">{translations.login}</TabsTrigger>
             <TabsTrigger value="register">{translations.register}</TabsTrigger>

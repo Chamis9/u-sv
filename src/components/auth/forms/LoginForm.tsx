@@ -59,6 +59,7 @@ export function LoginForm({ translations, onClose }: LoginFormProps) {
   };
 
   const onSubmit = async (values: LoginFormData) => {
+    console.log("Login form submitted", values);
     setIsLoading(true);
     
     try {
@@ -174,7 +175,10 @@ export function LoginForm({ translations, onClose }: LoginFormProps) {
           >
             {translations.forgotPassword}
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button 
+            type="submit"
+            disabled={isLoading}
+          >
             {isLoading ? translations.loginLoading : translations.login}
           </Button>
         </div>
