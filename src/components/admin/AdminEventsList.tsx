@@ -12,16 +12,30 @@ import { Event } from '@/hooks/useEvents';
 export function AdminEventsList() {
   const { currentLanguage } = useLanguage();
 
-  const { data: events, isLoading, refetch } = useQuery({
+  const { data: eventsData, isLoading, refetch } = useQuery({
     queryKey: ['admin-events'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('events')
-        .select('*')
+        .select('*, categories(name)')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data;
+      
+      // Transform to match Event interface
+      return data.map(event => ({
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        category: event.categories?.name || '',
+        category_id: event.category_id,
+        start_date: event.start_date,
+        end_date: event.end_date,
+        price_range: event.price_range,
+        venue_id: event.venue_id,
+        image_url: event.image_url,
+        status: event.status
+      })) as Event[];
     }
   });
 
@@ -51,7 +65,7 @@ export function AdminEventsList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {events?.map((event: Event) => (
+            {eventsData?.map((event: Event) => (
               <AdminEventRow key={event.id} event={event} onUpdate={refetch} />
             ))}
           </TableBody>
@@ -60,5 +74,3 @@ export function AdminEventsList() {
     </div>
   );
 }
-
-export default AdminEventsList;

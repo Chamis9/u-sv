@@ -13,7 +13,7 @@ export interface Event {
   venue_id: string | null;
   image_url: string | null;
   status: string | null;
-  category_id?: string; // Add this to make it compatible with database
+  category_id: string; // Make this required to match database shape
 }
 
 export const useEvents = (category?: string) => {
