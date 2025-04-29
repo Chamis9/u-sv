@@ -35,10 +35,6 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
     return acc;
   }, {} as Record<string, UserTicket[]>);
 
-  console.log("Events data:", events);
-  console.log("Available tickets:", availableTickets);
-  console.log("Tickets by event:", ticketsByEvent);
-
   if (isLoading) {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 animate-pulse">
@@ -136,7 +132,7 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
         </div>
       )}
 
-      {/* Standalone tickets section */}
+      {/* Standalone tickets section - always show this section if there are any standalone tickets */}
       {standAloneTickets.length > 0 && (
         <div>
           <h2 className="text-2xl font-bold mb-4 text-orange-500">
@@ -182,15 +178,6 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
               </div>
             ))}
           </div>
-        </div>
-      )}
-      
-      {/* Show this only when we have events but no standalone tickets */}
-      {events.length === 0 && standAloneTickets.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-lg text-gray-500 dark:text-gray-400">
-            {t('Šajā kategorijā nav pasākumu vai biļešu', 'No events or tickets in this category')}
-          </p>
         </div>
       )}
     </div>

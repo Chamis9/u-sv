@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useLanguage } from "@/features/language";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -36,12 +36,6 @@ export function CategoryEventList() {
     error: ticketsError,
     removeTicketFromState
   } = useCategoryTickets(category);
-  
-  // Log category and tickets for debugging
-  useEffect(() => {
-    console.log('Current category param:', category);
-    console.log('All category tickets:', allCategoryTickets);
-  }, [category, allCategoryTickets]);
 
   const {
     selectedTicket,
@@ -89,11 +83,6 @@ export function CategoryEventList() {
         (ticket.description && ticket.description.toLowerCase().includes(searchQuery.toLowerCase()))
       : true;
   });
-
-  // Display error if there's an issue fetching tickets
-  if (ticketsError) {
-    console.error('Ticket loading error:', ticketsError);
-  }
 
   if (error) {
     return (
@@ -160,18 +149,6 @@ export function CategoryEventList() {
                   </PopoverContent>
                 </Popover>
               </div>
-              
-              {/* Add debug info in development only */}
-              {process.env.NODE_ENV === 'development' && (
-                <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md mb-6 text-sm">
-                  <h3 className="font-bold mb-2">Debug Info:</h3>
-                  <p>Current category param: {category}</p>
-                  <p>Available tickets: {allCategoryTickets.length}</p>
-                  <p>Filtered tickets: {filteredTickets.length}</p>
-                  <p>Loading state: {ticketsLoading ? 'Loading...' : 'Done'}</p>
-                  <p>Events: {events?.length || 0}</p>
-                </div>
-              )}
               
               {/* Events Grid */}
               <EventsGrid 

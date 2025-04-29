@@ -13,10 +13,7 @@ export const useCategoryTickets = (category?: string) => {
       try {
         setIsLoading(true);
         
-        console.log('Fetching tickets for category:', category);
-        
         if (!category) {
-          console.log('No category provided, returning empty array');
           setAllCategoryTickets([]);
           setIsLoading(false);
           return;
@@ -35,7 +32,6 @@ export const useCategoryTickets = (category?: string) => {
         
         // Get possible category names from mapping or use the original
         const possibleCategories = categoryMapping[normalizedCategory] || [category];
-        console.log('Possible category matches:', possibleCategories);
         
         // Query using any of the possible category names
         const { data: ticketsData, error: fetchError } = await supabase
@@ -45,12 +41,8 @@ export const useCategoryTickets = (category?: string) => {
           .in('category_name', possibleCategories);
         
         if (fetchError) {
-          console.error('Error fetching tickets:', fetchError);
           throw fetchError;
         }
-        
-        console.log(`Fetched ${ticketsData?.length || 0} tickets for category ${category}`);
-        console.log('Raw tickets data:', ticketsData);
         
         // Transform the data to match UserTicket type
         const formattedTickets: UserTicket[] = ((ticketsData || []) as any[]).map((ticket: any) => {
@@ -75,7 +67,6 @@ export const useCategoryTickets = (category?: string) => {
           };
         });
         
-        console.log('Formatted tickets:', formattedTickets);
         setAllCategoryTickets(formattedTickets);
       } catch (err) {
         console.error('Error fetching available tickets:', err);
