@@ -1,91 +1,124 @@
-import { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/supabase/client";
-import { Activity, JsonActivity, convertJsonToActivity } from "@/components/admin/activity/types";
-import { useLanguage } from "@/features/language";
-import { Json } from "@/integrations/supabase/types";
-import { PostgrestError } from '@supabase/supabase-js';
 
-export function useActivityLog(pageSize = 10, enabled = true) {
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const { currentLanguage } = useLanguage();
+import { useState } from 'react';
+import { supabase } from "@/integrations/supabase/client";
+import { AddTicketData, UserTicket } from "./types";
+import { v4 as uuidv4 } from 'uuid';
+import { safeConvertJsonArrayToActivities } from '@/components/admin/activity/types';
+import { Json } from '@/integrations/supabase/types';
+
+export function useTicketMutations(userId?: string) {
+  const [loading, setLoading] = useState(false);
   
-  const t = (lvText: string, enText: string) => {
-    if (currentLanguage.code === 'lv') return lvText;
-    return enText;
+  const getCategoryTableName = (category: string): string => {
+    const categoryMap: Record<string, string> = {
+      'Theatre': 'tickets_theatre',
+      'Teātris': 'tickets_theatre',
+      'Concerts': 'tickets_concerts',
+      'Koncerti': 'tickets_concerts',
+      'Sports': 'tickets_sports',
+      'Festivals': 'tickets_festivals',
+      'Festivāli': 'tickets_festivals',
+      'Cinema': 'tickets_cinema',
+      'Kino': 'tickets_cinema',
+      'Children': 'tickets_children',
+      'Bērniem': 'tickets_children',
+      'Travel': 'tickets_travel',
+      'Ceļojumi': 'tickets_travel',
+      'Gift Cards': 'tickets_giftcards',
+      'Dāvanu kartes': 'tickets_giftcards',
+      'Other': 'tickets_other',
+      'Citi': 'tickets_other'
+    };
+    
+    return categoryMap[category] || 'tickets_other';
   };
   
-  const fetchActivities = async () => {
-    if (!enabled) return;
-    
-    setIsLoading(true);
-    setError(null);
-    
+  // Add a new ticket
+  const addTicket = async (data: AddTicketData): Promise<{ success: boolean; ticket?: UserTicket; error?: string }> => {
+    if (!userId) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    setLoading(true);
     try {
-      // Use RPC call for count with proper parameters
-      const { data: countData, error: countError } = await supabase.rpc('get_activity_count');
+      const ticketId = uuidv4();
+      const tableName = getCategoryTableName(data.category);
       
-      if (countError) {
-        throw countError;
+      // Insert ticket into the right table
+      const { data: insertedTicket, error } = await supabase
+        .from(tableName as any)
+        .insert({
+          id: ticketId,
+          user_id: userId,
+          owner_id: userId,
+          seller_id: userId,
+          price: data.price,
+          description: data.description,
+          event_date: data.eventDate,
+          venue: data.venue,
+          file_path: data.filePath,
+          status: 'available'
+        })
+        .select('*')
+        .single();
+        
+      if (error) {
+        throw error;
       }
       
-      // Ensure countData is a number before setting state
-      if (typeof countData === 'number') {
-        setTotalCount(countData);
-      }
+      // Type cast to UserTicket
+      const ticket: UserTicket = {
+        id: insertedTicket?.id,
+        title: insertedTicket?.description || 'Ticket',
+        description: insertedTicket?.description,
+        category: data.category,
+        price: insertedTicket?.price,
+        status: 'available',
+        file_path: insertedTicket?.file_path,
+        created_at: insertedTicket?.created_at,
+        seller_id: insertedTicket?.seller_id,
+        buyer_id: insertedTicket?.buyer_id,
+        owner_id: insertedTicket?.owner_id,
+        event_date: insertedTicket?.event_date,
+        venue: insertedTicket?.venue
+      };
       
-      // Use RPC call to get activities with proper parameters
-      const { data, error: activitiesError } = await supabase.rpc('get_activities', {
-        page_size: pageSize,
-        page_number: currentPage
-      });
-      
-      if (activitiesError) {
-        throw activitiesError;
-      }
-      
-      // Parse the JSON data to Activity objects
-      if (data && Array.isArray(data)) {
-        const parsedActivities: Activity[] = (data as JsonActivity[]).map(convertJsonToActivity);
-        setActivities(parsedActivities);
-      } else {
-        setActivities([]);
-      }
+      return { success: true, ticket };
     } catch (err) {
-      console.error('Error fetching activities:', err);
-      setError(t(
-        'Neizdevās ielādēt aktivitātes. Lūdzu, mēģiniet vēlreiz.', 
-        'Failed to load activities. Please try again.'
-      ));
+      console.error('Error adding ticket:', err);
+      return { success: false, error: 'Failed to add ticket' };
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
   
-  // Fetch activities when enabled, currentPage changes
-  useEffect(() => {
-    if (enabled) {
-      fetchActivities();
+  // Delete a ticket
+  const deleteTicket = async (ticketId: string, category: string): Promise<boolean> => {
+    if (!userId) {
+      return false;
     }
-  }, [enabled, currentPage]);
-  
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    
+    setLoading(true);
+    try {
+      const tableName = getCategoryTableName(category);
+      
+      const { error } = await supabase
+        .from(tableName as any)
+        .delete()
+        .match({ id: ticketId, owner_id: userId });
+        
+      if (error) {
+        throw error;
+      }
+      
+      return true;
+    } catch (err) {
+      console.error('Error deleting ticket:', err);
+      return false;
+    } finally {
+      setLoading(false);
+    }
   };
   
-  const totalPages = Math.ceil(totalCount / pageSize);
-  
-  return {
-    activities,
-    isLoading,
-    error,
-    totalCount,
-    currentPage,
-    totalPages,
-    handlePageChange,
-    refresh: fetchActivities
-  };
+  return { addTicket, deleteTicket, loading };
 }

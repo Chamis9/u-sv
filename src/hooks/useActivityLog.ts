@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
-import { Activity, JsonActivity, convertJsonToActivity } from "@/components/admin/activity/types";
+import { Activity, JsonActivity, convertJsonToActivity, safeConvertJsonArrayToActivities } from "@/components/admin/activity/types";
 import { useLanguage } from "@/features/language";
 import { Json } from "@/integrations/supabase/types";
 import { PostgrestError } from '@supabase/supabase-js';
@@ -48,9 +48,9 @@ export function useActivityLog(pageSize = 10, enabled = true) {
         throw activitiesError;
       }
       
-      // Parse the JSON data to Activity objects
+      // Parse the JSON data to Activity objects using our safe converter
       if (data && Array.isArray(data)) {
-        const parsedActivities: Activity[] = (data as JsonActivity[]).map(convertJsonToActivity);
+        const parsedActivities = safeConvertJsonArrayToActivities(data as Json[]);
         setActivities(parsedActivities);
       } else {
         setActivities([]);

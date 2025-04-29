@@ -34,3 +34,19 @@ export function convertJsonToActivity(json: JsonActivity): Activity {
     metadata: json.metadata as Record<string, any> | null
   };
 }
+
+// Function to safely convert Json to JsonActivity
+export function safeConvertJsonArrayToActivities(jsonArray: Json[] | null): Activity[] {
+  if (!jsonArray || !Array.isArray(jsonArray)) {
+    return [];
+  }
+  
+  try {
+    // First cast to unknown, then to JsonActivity[] to satisfy TypeScript
+    const jsonActivities = jsonArray as unknown as JsonActivity[];
+    return jsonActivities.map(convertJsonToActivity);
+  } catch (err) {
+    console.error("Error converting JSON to activities:", err);
+    return [];
+  }
+}
