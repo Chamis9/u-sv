@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,17 +41,27 @@ export function useTicketMutations(userId?: string) {
         console.log("Adding ticket:", ticketData);
         
         // Determine which ticket table to use based on category
-        let tableName: string = 'tickets_other';
+        const tableName = ticketData.category_name ? 
+          getCategoryTableName(ticketData.category_name) : 
+          'tickets_other';
         
-        if (ticketData.category_name) {
-          tableName = getCategoryTableName(ticketData.category_name);
+        // Validate table name to match allowed table names in Supabase
+        const validTableNames = [
+          'tickets_theatre', 'tickets_concerts', 'tickets_sports', 
+          'tickets_festivals', 'tickets_cinema', 'tickets_children', 
+          'tickets_travel', 'tickets_giftcards', 'tickets_other'
+        ];
+        
+        if (!validTableNames.includes(tableName)) {
+          console.error(`Invalid table name: ${tableName}`);
+          throw new Error(t('Nederīga kategorija', 'Invalid category'));
         }
         
         console.log(`Using table ${tableName} for ticket category: ${ticketData.category_name}`);
         
-        // Create the ticket in the appropriate category table
+        // Create the ticket in the appropriate category table using the validated table name
         const { data, error } = await supabase
-          .from(tableName)
+          .from(tableName as any)
           .insert([{
             description: ticketData.title,
             price: ticketData.price,

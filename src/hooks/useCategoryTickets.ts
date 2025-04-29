@@ -17,17 +17,29 @@ export const useCategoryTickets = (category?: string) => {
         console.log('Fetching tickets for category:', category);
         
         // Determine which table to query based on the category
-        let tableName = 'tickets';
+        let tableName = 'tickets_other';
         
         if (category) {
           tableName = getCategoryTableName(category);
         }
         
+        // Validate table name to match allowed table names in Supabase
+        const validTableNames = [
+          'tickets_theatre', 'tickets_concerts', 'tickets_sports', 
+          'tickets_festivals', 'tickets_cinema', 'tickets_children', 
+          'tickets_travel', 'tickets_giftcards', 'tickets_other'
+        ];
+        
+        if (!validTableNames.includes(tableName)) {
+          console.error(`Invalid table name: ${tableName}`);
+          throw new Error(`Invalid category: ${category}`);
+        }
+        
         console.log(`Using table ${tableName} for category: ${category}`);
         
-        // Query the appropriate table
+        // Query the appropriate table using the validated table name
         const { data: ticketsData, error: fetchError } = await supabase
-          .from(tableName)
+          .from(tableName as any)
           .select('*, categories(name)')
           .eq('status', 'available');
         
@@ -38,7 +50,7 @@ export const useCategoryTickets = (category?: string) => {
         console.log('Fetched tickets:', ticketsData);
         
         // Transform the data to match UserTicket type, handling potential missing fields
-        const formattedTickets: UserTicket[] = (ticketsData || []).map(ticket => {
+        const formattedTickets: UserTicket[] = (ticketsData || []).map((ticket: any) => {
           // Create a base ticket object with properties that should exist in all tables
           const baseTicket: UserTicket = {
             id: String(ticket.id), // Ensure id is a string
