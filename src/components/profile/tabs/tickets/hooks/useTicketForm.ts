@@ -90,12 +90,14 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       }
       
       // Format event date if provided
-      // Fix: Check if eventDate exists and is a Date object before calling toISOString()
-      const formattedEventDate = values.eventDate 
-        ? (values.eventDate instanceof Date 
-            ? values.eventDate.toISOString().split('T')[0] 
-            : values.eventDate)
-        : null;
+      // Fix: Check if eventDate exists but don't use instanceof as it might be a string
+      let formattedEventDate = null;
+      if (values.eventDate) {
+        // Handle eventDate whether it's a string or a Date object
+        formattedEventDate = typeof values.eventDate === 'object' ? 
+          values.eventDate.toISOString().split('T')[0] : 
+          values.eventDate;
+      }
       
       // Add the ticket - ensure all details are logged
       const result = await addTicket({

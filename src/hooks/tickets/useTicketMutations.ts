@@ -36,7 +36,8 @@ export function useTicketMutations(userId?: string) {
         event_date: data.event_date,
         venue: data.venue,
         file_path: data.file_path,
-        status: 'available' as 'available' | 'sold' | 'expired', // Fix: Explicitly cast to the union type
+        // Fix: Properly type the status to match the union type
+        status: 'available' as const,
         event_id: data.event_id || null,
         category_id: data.category_id,
         category_name: data.category_name,
@@ -85,7 +86,7 @@ export function useTicketMutations(userId?: string) {
         category: responseData.category_name || 'Other',
         price: responseData.price,
         event_id: responseData.event_id || null,
-        status: 'available',
+        status: responseData.status as 'available' | 'sold' | 'expired',
         file_path: responseData.file_path || undefined,
         created_at: responseData.created_at || new Date().toISOString(),
         seller_id: responseData.seller_id || undefined,
