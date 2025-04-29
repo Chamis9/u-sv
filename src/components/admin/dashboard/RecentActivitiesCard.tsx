@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, Mail } from "lucide-react";
-import { Activity } from "@/components/admin/activity/types";
+import { Activity, JsonActivity } from "@/components/admin/activity/types";
 import { useAdminTranslations } from "@/hooks/useAdminTranslations";
 import { supabase } from "@/integrations/supabase/client";
 import { ActivityIcon } from "@/components/admin/activity/ActivityIcon";
@@ -28,13 +28,24 @@ export function RecentActivitiesCard({
       setActivitiesLoading(true);
       try {
         // Use RPC call to get recent activities
-        const { data, error } = await supabase.rpc('get_recent_activities', { limit_num: 2 });
+        const { data, error } = await supabase.rpc<JsonActivity>('get_recent_activities', { limit_num: 2 });
         
         if (error) {
           throw error;
         }
         
-        setRecentActivities(data as Activity[] || []);
+        // Parse the JSON data to Activity objects
+        const parsedActivities: Activity[] = data ? data.map((item: any) => ({
+          id: item.id,
+          activity_type: item.activity_type,
+          description: item.description,
+          email: item.email,
+          user_id: item.user_id,
+          metadata: item.metadata,
+          created_at: item.created_at
+        })) : [];
+        
+        setRecentActivities(parsedActivities);
       } catch (err) {
         console.error('Error fetching recent activities:', err);
       } finally {

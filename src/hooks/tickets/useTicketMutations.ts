@@ -62,7 +62,7 @@ export function useTicketMutations(userId?: string) {
         
         // Create the ticket in the appropriate category table using the validated table name
         const { data, error } = await supabase
-          .from(tableName as any)
+          .from(tableName)
           .insert([{
             description: ticketData.title,
             price: ticketData.price,
@@ -124,14 +124,17 @@ export function useTicketMutations(userId?: string) {
           throw new Error(t('Nederīga kategorija', 'Invalid table name'));
         }
         
-        // First get the ticket to check for file_path
+        // First get the ticket to check for file_path and ownership
         const { data: ticketData, error: fetchError } = await supabase
-          .from(tableName as any)
+          .from(tableName)
           .select('file_path, user_id')
           .eq('id', ticketId)
           .single();
         
-        if (fetchError) throw fetchError;
+        if (fetchError) {
+          console.error("Error fetching ticket data:", fetchError);
+          throw fetchError;
+        }
         
         // Verify ownership
         if (ticketData && ticketData.user_id !== userId) {
@@ -145,7 +148,7 @@ export function useTicketMutations(userId?: string) {
         
         // Now delete the ticket
         const { error } = await supabase
-          .from(tableName as any)
+          .from(tableName)
           .delete()
           .eq('id', ticketId);
         

@@ -16,3 +16,13 @@ export interface Activity {
   created_at: string;
 }
 
+// Helper type to parse JSON returned from RPC functions
+export interface JsonActivity {
+  id: string;
+  activity_type: string;
+  description: string;
+  email?: string;
+  user_id?: string;
+  metadata?: Record<string, any> | null;
+  created_at: string;
+}

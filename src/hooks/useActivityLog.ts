@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
-import { Activity } from "@/components/admin/activity/types";
+import { Activity, JsonActivity } from "@/components/admin/activity/types";
 import { useLanguage } from "@/features/language";
+import { PostgrestError } from '@supabase/supabase-js';
 
 export function useActivityLog(pageSize = 10, enabled = true) {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -24,7 +25,7 @@ export function useActivityLog(pageSize = 10, enabled = true) {
     setError(null);
     
     try {
-      // Use RPC call for count to avoid type errors
+      // Use RPC call for count
       const { data: count, error: countError } = await supabase.rpc('get_activity_count');
       
       if (countError) {
@@ -35,11 +36,8 @@ export function useActivityLog(pageSize = 10, enabled = true) {
         setTotalCount(count);
       }
       
-      const from = (currentPage - 1) * pageSize;
-      const to = from + pageSize - 1;
-      
-      // Use RPC call to get activities instead of direct table access
-      const { data, error: activitiesError } = await supabase.rpc('get_activities', {
+      // Use RPC call to get activities
+      const { data, error: activitiesError } = await supabase.rpc<JsonActivity>('get_activities', {
         page_size: pageSize,
         page_number: currentPage
       });
@@ -48,8 +46,18 @@ export function useActivityLog(pageSize = 10, enabled = true) {
         throw activitiesError;
       }
       
-      // Make sure to cast data to Activity[] to avoid type errors
-      setActivities(data as Activity[] || []);
+      // Parse the JSON data to Activity objects
+      const parsedActivities: Activity[] = data ? data.map((item: any) => ({
+        id: item.id,
+        activity_type: item.activity_type,
+        description: item.description,
+        email: item.email,
+        user_id: item.user_id,
+        metadata: item.metadata,
+        created_at: item.created_at
+      })) : [];
+      
+      setActivities(parsedActivities);
     } catch (err) {
       console.error('Error fetching activities:', err);
       setError(t(

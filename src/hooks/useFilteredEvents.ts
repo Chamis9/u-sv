@@ -78,7 +78,7 @@ export const useFilteredEvents = (filters: FilterOptions) => {
         const categoryId = tableName.replace('tickets_', '');
         
         const { data, error } = await supabase
-          .from(tableName as any)
+          .from(tableName)
           .select('*')
           .eq('status', 'available');
           
@@ -89,7 +89,7 @@ export const useFilteredEvents = (filters: FilterOptions) => {
         
         if (data && data.length > 0) {
           // Format tickets to match UserTicket interface
-          const formattedTickets = data.map(ticket => ({
+          const formattedTickets = data.map((ticket: any) => ({
             id: String(ticket.id),
             title: ticket.description || "Ticket",
             description: ticket.description,
