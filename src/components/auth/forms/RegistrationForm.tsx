@@ -11,6 +11,7 @@ import { PasswordInput } from "../PasswordInput";
 import { getRegistrationFormSchema, type RegistrationFormData } from "../schema";
 import { PhoneField } from "./components/PhoneField";
 import { NameFields } from "./components/NameFields";
+import { TermsCheckbox } from "./components/TermsCheckbox";
 
 interface RegistrationFormProps {
   translations: any;
@@ -43,6 +44,16 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
     try {
       console.log("Registration data:", values);
       
+      // Validate terms acceptance
+      if (!values.termsAccepted) {
+        toast({
+          variant: "destructive",
+          description: translations.termsRequired || "You must accept the terms and conditions to register.",
+        });
+        setIsLoading(false);
+        return;
+      }
+      
       // Using signUp with email verification disabled (in Supabase admin)
       const { error } = await supabase.auth.signUp({
         email: values.email,
@@ -52,6 +63,7 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
             first_name: values.firstName,
             last_name: values.lastName,
             phone: values.phoneNumber ? `${values.countryCode}${values.phoneNumber}` : undefined,
+            newsletter: values.newsletter
           },
         },
       });
@@ -61,9 +73,22 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
         if (error.message.includes('Email signups are disabled') || error.message.includes('email_provider_disabled')) {
           toast({
             variant: "destructive",
-            description: "Email registration is currently disabled in the system. Please contact the administrator.",
+            description: translations.emailSignupsDisabled || "Email registration is currently disabled in the system. Please contact the administrator.",
           });
-        } else {
+        } 
+        else if (error.message.includes('rate limit') || error.message.toLowerCase().includes('rate_limit') || error.message.includes('429')) {
+          toast({
+            variant: "destructive",
+            description: translations.emailRateLimitExceeded || "Email rate limit exceeded. Please try again later.",
+          });
+        }
+        else if (error.message.includes('User already registered')) {
+          toast({
+            variant: "destructive",
+            description: translations.userAlreadyRegistered || "This email is already registered. Please use the login form instead.",
+          });
+        }
+        else {
           toast({
             variant: "destructive",
             description: error.message,
@@ -104,6 +129,11 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
         />
 
         <PhoneField form={form} translations={translations} />
+
+        <TermsCheckbox 
+          form={form} 
+          label={translations.terms || "I agree to the terms and conditions"} 
+        />
         
         <div className="flex justify-end">
           <Button type="submit" disabled={isLoading}>

@@ -29,6 +29,7 @@ export const registrationFormTranslations = {
     confirmPassword: "Apstipriniet paroli",
     phoneNumber: "Telefona numurs",
     terms: "Es piekrītu lietošanas noteikumiem",
+    termsRequired: "Jums ir jāpiekrīt lietošanas noteikumiem, lai reģistrētos",
     register: "Reģistrēties",
     registrationLoading: "Reģistrējos...",
     registrationSuccessful: "Reģistrācija veiksmīga! Lūdzu pārbaudiet savu e-pastu, lai apstiprinātu to.",
@@ -36,6 +37,8 @@ export const registrationFormTranslations = {
     languageCode: "lv",
     emailRateLimitExceeded: "E-pasta sūtīšanas limits ir pārsniegts. Lūdzu, mēģiniet vēlāk.",
     manualConfirmation: "Reģistrācija veiksmīga! Gaidiet apstiprinājumu no administratora.",
+    emailSignupsDisabled: "E-pasta reģistrācija ir atspējota. Lūdzu, sazinieties ar administratoru.",
+    userAlreadyRegistered: "Šis e-pasts jau ir reģistrēts. Lūdzu, izmantojiet pieslēgšanās formu.",
   },
   en: {
     firstName: "First Name",
@@ -45,6 +48,7 @@ export const registrationFormTranslations = {
     confirmPassword: "Confirm Password",
     phoneNumber: "Phone Number",
     terms: "I agree to the terms and conditions",
+    termsRequired: "You must accept the terms and conditions to register",
     register: "Register",
     registrationLoading: "Registering...",
     registrationSuccessful: "Registration successful! Please check your email to confirm it.",
@@ -52,6 +56,8 @@ export const registrationFormTranslations = {
     languageCode: "en",
     emailRateLimitExceeded: "Email rate limit exceeded. Please try again later.",
     manualConfirmation: "Registration successful! Please wait for admin confirmation.",
+    emailSignupsDisabled: "Email registration is disabled. Please contact the administrator.",
+    userAlreadyRegistered: "This email is already registered. Please use the login form instead.",
   },
 };
 
