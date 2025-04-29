@@ -3,7 +3,7 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UseFormReturn } from "react-hook-form";
-import { RegistrationFormData } from "@/hooks/useRegistrationForm";
+import { RegistrationFormData } from "../hooks/useRegistrationForm";
 
 interface PasswordFieldsProps {
   form: UseFormReturn<RegistrationFormData>;
@@ -55,3 +55,4 @@ export const PasswordFields = ({
     </>
   );
 };
+

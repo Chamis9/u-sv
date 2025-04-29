@@ -15,7 +15,6 @@ import { useNavigate } from "react-router-dom";
 import { LoginForm } from "./auth/forms/LoginForm";
 import { RegistrationForm } from "./auth/forms/RegistrationForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { loginFormTranslations, registrationFormTranslations } from "./auth/translations";
 
 export function Header() {
   const navigationLinks = getNavigationLinks();
@@ -36,9 +35,51 @@ export function Header() {
     navigate('/');
   };
   
-  // Get the translated values from the imported translation files
-  const loginTranslations = loginFormTranslations[currentLanguage.code] || loginFormTranslations.en;
-  const regTranslations = registrationFormTranslations[currentLanguage.code] || registrationFormTranslations.en;
+  const translations = {
+    login: t("Ieiet", "Login", "Войти"),
+    loginLoading: t("Ieeja...", "Logging in...", "Вход..."),
+    register: t("Reģistrēties", "Register", "Регистрация"),
+    registrationLoading: t("Reģistrējas...", "Registering...", "Регистрация..."),
+    registrationSuccess: t(
+      "Reģistrācija veiksmīga! Lūdzu pārbaudiet e-pastu, lai apstiprinātu kontu.",
+      "Registration successful! Please check your email to confirm your account.",
+      "Регистрация успешна! Пожалуйста, проверьте электронную почту, чтобы подтвердить аккаунт."
+    ),
+    registrationError: t(
+      "Kļūda reģistrācijas laikā. Lūdzu, mēģiniet vēlreiz.",
+      "Error during registration. Please try again.",
+      "Ошибка при регистрации. Пожалуйста, попробуйте снова."
+    ),
+    invalidCredentials: t(
+      "Nepareizs e-pasts vai parole.",
+      "Invalid email or password.",
+      "Неверный адрес электронной почты или пароль."
+    ),
+    email: t("E-pasta adrese", "Email address", "Электронная почта"),
+    password: t("Parole", "Password", "Пароль"),
+    confirmPassword: t("Apstiprināt paroli", "Confirm password", "Подтвердить пароль"),
+    firstName: t("Vārds", "First name", "Имя"),
+    lastName: t("Uzvārds", "Last name", "Фамилия"),
+    phoneNumber: t("Tālrunis", "Phone number", "Номер телефона"),
+    optional: t("(neobligāti)", "(optional)", "(необязательно)"),
+    countryCode: t("Valsts kods", "Country code", "Код страны"),
+    forgotPassword: t("Aizmirsu paroli", "Forgot password", "Забыл пароль"),
+    resetPasswordSent: t(
+      "Paroles atjaunošanas saite nosūtīta uz jūsu e-pastu.",
+      "Password reset link sent to your email.",
+      "Ссылка для сброса пароля отправлена на вашу почту."
+    ),
+    passwordsDoNotMatch: t(
+      "Paroles nesakrīt",
+      "Passwords do not match",
+      "Пароли не совпадают"
+    ),
+    passwordRequirements: t(
+      "Parolei jābūt vismaz 6 simboliem",
+      "Password must be at least 6 characters",
+      "Пароль должен содержать не менее 6 символов"
+    ),
+  };
   
   return (
     <header className="fixed top-0 left-0 right-0 z-50 py-3 md:py-4 px-4 md:px-6 bg-black/40 backdrop-blur-sm">
@@ -113,15 +154,16 @@ export function Header() {
                   
                   <TabsContent value="login" className="p-4">
                     <LoginForm 
-                      translations={loginTranslations} 
+                      translations={translations} 
                       onClose={() => setKeepHoverOpen(false)} 
                     />
                   </TabsContent>
                   
                   <TabsContent value="register" className="p-4">
                     <RegistrationForm 
-                      translations={regTranslations}
-                      onClose={() => setKeepHoverOpen(false)}
+                      translations={translations} 
+                      languageCode={currentLanguage.code} 
+                      onClose={() => setKeepHoverOpen(false)} 
                     />
                   </TabsContent>
                 </Tabs>

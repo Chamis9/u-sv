@@ -1,71 +1,56 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { EmailInput } from "../EmailInput";
-import { PasswordInput } from "../PasswordInput";
-import { getRegistrationFormSchema, type RegistrationFormData } from "../schema";
-import { PhoneField } from "./components/PhoneField";
 import { NameFields } from "./components/NameFields";
-import { TermsCheckbox } from "./components/TermsCheckbox";
+import { PhoneField } from "./components/PhoneField";
+import { PasswordFields } from "./components/PasswordFields";
+import { getRegistrationFormSchema, type RegistrationFormData } from "../schema";
 
 interface RegistrationFormProps {
   translations: any;
+  languageCode: string;
   onClose: () => void;
 }
 
-export function RegistrationForm({ translations, onClose }: RegistrationFormProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [rateLimitError, setRateLimitError] = useState(false);
+export function RegistrationForm({ translations, languageCode, onClose }: RegistrationFormProps) {
+  const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
 
-  const schema = getRegistrationFormSchema(translations.languageCode || "en");
   const form = useForm<RegistrationFormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(getRegistrationFormSchema(languageCode)),
     defaultValues: {
-      firstName: "",
-      lastName: "",
       email: "",
       password: "",
       confirmPassword: "",
-      countryCode: "+371", // Latvia country code
+      firstName: "",
+      lastName: "",
+      countryCode: "+371",
       phoneNumber: "",
-      termsAccepted: false,
-      newsletter: false,
     },
   });
 
   const onSubmit = async (values: RegistrationFormData) => {
-    if (rateLimitError) {
-      toast({
-        variant: "destructive",
-        description: translations.waitToRegister || "Please wait before attempting to register again.",
-      });
-      return;
-    }
-
     setIsLoading(true);
     
     try {
-      console.log("Registration data:", values);
-      
-      // Validate terms acceptance
-      if (!values.termsAccepted) {
-        toast({
-          variant: "destructive",
-          description: translations.termsRequired || "You must accept the terms and conditions to register.",
-        });
-        setIsLoading(false);
-        return;
+      const phoneNumber = values.phoneNumber 
+        ? `${values.countryCode}${values.phoneNumber}` 
+        : null;
+
+      const savedEmails = localStorage.getItem('globalPreviousEmails');
+      const emails = savedEmails ? JSON.parse(savedEmails) : [];
+      if (!emails.includes(values.email)) {
+        emails.unshift(values.email);
+        const updatedEmails = emails.slice(0, 5);
+        localStorage.setItem('globalPreviousEmails', JSON.stringify(updatedEmails));
       }
-      
-      // Using signUp with email verification disabled (in Supabase admin)
+
       const { error } = await supabase.auth.signUp({
         email: values.email,
         password: values.password,
@@ -73,101 +58,105 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
           data: {
             first_name: values.firstName,
             last_name: values.lastName,
-            phone: values.phoneNumber ? `${values.countryCode}${values.phoneNumber}` : undefined,
-            newsletter: values.newsletter
-          },
-        },
+            phone: phoneNumber,
+          }
+        }
       });
 
       if (error) {
-        // Check for specific error codes
-        if (error.message.includes('Email signups are disabled') || error.message.includes('email_provider_disabled')) {
-          toast({
-            variant: "destructive",
-            description: translations.emailSignupsDisabled || "Email registration is currently disabled in the system. Please contact the administrator.",
-          });
-        } 
-        else if (error.message.includes('rate limit') || error.message.toLowerCase().includes('rate_limit') || error.message.includes('429')) {
-          setRateLimitError(true);
-          
-          // Set a timer to reset the rate limit error after 5 minutes
-          setTimeout(() => {
-            setRateLimitError(false);
-          }, 5 * 60 * 1000); // 5 minutes
-          
-          toast({
-            variant: "destructive",
-            description: translations.emailRateLimitExceeded || "Email rate limit exceeded. Please try again later.",
-          });
-        }
-        else if (error.message.includes('User already registered')) {
-          toast({
-            variant: "destructive",
-            description: translations.userAlreadyRegistered || "This email is already registered. Please use the login form instead.",
-          });
-        }
-        else {
-          toast({
-            variant: "destructive",
-            description: error.message,
-          });
-        }
-        return;
+        toast({
+          variant: "destructive",
+          description: translations.registrationError,
+        });
+      } else {
+        toast({
+          description: translations.registrationSuccess,
+        });
+        if (onClose) onClose();
       }
-
-      // Success message - updated for manual confirmation flow
-      toast({
-        description: translations.manualConfirmation || "Registration successful! Please wait for admin confirmation.",
-      });
-      
-      if (onClose) onClose();
-    } catch (error) {
-      console.error("Registration error:", error);
+    } catch (err) {
+      console.error("Registration error:", err);
       toast({
         variant: "destructive",
-        description: translations.genericError || "Registration error. Please try again.",
+        description: translations.registrationError,
       });
     } finally {
       setIsLoading(false);
     }
   };
 
+  React.useEffect(() => {
+    let observer: MutationObserver | null = null;
+    
+    const handleAutoFill = () => {
+      const formElement = document.querySelector('form');
+      
+      if (formElement && !observer) {
+        observer = new MutationObserver((mutations) => {
+          const autofilled = document.querySelectorAll('input:-webkit-autofill');
+          if (autofilled.length > 0) {
+            setTimeout(() => {
+              const formFields = form.getValues();
+              Object.keys(formFields).forEach((key) => {
+                if (formFields[key]) {
+                  form.setValue(key as any, formFields[key]);
+                }
+              });
+              
+              // Stop propagation of all events to prevent the hover card from closing
+              const stopEvents = (e: Event) => {
+                e.stopPropagation();
+              };
+              
+              formElement.addEventListener('click', stopEvents as EventListener, true);
+              formElement.addEventListener('focus', stopEvents as EventListener, true);
+              
+              setTimeout(() => {
+                formElement.removeEventListener('click', stopEvents as EventListener, true);
+                formElement.removeEventListener('focus', stopEvents as EventListener, true);
+              }, 1000);
+            }, 100);
+          }
+        });
+        
+        observer.observe(formElement, {
+          subtree: true,
+          childList: true,
+          attributeFilter: ['style', 'class'],
+          attributes: true
+        });
+      }
+    };
+    
+    handleAutoFill();
+    
+    return () => {
+      if (observer) {
+        observer.disconnect();
+      }
+    };
+  }, [form]);
+
   return (
     <Form {...form}>
-      {rateLimitError && (
-        <Alert variant="destructive" className="mb-4">
-          <ExclamationTriangleIcon className="h-4 w-4" />
-          <AlertTitle>Rate Limit Exceeded</AlertTitle>
-          <AlertDescription>
-            {translations.emailRateLimitExceeded || "Email rate limit exceeded. Please try again later or contact support."}
-          </AlertDescription>
-        </Alert>
-      )}
-      
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form 
+        onSubmit={form.handleSubmit(onSubmit)} 
+        className="space-y-4"
+        onFocus={(e) => {
+          e.stopPropagation();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <NameFields form={form} translations={translations} />
-        
         <EmailInput form={form} label={translations.email} />
-        
-        <PasswordInput form={form} label={translations.password} />
-        <PasswordInput
-          form={form}
-          name="confirmPassword"
-          label={translations.confirmPassword}
-        />
-
         <PhoneField form={form} translations={translations} />
-
-        <TermsCheckbox 
-          form={form} 
-          label={translations.terms || "I agree to the terms and conditions"} 
-        />
+        <PasswordFields form={form} translations={translations} />
         
-        <div className="flex justify-end">
-          <Button type="submit" disabled={isLoading || rateLimitError}>
-            {isLoading ? translations.registrationLoading : translations.register}
-          </Button>
-        </div>
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? translations.registrationLoading : translations.register}
+        </Button>
       </form>
     </Form>
   );

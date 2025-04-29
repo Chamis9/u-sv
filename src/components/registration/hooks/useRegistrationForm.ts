@@ -14,7 +14,6 @@ export interface RegistrationFormData {
   confirmPassword: string;
   countryCode: string;
   phoneNumber: string;
-  termsAccepted: boolean;
   newsletter: boolean;
 }
 
@@ -27,10 +26,9 @@ export const useRegistrationForm = () => {
     defaultValues: {
       countryCode: "+371",
       phoneNumber: "",
-      newsletter: false,
-      termsAccepted: false
+      newsletter: false
     },
-    mode: "onChange"
+    mode: "onSubmit"
   });
 
   const passwordValidation = {
@@ -84,7 +82,7 @@ export const useRegistrationForm = () => {
         }
       }
 
-      // Proceed with registration if validation passes
+      // Register user with Supabase
       const { error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
