@@ -22,7 +22,7 @@ export const useCategoryTickets = (category?: string) => {
           .eq('status', 'available');
           
         if (category && categoryId) {
-          // Filter by category if provided
+          // Filter by category if provided - make sure to filter by the right field
           query = query.eq('category_id', categoryId);
         }
         

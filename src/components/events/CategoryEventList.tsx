@@ -30,6 +30,9 @@ export function CategoryEventList() {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   
+  // Get category ID for filtering tickets
+  const categoryId = category ? getCategoryIdFromName(category) : '';
+  
   const {
     allCategoryTickets,
     isLoading: ticketsLoading,
@@ -74,11 +77,12 @@ export function CategoryEventList() {
     return matchesSearch && matchesDateRange;
   }) || [];
 
-  // Filter tickets based on search query
+  // Filter tickets based on search query and category
   const filteredTickets = allCategoryTickets.filter(ticket => {
-    // Skip tickets that aren't for this category
-    if (ticket.category !== categoryId) return false;
+    // Only show tickets for this category
+    if (categoryId && ticket.category !== categoryId) return false;
     
+    // Text search filter
     return searchQuery
       ? ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (ticket.description && ticket.description.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -94,7 +98,6 @@ export function CategoryEventList() {
   }
 
   // Determine category display name
-  const categoryId = category ? getCategoryIdFromName(category) : '';
   const categoryDisplayName = category ? getCategoryDisplayName(categoryId, currentLanguage.code) : '';
   
   // Format the date range for display
