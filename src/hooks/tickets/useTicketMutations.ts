@@ -1,194 +1,91 @@
-
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { Activity, JsonActivity, convertJsonToActivity } from "@/components/admin/activity/types";
 import { useLanguage } from "@/features/language";
-import { AddTicketData } from "./types";
-import { useTicketStorage } from "./useTicketStorage";
-import { getCategoryTableName } from "@/components/profile/tabs/tickets/services/CategoryService";
-import { PostgrestError } from "@supabase/supabase-js";
+import { Json } from "@/integrations/supabase/types";
+import { PostgrestError } from '@supabase/supabase-js';
 
-export function useTicketMutations(userId?: string) {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
+export function useActivityLog(pageSize = 10, enabled = true) {
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { currentLanguage } = useLanguage();
-  const [loading, setLoading] = useState(false);
-  const { deleteTicketFile } = useTicketStorage();
   
-  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
-  
-  // Add a new ticket
-  const addTicketMutation = useMutation({
-    mutationFn: async (ticketData: AddTicketData) => {
-      setLoading(true);
-      
-      try {
-        // Get the current authenticated user
-        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) throw sessionError;
-        
-        if (!sessionData.session || !sessionData.session.user) {
-          throw new Error(t('Nepieciešama autentifikācija', 'Authentication required'));
-        }
-        
-        // Ensure the user_id matches the authenticated user's id
-        const authenticatedUserId = sessionData.session.user.id;
-        if (ticketData.user_id !== authenticatedUserId) {
-          console.warn("User ID mismatch, using authenticated user ID");
-          ticketData.user_id = authenticatedUserId;
-        }
-        
-        console.log("Adding ticket:", ticketData);
-        
-        // Determine which ticket table to use based on category
-        const tableName = ticketData.category_name ? 
-          getCategoryTableName(ticketData.category_name) : 
-          'tickets_other';
-        
-        // Validate table name to match allowed table names in Supabase
-        const validTableNames = [
-          'tickets_theatre', 'tickets_concerts', 'tickets_sports', 
-          'tickets_festivals', 'tickets_cinema', 'tickets_children', 
-          'tickets_travel', 'tickets_giftcards', 'tickets_other'
-        ];
-        
-        if (!validTableNames.includes(tableName)) {
-          console.error(`Invalid table name: ${tableName}`);
-          throw new Error(t('Nederīga kategorija', 'Invalid category'));
-        }
-        
-        console.log(`Using table ${tableName} for ticket category: ${ticketData.category_name}`);
-        
-        // Create the ticket in the appropriate category table using type assertion
-        const { data, error } = await supabase
-          .from(tableName as any)
-          .insert([{
-            description: ticketData.title,
-            price: ticketData.price,
-            user_id: ticketData.user_id,
-            file_path: ticketData.file_path,
-            seat_info: ticketData.seat_info,
-            status: 'available',
-            category_id: ticketData.category_id,
-            event_id: ticketData.event_id,
-            event_date: ticketData.event_date,
-            venue: ticketData.venue
-          }])
-          .select()
-          .single();
-        
-        if (error) {
-          console.error(`Error creating ticket in ${tableName}:`, error);
-          throw error;
-        }
-        
-        console.log("Ticket created successfully:", data);
-        return data;
-      } finally {
-        setLoading(false);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-tickets', userId] });
-      toast({
-        title: t('Biļete pievienota', 'Ticket Added'),
-        description: t('Biļete ir veiksmīgi pievienota pārdošanai', 'Your ticket has been successfully added for sale'),
-      });
-    },
-    onError: (error: any) => {
-      console.error('Error adding ticket:', error);
-      toast({
-        variant: "destructive",
-        title: t('Kļūda', 'Error'),
-        description: error?.message || t('Neizdevās pievienot biļeti', 'Failed to add ticket'),
-      });
-    }
-  });
-  
-  // Delete a ticket
-  const deleteTicketMutation = useMutation({
-    mutationFn: async (params: { ticketId: string, tableName: string }) => {
-      const { ticketId, tableName } = params;
-      setLoading(true);
-      
-      try {
-        // Validate table name
-        const validTableNames = [
-          'tickets_theatre', 'tickets_concerts', 'tickets_sports', 
-          'tickets_festivals', 'tickets_cinema', 'tickets_children', 
-          'tickets_travel', 'tickets_giftcards', 'tickets_other'
-        ];
-        
-        if (!validTableNames.includes(tableName)) {
-          throw new Error(t('Nederīga kategorija', 'Invalid table name'));
-        }
-        
-        // First get the ticket to check for file_path and ownership
-        const { data: ticketData, error: fetchError } = await supabase
-          .from(tableName as any)
-          .select('file_path, user_id')
-          .eq('id', ticketId)
-          .single();
-        
-        if (fetchError) {
-          console.error("Error fetching ticket data:", fetchError);
-          throw fetchError;
-        }
-        
-        // Add extra safety checks to handle type issues
-        const ticketInfo = ticketData as any;
-        
-        // Verify ownership
-        if (ticketInfo && ticketInfo.user_id !== userId) {
-          throw new Error(t('Nevar dzēst cita lietotāja biļeti', 'Cannot delete another user\'s ticket'));
-        }
-        
-        // If there's a file associated with the ticket, delete it
-        if (ticketInfo && ticketInfo.file_path) {
-          await deleteTicketFile(ticketInfo.file_path);
-        }
-        
-        // Now delete the ticket
-        const { error } = await supabase
-          .from(tableName as any)
-          .delete()
-          .eq('id', ticketId);
-        
-        if (error) throw error;
-        
-        console.log("Ticket deleted successfully:", ticketId);
-        return true;
-      } finally {
-        setLoading(false);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-tickets', userId] });
-      toast({
-        title: t('Biļete dzēsta', 'Ticket Deleted'),
-        description: t('Biļete ir veiksmīgi dzēsta', 'Your ticket has been successfully deleted'),
-      });
-    },
-    onError: (error: any) => {
-      console.error('Error deleting ticket:', error);
-      toast({
-        variant: "destructive",
-        title: t('Kļūda', 'Error'),
-        description: error?.message || t('Neizdevās dzēst biļeti', 'Failed to delete ticket'),
-      });
-    }
-  });
-  
-  // Simplified interface for external callers
-  const deleteTicket = (ticketId: string, tableName = 'tickets_other') => {
-    return deleteTicketMutation.mutate({ ticketId, tableName });
+  const t = (lvText: string, enText: string) => {
+    if (currentLanguage.code === 'lv') return lvText;
+    return enText;
   };
   
+  const fetchActivities = async () => {
+    if (!enabled) return;
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Use RPC call for count with proper parameters
+      const { data: countData, error: countError } = await supabase.rpc('get_activity_count');
+      
+      if (countError) {
+        throw countError;
+      }
+      
+      // Ensure countData is a number before setting state
+      if (typeof countData === 'number') {
+        setTotalCount(countData);
+      }
+      
+      // Use RPC call to get activities with proper parameters
+      const { data, error: activitiesError } = await supabase.rpc('get_activities', {
+        page_size: pageSize,
+        page_number: currentPage
+      });
+      
+      if (activitiesError) {
+        throw activitiesError;
+      }
+      
+      // Parse the JSON data to Activity objects
+      if (data && Array.isArray(data)) {
+        const parsedActivities: Activity[] = (data as JsonActivity[]).map(convertJsonToActivity);
+        setActivities(parsedActivities);
+      } else {
+        setActivities([]);
+      }
+    } catch (err) {
+      console.error('Error fetching activities:', err);
+      setError(t(
+        'Neizdevās ielādēt aktivitātes. Lūdzu, mēģiniet vēlreiz.', 
+        'Failed to load activities. Please try again.'
+      ));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Fetch activities when enabled, currentPage changes
+  useEffect(() => {
+    if (enabled) {
+      fetchActivities();
+    }
+  }, [enabled, currentPage]);
+  
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+  
+  const totalPages = Math.ceil(totalCount / pageSize);
+  
   return {
-    loading,
-    addTicket: addTicketMutation.mutate,
-    deleteTicket
+    activities,
+    isLoading,
+    error,
+    totalCount,
+    currentPage,
+    totalPages,
+    handlePageChange,
+    refresh: fetchActivities
   };
 }

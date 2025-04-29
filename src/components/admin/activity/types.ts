@@ -26,3 +26,11 @@ export interface JsonActivity {
   metadata?: Json | null;
   created_at: string;
 }
+
+// Function to convert JsonActivity to Activity
+export function convertJsonToActivity(json: JsonActivity): Activity {
+  return {
+    ...json,
+    metadata: json.metadata as Record<string, any> | null
+  };
+}
