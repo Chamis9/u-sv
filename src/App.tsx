@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -17,12 +18,12 @@ import Contact from "./pages/Contact";
 import Events from "./pages/Events";
 import Tickets from "./pages/Tickets";
 import AboutUs from "./pages/AboutUs";
+import Profile from "./pages/Profile";
 
 // Lazy load other pages for better performance
 const NotFound = lazy(() => import("./pages/NotFound"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Admin = lazy(() => import("./pages/Admin"));
-const Profile = lazy(() => import("./pages/Profile"));
 
 // Import the CategoryEventList component
 import { CategoryEventList } from "./components/events/CategoryEventList";
