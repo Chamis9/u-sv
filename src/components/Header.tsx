@@ -1,9 +1,10 @@
+
 import { LanguageSelector } from "@/features/language";
 import { Logo } from "./header/Logo";
 import { Navigation, getNavigationLinks } from "./header/Navigation";
 import { ThemeToggle } from "./theme/ThemeToggle";
 import { MobileMenu } from "./header/MobileMenu";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "./ui/hover-card";
 import { UserCircle } from "lucide-react";
@@ -18,10 +19,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 export function Header() {
   const navigationLinks = getNavigationLinks();
   const { currentLanguage } = useLanguage();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isAuthLoading, logout } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>("login");
   const [keepHoverOpen, setKeepHoverOpen] = useState(false);
+  
+  // Debug log for authentication state
+  useEffect(() => {
+    console.log("Header auth state:", { isAuthenticated, isAuthLoading, user });
+  }, [isAuthenticated, isAuthLoading, user]);
 
   const t = (lvText: string, enText: string, ruText?: string) => {
     if (currentLanguage.code === 'lv') return lvText;
@@ -92,14 +98,16 @@ export function Header() {
         
         <div className="flex items-center gap-2 md:gap-4 text-white">
           <ThemeToggle />
-          {isAuthenticated && user ? (
+          {isAuthLoading ? (
+            <div className="h-8 w-8 rounded-full animate-pulse bg-gray-500/30" />
+          ) : isAuthenticated && user ? (
             <UserHoverCard 
               user={user}
               onLogout={handleLogout}
               onLinkClick={() => {}}
             />
           ) : (
-            <HoverCard open={keepHoverOpen}>
+            <HoverCard open={keepHoverOpen} onOpenChange={setKeepHoverOpen}>
               <HoverCardTrigger asChild>
                 <Button
                   variant="ghost"

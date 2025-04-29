@@ -27,6 +27,13 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const auth = useSupabaseAuth();
+  
+  console.log("Auth provider state:", {
+    isAuthenticated: auth.isAuthenticated,
+    isAuthLoading: auth.isAuthLoading,
+    userEmail: auth.userEmail,
+    user: auth.user ? `${auth.user.first_name} ${auth.user.last_name}` : null
+  });
 
   return (
     <AuthContext.Provider value={auth}>
