@@ -38,6 +38,7 @@ export function LoginForm({ translations, onClose }: LoginFormProps) {
 
     setIsLoading(true);
     try {
+      console.log("Attempting password reset for:", email);
       const { error } = await supabase.auth.resetPasswordForEmail(email);
       
       if (!error) {
@@ -73,6 +74,7 @@ export function LoginForm({ translations, onClose }: LoginFormProps) {
       }
 
       // Attempt to sign in
+      console.log("Attempting to sign in with email:", values.email);
       const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,

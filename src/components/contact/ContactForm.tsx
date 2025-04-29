@@ -59,7 +59,9 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
+    
     try {
+      console.log("Submitting contact form:", data);
       const { data: responseData, error } = await supabase.functions.invoke('send-user-email', {
         body: {
           name: data.name,
@@ -73,6 +75,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
         throw new Error(error.message || t.errorMessage);
       }
       
+      console.log("Contact form submission response:", responseData);
       toast.success(t.successMessage);
       
       // Completely reset the form with clean state
