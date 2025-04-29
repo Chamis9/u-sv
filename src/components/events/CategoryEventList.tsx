@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -82,12 +81,20 @@ export function CategoryEventList() {
 
   const purchaseTicket = async (ticket: UserTicket) => {
     try {
+      // Get the current user's ID
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
+      
+      if (!userId) {
+        throw new Error("No authenticated user found");
+      }
+
       // Update the ticket status in the database
       const { error } = await supabase
         .from('tickets')
         .update({ 
           status: 'sold', 
-          buyer_id: supabase.auth.getUser().then(({ data }) => data.user?.id) 
+          buyer_id: userId 
         })
         .eq('id', ticket.id);
 
@@ -115,7 +122,7 @@ export function CategoryEventList() {
         description: currentLanguage.code === 'lv' 
           ? "Biļete ir veiksmīgi pievienota jūsu kontam" 
           : "The ticket has been successfully added to your account",
-        variant: "success"
+        variant: "default"
       });
     } catch (error) {
       console.error("Error purchasing ticket:", error);
