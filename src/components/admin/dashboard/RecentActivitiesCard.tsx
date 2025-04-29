@@ -28,26 +28,31 @@ export function RecentActivitiesCard({
       setActivitiesLoading(true);
       try {
         // Use RPC call to get recent activities
-        const { data, error } = await supabase.rpc<JsonActivity>('get_recent_activities', { limit_num: 2 });
+        const { data, error } = await supabase.rpc<JsonActivity[]>('get_recent_activities', { limit_num: 2 });
         
         if (error) {
           throw error;
         }
         
         // Parse the JSON data to Activity objects
-        const parsedActivities: Activity[] = data ? data.map((item: any) => ({
-          id: item.id,
-          activity_type: item.activity_type,
-          description: item.description,
-          email: item.email,
-          user_id: item.user_id,
-          metadata: item.metadata,
-          created_at: item.created_at
-        })) : [];
-        
-        setRecentActivities(parsedActivities);
+        if (data && Array.isArray(data)) {
+          const parsedActivities: Activity[] = data.map((item: any) => ({
+            id: item.id,
+            activity_type: item.activity_type,
+            description: item.description,
+            email: item.email,
+            user_id: item.user_id,
+            metadata: item.metadata,
+            created_at: item.created_at
+          }));
+          
+          setRecentActivities(parsedActivities);
+        } else {
+          setRecentActivities([]);
+        }
       } catch (err) {
         console.error('Error fetching recent activities:', err);
+        setRecentActivities([]);
       } finally {
         setActivitiesLoading(false);
       }

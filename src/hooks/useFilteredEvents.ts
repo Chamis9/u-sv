@@ -77,36 +77,41 @@ export const useFilteredEvents = (filters: FilterOptions) => {
       for (const tableName of ticketTables) {
         const categoryId = tableName.replace('tickets_', '');
         
-        const { data, error } = await supabase
-          .from(tableName)
-          .select('*')
-          .eq('status', 'available');
+        try {
+          // Use type assertion to satisfy TypeScript
+          const { data, error } = await supabase
+            .from(tableName as any)
+            .select('*')
+            .eq('status', 'available');
+            
+          if (error) {
+            console.error(`Error fetching available tickets from ${tableName}:`, error);
+            continue;
+          }
           
-        if (error) {
-          console.error(`Error fetching available tickets from ${tableName}:`, error);
-          continue;
-        }
-        
-        if (data && data.length > 0) {
-          // Format tickets to match UserTicket interface
-          const formattedTickets = data.map((ticket: any) => ({
-            id: String(ticket.id),
-            title: ticket.description || "Ticket",
-            description: ticket.description,
-            category: categoryId,
-            price: ticket.price,
-            event_id: ticket.event_id,
-            status: 'available' as const,
-            file_path: ticket.file_path,
-            created_at: ticket.created_at,
-            seller_id: ticket.seller_id,
-            buyer_id: ticket.buyer_id,
-            owner_id: ticket.owner_id,
-            event_date: ticket.event_date,
-            venue: ticket.venue
-          }));
-          
-          ticketsByCategory[categoryId] = formattedTickets;
+          if (data && data.length > 0) {
+            // Format tickets to match UserTicket interface
+            const formattedTickets = data.map((ticket: any) => ({
+              id: String(ticket.id),
+              title: ticket.description || "Ticket",
+              description: ticket.description,
+              category: categoryId,
+              price: ticket.price,
+              event_id: ticket.event_id,
+              status: 'available' as const,
+              file_path: ticket.file_path,
+              created_at: ticket.created_at,
+              seller_id: ticket.seller_id,
+              buyer_id: ticket.buyer_id,
+              owner_id: ticket.owner_id,
+              event_date: ticket.event_date,
+              venue: ticket.venue
+            }));
+            
+            ticketsByCategory[categoryId] = formattedTickets;
+          }
+        } catch (tableError) {
+          console.error(`Error processing table ${tableName}:`, tableError);
         }
       }
 

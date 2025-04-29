@@ -23,6 +23,6 @@ export interface JsonActivity {
   description: string;
   email?: string;
   user_id?: string;
-  metadata?: Record<string, any> | null;
+  metadata?: Json | null;
   created_at: string;
 }

@@ -1,8 +1,7 @@
 
-import { useState, useEffect } from 'react';
-import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
 import { getCategoryTableName } from "@/components/profile/tabs/tickets/services/CategoryService";
+import { supabase } from "@/integrations/supabase/client";
 
 export const useEventTickets = async (eventId?: string) => {
   if (!eventId) {
@@ -21,37 +20,43 @@ export const useEventTickets = async (eventId?: string) => {
     
     // Query each table for tickets with this event ID
     for (const tableName of ticketTables) {
-      const { data, error } = await supabase
-        .from(tableName)
-        .select('*, categories(name)')
-        .eq('status', 'available')
-        .eq('event_id', eventId);
-      
-      if (error) {
-        console.error(`Error fetching tickets from ${tableName}:`, error);
-        continue;
-      }
-      
-      if (data && data.length > 0) {
-        // Transform to UserTicket format
-        const formattedTickets: UserTicket[] = data.map((ticket: any) => ({
-          id: String(ticket.id),
-          title: ticket.description || "Ticket",
-          description: ticket.description || undefined,
-          category: ticket.categories?.name || getCategoryNameFromTable(tableName),
-          price: ticket.price,
-          event_id: ticket.event_id,
-          status: 'available' as const,
-          file_path: ticket.file_path,
-          created_at: ticket.created_at,
-          seller_id: ticket.seller_id,
-          buyer_id: ticket.buyer_id,
-          owner_id: ticket.owner_id,
-          event_date: ticket.event_date || null,
-          venue: ticket.venue || null
-        }));
+      try {
+        // Use type assertion to satisfy TypeScript
+        const { data, error } = await supabase
+          .from(tableName as any)
+          .select('*, categories(name)')
+          .eq('status', 'available')
+          .eq('event_id', eventId);
         
-        allTickets = [...allTickets, ...formattedTickets];
+        if (error) {
+          console.error(`Error fetching tickets from ${tableName}:`, error);
+          continue;
+        }
+        
+        if (data && data.length > 0) {
+          // Transform to UserTicket format
+          const formattedTickets: UserTicket[] = data.map((ticket: any) => ({
+            id: String(ticket.id),
+            title: ticket.description || "Ticket",
+            description: ticket.description || undefined,
+            category: ticket.categories?.name || getCategoryNameFromTable(tableName),
+            price: ticket.price,
+            event_id: ticket.event_id,
+            status: 'available' as const,
+            file_path: ticket.file_path,
+            created_at: ticket.created_at,
+            seller_id: ticket.seller_id,
+            buyer_id: ticket.buyer_id,
+            owner_id: ticket.owner_id,
+            event_date: ticket.event_date || null,
+            venue: ticket.venue || null
+          }));
+          
+          allTickets = [...allTickets, ...formattedTickets];
+        }
+      } catch (tableError) {
+        console.error(`Error processing table ${tableName}:`, tableError);
+        // Continue to next table if one fails
       }
     }
     

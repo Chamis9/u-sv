@@ -61,8 +61,9 @@ export function useTicketMutations(userId?: string) {
         console.log(`Using table ${tableName} for ticket category: ${ticketData.category_name}`);
         
         // Create the ticket in the appropriate category table using the validated table name
+        // Use type assertion to satisfy TypeScript
         const { data, error } = await supabase
-          .from(tableName)
+          .from(tableName as any)
           .insert([{
             description: ticketData.title,
             price: ticketData.price,
@@ -126,7 +127,7 @@ export function useTicketMutations(userId?: string) {
         
         // First get the ticket to check for file_path and ownership
         const { data: ticketData, error: fetchError } = await supabase
-          .from(tableName)
+          .from(tableName as any)
           .select('file_path, user_id')
           .eq('id', ticketId)
           .single();
@@ -148,7 +149,7 @@ export function useTicketMutations(userId?: string) {
         
         // Now delete the ticket
         const { error } = await supabase
-          .from(tableName)
+          .from(tableName as any)
           .delete()
           .eq('id', ticketId);
         

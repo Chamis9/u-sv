@@ -26,7 +26,7 @@ export function useActivityLog(pageSize = 10, enabled = true) {
     
     try {
       // Use RPC call for count
-      const { data: count, error: countError } = await supabase.rpc('get_activity_count');
+      const { data: count, error: countError } = await supabase.rpc<number>('get_activity_count');
       
       if (countError) {
         throw countError;
@@ -37,7 +37,7 @@ export function useActivityLog(pageSize = 10, enabled = true) {
       }
       
       // Use RPC call to get activities
-      const { data, error: activitiesError } = await supabase.rpc<JsonActivity>('get_activities', {
+      const { data, error: activitiesError } = await supabase.rpc<JsonActivity[]>('get_activities', {
         page_size: pageSize,
         page_number: currentPage
       });
@@ -47,17 +47,21 @@ export function useActivityLog(pageSize = 10, enabled = true) {
       }
       
       // Parse the JSON data to Activity objects
-      const parsedActivities: Activity[] = data ? data.map((item: any) => ({
-        id: item.id,
-        activity_type: item.activity_type,
-        description: item.description,
-        email: item.email,
-        user_id: item.user_id,
-        metadata: item.metadata,
-        created_at: item.created_at
-      })) : [];
-      
-      setActivities(parsedActivities);
+      if (data && Array.isArray(data)) {
+        const parsedActivities: Activity[] = data.map((item: any) => ({
+          id: item.id,
+          activity_type: item.activity_type,
+          description: item.description,
+          email: item.email,
+          user_id: item.user_id,
+          metadata: item.metadata,
+          created_at: item.created_at
+        }));
+        
+        setActivities(parsedActivities);
+      } else {
+        setActivities([]);
+      }
     } catch (err) {
       console.error('Error fetching activities:', err);
       setError(t(
