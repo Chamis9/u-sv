@@ -1,9 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, MapPin, Ticket } from "lucide-react";
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import { useLanguage } from "@/features/language";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -11,177 +8,42 @@ import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 import { useEvents } from '@/hooks/useEvents';
-import { supabase } from "@/integrations/supabase/client";
-import { UserTicket } from "@/hooks/tickets/types";
-import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { toast } from "@/hooks/use-toast";
+import { getCategoryDisplayName, getCategoryIdFromName } from './utils/categoryUtils';
+import { CategoryHeader } from './components/CategoryHeader';
+import { AvailableTicketsSection } from './components/AvailableTicketsSection';
+import { EventsSection } from './components/EventsSection';
+import { PurchaseDialog } from './components/PurchaseDialog';
+import { useCategoryTickets } from '@/hooks/useCategoryTickets';
+import { useTicketPurchase } from '@/hooks/useTicketPurchase';
 
 export function CategoryEventList() {
   const { category } = useParams<{ category: string }>();
   const { data: events, isLoading, error } = useEvents(category);
   const { currentLanguage } = useLanguage();
-  const [availableTickets, setAvailableTickets] = useState<Record<string, UserTicket[]>>({});
-  const [allCategoryTickets, setAllCategoryTickets] = useState<UserTicket[]>([]);
-  const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
-  const [isPurchaseDialogOpen, setIsPurchaseDialogOpen] = useState(false);
-
-  // Fetch available tickets for this category
-  useEffect(() => {
-    const fetchAvailableTickets = async () => {
-      const categoryId = getCategoryIdFromName(category || '');
-      
-      const { data: ticketsData, error } = await supabase
-        .from('tickets')
-        .select('*')
-        .eq('status', 'available')
-        .eq('category_id', categoryId);
-      
-      if (error) {
-        console.error('Error fetching available tickets:', error);
-        return;
-      }
-      
-      // Transform the data to match UserTicket type
-      const formattedTickets: UserTicket[] = ticketsData.map(ticket => ({
-        id: ticket.id,
-        title: ticket.description || "Ticket",
-        description: ticket.description,
-        category: ticket.category_id || "",
-        price: ticket.price,
-        event_id: ticket.event_id,
-        status: 'available' as const,
-        file_path: ticket.file_path,
-        created_at: ticket.created_at,
-        seller_id: ticket.seller_id,
-        buyer_id: ticket.buyer_id,
-        owner_id: ticket.owner_id
-      }));
-      
-      // Group tickets by event_id
-      const ticketsByEvent: Record<string, UserTicket[]> = {};
-      
-      formattedTickets.forEach(ticket => {
-        const eventId = ticket.event_id || 'unassigned';
-        if (!ticketsByEvent[eventId]) {
-          ticketsByEvent[eventId] = [];
-        }
-        
-        ticketsByEvent[eventId].push(ticket);
-      });
-      
-      setAvailableTickets(ticketsByEvent);
-      setAllCategoryTickets(formattedTickets);
-    };
-    
-    if (category) {
-      fetchAvailableTickets();
-    }
-  }, [category]);
-
-  const purchaseTicket = async (ticket: UserTicket) => {
-    try {
-      // Get the current user's ID
-      const { data: userData } = await supabase.auth.getUser();
-      const userId = userData.user?.id;
-      
-      if (!userId) {
-        throw new Error("No authenticated user found");
-      }
-
-      // Update the ticket status in the database
-      const { error } = await supabase
-        .from('tickets')
-        .update({ 
-          status: 'sold', 
-          buyer_id: userId 
-        })
-        .eq('id', ticket.id);
-
-      if (error) {
-        throw error;
-      }
-
-      // Remove the purchased ticket from state
-      const updatedAllTickets = allCategoryTickets.filter(t => t.id !== ticket.id);
-      setAllCategoryTickets(updatedAllTickets);
-      
-      // Update the grouped tickets as well
-      const updatedTicketsByEvent = { ...availableTickets };
-      if (ticket.event_id && updatedTicketsByEvent[ticket.event_id]) {
-        updatedTicketsByEvent[ticket.event_id] = updatedTicketsByEvent[ticket.event_id].filter(
-          t => t.id !== ticket.id
-        );
-      }
-      setAvailableTickets(updatedTicketsByEvent);
-      
-      setIsPurchaseDialogOpen(false);
-      
-      toast({
-        title: currentLanguage.code === 'lv' ? "Biļete nopirkta!" : "Ticket purchased!",
-        description: currentLanguage.code === 'lv' 
-          ? "Biļete ir veiksmīgi pievienota jūsu kontam" 
-          : "The ticket has been successfully added to your account",
-        variant: "default"
-      });
-    } catch (error) {
-      console.error("Error purchasing ticket:", error);
-      toast({
-        title: currentLanguage.code === 'lv' ? "Kļūda" : "Error",
-        description: currentLanguage.code === 'lv'
-          ? "Neizdevās iegādāties biļeti. Lūdzu, mēģiniet vēlreiz."
-          : "Failed to purchase ticket. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const openPurchaseDialog = (ticket: UserTicket) => {
-    setSelectedTicket(ticket);
-    setIsPurchaseDialogOpen(true);
-  };
-
-  const backButtonText = {
-    lv: "Atpakaļ",
-    en: "Back"
-  };
-
-  // Helper function to get category ID from name
-  const getCategoryIdFromName = (name: string): string => {
-    switch(name.toLowerCase()) {
-      case 'teatris':
-      case 'theatre':
-        return 'theatre';
-      case 'koncerti':
-      case 'concerts':
-        return 'concerts';
-      case 'sports':
-        return 'sports';
-      default:
-        return name;
-    }
-  };
   
-  // Get category name for display
-  const getCategoryDisplayName = (categoryId: string): string => {
-    if (currentLanguage.code === 'lv') {
-      switch(categoryId.toLowerCase()) {
-        case 'theatre': return 'Teātris';
-        case 'concerts': return 'Koncerti';
-        case 'sports': return 'Sports';
-        default: return categoryId;
-      }
-    } else {
-      switch(categoryId.toLowerCase()) {
-        case 'theatre': return 'Theatre';
-        case 'concerts': return 'Concerts';
-        case 'sports': return 'Sports';
-        default: return categoryId;
-      }
+  const {
+    availableTickets,
+    allCategoryTickets,
+    isLoading: ticketsLoading,
+    removeTicketFromState
+  } = useCategoryTickets(category);
+  
+  const {
+    selectedTicket,
+    isPurchaseDialogOpen,
+    setIsPurchaseDialogOpen,
+    openPurchaseDialog,
+    purchaseTicket
+  } = useTicketPurchase();
+
+  const handlePurchaseConfirm = async (ticket: typeof selectedTicket) => {
+    if (!ticket) return;
+    
+    const success = await purchaseTicket(ticket);
+    if (success) {
+      removeTicketFromState(ticket.id);
     }
   };
-
-  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
   if (error) {
     return (
@@ -192,7 +54,8 @@ export function CategoryEventList() {
   }
 
   // Determine category display name
-  const categoryDisplayName = category ? getCategoryDisplayName(getCategoryIdFromName(category)) : '';
+  const categoryId = category ? getCategoryIdFromName(category) : '';
+  const categoryDisplayName = category ? getCategoryDisplayName(categoryId, currentLanguage.code) : '';
 
   return (
     <ThemeProvider>
@@ -202,193 +65,32 @@ export function CategoryEventList() {
         <main className="flex-grow pt-24 pb-12">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="max-w-7xl mx-auto">
-              <div className="mb-6 flex items-center justify-between">
-                <div>
-                  <Link to="/events">
-                    <Button variant="ghost" className="mb-4">
-                      <ArrowLeft className="mr-2 h-4 w-4" />
-                      {backButtonText[currentLanguage.code as keyof typeof backButtonText]}
-                    </Button>
-                  </Link>
-                  <h1 className="text-3xl font-bold">{categoryDisplayName}</h1>
-                </div>
-              </div>
+              <CategoryHeader categoryDisplayName={categoryDisplayName} />
               
               {/* All Available Tickets Section */}
-              {allCategoryTickets.length > 0 ? (
-                <div className="mb-8">
-                  <h2 className="text-2xl font-bold mb-4">
-                    {t("Pieejamās biļetes", "Available Tickets")}
-                  </h2>
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {allCategoryTickets.map((ticket) => (
-                      <Card key={ticket.id} className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
-                        <CardHeader>
-                          <CardTitle className="flex items-center gap-2">
-                            <Ticket className="h-5 w-5 text-orange-500" />
-                            {ticket.title}
-                          </CardTitle>
-                          {ticket.description && (
-                            <CardDescription>
-                              {ticket.description}
-                            </CardDescription>
-                          )}
-                        </CardHeader>
-                        <CardContent>
-                          <div className="text-2xl font-bold text-orange-500">
-                            {ticket.price} €
-                          </div>
-                        </CardContent>
-                        <CardFooter>
-                          <Button 
-                            onClick={() => openPurchaseDialog(ticket)} 
-                            variant="orange" 
-                            className="w-full"
-                          >
-                            {t("Pirkt biļeti", "Buy Ticket")}
-                          </Button>
-                        </CardFooter>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-8 mb-8 bg-gray-100/50 dark:bg-gray-800/50 rounded-lg">
-                  <Ticket className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-medium">
-                    {t("Nav pieejamu biļešu", "No available tickets")}
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-400 mt-2">
-                    {t("Šajā kategorijā pašlaik nav pieejamu biļešu", "There are no tickets available in this category at the moment")}
-                  </p>
-                </div>
-              )}
+              <AvailableTicketsSection 
+                tickets={allCategoryTickets} 
+                onPurchase={openPurchaseDialog} 
+              />
 
               {/* Events Section */}
-              <h2 className="text-2xl font-bold mb-4">
-                {t("Pasākumi", "Events")}
-              </h2>
-              
-              {isLoading ? (
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 animate-pulse">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-64 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
-                  ))}
-                </div>
-              ) : events && events.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {events.map((event) => (
-                    <Card key={event.id} className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
-                      <CardHeader>
-                        <CardTitle>{event.title}</CardTitle>
-                        <CardDescription>
-                          <div className="flex items-center gap-2 text-orange-500">
-                            <Calendar className="h-4 w-4" />
-                            {new Date(event.start_date).toLocaleDateString(currentLanguage.code)}
-                          </div>
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-gray-600 dark:text-gray-400">
-                          {event.description}
-                        </p>
-                        
-                        {/* Display available tickets if any */}
-                        {availableTickets[event.id]?.length > 0 && (
-                          <div className="mt-4">
-                            <div className="flex items-center gap-2 mb-2">
-                              <Ticket className="h-4 w-4 text-green-500" />
-                              <span className="font-medium">
-                                {t('Pieejamās biļetes', 'Available tickets')}
-                              </span>
-                            </div>
-                            
-                            <div className="space-y-2">
-                              {availableTickets[event.id].map((ticket) => (
-                                <div key={ticket.id} className="flex justify-between items-center p-2 border border-gray-200 dark:border-gray-700 rounded-md">
-                                  <div>
-                                    <div className="font-medium">{ticket.title}</div>
-                                    <div className="text-sm text-gray-500">{ticket.description}</div>
-                                  </div>
-                                  <div className="text-right">
-                                    <div className="font-bold">{ticket.price} €</div>
-                                    <Badge className="bg-green-500">
-                                      {t('Aktīva', 'Active')}
-                                    </Badge>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </CardContent>
-                      <CardFooter className="mt-auto">
-                        <div className="flex justify-between items-center w-full">
-                          <span className="text-lg font-semibold">
-                            {event.price_range ? `${event.price_range[0]} - ${event.price_range[1]} €` : ''}
-                          </span>
-                          <Link to={`/events/${category}/${event.id}`}>
-                            <Button variant="outline">
-                              <Ticket className="mr-2 h-4 w-4" />
-                              {t('Biļetes', 'Tickets')}
-                            </Button>
-                          </Link>
-                        </div>
-                      </CardFooter>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 bg-gray-100/50 dark:bg-gray-800/50 rounded-lg">
-                  <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-medium">
-                    {t("Nav atrasts neviens pasākums", "No events found")}
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-400 mt-2">
-                    {t("Šajā kategorijā pašlaik nav pasākumu", "There are no events in this category at the moment")}
-                  </p>
-                </div>
-              )}
+              <EventsSection 
+                events={events || []} 
+                availableTickets={availableTickets}
+                category={category} 
+                isLoading={isLoading || ticketsLoading}
+              />
             </div>
           </div>
         </main>
         
         {/* Purchase Dialog */}
-        <Dialog open={isPurchaseDialogOpen} onOpenChange={setIsPurchaseDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{t("Biļetes pirkšana", "Purchase Ticket")}</DialogTitle>
-              <DialogDescription>
-                {t("Vai vēlaties iegādāties šo biļeti?", "Do you want to purchase this ticket?")}
-              </DialogDescription>
-            </DialogHeader>
-            
-            {selectedTicket && (
-              <div className="py-4">
-                <h3 className="font-medium">{selectedTicket.title}</h3>
-                {selectedTicket.description && (
-                  <p className="text-sm text-gray-500 mt-1">{selectedTicket.description}</p>
-                )}
-                <p className="text-xl font-bold mt-2">{selectedTicket.price} €</p>
-              </div>
-            )}
-            
-            <DialogFooter>
-              <Button 
-                variant="outline" 
-                onClick={() => setIsPurchaseDialogOpen(false)}
-              >
-                {t("Atcelt", "Cancel")}
-              </Button>
-              <Button 
-                variant="orange" 
-                onClick={() => selectedTicket && purchaseTicket(selectedTicket)}
-              >
-                {t("Apstiprināt pirkumu", "Confirm Purchase")}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <PurchaseDialog
+          ticket={selectedTicket}
+          isOpen={isPurchaseDialogOpen}
+          onOpenChange={setIsPurchaseDialogOpen}
+          onPurchaseConfirm={handlePurchaseConfirm}
+        />
         
         <Footer />
         <GlobalThemeToggle />
