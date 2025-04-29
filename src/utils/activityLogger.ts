@@ -1,6 +1,5 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Json } from "@/integrations/supabase/types";
 
 export type ActivityType = 'subscriber' | 'user' | 'ticket' | 'system' | 'login' | 'logout' | 'settings';
 
@@ -13,7 +12,7 @@ export interface LogActivityParams {
 }
 
 /**
- * Logs an activity to the activity_log table
+ * Logs an activity using an RPC function
  */
 export async function logActivity({
   activityType,
@@ -23,15 +22,14 @@ export async function logActivity({
   metadata
 }: LogActivityParams) {
   try {
-    const { error } = await supabase
-      .from('activity_log')
-      .insert({
-        activity_type: activityType,
-        description,
-        user_id: userId,
-        email,
-        metadata: metadata as Json
-      });
+    // Use RPC function to insert activity log
+    const { error } = await supabase.rpc('log_activity', {
+      p_activity_type: activityType,
+      p_description: description,
+      p_user_id: userId || null,
+      p_email: email || null,
+      p_metadata: metadata || null
+    });
     
     if (error) {
       console.error('Error logging activity:', error);

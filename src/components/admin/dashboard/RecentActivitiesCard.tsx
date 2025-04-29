@@ -27,11 +27,8 @@ export function RecentActivitiesCard({
     const fetchRecentActivities = async () => {
       setActivitiesLoading(true);
       try {
-        const { data, error } = await supabase
-          .from('activity_log')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(2);
+        // Use RPC call to get recent activities
+        const { data, error } = await supabase.rpc('get_recent_activities', { limit_num: 2 });
         
         if (error) {
           throw error;

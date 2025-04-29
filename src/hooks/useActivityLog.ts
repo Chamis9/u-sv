@@ -24,9 +24,8 @@ export function useActivityLog(pageSize = 10, enabled = true) {
     setError(null);
     
     try {
-      const { count, error: countError } = await supabase
-        .from('activity_log')
-        .select('*', { count: 'exact', head: true });
+      // Use RPC call for count to avoid type errors
+      const { count, error: countError } = await supabase.rpc('get_activity_count');
       
       if (countError) {
         throw countError;
@@ -39,16 +38,17 @@ export function useActivityLog(pageSize = 10, enabled = true) {
       const from = (currentPage - 1) * pageSize;
       const to = from + pageSize - 1;
       
-      const { data, error } = await supabase
-        .from('activity_log')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .range(from, to);
+      // Use RPC call to get activities instead of direct table access
+      const { data, error: activitiesError } = await supabase.rpc('get_activities', {
+        page_size: pageSize,
+        page_number: currentPage
+      });
       
-      if (error) {
-        throw error;
+      if (activitiesError) {
+        throw activitiesError;
       }
       
+      // Make sure to cast data to Activity[] to avoid type errors
       setActivities(data as Activity[] || []);
     } catch (err) {
       console.error('Error fetching activities:', err);

@@ -108,12 +108,11 @@ export function useTicketMutations(userId?: string) {
   
   // Delete a ticket
   const deleteTicketMutation = useMutation({
-    mutationFn: async (ticketData: { ticketId: string, tableName: string }) => {
+    mutationFn: async (params: { ticketId: string, tableName: string }) => {
+      const { ticketId, tableName } = params;
       setLoading(true);
       
       try {
-        const { ticketId, tableName } = ticketData;
-        
         // Validate table name
         const validTableNames = [
           'tickets_theatre', 'tickets_concerts', 'tickets_sports', 
