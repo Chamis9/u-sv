@@ -18,16 +18,37 @@ export function useTicketStorage() {
     try {
       // Check if tickets bucket exists
       const { data: buckets } = await supabase.storage.listBuckets();
-      if (!buckets?.find(bucket => bucket.name === 'tickets')) {
-        // Create the bucket with public access
-        await supabase.storage.createBucket('tickets', {
+      const ticketsBucket = buckets?.find(bucket => bucket.name === 'tickets');
+      
+      if (!ticketsBucket) {
+        // Create the bucket if it doesn't exist
+        const { data, error } = await supabase.storage.createBucket('tickets', {
           public: true,
           allowedMimeTypes: ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'],
           fileSizeLimit: 10485760, // 10MB
         });
         
-        // Set up storage policy directly through SQL instead of RPC
-        console.log("Created tickets bucket successfully");
+        if (error) {
+          console.error("Error creating bucket:", error);
+          return false;
+        }
+        
+        // Create public policy directly through SQL
+        const { error: policyError } = await supabase.storage.from('tickets').createPolicy('public-read', {
+          name: 'public-read',
+          definition: {
+            role: '*',
+            action: 'READ'
+          }
+        });
+        
+        if (policyError) {
+          console.error("Error creating bucket policy:", policyError);
+        } else {
+          console.log("Created tickets bucket and policy successfully");
+        }
+      } else {
+        console.log("Tickets bucket already exists");
       }
       return true;
     } catch (err) {
@@ -63,7 +84,13 @@ export function useTicketStorage() {
       }
       
       // Ensure tickets bucket exists
-      await createTicketsBucket();
+      const bucketCreated = await createTicketsBucket();
+      if (!bucketCreated) {
+        throw new Error(t(
+          "Nevarēja izveidot vai piekļūt biļešu krātuvei", 
+          "Could not create or access tickets storage"
+        ));
+      }
       
       // Generate a unique filename with original extension
       const fileExt = file.name.split('.').pop();
