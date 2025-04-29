@@ -14,6 +14,8 @@ import { EventHeader } from './components/EventHeader';
 import { TicketCard } from './components/TicketCard';
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "@/hooks/use-toast";
 
 interface TicketType {
   id: number;
@@ -32,6 +34,8 @@ export function EventTickets() {
   const { category, eventId } = useParams<{ category: string; eventId: string }>();
   const { currentLanguage } = useLanguage();
   const [availableTickets, setAvailableTickets] = useState<UserTicket[]>([]);
+  const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
+  const [isPurchaseDialogOpen, setIsPurchaseDialogOpen] = useState(false);
   
   const event = category && eventId 
     ? categoryEvents[category]?.find(e => e.id === Number(eventId))
@@ -74,6 +78,49 @@ export function EventTickets() {
       fetchAvailableTickets();
     }
   }, [eventId]);
+
+  const purchaseTicket = async (ticket: UserTicket) => {
+    try {
+      // Update the ticket status in the database
+      const { error } = await supabase
+        .from('tickets')
+        .update({ 
+          status: 'sold',
+          buyer_id: supabase.auth.getUser().then(({ data }) => data.user?.id) 
+        })
+        .eq('id', ticket.id);
+
+      if (error) {
+        throw error;
+      }
+
+      // Remove the purchased ticket from state
+      setAvailableTickets(prev => prev.filter(t => t.id !== ticket.id));
+      setIsPurchaseDialogOpen(false);
+      
+      toast({
+        title: currentLanguage.code === 'lv' ? "Biļete nopirkta!" : "Ticket purchased!",
+        description: currentLanguage.code === 'lv' 
+          ? "Biļete ir veiksmīgi pievienota jūsu kontam" 
+          : "The ticket has been successfully added to your account",
+        variant: "success"
+      });
+    } catch (error) {
+      console.error("Error purchasing ticket:", error);
+      toast({
+        title: currentLanguage.code === 'lv' ? "Kļūda" : "Error",
+        description: currentLanguage.code === 'lv'
+          ? "Neizdevās iegādāties biļeti. Lūdzu, mēģiniet vēlreiz."
+          : "Failed to purchase ticket. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const openPurchaseDialog = (ticket: UserTicket) => {
+    setSelectedTicket(ticket);
+    setIsPurchaseDialogOpen(true);
+  };
 
   if (!event) {
     const notFoundText = {
@@ -150,7 +197,7 @@ export function EventTickets() {
                         </div>
                         
                         <div className="mt-4 flex justify-end">
-                          <Button>
+                          <Button onClick={() => openPurchaseDialog(ticket)}>
                             <Ticket className="mr-2 h-4 w-4" />
                             {t("Pirkt biļeti", "Buy ticket")}
                           </Button>
@@ -163,6 +210,44 @@ export function EventTickets() {
             </div>
           </div>
         </main>
+
+        {/* Purchase Dialog */}
+        <Dialog open={isPurchaseDialogOpen} onOpenChange={setIsPurchaseDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t("Biļetes pirkšana", "Purchase Ticket")}</DialogTitle>
+              <DialogDescription>
+                {t("Vai vēlaties iegādāties šo biļeti?", "Do you want to purchase this ticket?")}
+              </DialogDescription>
+            </DialogHeader>
+            
+            {selectedTicket && (
+              <div className="py-4">
+                <h3 className="font-medium">{selectedTicket.title}</h3>
+                {selectedTicket.description && (
+                  <p className="text-sm text-gray-500 mt-1">{selectedTicket.description}</p>
+                )}
+                <p className="text-xl font-bold mt-2">{selectedTicket.price} €</p>
+              </div>
+            )}
+            
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsPurchaseDialogOpen(false)}
+              >
+                {t("Atcelt", "Cancel")}
+              </Button>
+              <Button 
+                onClick={() => selectedTicket && purchaseTicket(selectedTicket)}
+                variant="orange"
+              >
+                {t("Apstiprināt pirkumu", "Confirm Purchase")}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        
         <Footer />
         <GlobalThemeToggle />
       </div>
