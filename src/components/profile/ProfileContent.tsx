@@ -2,9 +2,10 @@
 import React from "react";
 import { User } from "@/types/users";
 import { AccountTab } from "./tabs/account";
-import { TicketsTab } from "./tabs/TicketsTab";
+import { TicketsTab } from "./tabs/tickets/TicketsTab";
 import { PaymentsTab } from "./tabs/PaymentsTab";
 import { SettingsTab } from "./tabs/SettingsTab";
+import { LoadingSpinner } from "./components/LoadingSpinner";
 
 interface ProfileContentProps {
   activeTab: string;
@@ -15,11 +16,7 @@ interface ProfileContentProps {
 
 export function ProfileContent({ activeTab, user, onUserUpdate, isLoading }: ProfileContentProps) {
   if (isLoading) {
-    return (
-      <div className="flex justify-center p-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   // Renderējam atbilstošo sadaļu atkarībā no aktīvā taba

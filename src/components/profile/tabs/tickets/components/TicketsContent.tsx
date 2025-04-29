@@ -3,6 +3,8 @@ import React from "react";
 import { UserTicket } from "@/hooks/tickets";
 import { TicketsList } from "../TicketsList";
 import { EmptyTicketState } from "./EmptyTicketState";
+import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingSpinner } from "@/components/profile/components/LoadingSpinner";
 
 interface TicketsContentProps {
   tickets: UserTicket[];
@@ -20,11 +22,7 @@ export function TicketsContent({
   ticketType 
 }: TicketsContentProps) {
   if (isLoading) {
-    return (
-      <div className="flex justify-center p-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
   
   if (tickets.length === 0) {

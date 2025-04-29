@@ -4,7 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useUserTickets } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
 import { User } from "@/types/users";
-import { UserTicket } from "@/hooks/tickets";
 
 export function useTicketsTab(user: User) {
   const { currentLanguage } = useLanguage();
@@ -39,6 +38,7 @@ export function useTicketsTab(user: User) {
   };
 
   const refreshTickets = () => {
+    console.log("Refreshing tickets for user:", user.id);
     queryClient.invalidateQueries({ queryKey: ['user-tickets', user.id] });
   };
   

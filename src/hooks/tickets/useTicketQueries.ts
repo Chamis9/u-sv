@@ -37,7 +37,10 @@ export function useTicketQueries(userId?: string) {
         created_at: ticket.created_at
       })) || [];
     },
-    enabled: !!userId
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+    refetchOnMount: true,
+    refetchOnWindowFocus: true
   });
 
   return {
