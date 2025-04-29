@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1"
 
@@ -14,6 +13,7 @@ function getCategoryTableName(category?: string): string {
   
   // Convert to lowercase and normalize
   const normalizedCategory = category.toLowerCase().trim();
+  console.log(`[Edge] Getting table name for category: ${category}, normalized: ${normalizedCategory}`);
   
   const categoryToTable: Record<string, string> = {
     // English
@@ -32,21 +32,26 @@ function getCategoryTableName(category?: string): string {
     'kino': 'tickets_cinema',
     'bērniem': 'tickets_children',
     'ceļojumi': 'tickets_travel',
-    'dāvanu kartes': 'tickets_giftcards'
+    'dāvanu kartes': 'tickets_giftcards',
+    'citi': 'tickets_other',
+    'other': 'tickets_other'
   };
   
   // Try direct match first
   if (categoryToTable[normalizedCategory]) {
+    console.log(`[Edge] Found direct match: ${normalizedCategory} -> ${categoryToTable[normalizedCategory]}`);
     return categoryToTable[normalizedCategory];
   }
   
   // If no direct match, look for partial matches
   for (const [key, value] of Object.entries(categoryToTable)) {
     if (normalizedCategory.includes(key)) {
+      console.log(`[Edge] Found partial match: ${normalizedCategory} includes ${key} -> ${value}`);
       return value;
     }
   }
   
+  console.log(`[Edge] No match found for category: ${category}, using default: tickets_other`);
   // Default fallback
   return 'tickets_other';
 }
@@ -132,7 +137,7 @@ serve(async (req) => {
       
       // Determine table name from category using our utility function
       const tableName = getCategoryTableName(categoryName);
-      console.log(`Creating ticket in table: ${tableName} for category: ${categoryName}`);
+      console.log(`[Edge] Creating ticket in table: ${tableName} for category: ${categoryName}`);
       
       // Get category ID if provided
       let categoryId = null
@@ -264,7 +269,7 @@ serve(async (req) => {
       })
     }
   } catch (error) {
-    console.error('Unhandled error:', error)
+    console.error('[Edge] Unhandled error:', error)
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -1,4 +1,3 @@
-
 // Utility functions for mapping between categories and table names
 
 // Map category name to table name
@@ -7,6 +6,8 @@ export const getCategoryTableName = (category?: string): string => {
   
   // Convert to lowercase and normalize
   const normalizedCategory = category.toLowerCase().trim();
+  
+  console.log(`Getting table name for category: ${category}, normalized: ${normalizedCategory}`);
   
   const categoryToTable: Record<string, string> = {
     // English
@@ -20,7 +21,6 @@ export const getCategoryTableName = (category?: string): string => {
     'giftcards': 'tickets_giftcards',
     // Latvian
     'teātris': 'tickets_theatre',
-    // Remove the duplicate 'teatris' entry that caused the error
     'koncerti': 'tickets_concerts',
     'festivāli': 'tickets_festivals',
     'festivali': 'tickets_festivals',
@@ -37,15 +37,20 @@ export const getCategoryTableName = (category?: string): string => {
   
   // Try direct match first
   if (categoryToTable[normalizedCategory]) {
+    console.log(`Found direct match: ${normalizedCategory} -> ${categoryToTable[normalizedCategory]}`);
     return categoryToTable[normalizedCategory];
   }
   
   // If no direct match, look for partial matches
   for (const [key, value] of Object.entries(categoryToTable)) {
     if (normalizedCategory.includes(key)) {
+      console.log(`Found partial match: ${normalizedCategory} includes ${key} -> ${value}`);
       return value;
     }
   }
+  
+  // If still no match, log the failure and return default
+  console.log(`No match found for category: ${category}, using default: tickets_other`);
   
   // Default fallback
   return 'tickets_other';

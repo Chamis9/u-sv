@@ -21,6 +21,7 @@ export function useTicketMutations(userId?: string) {
       const tableName = data.table_name || getCategoryTableName(data.category_name || 'Other');
       
       console.log(`Adding ticket to table: ${tableName}`);
+      console.log(`Full ticket data:`, JSON.stringify(data, null, 2));
       
       // Insert ticket into the right table
       const { data: responseData, error } = await supabase
@@ -36,14 +37,18 @@ export function useTicketMutations(userId?: string) {
           venue: data.venue,
           file_path: data.file_path,
           status: 'available',
-          event_id: data.event_id || null
+          event_id: data.event_id || null,
+          category_id: data.category_id
         })
         .select('*')
         .single();
         
       if (error) {
+        console.error(`Error inserting into table ${tableName}:`, error);
         throw error;
       }
+      
+      console.log(`Successfully added ticket to ${tableName}:`, responseData);
       
       // Type check and fallback to default values if needed
       if (!responseData) {

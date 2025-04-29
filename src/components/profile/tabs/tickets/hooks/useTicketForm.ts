@@ -81,8 +81,8 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       const tableName = getCategoryTableName(values.category);
       console.log(`Using table ${tableName} for category: ${values.category}`);
       
-      // Add the ticket
-      addTicket({
+      // Add the ticket - ensure all details are logged
+      const result = await addTicket({
         title: values.title,
         description: values.description,
         price: Number(values.price),
@@ -95,6 +95,8 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
         venue: values.venue,
         table_name: tableName // Pass the table name to the addTicket function
       });
+      
+      console.log("Add ticket result:", result);
       
       toast({
         title: t("Veiksmīgi!", "Success!"),

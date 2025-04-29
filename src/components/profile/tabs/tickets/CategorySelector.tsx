@@ -44,6 +44,10 @@ export function CategorySelector({ form }: CategorySelectorProps) {
     // Log the table that will be used for this category
     const tableName = getCategoryTableName(value);
     console.log(`Selected category: ${value}, will use table: ${tableName}`);
+    
+    // Additionally log the normalized category to help debug mapping issues
+    const normalizedCategory = value.toLowerCase().trim();
+    console.log(`Normalized category name: ${normalizedCategory}`);
   };
 
   return (
