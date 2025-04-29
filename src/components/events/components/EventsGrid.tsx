@@ -35,6 +35,10 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
     return acc;
   }, {} as Record<string, UserTicket[]>);
 
+  console.log("Events data:", events);
+  console.log("Available tickets:", availableTickets);
+  console.log("Tickets by event:", ticketsByEvent);
+
   if (isLoading) {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 animate-pulse">
@@ -147,6 +151,17 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
                     <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
                       {ticket.description}
                     </p>
+                  )}
+                  {ticket.venue && (
+                    <div className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                      {t('Vieta', 'Venue')}: {ticket.venue}
+                    </div>
+                  )}
+                  {ticket.event_date && (
+                    <div className="text-sm text-gray-600 dark:text-gray-300 mb-3 flex items-center">
+                      <Calendar className="h-4 w-4 mr-1" />
+                      {format(new Date(ticket.event_date), 'dd.MM.yyyy', { locale })}
+                    </div>
                   )}
                 </div>
                 

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
-import { getCategoryTableName } from "@/components/profile/tabs/tickets/services/CategoryService";
+import { getCategoryTableName } from "@/utils/categoryMapping";
 
 export const useCategoryTickets = (category?: string) => {
   const [allCategoryTickets, setAllCategoryTickets] = useState<UserTicket[]>([]);
