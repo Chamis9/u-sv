@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { CalendarIcon, FileIcon, Eye, Trash2 } from "lucide-react";
 import { useLanguage } from "@/features/language";
-import { Ticket, useTickets } from "@/hooks/useTickets";
+import { Ticket, useTickets } from "@/hooks/tickets"; // Updated import path
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns';

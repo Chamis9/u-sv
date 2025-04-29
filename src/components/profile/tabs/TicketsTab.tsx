@@ -31,7 +31,7 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import { useTickets } from "@/hooks/useTickets";
+import { useTickets } from "@/hooks/tickets"; // Updated import path
 import { useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";

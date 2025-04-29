@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useLanguage } from "@/features/language";
-import { AddTicketData, useTickets } from "@/hooks/useTickets";
+import { AddTicketData, useTickets } from "@/hooks/tickets"; // Updated import path
 import { Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";

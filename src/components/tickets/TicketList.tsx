@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Ticket, useTickets } from "@/hooks/useTickets";
+import { Ticket, useTickets } from "@/hooks/tickets"; // Updated import path
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { Separator } from "@/components/ui/separator";

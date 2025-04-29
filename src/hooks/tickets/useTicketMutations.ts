@@ -1,123 +1,17 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
 import { useLanguage } from "@/features/language";
+import { toast } from "sonner";
+import { AddTicketData, Ticket } from "./types";
 
-export interface Ticket {
-  id: string;
-  user_id: string;
-  event_id: string;
-  price: number;
-  seat_info: string | null;
-  description: string | null;
-  status: 'available' | 'sold' | 'cancelled';
-  created_at: string;
-  updated_at: string;
-  file_path?: string | null;
-}
-
-export interface AddTicketData {
-  event_id: string;
-  price: number;
-  seat_info?: string;
-  description?: string;
-  file_path?: string;
-}
-
-export const useTickets = (eventId?: string) => {
+export const useTicketMutations = (eventId?: string) => {
   const { isAuthenticated, user } = useAuth();
   const queryClient = useQueryClient();
   const { currentLanguage } = useLanguage();
   
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
-  
-  const getEventTickets = useQuery({
-    queryKey: ['tickets', eventId],
-    queryFn: async (): Promise<Ticket[]> => {
-      if (!eventId) return [];
-      
-      const { data, error } = await supabase
-        .from('tickets')
-        .select('*')
-        .eq('event_id', eventId)
-        .eq('status', 'available')
-        .order('price', { ascending: true });
-      
-      if (error) {
-        console.error('Error fetching tickets:', error);
-        throw error;
-      }
-      
-      return data as Ticket[];
-    },
-    enabled: !!eventId
-  });
-
-  const getUserTickets = useQuery({
-    queryKey: ['user-tickets'],
-    queryFn: async (): Promise<Ticket[]> => {
-      if (!isAuthenticated || !user) return [];
-      
-      const { data, error } = await supabase
-        .from('tickets')
-        .select('*, events(title, start_date)')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-      
-      if (error) {
-        console.error('Error fetching user tickets:', error);
-        throw error;
-      }
-      
-      return data as Ticket[];
-    },
-    enabled: isAuthenticated && !!user
-  });
-
-  const getUserPurchases = useQuery({
-    queryKey: ['user-purchases'],
-    queryFn: async () => {
-      if (!isAuthenticated || !user) return [];
-      
-      const { data, error } = await supabase
-        .from('ticket_purchases')
-        .select(`
-          *,
-          tickets:ticket_id (*)
-        `)
-        .eq('buyer_id', user.id)
-        .order('purchase_date', { ascending: false });
-      
-      if (error) {
-        console.error('Error fetching user purchases:', error);
-        throw error;
-      }
-      
-      return data;
-    },
-    enabled: isAuthenticated && !!user
-  });
-
-  const getTicketFile = async (filePath: string): Promise<string | null> => {
-    if (!isAuthenticated || !user) return null;
-    
-    try {
-      const { data, error } = await supabase.storage
-        .from('ticket_files')
-        .createSignedUrl(filePath, 3600); // URL expires in 1 hour
-      
-      if (error || !data) {
-        console.error('Error getting signed URL:', error);
-        return null;
-      }
-      
-      return data.signedUrl;
-    } catch (error) {
-      console.error('Exception getting ticket file:', error);
-      return null;
-    }
-  };
 
   const addTicket = useMutation({
     mutationFn: async (ticketData: AddTicketData): Promise<Ticket> => {
@@ -231,13 +125,6 @@ export const useTickets = (eventId?: string) => {
   });
 
   return {
-    eventTickets: getEventTickets.data || [],
-    userTickets: getUserTickets.data || [],
-    userPurchases: getUserPurchases.data || [],
-    isLoadingEventTickets: getEventTickets.isLoading,
-    isLoadingUserTickets: getUserTickets.isLoading,
-    isLoadingUserPurchases: getUserPurchases.isLoading,
-    getTicketFile,
     addTicket,
     deleteTicket,
     purchaseTicket
