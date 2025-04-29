@@ -1,45 +1,26 @@
 
-import React from "react";
-import { UserTicket } from "@/hooks/tickets";
-import { VisualTicket } from "./VisualTicket";
-import { EmptyTicketState } from "./EmptyTicketState";
-import { LoadingSpinner } from "@/components/profile/components/LoadingSpinner";
+import React from 'react';
+import { UserTicket } from '@/hooks/tickets/types';
+import { VisualTicket } from './VisualTicket';
 
 interface TicketsGridProps {
   tickets: UserTicket[];
-  isLoading: boolean;
-  onDelete: (ticketId: string) => void;
-  loadingDelete: boolean;
+  onDelete: (id: string) => void;
+  onView: (ticket: UserTicket) => void;
+  onEdit?: (ticket: UserTicket) => void;
   ticketType: "added" | "purchased";
-  onViewTicket: (ticket: UserTicket) => void;
 }
 
-export function TicketsGrid({ 
-  tickets, 
-  isLoading, 
-  onDelete, 
-  loadingDelete,
-  ticketType,
-  onViewTicket
-}: TicketsGridProps) {
-  console.log(`Rendering TicketsGrid for ${ticketType} tickets:`, tickets);
-  
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-  
-  if (tickets.length === 0) {
-    return <EmptyTicketState type={ticketType} />;
-  }
-  
+export function TicketsGrid({ tickets, onDelete, onView, onEdit, ticketType }: TicketsGridProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid gap-4 sm:grid-cols-2">
       {tickets.map((ticket) => (
         <VisualTicket 
           key={ticket.id}
-          ticket={ticket} 
-          onView={onViewTicket}
-          onDelete={loadingDelete ? undefined : onDelete}
+          ticket={ticket}
+          onView={onView}
+          onEdit={onEdit}
+          onDelete={onDelete}
           ticketType={ticketType}
         />
       ))}

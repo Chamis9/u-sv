@@ -34,7 +34,12 @@ export function TicketsTab({ user }: TicketsTabProps) {
     addTicketOpen,
     setAddTicketOpen,
     handleDeleteTicket,
+    handleUpdateTicket,
     refreshTickets,
+    editTicketOpen,
+    setEditTicketOpen,
+    currentEditTicket,
+    setCurrentEditTicket,
     t,
     isAuthenticated
   } = useTicketsTab(user);
@@ -97,6 +102,10 @@ export function TicketsTab({ user }: TicketsTabProps) {
               tickets={addedTickets}
               isLoading={isLoading}
               onDelete={handleDeleteTicket}
+              onEdit={(ticket) => {
+                setCurrentEditTicket(ticket);
+                setEditTicketOpen(true);
+              }}
               loadingDelete={loading}
               ticketType="added"
             />
@@ -123,6 +132,25 @@ export function TicketsTab({ user }: TicketsTabProps) {
             setAddTicketOpen(false);
             refreshTickets();
           }} />
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={editTicketOpen} onOpenChange={setEditTicketOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("Rediģēt biļeti", "Edit Ticket")}</DialogTitle>
+          </DialogHeader>
+          {currentEditTicket && (
+            <AddTicketForm 
+              onClose={() => {
+                setEditTicketOpen(false);
+                refreshTickets();
+              }}
+              isEditing={true}
+              ticketToEdit={currentEditTicket}
+              onUpdate={handleUpdateTicket}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </Card>

@@ -3,18 +3,19 @@ import React from "react";
 import { UserTicket } from "@/hooks/tickets/types";
 import { formatPrice, formatDate } from "@/utils/formatters";
 import { Badge } from "@/components/ui/badge";
-import { Ticket as TicketIcon, Calendar, Tag, Download, Eye, MapPin, Clock } from "lucide-react";
+import { Ticket as TicketIcon, Calendar, Tag, Download, Eye, MapPin, Clock, Pencil } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
 
 interface VisualTicketProps {
   ticket: UserTicket;
   onView: (ticket: UserTicket) => void;
+  onEdit?: (ticket: UserTicket) => void;
   onDelete?: (id: string) => void;
   ticketType: "added" | "purchased";
 }
 
-export function VisualTicket({ ticket, onView, onDelete, ticketType }: VisualTicketProps) {
+export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: VisualTicketProps) {
   const { currentLanguage } = useLanguage();
   
   const t = (lvText: string, enText: string) => 
@@ -128,6 +129,18 @@ export function VisualTicket({ ticket, onView, onDelete, ticketType }: VisualTic
             >
               <Download className="h-4 w-4 mr-2" />
               {t("Lejupielādēt", "Download")}
+            </Button>
+          )}
+          
+          {ticketType === "added" && ticket.status === 'available' && onEdit && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onEdit(ticket)}
+              className="flex-1"
+            >
+              <Pencil className="h-4 w-4 mr-2" />
+              {t("Rediģēt", "Edit")}
             </Button>
           )}
           

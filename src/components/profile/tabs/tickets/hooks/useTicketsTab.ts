@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useUserTickets } from "@/hooks/tickets";
+import { useUserTickets, UserTicket, AddTicketData } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
 import { User } from "@/types/users";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 export function useTicketsTab(user: User) {
   const { currentLanguage } = useLanguage();
   const [addTicketOpen, setAddTicketOpen] = useState(false);
+  const [editTicketOpen, setEditTicketOpen] = useState(false);
+  const [currentEditTicket, setCurrentEditTicket] = useState<UserTicket | null>(null);
   const queryClient = useQueryClient();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
@@ -18,7 +20,8 @@ export function useTicketsTab(user: User) {
     tickets, 
     isLoading, 
     loading, 
-    deleteTicket 
+    deleteTicket,
+    updateTicket
   } = useUserTickets(user?.id || '');
   
   const t = (lvText: string, enText: string) => 
@@ -41,13 +44,74 @@ export function useTicketsTab(user: User) {
     ticketDetails: tickets
   });
   
-  const handleDeleteTicket = (ticketId: string) => {
+  const handleDeleteTicket = async (ticketId: string) => {
     if (window.confirm(t(
       "Vai tiešām vēlaties dzēst šo biļeti?", 
       "Are you sure you want to delete this ticket?"
     ))) {
-      // With consolidated table, we no longer need to pass category
-      deleteTicket(ticketId);
+      const success = await deleteTicket(ticketId);
+      
+      if (success) {
+        toast({
+          title: t("Biļete dzēsta", "Ticket deleted"),
+          description: t(
+            "Biļete ir veiksmīgi dzēsta", 
+            "The ticket has been successfully deleted"
+          )
+        });
+        
+        // Refresh tickets list
+        queryClient.invalidateQueries({ queryKey: ['user-tickets', user?.id] });
+      } else {
+        toast({
+          title: t("Kļūda", "Error"),
+          description: t(
+            "Neizdevās dzēst biļeti. Lūdzu mēģiniet vēlreiz.", 
+            "Failed to delete the ticket. Please try again."
+          ),
+          variant: "destructive"
+        });
+      }
+    }
+  };
+
+  const handleUpdateTicket = async (ticketId: string, data: Partial<AddTicketData>) => {
+    try {
+      const { success, ticket, error } = await updateTicket(ticketId, data);
+      
+      if (success && ticket) {
+        toast({
+          title: t("Biļete atjaunināta", "Ticket updated"),
+          description: t(
+            "Biļetes informācija ir veiksmīgi atjaunināta", 
+            "Ticket information has been successfully updated"
+          )
+        });
+        
+        // Refresh tickets list
+        queryClient.invalidateQueries({ queryKey: ['user-tickets', user?.id] });
+        return { success: true };
+      } else {
+        toast({
+          title: t("Kļūda", "Error"),
+          description: error || t(
+            "Neizdevās atjaunināt biļeti. Lūdzu mēģiniet vēlreiz.", 
+            "Failed to update the ticket. Please try again."
+          ),
+          variant: "destructive"
+        });
+        return { success: false, error };
+      }
+    } catch (err: any) {
+      toast({
+        title: t("Kļūda", "Error"),
+        description: err.message || t(
+          "Neizdevās atjaunināt biļeti. Lūdzu mēģiniet vēlreiz.", 
+          "Failed to update the ticket. Please try again."
+        ),
+        variant: "destructive"
+      });
+      return { success: false, error: err.message };
     }
   };
 
@@ -90,7 +154,12 @@ export function useTicketsTab(user: User) {
     loading,
     addTicketOpen,
     setAddTicketOpen,
+    editTicketOpen,
+    setEditTicketOpen,
+    currentEditTicket,
+    setCurrentEditTicket,
     handleDeleteTicket,
+    handleUpdateTicket,
     refreshTickets,
     t,
     isAuthenticated

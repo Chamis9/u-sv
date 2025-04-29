@@ -13,12 +13,14 @@ import {
 import { formatPrice, formatDate } from '@/utils/formatters';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Eye, Download, Trash2 } from 'lucide-react';
+import { Eye, Download, Trash2, Pencil } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface TicketsListProps {
   tickets: UserTicket[];
   onDelete: (id: string) => void;
+  onView: (ticket: UserTicket) => void;
+  onEdit?: (ticket: UserTicket) => void;
   isLoading: boolean;
   ticketType: "added" | "purchased";
 }
@@ -27,7 +29,7 @@ interface TicketsListProps {
 let globalSelectedTicket: UserTicket | null = null;
 let setGlobalSelectedTicket: ((ticket: UserTicket | null) => void) | null = null;
 
-export function TicketsList({ tickets, onDelete, isLoading, ticketType }: TicketsListProps) {
+export function TicketsList({ tickets, onDelete, onView, onEdit, isLoading, ticketType }: TicketsListProps) {
   const { currentLanguage } = useLanguage();
   const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
   
@@ -91,7 +93,7 @@ export function TicketsList({ tickets, onDelete, isLoading, ticketType }: Ticket
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => setSelectedTicket(ticket)}
+                    onClick={() => onView(ticket)}
                     title={t("Skatīt", "View")}
                   >
                     <Eye className="h-4 w-4" />
@@ -107,6 +109,18 @@ export function TicketsList({ tickets, onDelete, isLoading, ticketType }: Ticket
                       title={t("Lejupielādēt", "Download")}
                     >
                       <Download className="h-4 w-4" />
+                    </Button>
+                  )}
+                  
+                  {ticketType === "added" && ticket.status === 'available' && onEdit && (
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => onEdit(ticket)}
+                      className="text-blue-600 hover:bg-blue-50 hover:text-blue-800"
+                      title={t("Rediģēt", "Edit")}
+                    >
+                      <Pencil className="h-4 w-4" />
                     </Button>
                   )}
                   
@@ -160,6 +174,20 @@ export function TicketsList({ tickets, onDelete, isLoading, ticketType }: Ticket
                 </div>
               )}
               
+              {selectedTicket.event_date && (
+                <div>
+                  <h3 className="font-semibold">{t("Datums", "Date")}</h3>
+                  <p>{formatDate(selectedTicket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}</p>
+                </div>
+              )}
+              
+              {selectedTicket.venue && (
+                <div>
+                  <h3 className="font-semibold">{t("Vieta", "Venue")}</h3>
+                  <p>{selectedTicket.venue}</p>
+                </div>
+              )}
+              
               <div>
                 <h3 className="font-semibold">{t("Statuss", "Status")}</h3>
                 <div>{getStatusBadge(selectedTicket.status)}</div>
@@ -170,9 +198,10 @@ export function TicketsList({ tickets, onDelete, isLoading, ticketType }: Ticket
                 <p>{formatDate(selectedTicket.created_at, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}</p>
               </div>
               
-              {selectedTicket.file_path && (
-                <div className="pt-2">
+              <div className="pt-2 flex gap-2">
+                {selectedTicket.file_path && (
                   <Button
+                    variant="secondary"
                     onClick={() => {
                       window.open(`https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/tickets/${selectedTicket.file_path}`, '_blank');
                     }}
@@ -180,8 +209,21 @@ export function TicketsList({ tickets, onDelete, isLoading, ticketType }: Ticket
                     <Download className="mr-2 h-4 w-4" />
                     {t("Lejupielādēt biļeti", "Download Ticket")}
                   </Button>
-                </div>
-              )}
+                )}
+                
+                {ticketType === "added" && selectedTicket.status === 'available' && onEdit && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedTicket(null);
+                      onEdit(selectedTicket);
+                    }}
+                  >
+                    <Pencil className="mr-2 h-4 w-4" />
+                    {t("Rediģēt", "Edit")}
+                  </Button>
+                )}
+              </div>
             </div>
           )}
         </DialogContent>

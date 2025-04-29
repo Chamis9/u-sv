@@ -1,18 +1,16 @@
 
-import React, { useState } from "react";
-import { UserTicket } from "@/hooks/tickets";
-import { TicketsList } from "../TicketsList";
-import { TicketsGrid } from "./TicketsGrid";
-import { EmptyTicketState } from "./EmptyTicketState";
-import { LoadingSpinner } from "@/components/profile/components/LoadingSpinner";
-import { useLanguage } from "@/features/language";
-import { Button } from "@/components/ui/button";
-import { Grid, List } from "lucide-react";
+import React from 'react';
+import { UserTicket } from '@/hooks/tickets/types';
+import { Pencil } from 'lucide-react';
+import { TicketsGrid } from './TicketsGrid';
+import { TicketsList, openTicketDialog } from '../../tickets/TicketsList';
+import { EmptyTicketState } from './EmptyTicketState';
 
 interface TicketsContentProps {
   tickets: UserTicket[];
   isLoading: boolean;
-  onDelete: (ticketId: string) => void;
+  onDelete: (id: string) => void;
+  onEdit?: (ticket: UserTicket) => void;
   loadingDelete: boolean;
   ticketType: "added" | "purchased";
 }
@@ -21,83 +19,48 @@ export function TicketsContent({
   tickets, 
   isLoading, 
   onDelete, 
-  loadingDelete,
+  onEdit,
+  loadingDelete, 
   ticketType 
 }: TicketsContentProps) {
-  const { currentLanguage } = useLanguage();
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
-  
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
-  
-  // Add debug logging
-  console.log(`Rendering TicketsContent for ${ticketType} tickets:`, tickets);
-  console.log("Current view mode:", viewMode);
+  const handleView = (ticket: UserTicket) => {
+    openTicketDialog(ticket);
+  };
   
   if (isLoading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="flex justify-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
   }
   
   if (tickets.length === 0) {
-    return <EmptyTicketState type={ticketType} />;
+    return <EmptyTicketState ticketType={ticketType} />;
   }
   
   return (
-    <div>
-      <div className="flex justify-end mb-4">
-        <div className="bg-muted/20 rounded-lg p-1 flex">
-          <Button
-            variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
-            size="icon"
-            onClick={() => setViewMode('grid')}
-            className="h-8 w-8"
-            title={t("Režģa skats", "Grid view")}
-          >
-            <Grid className="h-4 w-4" />
-          </Button>
-          <Button
-            variant={viewMode === 'list' ? 'secondary' : 'ghost'}
-            size="icon"
-            onClick={() => setViewMode('list')}
-            className="h-8 w-8"
-            title={t("Saraksta skats", "List view")}
-          >
-            <List className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-      
-      {viewMode === 'grid' ? (
-        <TicketsGrid 
-          tickets={tickets} 
-          isLoading={isLoading}
-          onDelete={onDelete}
-          loadingDelete={loadingDelete}
-          ticketType={ticketType}
-          onViewTicket={setSelectedTicket}
-        />
-      ) : (
+    <div className="space-y-6">
+      <div className="hidden md:block">
         <TicketsList 
           tickets={tickets} 
-          onDelete={onDelete}
-          isLoading={loadingDelete}
+          onDelete={onDelete} 
+          isLoading={loadingDelete} 
           ticketType={ticketType}
+          onView={handleView}
+          onEdit={onEdit}
         />
-      )}
+      </div>
       
-      {/* Re-use existing ticket detail dialog logic from TicketsList */}
-      {selectedTicket && (
-        <div className="hidden">
-          {/* This is a trick to trigger the dialog from TicketsList */}
-          <TicketsList 
-            tickets={[selectedTicket]} 
-            onDelete={() => {}}
-            isLoading={false}
-            ticketType={ticketType}
-          />
-        </div>
-      )}
+      <div className="md:hidden">
+        <TicketsGrid 
+          tickets={tickets} 
+          onDelete={onDelete} 
+          onView={handleView}
+          onEdit={onEdit}
+          ticketType={ticketType} 
+        />
+      </div>
     </div>
   );
 }

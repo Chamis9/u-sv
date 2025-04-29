@@ -6,7 +6,7 @@ import { useTicketStorage } from "./useTicketStorage";
 
 export function useUserTickets(userId?: string) {
   const { tickets, isLoading, error: queryError } = useTicketQueries(userId);
-  const { loading, addTicket, deleteTicket, error: mutationError } = useTicketMutations(userId);
+  const { loading, addTicket, deleteTicket, updateTicket, error: mutationError } = useTicketMutations(userId);
   const { uploadTicketFile, deleteTicketFile, uploading, error: storageError } = useTicketStorage();
   
   // Combine errors from different sources
@@ -19,6 +19,7 @@ export function useUserTickets(userId?: string) {
     loading: loading || uploading,
     addTicket,
     deleteTicket,
+    updateTicket,
     uploadTicketFile,
     deleteTicketFile,
     uploading
