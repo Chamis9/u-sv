@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "./types";
 import { useAuth } from "@/contexts/AuthContext";
+import { getCategoryTableName } from "@/components/profile/tabs/tickets/services/CategoryService";
 
 export function useTicketQueries(userId?: string) {
   const { isAuthenticated } = useAuth();
@@ -24,38 +25,55 @@ export function useTicketQueries(userId?: string) {
       console.log("Fetching tickets for user:", userId);
       
       try {
-        // Thanks to RLS, this will only return tickets where the user is seller_id or buyer_id
-        const { data: tickets, error } = await supabase
-          .from('tickets')
-          .select('*, categories(name)')
-          .or(`seller_id.eq.${userId},buyer_id.eq.${userId}`);
+        // We need to query all category-specific ticket tables
+        const ticketTables = [
+          'tickets_theatre', 'tickets_concerts', 'tickets_sports', 
+          'tickets_festivals', 'tickets_cinema', 'tickets_children', 
+          'tickets_travel', 'tickets_giftcards', 'tickets_other'
+        ];
         
-        if (error) {
-          console.error("Error fetching tickets:", error);
-          throw error;
+        let allTickets: UserTicket[] = [];
+        
+        // Query each table separately and combine results
+        for (const tableName of ticketTables) {
+          const { data: tableTickets, error } = await supabase
+            .from(tableName as any)
+            .select('*, categories(name)')
+            .or(`seller_id.eq.${userId},buyer_id.eq.${userId}`);
+          
+          if (error) {
+            console.error(`Error fetching tickets from ${tableName}:`, error);
+            continue; // Skip this table if there's an error
+          }
+          
+          if (tableTickets && tableTickets.length > 0) {
+            console.log(`Found ${tableTickets.length} tickets in ${tableName}`);
+            
+            // Map to common UserTicket structure
+            const formattedTickets = tableTickets.map((ticket: any): UserTicket => ({
+              id: String(ticket.id),
+              title: ticket.description || "Ticket",
+              description: ticket.description || undefined,
+              category: ticket.categories?.name || getCategoryNameFromTableName(tableName),
+              price: ticket.price,
+              event_id: ticket.event_id || null,
+              status: ticket.buyer_id ? 'sold' : 'available',
+              file_path: ticket.file_path || undefined,
+              created_at: ticket.created_at,
+              seller_id: ticket.seller_id || undefined,
+              buyer_id: ticket.buyer_id || undefined,
+              owner_id: ticket.owner_id,
+              event_date: ticket.event_date || null,
+              venue: ticket.venue || null
+            }));
+            
+            allTickets = [...allTickets, ...formattedTickets];
+          }
         }
         
-        console.log("Raw ticket data:", tickets);
+        console.log(`Total tickets fetched: ${allTickets.length} across all tables`);
+        return allTickets;
         
-        // Process tickets with consistent format
-        const formattedTickets: UserTicket[] = (tickets || []).map(ticket => ({
-          id: ticket.id,
-          title: ticket.description || "Custom Ticket",
-          description: ticket.description,
-          category: ticket.categories?.name || "Other",
-          price: ticket.price,
-          event_id: ticket.event_id,
-          status: ticket.buyer_id ? 'sold' : 'available',
-          file_path: ticket.file_path,
-          created_at: ticket.created_at,
-          seller_id: ticket.seller_id,
-          buyer_id: ticket.buyer_id,
-          owner_id: ticket.owner_id
-        }));
-        
-        console.log(`Tickets fetched: ${formattedTickets.length} total tickets found`);
-        
-        return formattedTickets;
       } catch (error) {
         console.error("Error in useTicketQueries:", error);
         throw error;
@@ -66,6 +84,23 @@ export function useTicketQueries(userId?: string) {
     refetchOnMount: true,
     refetchOnWindowFocus: true
   });
+
+  // Helper function to derive category name from table name
+  function getCategoryNameFromTableName(tableName: string): string {
+    const categoryMapping: Record<string, string> = {
+      'tickets_theatre': 'Theatre',
+      'tickets_concerts': 'Concerts',
+      'tickets_sports': 'Sports',
+      'tickets_festivals': 'Festivals',
+      'tickets_cinema': 'Cinema',
+      'tickets_children': 'Children',
+      'tickets_travel': 'Travel',
+      'tickets_giftcards': 'Gift Cards',
+      'tickets_other': 'Other'
+    };
+    
+    return categoryMapping[tableName] || 'Other';
+  }
 
   return {
     tickets,

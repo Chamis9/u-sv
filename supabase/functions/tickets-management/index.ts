@@ -50,45 +50,102 @@ serve(async (req) => {
 
     // Handle different API endpoints
     if (req.method === 'GET' && path === 'my-tickets') {
-      // Get user tickets
-      const { data, error } = await supabaseClient
-        .from('tickets')
-        .select('*, categories(name)')
-        .eq('user_id', user.id)
-
-      if (error) {
-        console.error('Error fetching tickets:', error)
-        return new Response(JSON.stringify({ error: error.message }), {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        })
+      // Get user tickets from all ticket tables
+      const ticketTables = [
+        'tickets_theatre', 'tickets_concerts', 'tickets_sports', 
+        'tickets_festivals', 'tickets_cinema', 'tickets_children', 
+        'tickets_travel', 'tickets_giftcards', 'tickets_other'
+      ];
+      
+      let allTickets: any[] = [];
+      
+      for (const tableName of ticketTables) {
+        const { data, error } = await supabaseClient
+          .from(tableName)
+          .select('*, categories(name)')
+          .or(`seller_id.eq.${user.id},buyer_id.eq.${user.id}`)
+        
+        if (error) {
+          console.error(`Error fetching tickets from ${tableName}:`, error)
+          continue;
+        }
+        
+        if (data && data.length > 0) {
+          allTickets = [...allTickets, ...data.map(ticket => ({
+            ...ticket,
+            tableName // Include table name for reference
+          }))]
+        }
       }
 
-      return new Response(JSON.stringify({ tickets: data }), {
+      return new Response(JSON.stringify({ tickets: allTickets }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     } else if (req.method === 'POST' && path === 'create-ticket') {
       // Create a new ticket
       const body = await req.json()
-      const { title, price, categoryId, description, filePath } = body
+      const { title, price, categoryName, description, filePath, eventDate, venue } = body
+      
+      // Determine table name from category
+      let tableName = 'tickets_other'
+      
+      if (categoryName) {
+        const categoryToTable: Record<string, string> = {
+          'Theatre': 'tickets_theatre',
+          'Teātris': 'tickets_theatre',
+          'Concerts': 'tickets_concerts',
+          'Koncerti': 'tickets_concerts',
+          'Sports': 'tickets_sports',
+          'Festivals': 'tickets_festivals',
+          'Festivāli': 'tickets_festivals',
+          'Cinema': 'tickets_cinema',
+          'Kino': 'tickets_cinema',
+          'Children': 'tickets_children',
+          'Bērniem': 'tickets_children',
+          'Travel': 'tickets_travel',
+          'Ceļojumi': 'tickets_travel',
+          'Gift Cards': 'tickets_giftcards',
+          'Dāvanu kartes': 'tickets_giftcards'
+        }
+        
+        tableName = categoryToTable[categoryName] || 'tickets_other'
+      }
+      
+      // Get category ID if provided
+      let categoryId = null
+      if (categoryName) {
+        const { data: categoryData } = await supabaseClient
+          .from('categories')
+          .select('id')
+          .eq('name', categoryName)
+          .single()
+        
+        if (categoryData) {
+          categoryId = categoryData.id
+        }
+      }
       
       // Always use the authenticated user's ID
       const { data, error } = await supabaseClient
-        .from('tickets')
+        .from(tableName)
         .insert({
           description: title,
           price: price,
           user_id: user.id,
+          seller_id: user.id,
+          owner_id: user.id,
           category_id: categoryId,
           file_path: filePath,
-          status: 'available'
+          status: 'available',
+          event_date: eventDate,
+          venue: venue
         })
         .select()
         .single()
       
       if (error) {
-        console.error('Error creating ticket:', error)
+        console.error(`Error creating ticket in ${tableName}:`, error)
         return new Response(JSON.stringify({ error: error.message }), {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -102,11 +159,32 @@ serve(async (req) => {
     } else if (req.method === 'DELETE' && path === 'delete-ticket') {
       // Delete a ticket
       const body = await req.json()
-      const { ticketId } = body
+      const { ticketId, tableName } = body
+      
+      if (!tableName) {
+        return new Response(JSON.stringify({ error: 'Table name is required' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+      
+      // Validate table name
+      const validTableNames = [
+        'tickets_theatre', 'tickets_concerts', 'tickets_sports', 
+        'tickets_festivals', 'tickets_cinema', 'tickets_children', 
+        'tickets_travel', 'tickets_giftcards', 'tickets_other'
+      ];
+      
+      if (!validTableNames.includes(tableName)) {
+        return new Response(JSON.stringify({ error: 'Invalid table name' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
       
       // First check if the ticket belongs to the user
       const { data: ticketData, error: fetchError } = await supabaseClient
-        .from('tickets')
+        .from(tableName)
         .select('user_id, file_path')
         .eq('id', ticketId)
         .single()
@@ -141,7 +219,7 @@ serve(async (req) => {
       
       // Delete the ticket
       const { error: deleteError } = await supabaseClient
-        .from('tickets')
+        .from(tableName)
         .delete()
         .eq('id', ticketId)
       

@@ -37,7 +37,7 @@ export const useCategoryTickets = (category?: string) => {
         
         console.log(`Using table ${tableName} for category: ${category}`);
         
-        // Query the appropriate table using the validated table name
+        // Query the appropriate table using the validated table name and type assertion
         const { data: ticketsData, error: fetchError } = await supabase
           .from(tableName as any)
           .select('*, categories(name)')
@@ -69,9 +69,16 @@ export const useCategoryTickets = (category?: string) => {
             venue: ticket.venue || null // Add venue property
           };
           
-          // Handle optional category_id if available
-          if ('category_id' in ticket) {
-            baseTicket.category = ticket.category_id || "";
+          // Handle category information if available
+          if (ticket.categories) {
+            try {
+              // Try to get category name from the relation
+              baseTicket.category = ticket.categories.name || "";
+            } catch (e) {
+              baseTicket.category = category || "";
+            }
+          } else if (category) {
+            baseTicket.category = category;
           }
           
           // Handle event_date if available

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -107,13 +108,26 @@ export function useTicketMutations(userId?: string) {
   
   // Delete a ticket
   const deleteTicketMutation = useMutation({
-    mutationFn: async (ticketId: string) => {
+    mutationFn: async (ticketData: { ticketId: string, tableName: string }) => {
       setLoading(true);
       
       try {
+        const { ticketId, tableName } = ticketData;
+        
+        // Validate table name
+        const validTableNames = [
+          'tickets_theatre', 'tickets_concerts', 'tickets_sports', 
+          'tickets_festivals', 'tickets_cinema', 'tickets_children', 
+          'tickets_travel', 'tickets_giftcards', 'tickets_other'
+        ];
+        
+        if (!validTableNames.includes(tableName)) {
+          throw new Error(t('Nederīga kategorija', 'Invalid table name'));
+        }
+        
         // First get the ticket to check for file_path
         const { data: ticketData, error: fetchError } = await supabase
-          .from('tickets')
+          .from(tableName as any)
           .select('file_path, user_id')
           .eq('id', ticketId)
           .single();
@@ -121,18 +135,18 @@ export function useTicketMutations(userId?: string) {
         if (fetchError) throw fetchError;
         
         // Verify ownership
-        if (ticketData.user_id !== userId) {
+        if (ticketData && ticketData.user_id !== userId) {
           throw new Error(t('Nevar dzēst cita lietotāja biļeti', 'Cannot delete another user\'s ticket'));
         }
         
         // If there's a file associated with the ticket, delete it
-        if (ticketData?.file_path) {
+        if (ticketData && ticketData.file_path) {
           await deleteTicketFile(ticketData.file_path);
         }
         
         // Now delete the ticket
         const { error } = await supabase
-          .from('tickets')
+          .from(tableName as any)
           .delete()
           .eq('id', ticketId);
         
@@ -161,9 +175,14 @@ export function useTicketMutations(userId?: string) {
     }
   });
   
+  // Simplified interface for external callers
+  const deleteTicket = (ticketId: string, tableName = 'tickets_other') => {
+    return deleteTicketMutation.mutate({ ticketId, tableName });
+  };
+  
   return {
     loading,
     addTicket: addTicketMutation.mutate,
-    deleteTicket: deleteTicketMutation.mutate
+    deleteTicket
   };
 }
