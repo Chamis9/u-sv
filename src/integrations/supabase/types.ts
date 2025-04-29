@@ -63,24 +63,6 @@ export type Database = {
         }
         Relationships: []
       }
-      admin_users: {
-        Row: {
-          created_at: string
-          id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       categories: {
         Row: {
           created_at: string
@@ -108,72 +90,6 @@ export type Database = {
         }
         Relationships: []
       }
-      events: {
-        Row: {
-          admin_id: string | null
-          category_id: string
-          created_at: string
-          created_by: string | null
-          description: string | null
-          end_date: string | null
-          id: string
-          image_url: string | null
-          price_range: unknown | null
-          start_date: string
-          status: string | null
-          title: string
-          updated_at: string
-          venue_id: string | null
-        }
-        Insert: {
-          admin_id?: string | null
-          category_id: string
-          created_at?: string
-          created_by?: string | null
-          description?: string | null
-          end_date?: string | null
-          id?: string
-          image_url?: string | null
-          price_range?: unknown | null
-          start_date: string
-          status?: string | null
-          title: string
-          updated_at?: string
-          venue_id?: string | null
-        }
-        Update: {
-          admin_id?: string | null
-          category_id?: string
-          created_at?: string
-          created_by?: string | null
-          description?: string | null
-          end_date?: string | null
-          id?: string
-          image_url?: string | null
-          price_range?: unknown | null
-          start_date?: string
-          status?: string | null
-          title?: string
-          updated_at?: string
-          venue_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "events_venue_id_fkey"
-            columns: ["venue_id"]
-            isOneToOne: false
-            referencedRelation: "venues"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_category"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       newsletter_subscribers: {
         Row: {
           created_at: string
@@ -189,39 +105,6 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: number
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          avatar_url: string | null
-          created_at: string | null
-          email: string | null
-          first_name: string | null
-          id: string
-          last_name: string | null
-          phone: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string | null
-          email?: string | null
-          first_name?: string | null
-          id: string
-          last_name?: string | null
-          phone?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string | null
-          email?: string | null
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          phone?: string | null
-          updated_at?: string | null
         }
         Relationships: []
       }
@@ -264,121 +147,6 @@ export type Database = {
           phone?: string | null
           status?: string | null
           updated_at?: string | null
-        }
-        Relationships: []
-      }
-      ticket_purchases: {
-        Row: {
-          buyer_id: string
-          id: string
-          purchase_date: string
-          seller_id: string
-          status: string
-          ticket_id: string
-        }
-        Insert: {
-          buyer_id: string
-          id?: string
-          purchase_date?: string
-          seller_id: string
-          status?: string
-          ticket_id: string
-        }
-        Update: {
-          buyer_id?: string
-          id?: string
-          purchase_date?: string
-          seller_id?: string
-          status?: string
-          ticket_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ticket_purchases_ticket_id_fkey"
-            columns: ["ticket_id"]
-            isOneToOne: false
-            referencedRelation: "tickets"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tickets: {
-        Row: {
-          created_at: string
-          description: string | null
-          event_id: string
-          file_path: string | null
-          id: string
-          price: number
-          seat_info: string | null
-          status: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          event_id: string
-          file_path?: string | null
-          id?: string
-          price: number
-          seat_info?: string | null
-          status?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          event_id?: string
-          file_path?: string | null
-          id?: string
-          price?: number
-          seat_info?: string | null
-          status?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tickets_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      venues: {
-        Row: {
-          address: string | null
-          capacity: number | null
-          city: string | null
-          created_at: string
-          description: string | null
-          id: string
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          address?: string | null
-          capacity?: number | null
-          city?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          address?: string | null
-          capacity?: number | null
-          city?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          name?: string
-          updated_at?: string
         }
         Relationships: []
       }

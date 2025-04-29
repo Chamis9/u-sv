@@ -59,7 +59,7 @@ export function useUserTickets(userId?: string) {
       // Transform the data to match UserTicket interface
       return data.map(ticket => ({
         id: ticket.id,
-        title: ticket.events?.title || ticket.description || "Custom Ticket",
+        title: ticket.description || ticket.events?.title || "Custom Ticket",
         description: ticket.description,
         category: ticket.events?.categories?.name || "Other",
         price: ticket.price,
@@ -78,38 +78,23 @@ export function useUserTickets(userId?: string) {
       setLoading(true);
       
       try {
-        // If it's a custom ticket without event_id
-        if (!ticketData.event_id && ticketData.category_id) {
-          const { data, error } = await supabase
-            .from('tickets')
-            .insert([{
-              description: ticketData.title,
-              price: ticketData.price,
-              user_id: ticketData.user_id,
-              file_path: ticketData.file_path,
-              seat_info: ticketData.seat_info,
-              status: 'available',
-              event_id: null
-            }])
-            .select()
-            .single();
-          
-          if (error) throw error;
-          return data;
-        } else {
-          // Regular event ticket
-          const { data, error } = await supabase
-            .from('tickets')
-            .insert([{
-              ...ticketData,
-              status: 'available'
-            }])
-            .select()
-            .single();
-          
-          if (error) throw error;
-          return data;
-        }
+        // Create the ticket (custom tickets don't have event_id)
+        const { data, error } = await supabase
+          .from('tickets')
+          .insert([{
+            description: ticketData.title,
+            price: ticketData.price,
+            user_id: ticketData.user_id,
+            file_path: ticketData.file_path,
+            seat_info: ticketData.seat_info,
+            status: 'available',
+            event_id: null
+          }])
+          .select()
+          .single();
+        
+        if (error) throw error;
+        return data;
       } finally {
         setLoading(false);
       }
