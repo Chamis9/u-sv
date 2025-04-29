@@ -2,7 +2,6 @@
 import React from "react";
 import { useLanguage } from "@/features/language";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import {
   FormField,
   FormItem,
@@ -19,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { UseFormReturn } from "react-hook-form";
 import { TicketFormValues } from "./schema";
+import { getAllCategories } from "./services/CategoryService";
 
 interface CategorySelectorProps {
   form: UseFormReturn<TicketFormValues>;
@@ -30,23 +30,11 @@ export function CategorySelector({ form }: CategorySelectorProps) {
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
 
-  // Fetch categories
-  const { data: categories = [] } = useQuery({
+  // Fetch categories using our service function
+  const { data: categories = [], isLoading } = useQuery({
     queryKey: ['categories'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .eq('status', 'active')
-        .order('priority', { ascending: true });
-
-      if (error) {
-        console.error("Error fetching categories:", error);
-        throw error;
-      }
-
-      return data || [];
-    },
+    queryFn: getAllCategories,
+    staleTime: 60000, // Cache for 1 minute
   });
 
   return (
@@ -63,7 +51,11 @@ export function CategorySelector({ form }: CategorySelectorProps) {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {categories.length > 0 ? (
+              {isLoading ? (
+                <SelectItem value="loading" disabled>
+                  {t("Ielādē...", "Loading...")}
+                </SelectItem>
+              ) : categories.length > 0 ? (
                 categories.map((category) => (
                   <SelectItem key={category.id} value={category.name}>
                     {category.name}

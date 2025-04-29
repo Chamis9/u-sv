@@ -212,6 +212,7 @@ export type Database = {
       tickets_concerts: {
         Row: {
           buyer_id: string | null
+          category_id: string | null
           created_at: string
           description: string | null
           event_date: string | null
@@ -228,6 +229,7 @@ export type Database = {
         }
         Insert: {
           buyer_id?: string | null
+          category_id?: string | null
           created_at?: string
           description?: string | null
           event_date?: string | null
@@ -244,6 +246,7 @@ export type Database = {
         }
         Update: {
           buyer_id?: string | null
+          category_id?: string | null
           created_at?: string
           description?: string | null
           event_date?: string | null
@@ -258,11 +261,20 @@ export type Database = {
           user_id?: string
           venue?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tickets_concerts_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tickets_festivals: {
         Row: {
           buyer_id: string | null
+          category_id: string | null
           created_at: string
           description: string | null
           event_date: string | null
@@ -279,6 +291,7 @@ export type Database = {
         }
         Insert: {
           buyer_id?: string | null
+          category_id?: string | null
           created_at?: string
           description?: string | null
           event_date?: string | null
@@ -295,6 +308,7 @@ export type Database = {
         }
         Update: {
           buyer_id?: string | null
+          category_id?: string | null
           created_at?: string
           description?: string | null
           event_date?: string | null
@@ -309,11 +323,20 @@ export type Database = {
           user_id?: string
           venue?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tickets_festivals_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tickets_other: {
         Row: {
           buyer_id: string | null
+          category_id: string | null
           created_at: string
           description: string | null
           event_date: string | null
@@ -330,6 +353,7 @@ export type Database = {
         }
         Insert: {
           buyer_id?: string | null
+          category_id?: string | null
           created_at?: string
           description?: string | null
           event_date?: string | null
@@ -346,6 +370,7 @@ export type Database = {
         }
         Update: {
           buyer_id?: string | null
+          category_id?: string | null
           created_at?: string
           description?: string | null
           event_date?: string | null
@@ -360,11 +385,20 @@ export type Database = {
           user_id?: string
           venue?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tickets_other_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tickets_sports: {
         Row: {
           buyer_id: string | null
+          category_id: string | null
           created_at: string
           description: string | null
           event_date: string | null
@@ -381,6 +415,7 @@ export type Database = {
         }
         Insert: {
           buyer_id?: string | null
+          category_id?: string | null
           created_at?: string
           description?: string | null
           event_date?: string | null
@@ -397,6 +432,7 @@ export type Database = {
         }
         Update: {
           buyer_id?: string | null
+          category_id?: string | null
           created_at?: string
           description?: string | null
           event_date?: string | null
@@ -411,11 +447,20 @@ export type Database = {
           user_id?: string
           venue?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tickets_sports_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tickets_theatre: {
         Row: {
           buyer_id: string | null
+          category_id: string | null
           created_at: string
           description: string | null
           event_date: string | null
@@ -432,6 +477,7 @@ export type Database = {
         }
         Insert: {
           buyer_id?: string | null
+          category_id?: string | null
           created_at?: string
           description?: string | null
           event_date?: string | null
@@ -448,6 +494,7 @@ export type Database = {
         }
         Update: {
           buyer_id?: string | null
+          category_id?: string | null
           created_at?: string
           description?: string | null
           event_date?: string | null
@@ -462,7 +509,15 @@ export type Database = {
           user_id?: string
           venue?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tickets_theatre_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
