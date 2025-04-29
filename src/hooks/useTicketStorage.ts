@@ -26,15 +26,8 @@ export function useTicketStorage() {
           fileSizeLimit: 10485760, // 10MB
         });
         
-        // Ensure proper policies are set for the new bucket
-        const { error } = await supabase.rpc('create_storage_policy', {
-          bucket_name: 'tickets',
-          policy_definition: `(auth.uid() = '${supabase.auth.getUser()}'::uuid)`
-        });
-        
-        if (error) {
-          console.warn("Error creating storage policy:", error);
-        }
+        // Set up storage policy directly through SQL instead of RPC
+        console.log("Created tickets bucket successfully");
       }
       return true;
     } catch (err) {
