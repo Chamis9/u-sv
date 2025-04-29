@@ -77,7 +77,7 @@ export function CategoryEventList() {
     return matchesSearch && matchesDateRange;
   }) || [];
 
-  // Filter tickets based on search query and category
+  // Filter tickets based on search query
   const filteredTickets = allCategoryTickets.filter(ticket => {
     // Text search filter
     return searchQuery

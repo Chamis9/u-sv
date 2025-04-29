@@ -14,7 +14,7 @@ export const useCategoryTickets = (category?: string) => {
       try {
         setIsLoading(true);
         
-        // Convert category name to ID if needed
+        // Convert category name to normalized category ID
         const categoryId = category ? getCategoryIdFromName(category) : '';
         
         let query = supabase
@@ -22,8 +22,8 @@ export const useCategoryTickets = (category?: string) => {
           .select('*, categories(name)')
           .eq('status', 'available');
           
-        if (category && categoryId) {
-          // Filter by category if provided
+        // Only add the category filter if we have a valid category ID
+        if (categoryId) {
           query = query.eq('category_id', categoryId);
         }
         
