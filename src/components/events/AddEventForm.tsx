@@ -3,42 +3,23 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Form } from "@/components/ui/form";
 import { useLanguage } from "@/features/language";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { CalendarIcon, Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useCategories } from "@/hooks/useCategories";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { LoginDialog } from "@/components/auth/LoginDialog";
+
+// Import the refactored components
+import { FormHeader } from "./form/FormHeader";
+import { EventDetailsFields } from "./form/EventDetailsFields";
+import { DateTimeField } from "./form/DateTimeField";
+import { PriceField } from "./form/PriceField";
+import { FileUploadField } from "./form/FileUploadField";
+import { SubmitButton } from "./form/SubmitButton";
 
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -196,235 +177,41 @@ export function AddEventForm() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{t("Pievienot pasākumu un biļeti", "Add event and ticket")}</CardTitle>
-      </CardHeader>
+      <FormHeader />
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("Pasākuma nosaukums", "Event title")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("Ievadiet pasākuma nosaukumu", "Enter event title")} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <EventDetailsFields form={form} categories={categories} />
             
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("Apraksts", "Description")}</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder={t("Pasākuma apraksts", "Event description")} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <DateTimeField form={form} />
             
-            <FormField
-              control={form.control}
-              name="category_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("Kategorija", "Category")}</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("Izvēlieties kategoriju", "Select category")} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories?.map(category => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <PriceField form={form} />
             
-            <FormField
-              control={form.control}
-              name="start_date"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>{t("Pasākuma datums un laiks", "Event date and time")}</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP HH:mm")
-                          ) : (
-                            <span>{t("Izvēlieties datumu", "Pick a date")}</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        initialFocus
-                        className={cn("p-3 pointer-events-auto")}
-                      />
-                      {field.value && (
-                        <div className="p-3 border-t border-border">
-                          <Input
-                            type="time"
-                            onChange={(e) => {
-                              const [hours, minutes] = e.target.value.split(':');
-                              const newDate = new Date(field.value);
-                              newDate.setHours(parseInt(hours, 10));
-                              newDate.setMinutes(parseInt(minutes, 10));
-                              field.onChange(newDate);
-                            }}
-                            defaultValue={field.value ? 
-                              `${field.value.getHours().toString().padStart(2, '0')}:${field.value.getMinutes().toString().padStart(2, '0')}` : 
-                              "00:00"
-                            }
-                          />
-                        </div>
-                      )}
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("Biļetes cena (EUR)", "Ticket price (EUR)")}</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      step="0.01"
-                      placeholder="0.00" 
-                      {...field}
-                      value={field.value || ''}
-                      onChange={e => field.onChange(e.target.value)}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    {t("Norādiet biļetes cenu eiro", "Enter the ticket price in euros")}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
+            <FileUploadField 
+              form={form}
               name="eventImage"
-              render={() => (
-                <FormItem>
-                  <FormLabel>{t("Pasākuma attēls", "Event image")}</FormLabel>
-                  <FormControl>
-                    <div className="flex items-center space-x-2">
-                      <label htmlFor="event-image" className="cursor-pointer">
-                        <div className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md flex items-center space-x-2 hover:bg-secondary/80">
-                          <Upload className="h-4 w-4" />
-                          <span>{t("Augšupielādēt attēlu", "Upload image")}</span>
-                        </div>
-                        <input
-                          type="file"
-                          id="event-image"
-                          className="hidden"
-                          accept="image/*"
-                          onChange={onEventImageChange}
-                        />
-                      </label>
-                      {eventImageName && (
-                        <span className="text-sm text-muted-foreground">
-                          {eventImageName}
-                        </span>
-                      )}
-                    </div>
-                  </FormControl>
-                  <FormDescription>
-                    {t("Pievienojiet pasākuma attēlu (neobligāti)", "Add an event image (optional)")}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t("Pasākuma attēls", "Event image")}
+              description={t("Pievienojiet pasākuma attēlu (neobligāti)", "Add an event image (optional)")}
+              fileName={eventImageName}
+              onFileChange={onEventImageChange}
+              accept="image/*"
             />
             
-            <FormField
-              control={form.control}
+            <FileUploadField 
+              form={form}
               name="ticketFile"
-              render={() => (
-                <FormItem>
-                  <FormLabel>{t("Biļetes fails", "Ticket file")}</FormLabel>
-                  <FormControl>
-                    <div className="flex items-center space-x-2">
-                      <label htmlFor="ticket-file" className="cursor-pointer">
-                        <div className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md flex items-center space-x-2 hover:bg-secondary/80">
-                          <Upload className="h-4 w-4" />
-                          <span>{t("Augšupielādēt failu", "Upload file")}</span>
-                        </div>
-                        <input
-                          type="file"
-                          id="ticket-file"
-                          className="hidden"
-                          accept=".pdf,.png,.jpg,.jpeg"
-                          onChange={onTicketFileChange}
-                        />
-                      </label>
-                      {ticketFileName && (
-                        <span className="text-sm text-muted-foreground">
-                          {ticketFileName}
-                        </span>
-                      )}
-                    </div>
-                  </FormControl>
-                  <FormDescription>
-                    {t("Pievienojiet biļetes failu (redzams tikai jums)", "Upload ticket file (visible only to you)")}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+              label={t("Biļetes fails", "Ticket file")}
+              description={t("Pievienojiet biļetes failu (redzams tikai jums)", "Upload ticket file (visible only to you)")}
+              fileName={ticketFileName}
+              onFileChange={onTicketFileChange}
+              accept=".pdf,.png,.jpg,.jpeg"
             />
             
-            <Button 
-              type="submit" 
-              disabled={isSubmitting}
-              className="w-full"
-            >
-              {isSubmitting 
-                ? t("Pievieno...", "Adding...") 
-                : t("Pievienot pasākumu un biļeti", "Add event and ticket")
-              }
-            </Button>
+            <SubmitButton isSubmitting={isSubmitting} />
           </form>
         </Form>
       </CardContent>
+      <LoginDialog isOpen={showLoginDialog} onClose={() => setShowLoginDialog(false)} />
     </Card>
   );
 }
