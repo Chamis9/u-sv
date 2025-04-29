@@ -69,20 +69,11 @@ export function useTicketsTab(user: User) {
     });
   };
   
-  // Automatically refresh tickets when component mounts and every 30 seconds
+  // Only refresh tickets once when component mounts
   useEffect(() => {
     if (isAuthenticated && user.id) {
-      console.log("Setting up ticket refresh for user:", user.id);
+      console.log("Initial ticket refresh for user:", user.id);
       refreshTickets();
-      
-      // Set up periodic refresh
-      const intervalId = setInterval(() => {
-        refreshTickets();
-      }, 30000); // 30 seconds
-      
-      return () => {
-        clearInterval(intervalId);
-      };
     } else {
       console.log("Not authenticated or no user ID, skipping ticket refresh");
     }

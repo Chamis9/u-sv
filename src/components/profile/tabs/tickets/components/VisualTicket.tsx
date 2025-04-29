@@ -20,28 +20,36 @@ export function VisualTicket({ ticket, onView, onDelete, ticketType }: VisualTic
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
   
-  const getStatusColor = (ticket: UserTicket) => {
-    if (ticketType === "added") {
-      return ticket.buyer_id ? "bg-blue-500" : "bg-green-500";
-    } else {
-      return "bg-green-500";
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'sold':
+        return "bg-blue-500";
+      case 'available':
+        return "bg-green-500";
+      case 'expired':
+        return "bg-orange-500";
+      default:
+        return "bg-gray-500";
     }
   };
   
-  const getStatusText = (ticket: UserTicket) => {
-    if (ticketType === "added") {
-      return ticket.buyer_id ? 
-        t("Pārdota", "Sold") :
-        t("Aktīva", "Active");
-    } else {
-      return t("Iegādāta", "Purchased");
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'sold':
+        return t("Pārdota", "Sold");
+      case 'available':
+        return t("Aktīva", "Active");
+      case 'expired':
+        return t("Beigusies", "Expired");
+      default:
+        return t("Nezināms", "Unknown");
     }
   };
   
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
       {/* Ticket header with color band */}
-      <div className={`h-2 ${getStatusColor(ticket)}`}></div>
+      <div className={`h-2 ${getStatusColor(ticket.status)}`}></div>
       
       <div className="p-4">
         <div className="flex items-start justify-between">
@@ -57,8 +65,8 @@ export function VisualTicket({ ticket, onView, onDelete, ticketType }: VisualTic
                 <Tag className="h-4 w-4 mr-1 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">{ticket.category}</span>
               </div>
-              <Badge className={getStatusColor(ticket)}>
-                {getStatusText(ticket)}
+              <Badge className={getStatusColor(ticket.status)}>
+                {getStatusText(ticket.status)}
               </Badge>
             </div>
             
@@ -97,7 +105,7 @@ export function VisualTicket({ ticket, onView, onDelete, ticketType }: VisualTic
             </Button>
           )}
           
-          {ticketType === "added" && !ticket.buyer_id && onDelete && (
+          {ticketType === "added" && ticket.status === 'available' && onDelete && (
             <Button
               variant="destructive"
               size="sm"

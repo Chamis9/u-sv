@@ -39,9 +39,9 @@ export function TicketsTab({ user }: TicketsTabProps) {
     isAuthenticated
   } = useTicketsTab(user);
   
-  // Force refresh on component mount and when user changes
+  // Force refresh only on component mount and when user changes
   useEffect(() => {
-    console.log("TicketsTab mounted or user changed, forcing refresh");
+    console.log("TicketsTab mounted or user changed");
     if (isAuthenticated) {
       refreshTickets();
     }
@@ -114,7 +114,6 @@ export function TicketsTab({ user }: TicketsTabProps) {
         </Tabs>
       </CardContent>
       
-      {/* Add Ticket Dialog */}
       <Dialog open={addTicketOpen} onOpenChange={setAddTicketOpen}>
         <DialogContent>
           <DialogHeader>

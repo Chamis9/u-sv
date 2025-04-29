@@ -50,13 +50,16 @@ export function TicketsList({ tickets, onDelete, isLoading, ticketType }: Ticket
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
   
-  const getStatusBadge = (ticket: UserTicket) => {
-    if (ticketType === "added") {
-      return ticket.buyer_id ? 
-        <Badge className="bg-blue-500">{t("Pārdota", "Sold")}</Badge> :
-        <Badge className="bg-green-500">{t("Aktīva", "Active")}</Badge>;
-    } else {
-      return <Badge className="bg-green-500">{t("Iegādāta", "Purchased")}</Badge>;
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'sold':
+        return <Badge className="bg-blue-500">{t("Pārdota", "Sold")}</Badge>;
+      case 'available':
+        return <Badge className="bg-green-500">{t("Aktīva", "Active")}</Badge>;
+      case 'expired':
+        return <Badge className="bg-orange-500">{t("Beigusies", "Expired")}</Badge>;
+      default:
+        return <Badge className="bg-gray-500">{t("Nezināms", "Unknown")}</Badge>;
     }
   };
   
@@ -82,7 +85,7 @@ export function TicketsList({ tickets, onDelete, isLoading, ticketType }: Ticket
               <TableCell className="hidden md:table-cell">
                 {formatDate(ticket.created_at, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
               </TableCell>
-              <TableCell>{getStatusBadge(ticket)}</TableCell>
+              <TableCell>{getStatusBadge(ticket.status)}</TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button
@@ -107,7 +110,7 @@ export function TicketsList({ tickets, onDelete, isLoading, ticketType }: Ticket
                     </Button>
                   )}
                   
-                  {ticketType === "added" && !ticket.buyer_id && (
+                  {ticketType === "added" && ticket.status === 'available' && (
                     <Button
                       variant="outline"
                       size="icon"
@@ -159,7 +162,7 @@ export function TicketsList({ tickets, onDelete, isLoading, ticketType }: Ticket
               
               <div>
                 <h3 className="font-semibold">{t("Statuss", "Status")}</h3>
-                <div>{getStatusBadge(selectedTicket)}</div>
+                <div>{getStatusBadge(selectedTicket.status)}</div>
               </div>
               
               <div>
