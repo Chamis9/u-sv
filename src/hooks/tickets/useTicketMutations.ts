@@ -25,9 +25,11 @@ export const useTicketMutations = (eventId?: string) => {
           event_id: ticketData.event_id,
           user_id: user.id,
           price: ticketData.price,
+          quantity: ticketData.quantity || 1,
           seat_info: ticketData.seat_info || null,
           description: ticketData.description || null,
-          file_path: ticketData.file_path || null
+          file_path: ticketData.file_path || null,
+          image_path: ticketData.image_path || null
         })
         .select()
         .single();
@@ -43,6 +45,8 @@ export const useTicketMutations = (eventId?: string) => {
       toast.success(t('Biļete veiksmīgi pievienota', 'Ticket successfully added'));
       queryClient.invalidateQueries({ queryKey: ['user-tickets'] });
       queryClient.invalidateQueries({ queryKey: ['tickets', eventId] });
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+      queryClient.invalidateQueries({ queryKey: ['filtered-events'] });
     },
     onError: (error) => {
       toast.error(t('Kļūda pievienojot biļeti', 'Error adding ticket') + ': ' + error.message);

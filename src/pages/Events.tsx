@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from "@/components/Header";
@@ -34,11 +33,13 @@ const Events = () => {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
 
+  // Get events including user listings
   const { data: events, isLoading: eventsLoading } = useFilteredEvents({
     categoryId: selectedCategoryId,
     startDate,
     endDate,
-    searchQuery
+    searchQuery,
+    includeUserListings: true // Include tickets added by users
   });
 
   const isLoading = categoriesLoading || eventsLoading;
@@ -115,6 +116,16 @@ const Events = () => {
                             {event.description && (
                               <p className="mt-2 text-sm">{event.description}</p>
                             )}
+                            {event.status === 'temp_listing' && (
+                              <div className="mt-2 text-sm text-orange-500 font-medium">
+                                {currentLanguage.code === 'lv' ? 'Lietotāja pievienota biļete' : 'User added ticket'}
+                              </div>
+                            )}
+                            <div className="mt-1 text-xs text-gray-500">
+                              {event.ticketCount > 0 && (
+                                <span>{event.ticketCount} {currentLanguage.code === 'lv' ? 'biļetes pieejamas' : 'tickets available'}</span>
+                              )}
+                            </div>
                           </CardDescription>
                         </CardHeader>
                       </Card>
@@ -179,6 +190,9 @@ const Events = () => {
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
                 {categories?.map((category) => {
                   const IconComponent = categoryIcons[category.name as keyof typeof categoryIcons] || MoreHorizontal;
+                  // Get count of tickets in this category
+                  const categoryEvents = events?.filter(event => event.category_id === category.id) || [];
+                  const ticketCount = categoryEvents.reduce((sum, event) => sum + (event.ticketCount || 0), 0);
                   
                   return (
                     <Link to={`/events/${category.id}`} key={category.id}>
@@ -190,6 +204,11 @@ const Events = () => {
                           </CardTitle>
                           <CardDescription>
                             {category.description}
+                            {ticketCount > 0 && (
+                              <p className="mt-2 text-sm font-medium text-orange-500">
+                                {ticketCount} {currentLanguage.code === 'lv' ? 'biļetes pieejamas' : 'tickets available'}
+                              </p>
+                            )}
                           </CardDescription>
                         </CardHeader>
                       </Card>
