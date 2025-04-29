@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import { categoryEvents } from '@/utils/eventData';
 import { EventHeader } from './components/EventHeader';
 import { TicketCard } from './components/TicketCard';
 import { supabase } from "@/integrations/supabase/client";
-import { UserTicket } from "@/hooks/tickets/types";
+import { UserTicket } from "@/hooks/tickets";
 
 interface TicketType {
   id: number;
@@ -58,7 +59,7 @@ export function EventTickets() {
         category: ticket.category_id || "",
         price: ticket.price,
         event_id: ticket.event_id,
-        status: 'available', // Fixed status as a literal
+        status: 'available' as const, // Type assertion to match UserTicket.status
         file_path: ticket.file_path,
         created_at: ticket.created_at,
         seller_id: ticket.seller_id,

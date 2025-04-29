@@ -54,7 +54,7 @@ export function CategoryEventList() {
           category: ticket.category_id || "",
           price: ticket.price,
           event_id: ticket.event_id,
-          status: 'available', // Fixed status as a literal
+          status: 'available' as const, // Type assertion to match UserTicket.status
           file_path: ticket.file_path,
           created_at: ticket.created_at,
           seller_id: ticket.seller_id,
