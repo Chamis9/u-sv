@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useLanguage } from "@/features/language";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -10,11 +10,11 @@ import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 import { useEvents } from '@/hooks/useEvents';
 import { getCategoryDisplayName, getCategoryIdFromName } from './utils/categoryUtils';
 import { CategoryHeader } from './components/CategoryHeader';
-import { AvailableTicketsSection } from './components/AvailableTicketsSection';
-import { EventsSection } from './components/EventsSection';
+import { EventsGrid } from './components/EventsGrid';
 import { PurchaseDialog } from './components/PurchaseDialog';
 import { useCategoryTickets } from '@/hooks/useCategoryTickets';
 import { useTicketPurchase } from '@/hooks/useTicketPurchase';
+import { Toaster } from "@/components/ui/toaster";
 
 export function CategoryEventList() {
   const { category } = useParams<{ category: string }>();
@@ -22,7 +22,6 @@ export function CategoryEventList() {
   const { currentLanguage } = useLanguage();
   
   const {
-    availableTickets,
     allCategoryTickets,
     isLoading: ticketsLoading,
     removeTicketFromState
@@ -67,18 +66,12 @@ export function CategoryEventList() {
             <div className="max-w-7xl mx-auto">
               <CategoryHeader categoryDisplayName={categoryDisplayName} />
               
-              {/* All Available Tickets Section */}
-              <AvailableTicketsSection 
-                tickets={allCategoryTickets} 
-                onPurchase={openPurchaseDialog} 
-              />
-
-              {/* Events Section */}
-              <EventsSection 
-                events={events || []} 
-                availableTickets={availableTickets}
-                category={category} 
+              {/* Events Grid */}
+              <EventsGrid 
+                events={events || []}
+                availableTickets={allCategoryTickets} 
                 isLoading={isLoading || ticketsLoading}
+                onPurchase={openPurchaseDialog}
               />
             </div>
           </div>
@@ -94,6 +87,7 @@ export function CategoryEventList() {
         
         <Footer />
         <GlobalThemeToggle />
+        <Toaster />
       </div>
     </ThemeProvider>
   );
