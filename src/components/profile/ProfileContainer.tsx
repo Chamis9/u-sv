@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Routes, Route, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import { User } from "@/types/users";
@@ -46,6 +47,9 @@ export function ProfileContainer({ isAuthenticated, isLoading, userId }: Profile
     const result = await handleUserUpdate(user, updatedUser);
     setUser(result);
   };
+
+  console.log("Current route:", location.pathname);
+  console.log("Active tab:", getActiveTabFromRoute());
 
   return (
     <ProfileAuthGuard isAuthenticated={isAuthenticated} isLoading={isLoading}>

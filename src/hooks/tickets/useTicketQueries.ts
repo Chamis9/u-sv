@@ -12,7 +12,7 @@ export function useTicketQueries(userId?: string) {
       
       console.log("Fetching tickets for user:", userId);
       
-      // Get tickets where the user is the seller (created tickets)
+      // Get tickets where the user is the seller (added tickets)
       const { data: createdTickets, error: createdError } = await supabase
         .from('tickets')
         .select('*, categories(name)')
@@ -33,6 +33,11 @@ export function useTicketQueries(userId?: string) {
         console.error("Error fetching purchased tickets:", purchasedError);
         // Continue with just the created tickets if there's an error
       }
+      
+      console.log("Raw ticket data:", {
+        created: createdTickets,
+        purchased: purchasedTickets
+      });
       
       // Process created tickets
       const createdTicketsFormatted: UserTicket[] = (createdTickets || []).map(ticket => ({
