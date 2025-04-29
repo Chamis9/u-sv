@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { User } from "@/types/users";
 import { 
   Card, 
@@ -35,6 +35,12 @@ export function TicketsTab({ user }: TicketsTabProps) {
     refreshTickets,
     t
   } = useTicketsTab(user);
+  
+  // Force refresh on component mount and when user changes
+  useEffect(() => {
+    console.log("TicketsTab mounted or user changed, forcing refresh");
+    refreshTickets();
+  }, [user.id]);
   
   return (
     <Card>

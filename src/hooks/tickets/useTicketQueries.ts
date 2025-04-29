@@ -79,7 +79,7 @@ export function useTicketQueries(userId?: string) {
       return allTickets;
     },
     enabled: !!userId,
-    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
+    staleTime: 1000 * 60, // Consider data fresh for only 1 minute to ensure we see updates quickly
     refetchOnMount: true,
     refetchOnWindowFocus: true
   });

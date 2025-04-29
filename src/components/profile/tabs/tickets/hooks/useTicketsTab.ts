@@ -29,6 +29,13 @@ export function useTicketsTab(user: User) {
     ticket.buyer_id === user.id
   );
   
+  console.log("Current user ID:", user.id);
+  console.log("Filtered tickets:", {
+    total: tickets.length,
+    added: addedTickets.length,
+    purchased: purchasedTickets.length
+  });
+  
   const handleDeleteTicket = (ticketId: string) => {
     if (window.confirm(t(
       "Vai tiešām vēlaties dzēst šo biļeti?", 

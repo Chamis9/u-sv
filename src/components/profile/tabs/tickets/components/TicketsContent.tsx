@@ -20,6 +20,9 @@ export function TicketsContent({
   loadingDelete,
   ticketType 
 }: TicketsContentProps) {
+  // Add debug logging
+  console.log(`Rendering TicketsContent for ${ticketType} tickets:`, tickets);
+  
   if (isLoading) {
     return <LoadingSpinner />;
   }
