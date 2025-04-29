@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AddTicketForm } from "./tickets/AddTicketForm";
 import { TicketsList } from "./tickets/TicketsList";
-import { useUserTickets } from "@/hooks/useUserTickets";
+import { useUserTickets } from "@/hooks/tickets";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface TicketsTabProps {

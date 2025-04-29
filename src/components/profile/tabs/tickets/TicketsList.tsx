@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useLanguage } from '@/features/language';
-import { UserTicket } from '@/hooks/useUserTickets';
+import { UserTicket } from '@/hooks/tickets';
 import { 
   Table,
   TableBody,

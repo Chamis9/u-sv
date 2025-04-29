@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ticketFormSchema, TicketFormValues } from "../schema";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTicketStorage } from "@/hooks/useTicketStorage";
-import { useUserTickets } from "@/hooks/useUserTickets";
+import { useTicketStorage } from "@/hooks/tickets";
+import { useUserTickets } from "@/hooks/tickets";
 import { getCategoryByName } from "../services/CategoryService";
 import { useLanguage } from "@/features/language";
 

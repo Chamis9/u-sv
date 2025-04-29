@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useLanguage } from "@/features/language";
 import { useForm } from "react-hook-form";
@@ -13,8 +14,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useTicketStorage } from "@/hooks/useTicketStorage";
-import { useUserTickets } from "@/hooks/useUserTickets";
+import { useTicketStorage } from "@/hooks/tickets";
+import { useUserTickets } from "@/hooks/tickets";
 import { useAuth } from "@/contexts/AuthContext";
 import { LoaderCircle } from "lucide-react";
 import { TicketFileUpload } from "./TicketFileUpload";
