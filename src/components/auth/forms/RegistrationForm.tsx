@@ -57,10 +57,18 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
       });
 
       if (error) {
-        toast({
-          variant: "destructive",
-          description: error.message,
-        });
+        // Check for specific error codes
+        if (error.message.includes('Email signups are disabled') || error.message.includes('email_provider_disabled')) {
+          toast({
+            variant: "destructive",
+            description: "Email registration is currently disabled in the system. Please contact the administrator.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            description: error.message,
+          });
+        }
         return;
       }
 
