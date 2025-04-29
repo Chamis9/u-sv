@@ -16,7 +16,7 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
   const { user } = useAuth();
   const { toast } = useToast();
   const { uploadTicketFile, uploading: fileUploading } = useTicketStorage();
-  const { addTicket, loading: ticketLoading } = useUserTickets(user?.id);
+  const { addTicket, loading: ticketLoading, lastError } = useUserTickets(user?.id);
   const [file, setFile] = useState<File | null>(null);
   
   const t = (lvText: string, enText: string) => 
@@ -47,6 +47,7 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
     
     try {
       console.log("Submitting form with values:", values);
+      console.log("Current user:", user);
       
       let filePath = null;
       
@@ -80,6 +81,7 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       // Determine the correct table name based on the category
       const tableName = getCategoryTableName(values.category);
       console.log(`Using table ${tableName} for category: ${values.category}`);
+      console.log("User ID:", user.id);
       
       // Add the ticket - ensure all details are logged
       const result = await addTicket({
@@ -98,6 +100,15 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       
       console.log("Add ticket result:", result);
       
+      if (!result.success) {
+        toast({
+          title: t("Kļūda", "Error"),
+          description: result.error || t("Kļūda pievienojot biļeti", "Error adding ticket"),
+          variant: "destructive"
+        });
+        return;
+      }
+      
       toast({
         title: t("Veiksmīgi!", "Success!"),
         description: t("Biļete ir pievienota", "Ticket has been added"),
@@ -109,7 +120,7 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       console.error("Error adding ticket:", err);
       toast({
         title: t("Kļūda", "Error"),
-        description: t("Kļūda pievienojot biļeti", "Error adding ticket"),
+        description: err.message || t("Kļūda pievienojot biļeti", "Error adding ticket"),
         variant: "destructive"
       });
     }
@@ -121,6 +132,7 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
     setFile,
     isLoading,
     handleSubmit,
-    t
+    t,
+    lastError
   };
 }

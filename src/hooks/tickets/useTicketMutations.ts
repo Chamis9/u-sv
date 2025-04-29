@@ -7,6 +7,7 @@ import { getCategoryTableName } from "@/utils/categoryMapping";
 
 export function useTicketMutations(userId?: string) {
   const [loading, setLoading] = useState(false);
+  const [lastError, setLastError] = useState<string | null>(null);
   
   // Add a new ticket
   const addTicket = async (data: AddTicketData): Promise<{ success: boolean; ticket?: UserTicket; error?: string }> => {
@@ -15,6 +16,8 @@ export function useTicketMutations(userId?: string) {
     }
 
     setLoading(true);
+    setLastError(null);
+    
     try {
       const ticketId = uuidv4();
       // Use the provided table_name or determine it from the category
@@ -45,7 +48,20 @@ export function useTicketMutations(userId?: string) {
         
       if (error) {
         console.error(`Error inserting into table ${tableName}:`, error);
-        throw error;
+        let errorMessage = `Failed to add ticket: ${error.message}`;
+        
+        if (error.code === '42501') {
+          errorMessage = `Row Level Security prevented adding ticket to ${tableName}. User ID: ${userId}`;
+          console.error('RLS error details:', { 
+            userId, 
+            tableName, 
+            errorCode: error.code,
+            errorMessage: error.message
+          });
+        }
+        
+        setLastError(errorMessage);
+        throw new Error(errorMessage);
       }
       
       console.log(`Successfully added ticket to ${tableName}:`, responseData);
@@ -75,9 +91,11 @@ export function useTicketMutations(userId?: string) {
       };
       
       return { success: true, ticket };
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error adding ticket:', err);
-      return { success: false, error: 'Failed to add ticket' };
+      const errorMessage = err.message || 'Failed to add ticket';
+      setLastError(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
@@ -90,8 +108,13 @@ export function useTicketMutations(userId?: string) {
     }
     
     setLoading(true);
+    setLastError(null);
+    
     try {
       const tableName = getCategoryTableName(category);
+      
+      console.log(`Deleting ticket from table: ${tableName}`);
+      console.log(`Ticket ID: ${ticketId}, Category: ${category}, User ID: ${userId}`);
       
       const { error } = await supabase
         .from(tableName as any)
@@ -99,17 +122,22 @@ export function useTicketMutations(userId?: string) {
         .match({ id: ticketId, owner_id: userId });
         
       if (error) {
+        console.error(`Error deleting ticket from ${tableName}:`, error);
+        setLastError(`Failed to delete ticket: ${error.message}`);
         throw error;
       }
       
+      console.log(`Successfully deleted ticket from ${tableName}`);
       return true;
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error deleting ticket:', err);
+      const errorMessage = err.message || 'Failed to delete ticket';
+      setLastError(errorMessage);
       return false;
     } finally {
       setLoading(false);
     }
   };
   
-  return { addTicket, deleteTicket, loading };
+  return { addTicket, deleteTicket, loading, lastError };
 }
