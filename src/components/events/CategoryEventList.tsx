@@ -8,7 +8,7 @@ import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 import { useEvents } from '@/hooks/useEvents';
-import { getCategoryDisplayName, getCategoryIdFromName } from './utils/categoryUtils';
+import { getCategoryDisplayName } from './utils/categoryUtils';
 import { CategoryHeader } from './components/CategoryHeader';
 import { EventsGrid } from './components/EventsGrid';
 import { PurchaseDialog } from './components/PurchaseDialog';
@@ -39,7 +39,7 @@ export function CategoryEventList() {
   
   // Log category and tickets for debugging
   useEffect(() => {
-    console.log('Current category:', category);
+    console.log('Current category param:', category);
     console.log('All category tickets:', allCategoryTickets);
   }, [category, allCategoryTickets]);
 
@@ -160,6 +160,18 @@ export function CategoryEventList() {
                   </PopoverContent>
                 </Popover>
               </div>
+              
+              {/* Add debug info in development only */}
+              {process.env.NODE_ENV === 'development' && (
+                <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md mb-6 text-sm">
+                  <h3 className="font-bold mb-2">Debug Info:</h3>
+                  <p>Current category param: {category}</p>
+                  <p>Available tickets: {allCategoryTickets.length}</p>
+                  <p>Filtered tickets: {filteredTickets.length}</p>
+                  <p>Loading state: {ticketsLoading ? 'Loading...' : 'Done'}</p>
+                  <p>Events: {events?.length || 0}</p>
+                </div>
+              )}
               
               {/* Events Grid */}
               <EventsGrid 

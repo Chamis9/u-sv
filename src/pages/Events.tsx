@@ -24,6 +24,19 @@ const categoryIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   "Citi": MoreHorizontal
 };
 
+// Map category names to URL slugs
+const categorySlugMap: Record<string, string> = {
+  "Teātris": "teatris",
+  "Koncerti": "koncerti",
+  "Festivāli": "festivali",
+  "Sports": "sports",
+  "Kino": "kino",
+  "Bērniem": "berniem",
+  "Ceļojumi": "celojumi",
+  "Dāvanu kartes": "davanu-kartes",
+  "Citi": "citi"
+};
+
 const Events = () => {
   const { translations, currentLanguage } = useLanguage();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
@@ -69,10 +82,13 @@ const Events = () => {
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {categories?.map((category) => {
                   const IconComponent = categoryIcons[category.name as keyof typeof categoryIcons] || MoreHorizontal;
-                  const route = category.name.toLowerCase().replace(/\s+/g, '-');
+                  // Get the correct URL slug for this category
+                  const slug = categorySlugMap[category.name] || category.name.toLowerCase().replace(/\s+/g, '-');
+                  
+                  console.log(`Mapping category "${category.name}" to slug "${slug}"`);
                   
                   return (
-                    <Link to={`/events/${route}`} key={category.id}>
+                    <Link to={`/events/${slug}`} key={category.id}>
                       <Card className="h-full transition-transform hover:scale-105 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">

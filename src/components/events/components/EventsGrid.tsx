@@ -49,7 +49,7 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
     );
   }
 
-  // Show message if both events and tickets are empty
+  // Handle case with no events or tickets
   if (events.length === 0 && availableTickets.length === 0) {
     return (
       <div className="text-center py-12">
@@ -60,7 +60,7 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
     );
   }
 
-  // If we don't have events but have standalone tickets
+  // Get standalone tickets (not associated with events or associated with events that aren't in our events array)
   const standAloneTickets = availableTickets.filter(ticket => !ticket.event_id || !events.some(event => String(event.id) === ticket.event_id));
   
   return (
@@ -182,6 +182,15 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
               </div>
             ))}
           </div>
+        </div>
+      )}
+      
+      {/* Show this only when we have events but no standalone tickets */}
+      {events.length === 0 && standAloneTickets.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-lg text-gray-500 dark:text-gray-400">
+            {t('Šajā kategorijā nav pasākumu vai biļešu', 'No events or tickets in this category')}
+          </p>
         </div>
       )}
     </div>

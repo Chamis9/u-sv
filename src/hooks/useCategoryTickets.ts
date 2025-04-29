@@ -22,18 +22,35 @@ export const useCategoryTickets = (category?: string) => {
           return;
         }
         
-        // Query the consolidated tickets table with a filter for category
+        // Normalize category name for comparison (convert to lowercase, handle hyphens, etc)
+        const normalizedCategory = category.toLowerCase();
+        
+        // Map URL slugs to possible database category names
+        const categoryMapping: Record<string, string[]> = {
+          'sports': ['Sports', 'sports', 'Sport', 'sport'],
+          'teatris': ['Teātris', 'teatris', 'teātris', 'Teatris'],
+          'koncerti': ['Koncerti', 'koncerti', 'Koncerts', 'koncerts'],
+          'festivali': ['Festivāli', 'festivali', 'festivāli', 'Festivali']
+        };
+        
+        // Get possible category names from mapping or use the original
+        const possibleCategories = categoryMapping[normalizedCategory] || [category];
+        console.log('Possible category matches:', possibleCategories);
+        
+        // Query using any of the possible category names
         const { data: ticketsData, error: fetchError } = await supabase
           .from('tickets')
           .select('*, categories(name)')
           .eq('status', 'available')
-          .eq('category_name', category);
+          .in('category_name', possibleCategories);
         
         if (fetchError) {
+          console.error('Error fetching tickets:', fetchError);
           throw fetchError;
         }
         
         console.log(`Fetched ${ticketsData?.length || 0} tickets for category ${category}`);
+        console.log('Raw tickets data:', ticketsData);
         
         // Transform the data to match UserTicket type
         const formattedTickets: UserTicket[] = ((ticketsData || []) as any[]).map((ticket: any) => {
@@ -58,6 +75,7 @@ export const useCategoryTickets = (category?: string) => {
           };
         });
         
+        console.log('Formatted tickets:', formattedTickets);
         setAllCategoryTickets(formattedTickets);
       } catch (err) {
         console.error('Error fetching available tickets:', err);
