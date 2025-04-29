@@ -25,8 +25,7 @@ interface TicketsTabProps {
 
 export function TicketsTab({ user }: TicketsTabProps) {
   const {
-    listedTickets,
-    soldTickets,
+    addedTickets,
     purchasedTickets,
     isLoading,
     loading,
@@ -45,36 +44,23 @@ export function TicketsTab({ user }: TicketsTabProps) {
       />
       
       <CardContent>
-        <Tabs defaultValue="listed">
+        <Tabs defaultValue="added">
           <TabsList className="mb-4">
-            <TabsTrigger value="listed">
-              {t("Pievienotās biļetes", "Listed Tickets")} {listedTickets.length > 0 && `(${listedTickets.length})`}
-            </TabsTrigger>
-            <TabsTrigger value="sold">
-              {t("Pārdotās biļetes", "Sold Tickets")} {soldTickets.length > 0 && `(${soldTickets.length})`}
+            <TabsTrigger value="added">
+              {t("Pievienotās biļetes", "Added Tickets")} {addedTickets.length > 0 && `(${addedTickets.length})`}
             </TabsTrigger>
             <TabsTrigger value="purchased">
-              {t("Nopirktās biļetes", "Purchased Tickets")} {purchasedTickets.length > 0 && `(${purchasedTickets.length})`}
+              {t("Iegādātās biļetes", "Purchased Tickets")} {purchasedTickets.length > 0 && `(${purchasedTickets.length})`}
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="listed">
+          <TabsContent value="added">
             <TicketsContent 
-              tickets={listedTickets}
+              tickets={addedTickets}
               isLoading={isLoading}
               onDelete={handleDeleteTicket}
               loadingDelete={loading}
-              ticketType="listed"
-            />
-          </TabsContent>
-          
-          <TabsContent value="sold">
-            <TicketsContent 
-              tickets={soldTickets}
-              isLoading={isLoading}
-              onDelete={handleDeleteTicket}
-              loadingDelete={loading}
-              ticketType="sold"
+              ticketType="added"
             />
           </TabsContent>
           

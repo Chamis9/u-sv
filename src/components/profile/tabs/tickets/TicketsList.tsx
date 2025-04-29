@@ -21,25 +21,23 @@ interface TicketsListProps {
   tickets: UserTicket[];
   onDelete: (id: string) => void;
   isLoading: boolean;
+  ticketType: "added" | "purchased";
 }
 
-export function TicketsList({ tickets, onDelete, isLoading }: TicketsListProps) {
+export function TicketsList({ tickets, onDelete, isLoading, ticketType }: TicketsListProps) {
   const { currentLanguage } = useLanguage();
   const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
   
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'available':
-        return <Badge className="bg-green-500">{t("Pieejama", "Available")}</Badge>;
-      case 'sold':
-        return <Badge className="bg-blue-500">{t("Pārdota", "Sold")}</Badge>;
-      case 'expired':
-        return <Badge variant="outline">{t("Beigusies", "Expired")}</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
+  const getStatusBadge = (ticket: UserTicket) => {
+    if (ticketType === "added") {
+      return ticket.buyer_id ? 
+        <Badge className="bg-blue-500">{t("Pārdota", "Sold")}</Badge> :
+        <Badge className="bg-green-500">{t("Aktīva", "Active")}</Badge>;
+    } else {
+      return <Badge className="bg-green-500">{t("Iegādāta", "Purchased")}</Badge>;
     }
   };
   
@@ -65,7 +63,7 @@ export function TicketsList({ tickets, onDelete, isLoading }: TicketsListProps) 
               <TableCell className="hidden md:table-cell">
                 {formatDate(ticket.created_at, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
               </TableCell>
-              <TableCell>{getStatusBadge(ticket.status)}</TableCell>
+              <TableCell>{getStatusBadge(ticket)}</TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button
@@ -82,7 +80,6 @@ export function TicketsList({ tickets, onDelete, isLoading }: TicketsListProps) 
                       variant="outline"
                       size="icon"
                       onClick={() => {
-                        // Handle download logic
                         window.open(`https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/tickets/${ticket.file_path}`, '_blank');
                       }}
                       title={t("Lejupielādēt", "Download")}
@@ -91,7 +88,7 @@ export function TicketsList({ tickets, onDelete, isLoading }: TicketsListProps) 
                     </Button>
                   )}
                   
-                  {ticket.status === 'available' && (
+                  {ticketType === "added" && !ticket.buyer_id && (
                     <Button
                       variant="outline"
                       size="icon"
@@ -143,7 +140,7 @@ export function TicketsList({ tickets, onDelete, isLoading }: TicketsListProps) 
               
               <div>
                 <h3 className="font-semibold">{t("Statuss", "Status")}</h3>
-                <div>{getStatusBadge(selectedTicket.status)}</div>
+                <div>{getStatusBadge(selectedTicket)}</div>
               </div>
               
               <div>

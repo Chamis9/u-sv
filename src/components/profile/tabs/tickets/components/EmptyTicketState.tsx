@@ -1,10 +1,10 @@
 
 import React from "react";
 import { useLanguage } from "@/features/language";
-import { Ticket as TicketIcon, Tag, ShoppingBag } from "lucide-react";
+import { Ticket as TicketIcon, ShoppingBag } from "lucide-react";
 
 interface EmptyTicketStateProps {
-  type: "listed" | "sold" | "purchased";
+  type: "added" | "purchased";
 }
 
 export function EmptyTicketState({ type }: EmptyTicketStateProps) {
@@ -18,19 +18,14 @@ export function EmptyTicketState({ type }: EmptyTicketStateProps) {
   let description = "";
   
   switch (type) {
-    case "listed":
+    case "added":
       Icon = TicketIcon;
-      title = t("Nav pievienotu biļešu", "No listed tickets");
-      description = t("Jūs vēl neesat pievienojis nevienu biļeti pārdošanā", "You haven't listed any tickets for sale yet");
-      break;
-    case "sold":
-      Icon = Tag;
-      title = t("Nav pārdotu biļešu", "No sold tickets");
-      description = t("Jūs vēl neesat pārdevis nevienu biļeti", "You haven't sold any tickets yet");
+      title = t("Nav pievienotu biļešu", "No added tickets");
+      description = t("Jūs vēl neesat pievienojis nevienu biļeti pārdošanā", "You haven't added any tickets for sale yet");
       break;
     case "purchased":
       Icon = ShoppingBag;
-      title = t("Nav nopirktu biļešu", "No purchased tickets");
+      title = t("Nav iegādātu biļešu", "No purchased tickets");
       description = t("Jūs vēl neesat iegādājies nevienu biļeti", "You haven't purchased any tickets yet");
       break;
     default:

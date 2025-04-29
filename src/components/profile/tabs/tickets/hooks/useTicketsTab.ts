@@ -20,17 +20,13 @@ export function useTicketsTab(user: User) {
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
   
-  // Filter tickets based on status
-  const listedTickets = tickets.filter(ticket => 
-    ticket.status === 'available' || ticket.status === 'expired'
-  );
-  
-  const soldTickets = tickets.filter(ticket => 
-    ticket.status === 'sold'
+  // Filter tickets based on seller_id and buyer_id
+  const addedTickets = tickets.filter(ticket => 
+    ticket.seller_id === user.id
   );
   
   const purchasedTickets = tickets.filter(ticket => 
-    ticket.status === 'purchased'
+    ticket.buyer_id === user.id
   );
   
   const handleDeleteTicket = (ticketId: string) => {
@@ -54,8 +50,7 @@ export function useTicketsTab(user: User) {
   
   return {
     tickets,
-    listedTickets,
-    soldTickets,
+    addedTickets,
     purchasedTickets,
     isLoading,
     loading,
