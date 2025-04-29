@@ -49,22 +49,37 @@ export const useCategoryTickets = (category?: string) => {
         
         console.log('Fetched tickets:', ticketsData);
         
-        // Transform the data to match UserTicket type
-        const formattedTickets: UserTicket[] = (ticketsData || []).map(ticket => ({
-          id: ticket.id as string, // Ensure id is a string
-          title: ticket.description || "Ticket",
-          description: ticket.description,
-          category: ticket.category_id || "",
-          price: ticket.price,
-          event_id: ticket.event_id,
-          status: 'available' as const,
-          file_path: ticket.file_path,
-          created_at: ticket.created_at,
-          seller_id: ticket.seller_id,
-          buyer_id: ticket.buyer_id,
-          owner_id: ticket.owner_id,
-          event_date: ticket.event_date
-        }));
+        // Transform the data to match UserTicket type, handling potential missing fields
+        const formattedTickets: UserTicket[] = (ticketsData || []).map(ticket => {
+          // Create a base ticket object with properties that should exist in all tables
+          const baseTicket: UserTicket = {
+            id: String(ticket.id), // Ensure id is a string
+            title: ticket.description || "Ticket",
+            description: ticket.description || "",
+            category: "", // Will be populated below if available
+            price: ticket.price,
+            event_id: ticket.event_id || null,
+            status: 'available' as const,
+            file_path: ticket.file_path || undefined,
+            created_at: ticket.created_at,
+            seller_id: ticket.seller_id || undefined,
+            buyer_id: ticket.buyer_id || undefined,
+            owner_id: ticket.owner_id,
+            event_date: null // Default value
+          };
+          
+          // Handle optional category_id if available
+          if ('category_id' in ticket) {
+            baseTicket.category = ticket.category_id || "";
+          }
+          
+          // Handle event_date if available
+          if ('event_date' in ticket) {
+            baseTicket.event_date = ticket.event_date || null;
+          }
+          
+          return baseTicket;
+        });
         
         setAllCategoryTickets(formattedTickets);
       } catch (err) {
