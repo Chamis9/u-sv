@@ -129,5 +129,4 @@ export function useTicketMutations(userId?: string) {
   return { addTicket, deleteTicket, loading };
 }
 
-// Make sure to export the hook
-export { useTicketMutations };
+// No duplicate export - removed the second export
