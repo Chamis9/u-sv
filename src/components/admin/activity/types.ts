@@ -15,3 +15,4 @@ export interface Activity {
   metadata?: Record<string, any> | null;
   created_at: string;
 }
+

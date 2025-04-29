@@ -25,7 +25,7 @@ export function useActivityLog(pageSize = 10, enabled = true) {
     
     try {
       // Use RPC call for count to avoid type errors
-      const { count, error: countError } = await supabase.rpc('get_activity_count');
+      const { data: count, error: countError } = await supabase.rpc('get_activity_count');
       
       if (countError) {
         throw countError;

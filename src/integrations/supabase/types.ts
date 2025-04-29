@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      activity_log: {
+        Row: {
+          activity_type: string
+          created_at: string
+          description: string
+          email: string | null
+          id: string
+          metadata: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string
+          description: string
+          email?: string | null
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string
+          description?: string
+          email?: string | null
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       admin_user: {
         Row: {
           created_at: string
@@ -690,6 +720,28 @@ export type Database = {
       check_phone_exists: {
         Args: { check_phone: string }
         Returns: boolean
+      }
+      get_activities: {
+        Args: { page_size: number; page_number: number }
+        Returns: Json[]
+      }
+      get_activity_count: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      get_recent_activities: {
+        Args: { limit_num: number }
+        Returns: Json[]
+      }
+      log_activity: {
+        Args: {
+          p_activity_type: string
+          p_description: string
+          p_user_id: string
+          p_email: string
+          p_metadata: Json
+        }
+        Returns: undefined
       }
     }
     Enums: {

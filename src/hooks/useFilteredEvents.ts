@@ -65,43 +65,50 @@ export const useFilteredEvents = (filters: FilterOptions) => {
         status: 'published'
       }));
       
-      // Fetch all available tickets from Supabase
-      const { data: ticketsData, error } = await supabase
-        .from('tickets')
-        .select('*')
-        .eq('status', 'available');
-        
-      if (error) {
-        console.error('Error fetching available tickets:', error);
-        return { events: transformedEvents, availableTickets: {} };
-      }
+      // Fetch available tickets from each category-specific table
+      const ticketTables = [
+        'tickets_theatre', 'tickets_concerts', 'tickets_sports', 
+        'tickets_festivals', 'tickets_cinema', 'tickets_children', 
+        'tickets_travel', 'tickets_giftcards', 'tickets_other'
+      ];
       
-      // Format tickets to match UserTicket interface
-      const availableTickets = ticketsData.map(ticket => ({
-        id: ticket.id,
-        title: ticket.description || "Ticket",
-        description: ticket.description,
-        category: ticket.category_id || "",
-        price: ticket.price,
-        event_id: ticket.event_id,
-        status: 'available' as const, // Type assertion to match UserTicket.status
-        file_path: ticket.file_path,
-        created_at: ticket.created_at,
-        seller_id: ticket.seller_id,
-        buyer_id: ticket.buyer_id,
-        owner_id: ticket.owner_id
-      }));
-      
-      // Group tickets by category
       const ticketsByCategory: Record<string, UserTicket[]> = {};
       
-      availableTickets.forEach(ticket => {
-        const categoryId = ticket.category;
-        if (!ticketsByCategory[categoryId]) {
-          ticketsByCategory[categoryId] = [];
+      for (const tableName of ticketTables) {
+        const categoryId = tableName.replace('tickets_', '');
+        
+        const { data, error } = await supabase
+          .from(tableName as any)
+          .select('*')
+          .eq('status', 'available');
+          
+        if (error) {
+          console.error(`Error fetching available tickets from ${tableName}:`, error);
+          continue;
         }
-        ticketsByCategory[categoryId].push(ticket);
-      });
+        
+        if (data && data.length > 0) {
+          // Format tickets to match UserTicket interface
+          const formattedTickets = data.map(ticket => ({
+            id: String(ticket.id),
+            title: ticket.description || "Ticket",
+            description: ticket.description,
+            category: categoryId,
+            price: ticket.price,
+            event_id: ticket.event_id,
+            status: 'available' as const,
+            file_path: ticket.file_path,
+            created_at: ticket.created_at,
+            seller_id: ticket.seller_id,
+            buyer_id: ticket.buyer_id,
+            owner_id: ticket.owner_id,
+            event_date: ticket.event_date,
+            venue: ticket.venue
+          }));
+          
+          ticketsByCategory[categoryId] = formattedTickets;
+        }
+      }
 
       return { 
         events: transformedEvents, 
