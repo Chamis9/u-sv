@@ -41,13 +41,17 @@ export function useSupabaseAuth() {
 
   // Set up subscription to user avatar changes
   useEffect(() => {
+    if (!user || !user.id) return;
+    
+    console.log("Setting up avatar change subscription for user:", user.id);
+    
     const subscription = supabase
       .channel('avatar_changes')
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',
         table: 'registered_users',
-        filter: user ? `id=eq.${user.id}` : undefined
+        filter: `id=eq.${user.id}`
       }, (payload) => {
         console.log("User data changed:", payload);
         if (payload.new && payload.new.avatar_url !== user?.avatar_url) {
@@ -59,6 +63,7 @@ export function useSupabaseAuth() {
       .subscribe();
 
     return () => {
+      console.log("Removing avatar change subscription");
       supabase.removeChannel(subscription);
     };
   }, [user?.id]);
@@ -67,12 +72,14 @@ export function useSupabaseAuth() {
     const checkAuth = async () => {
       try {
         setIsAuthLoading(true);
+        console.log("Checking authentication status...");
         
         // Get current session
         const { data: sessionData } = await supabase.auth.getSession();
         const session = sessionData.session;
         
         if (session) {
+          console.log("User is authenticated:", session.user.email);
           setIsAuthenticated(true);
           setUserEmail(session.user.email);
           
@@ -81,6 +88,7 @@ export function useSupabaseAuth() {
             await fetchUserData(session.user.email);
           }
         } else {
+          console.log("No active session found");
           setIsAuthenticated(false);
           setUserEmail(null);
           setUser(null);
@@ -100,6 +108,7 @@ export function useSupabaseAuth() {
     // Set up auth state change listener
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log("Auth state changed:", event);
         if (event === 'SIGNED_IN' && session) {
           setIsAuthenticated(true);
           setUserEmail(session.user.email);
@@ -123,6 +132,7 @@ export function useSupabaseAuth() {
 
   // Function to refresh user data (e.g., after avatar update)
   const refreshUserData = async () => {
+    console.log("Refreshing user data...");
     if (userEmail) {
       await fetchUserData(userEmail);
       setLastAvatarUpdate(Date.now());
@@ -131,6 +141,7 @@ export function useSupabaseAuth() {
 
   const logout = async () => {
     try {
+      console.log("Logging out...");
       await supabase.auth.signOut();
       setIsAuthenticated(false);
       setUserEmail(null);
