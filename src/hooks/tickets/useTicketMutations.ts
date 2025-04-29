@@ -25,6 +25,7 @@ export function useTicketMutations(userId?: string) {
       
       console.log(`Adding ticket to table: ${tableName}`);
       console.log(`Full ticket data:`, JSON.stringify(data, null, 2));
+      console.log(`Current user ID: ${userId}`);
       
       // Insert ticket into the right table
       const { data: responseData, error } = await supabase
@@ -41,7 +42,8 @@ export function useTicketMutations(userId?: string) {
           file_path: data.file_path,
           status: 'available',
           event_id: data.event_id || null,
-          category_id: data.category_id
+          category_id: data.category_id,
+          title: data.title || data.description // Add title field explicitly
         })
         .select('*')
         .single();
@@ -61,7 +63,7 @@ export function useTicketMutations(userId?: string) {
         }
         
         setError(errorMessage);
-        throw new Error(errorMessage);
+        return { success: false, error: errorMessage };
       }
       
       console.log(`Successfully added ticket to ${tableName}:`, responseData);

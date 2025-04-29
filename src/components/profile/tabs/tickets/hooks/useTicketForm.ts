@@ -133,6 +133,6 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
     isLoading,
     handleSubmit,
     t,
-    error // Return error instead of lastError
+    error
   };
 }
