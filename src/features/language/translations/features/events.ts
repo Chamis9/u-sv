@@ -23,7 +23,7 @@ export interface EventsTranslations {
 
 export const eventsTranslations = {
   lv: {
-    title: "Pasākumi",
+    title: "Biļetes",
     theatre: "Teātris",
     theatreDesc: "Teātris, opera, balets",
     concerts: "Koncerti",
@@ -44,7 +44,7 @@ export const eventsTranslations = {
     otherDesc: "Citi pasākumi"
   },
   en: {
-    title: "Events",
+    title: "Tickets",
     theatre: "Theatre",
     theatreDesc: "Theatre, opera, ballet",
     concerts: "Concerts",
@@ -65,7 +65,7 @@ export const eventsTranslations = {
     otherDesc: "Other events"
   },
   ru: {
-    title: "Мероприятия",
+    title: "Билеты",
     theatre: "Театр",
     theatreDesc: "Театр, опера, балет",
     concerts: "Концерты",

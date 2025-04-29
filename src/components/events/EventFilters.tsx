@@ -10,6 +10,9 @@ import { useLanguage } from "@/features/language";
 import { useCategories } from '@/hooks/useCategories';
 import { format } from "date-fns";
 
+// This component is kept for reference but is no longer used in the application
+// It has been replaced by inline filtering in CategoryEventList
+
 interface EventFiltersProps {
   onSearchChange: (value: string) => void;
   onCategoryChange: (value: string) => void;
@@ -81,6 +84,7 @@ export function EventFilters({
                 onDateChange(range?.from, range?.to);
               }}
               numberOfMonths={2}
+              className="pointer-events-auto"
             />
           </PopoverContent>
         </Popover>

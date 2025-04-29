@@ -1,3 +1,4 @@
+
 export interface NavigationTranslations {
   home: string;
   events: string;
@@ -21,21 +22,21 @@ export interface LanguageSelectorTranslations {
 export const navigationTranslations = {
   lv: {
     home: "Sākumlapa",
-    events: "Pasākumi",
+    events: "Biļetes",
     tickets: "Biļetes",
     contact: "Kontakti",
     aboutUs: "Par mums"
   },
   en: {
     home: "Home",
-    events: "Events",
+    events: "Tickets",
     tickets: "Tickets",
     contact: "Contact",
     aboutUs: "About Us"
   },
   ru: {
     home: "Главная",
-    events: "События",
+    events: "Билеты",
     tickets: "Билеты",
     contact: "Контакты",
     aboutUs: "О нас"

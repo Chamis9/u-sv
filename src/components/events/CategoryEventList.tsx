@@ -16,13 +16,19 @@ import { useCategoryTickets } from '@/hooks/useCategoryTickets';
 import { useTicketPurchase } from '@/hooks/useTicketPurchase';
 import { Toaster } from "@/components/ui/toaster";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, CalendarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
 
 export function CategoryEventList() {
   const { category } = useParams<{ category: string }>();
   const { data: events, isLoading, error } = useEvents(category);
   const { currentLanguage } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
   
   const {
     allCategoryTickets,
@@ -47,19 +53,37 @@ export function CategoryEventList() {
     }
   };
 
-  // Filter events based on search query
-  const filteredEvents = events?.filter(event =>
-    event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (event.description && event.description.toLowerCase().includes(searchQuery.toLowerCase()))
-  ) || [];
+  // Filter events based on search query and dates
+  const filteredEvents = events?.filter(event => {
+    // Text search filter
+    const matchesSearch = 
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (event.description && event.description.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    // Date filter
+    let matchesDateRange = true;
+    if (startDate) {
+      const eventDate = new Date(event.start_date);
+      matchesDateRange = eventDate >= startDate;
+    }
+    if (endDate) {
+      const eventDate = new Date(event.start_date);
+      matchesDateRange = matchesDateRange && eventDate <= endDate;
+    }
+    
+    return matchesSearch && matchesDateRange;
+  }) || [];
 
   // Filter tickets based on search query
-  const filteredTickets = searchQuery
-    ? allCategoryTickets.filter(ticket =>
-        ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredTickets = allCategoryTickets.filter(ticket => {
+    // Skip tickets that aren't for this category
+    if (ticket.category !== categoryId) return false;
+    
+    return searchQuery
+      ? ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (ticket.description && ticket.description.toLowerCase().includes(searchQuery.toLowerCase()))
-      )
-    : allCategoryTickets;
+      : true;
+  });
 
   if (error) {
     return (
@@ -72,6 +96,11 @@ export function CategoryEventList() {
   // Determine category display name
   const categoryId = category ? getCategoryIdFromName(category) : '';
   const categoryDisplayName = category ? getCategoryDisplayName(categoryId, currentLanguage.code) : '';
+  
+  // Format the date range for display
+  const dateButtonText = startDate && endDate
+    ? `${format(startDate, 'dd.MM.yyyy')} - ${format(endDate, 'dd.MM.yyyy')}`
+    : currentLanguage.code === 'lv' ? 'Izvēlies datumus' : 'Select dates';
 
   return (
     <ThemeProvider>
@@ -83,16 +112,44 @@ export function CategoryEventList() {
             <div className="max-w-7xl mx-auto">
               <CategoryHeader categoryDisplayName={categoryDisplayName} />
               
-              {/* Search Input */}
-              <div className="mb-8 relative">
-                <Input
-                  type="search"
-                  placeholder={currentLanguage.code === 'lv' ? "Meklēt pasākumus un biļetes..." : "Search events and tickets..."}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              {/* Search and Date Filter */}
+              <div className="mb-8 flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-grow">
+                  <Input
+                    type="search"
+                    placeholder={currentLanguage.code === 'lv' ? "Meklēt pasākumus un biļetes..." : "Search events and tickets..."}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                </div>
+                
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full sm:w-[300px]">
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dateButtonText}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      initialFocus
+                      mode="range"
+                      defaultMonth={startDate}
+                      selected={{
+                        from: startDate,
+                        to: endDate
+                      }}
+                      onSelect={(range) => {
+                        setStartDate(range?.from);
+                        setEndDate(range?.to);
+                      }}
+                      numberOfMonths={2}
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               
               {/* Events Grid */}
