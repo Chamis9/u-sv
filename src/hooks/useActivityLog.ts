@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { Activity, JsonActivity } from "@/components/admin/activity/types";
 import { useLanguage } from "@/features/language";
+import { Json } from "@/integrations/supabase/types";
 import { PostgrestError } from '@supabase/supabase-js';
 
 export function useActivityLog(pageSize = 10, enabled = true) {
@@ -25,19 +26,20 @@ export function useActivityLog(pageSize = 10, enabled = true) {
     setError(null);
     
     try {
-      // Use RPC call for count
-      const { data: count, error: countError } = await supabase.rpc<number>('get_activity_count');
+      // Use RPC call for count with proper type parameters
+      const { data: countData, error: countError } = await supabase.rpc<number, {}>('get_activity_count');
       
       if (countError) {
         throw countError;
       }
       
-      if (count !== null) {
-        setTotalCount(count);
+      // Ensure countData is a number before setting state
+      if (typeof countData === 'number') {
+        setTotalCount(countData);
       }
       
-      // Use RPC call to get activities
-      const { data, error: activitiesError } = await supabase.rpc<JsonActivity[]>('get_activities', {
+      // Use RPC call to get activities with proper type parameters
+      const { data, error: activitiesError } = await supabase.rpc<JsonActivity[], {}>('get_activities', {
         page_size: pageSize,
         page_number: currentPage
       });
@@ -48,7 +50,7 @@ export function useActivityLog(pageSize = 10, enabled = true) {
       
       // Parse the JSON data to Activity objects
       if (data && Array.isArray(data)) {
-        const parsedActivities: Activity[] = data.map((item: any) => ({
+        const parsedActivities: Activity[] = data.map((item: JsonActivity) => ({
           id: item.id,
           activity_type: item.activity_type,
           description: item.description,

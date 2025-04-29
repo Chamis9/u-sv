@@ -7,6 +7,7 @@ import { useLanguage } from "@/features/language";
 import { AddTicketData } from "./types";
 import { useTicketStorage } from "./useTicketStorage";
 import { getCategoryTableName } from "@/components/profile/tabs/tickets/services/CategoryService";
+import { PostgrestError } from "@supabase/supabase-js";
 
 export function useTicketMutations(userId?: string) {
   const { toast } = useToast();
@@ -60,8 +61,7 @@ export function useTicketMutations(userId?: string) {
         
         console.log(`Using table ${tableName} for ticket category: ${ticketData.category_name}`);
         
-        // Create the ticket in the appropriate category table using the validated table name
-        // Use type assertion to satisfy TypeScript
+        // Create the ticket in the appropriate category table using type assertion
         const { data, error } = await supabase
           .from(tableName as any)
           .insert([{
@@ -137,14 +137,17 @@ export function useTicketMutations(userId?: string) {
           throw fetchError;
         }
         
+        // Add extra safety checks to handle type issues
+        const ticketInfo = ticketData as any;
+        
         // Verify ownership
-        if (ticketData && ticketData.user_id !== userId) {
+        if (ticketInfo && ticketInfo.user_id !== userId) {
           throw new Error(t('Nevar dzēst cita lietotāja biļeti', 'Cannot delete another user\'s ticket'));
         }
         
         // If there's a file associated with the ticket, delete it
-        if (ticketData && ticketData.file_path) {
-          await deleteTicketFile(ticketData.file_path);
+        if (ticketInfo && ticketInfo.file_path) {
+          await deleteTicketFile(ticketInfo.file_path);
         }
         
         // Now delete the ticket

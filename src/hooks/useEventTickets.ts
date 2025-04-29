@@ -34,8 +34,8 @@ export const useEventTickets = async (eventId?: string) => {
         }
         
         if (data && data.length > 0) {
-          // Transform to UserTicket format
-          const formattedTickets: UserTicket[] = data.map((ticket: any) => ({
+          // Transform to UserTicket format using safer type handling
+          const formattedTickets: UserTicket[] = (data as any[]).map((ticket: any) => ({
             id: String(ticket.id),
             title: ticket.description || "Ticket",
             description: ticket.description || undefined,

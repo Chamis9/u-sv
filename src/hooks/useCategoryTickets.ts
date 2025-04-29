@@ -50,7 +50,7 @@ export const useCategoryTickets = (category?: string) => {
         console.log('Fetched tickets:', ticketsData);
         
         // Transform the data to match UserTicket type, handling potential missing fields
-        const formattedTickets: UserTicket[] = (ticketsData || []).map((ticket: any) => {
+        const formattedTickets: UserTicket[] = ((ticketsData || []) as any[]).map((ticket: any) => {
           // Create a base ticket object with properties that should exist in all tables
           const baseTicket: UserTicket = {
             id: String(ticket.id), // Ensure id is a string
