@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
-import { formatPrice } from '@/utils/formatters';
+import { formatPrice, formatDate } from '@/utils/formatters';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Eye, Download, Trash2 } from 'lucide-react';
@@ -43,21 +43,12 @@ export function TicketsList({ tickets, onDelete, isLoading }: TicketsListProps) 
     }
   };
   
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat(currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }).format(date);
-  };
-  
   return (
     <>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>{t("Pasākums", "Event")}</TableHead>
+            <TableHead>{t("Nosaukums", "Title")}</TableHead>
             <TableHead>{t("Cena", "Price")}</TableHead>
             <TableHead className="hidden md:table-cell">{t("Datums", "Date")}</TableHead>
             <TableHead>{t("Statuss", "Status")}</TableHead>
@@ -71,7 +62,9 @@ export function TicketsList({ tickets, onDelete, isLoading }: TicketsListProps) 
                 {ticket.title}
               </TableCell>
               <TableCell>{formatPrice(ticket.price)}</TableCell>
-              <TableCell className="hidden md:table-cell">{formatDate(ticket.created_at)}</TableCell>
+              <TableCell className="hidden md:table-cell">
+                {formatDate(ticket.created_at, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
+              </TableCell>
               <TableCell>{getStatusBadge(ticket.status)}</TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
@@ -127,7 +120,7 @@ export function TicketsList({ tickets, onDelete, isLoading }: TicketsListProps) 
           {selectedTicket && (
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold">{t("Pasākums", "Event")}</h3>
+                <h3 className="font-semibold">{t("Nosaukums", "Title")}</h3>
                 <p>{selectedTicket.title}</p>
               </div>
               
@@ -155,7 +148,7 @@ export function TicketsList({ tickets, onDelete, isLoading }: TicketsListProps) 
               
               <div>
                 <h3 className="font-semibold">{t("Pievienota", "Added")}</h3>
-                <p>{formatDate(selectedTicket.created_at)}</p>
+                <p>{formatDate(selectedTicket.created_at, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}</p>
               </div>
               
               {selectedTicket.file_path && (

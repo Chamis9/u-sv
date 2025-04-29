@@ -12,7 +12,7 @@ export interface UserTicket {
   description?: string;
   category: string;
   price: number;
-  event_id: string;
+  event_id: string | null;
   status: 'available' | 'sold' | 'expired';
   file_path?: string;
   created_at: string;
@@ -21,11 +21,14 @@ export interface UserTicket {
 export interface AddTicketData {
   title: string;
   description?: string | null;
-  event_id: string;
+  event_id: string | null;
   price: number;
   user_id: string;
   file_path?: string | null;
   seat_info?: string | null;
+  category_name?: string;
+  category_id?: string;
+  quantity?: number;
 }
 
 export function useUserTickets(userId?: string) {
@@ -56,7 +59,7 @@ export function useUserTickets(userId?: string) {
       // Transform the data to match UserTicket interface
       return data.map(ticket => ({
         id: ticket.id,
-        title: ticket.events?.title || "Unknown Event",
+        title: ticket.events?.title || ticket.description || "Custom Ticket",
         description: ticket.description,
         category: ticket.events?.categories?.name || "Other",
         price: ticket.price,
@@ -75,17 +78,38 @@ export function useUserTickets(userId?: string) {
       setLoading(true);
       
       try {
-        const { data, error } = await supabase
-          .from('tickets')
-          .insert([{
-            ...ticketData,
-            status: 'available'
-          }])
-          .select()
-          .single();
-        
-        if (error) throw error;
-        return data;
+        // If it's a custom ticket without event_id
+        if (!ticketData.event_id && ticketData.category_id) {
+          const { data, error } = await supabase
+            .from('tickets')
+            .insert([{
+              description: ticketData.title,
+              price: ticketData.price,
+              user_id: ticketData.user_id,
+              file_path: ticketData.file_path,
+              seat_info: ticketData.seat_info,
+              status: 'available',
+              event_id: null
+            }])
+            .select()
+            .single();
+          
+          if (error) throw error;
+          return data;
+        } else {
+          // Regular event ticket
+          const { data, error } = await supabase
+            .from('tickets')
+            .insert([{
+              ...ticketData,
+              status: 'available'
+            }])
+            .select()
+            .single();
+          
+          if (error) throw error;
+          return data;
+        }
       } finally {
         setLoading(false);
       }
