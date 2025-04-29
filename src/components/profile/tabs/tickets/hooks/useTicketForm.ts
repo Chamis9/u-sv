@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -94,9 +93,9 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       let formattedEventDate = null;
       if (values.eventDate) {
         // Handle eventDate whether it's a string or a Date object
-        formattedEventDate = typeof values.eventDate === 'object' ? 
+        formattedEventDate = typeof values.eventDate === 'object' && values.eventDate !== null ? 
           values.eventDate.toISOString().split('T')[0] : 
-          values.eventDate;
+          String(values.eventDate);
       }
       
       // Add the ticket - ensure all details are logged
