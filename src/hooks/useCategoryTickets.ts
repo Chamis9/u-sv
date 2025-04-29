@@ -16,12 +16,15 @@ export const useCategoryTickets = (category?: string) => {
         
         console.log('Fetching tickets for category:', category);
         
-        // Determine which table to query based on the category
-        let tableName = 'tickets_other';
-        
-        if (category) {
-          tableName = getCategoryTableName(category);
+        if (!category) {
+          console.log('No category provided, returning empty array');
+          setAllCategoryTickets([]);
+          setIsLoading(false);
+          return;
         }
+        
+        // Determine which table to query based on the category
+        const tableName = getCategoryTableName(category);
         
         // Validate table name to match allowed table names in Supabase
         const validTableNames = [
@@ -37,7 +40,7 @@ export const useCategoryTickets = (category?: string) => {
         
         console.log(`Using table ${tableName} for category: ${category}`);
         
-        // Query the appropriate table using the validated table name and type assertion
+        // Query ONLY the appropriate table for this category
         const { data: ticketsData, error: fetchError } = await supabase
           .from(tableName as any)
           .select('*, categories(name)')
@@ -47,7 +50,7 @@ export const useCategoryTickets = (category?: string) => {
           throw fetchError;
         }
         
-        console.log('Fetched tickets:', ticketsData);
+        console.log(`Fetched ${ticketsData?.length || 0} tickets for category ${category}`);
         
         // Transform the data to match UserTicket type, handling potential missing fields
         const formattedTickets: UserTicket[] = ((ticketsData || []) as any[]).map((ticket: any) => {
@@ -56,7 +59,7 @@ export const useCategoryTickets = (category?: string) => {
             id: String(ticket.id), // Ensure id is a string
             title: ticket.description || "Ticket",
             description: ticket.description || "",
-            category: "", // Will be populated below if available
+            category: category, // Use the provided category parameter
             price: ticket.price,
             event_id: ticket.event_id || null,
             status: 'available' as const,
@@ -68,18 +71,6 @@ export const useCategoryTickets = (category?: string) => {
             event_date: null, // Default value
             venue: ticket.venue || null // Add venue property
           };
-          
-          // Handle category information if available
-          if (ticket.categories) {
-            try {
-              // Try to get category name from the relation
-              baseTicket.category = ticket.categories.name || "";
-            } catch (e) {
-              baseTicket.category = category || "";
-            }
-          } else if (category) {
-            baseTicket.category = category;
-          }
           
           // Handle event_date if available
           if ('event_date' in ticket) {

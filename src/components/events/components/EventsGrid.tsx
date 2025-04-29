@@ -171,4 +171,4 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
       )}
     </div>
   );
-};
+}
