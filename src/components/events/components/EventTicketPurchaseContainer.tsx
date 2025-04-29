@@ -30,15 +30,19 @@ export const EventTicketPurchaseContainer: React.FC<EventTicketPurchaseContainer
     }
   };
 
-  // Here we clone the child element and pass the onPurchase prop
-  // We need to use React.Children.only to ensure we only have one child and it's a valid element
-  const childElement = React.isValidElement(children) 
-    ? React.cloneElement(children, { onPurchase: openPurchaseDialog })
-    : children;
-
   return (
     <>
-      {childElement}
+      {React.Children.map(children, child => {
+        // Check if the child is a valid React element
+        if (React.isValidElement(child)) {
+          // Clone and pass the onPurchase prop
+          return React.cloneElement(child, { 
+            onPurchase: openPurchaseDialog 
+          });
+        }
+        // Return the child as is if not a valid React element
+        return child;
+      })}
       
       <PurchaseDialog
         ticket={selectedTicket}
