@@ -12,7 +12,7 @@ import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 import { categoryEvents } from '@/utils/eventData';
 import { EventHeader } from './components/EventHeader';
 import { OrganizerTickets } from './components/OrganizerTickets';
-import { UserTickets } from './components/UserTickets';
+import { AvailableTicketsSection } from './components/AvailableTicketsSection';
 import { PurchaseDialog } from './components/PurchaseDialog';
 import { UserTicket } from "@/hooks/tickets";
 import { useTicketPurchase } from '@/hooks/useTicketPurchase';
@@ -100,9 +100,9 @@ export function EventTickets() {
               {/* Standard tickets */}
               <OrganizerTickets />
 
-              {/* User posted available tickets */}
-              <UserTickets 
-                availableTickets={availableTickets}
+              {/* User posted available tickets - now using AvailableTicketsSection */}
+              <AvailableTicketsSection
+                tickets={availableTickets}
                 onPurchase={openPurchaseDialog}
               />
             </div>
