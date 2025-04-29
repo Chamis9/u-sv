@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
+import { getCategoryIdFromName } from '@/components/events/utils/categoryUtils';
 
 export const useCategoryTickets = (category?: string) => {
   const [allCategoryTickets, setAllCategoryTickets] = useState<UserTicket[]>([]);
@@ -19,30 +20,21 @@ export const useCategoryTickets = (category?: string) => {
           return;
         }
         
-        // Normalize category name for comparison (convert to lowercase, handle hyphens, etc)
-        const normalizedCategory = category.toLowerCase();
+        // Convert URL parameter to standard category ID
+        const normalizedCategoryId = getCategoryIdFromName(category);
         
-        // Map URL slugs to possible database category names
-        const categoryMapping: Record<string, string[]> = {
-          'sports': ['Sports', 'sports', 'Sport', 'sport'],
-          'teatris': ['Teātris', 'teatris', 'teātris', 'Teatris'],
-          'koncerti': ['Koncerti', 'koncerti', 'Koncerts', 'koncerts'],
-          'festivali': ['Festivāli', 'festivali', 'festivāli', 'Festivali']
-        };
-        
-        // Get possible category names from mapping or use the original
-        const possibleCategories = categoryMapping[normalizedCategory] || [category];
-        
-        // Query using any of the possible category names
+        // Query using the normalized category ID or name
         const { data: ticketsData, error: fetchError } = await supabase
           .from('tickets')
           .select('*, categories(name)')
           .eq('status', 'available')
-          .in('category_name', possibleCategories);
+          .eq('category_name', normalizedCategoryId);
         
         if (fetchError) {
           throw fetchError;
         }
+        
+        console.log(`Fetched ${ticketsData?.length || 0} tickets for category "${normalizedCategoryId}"`);
         
         // Transform the data to match UserTicket type
         const formattedTickets: UserTicket[] = ((ticketsData || []) as any[]).map((ticket: any) => {

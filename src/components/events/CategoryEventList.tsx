@@ -40,7 +40,9 @@ export function CategoryEventList() {
   const filteredTickets = filterTickets(allCategoryTickets);
 
   // Dummy function to satisfy type checking - this will be replaced by the container
-  const dummyOnPurchase = (ticket: UserTicket) => {};
+  const dummyOnPurchase = (ticket: UserTicket) => {
+    console.log("Dummy purchase function called, will be replaced by container", ticket);
+  };
 
   if (error) {
     return (
