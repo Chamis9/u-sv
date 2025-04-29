@@ -14,15 +14,16 @@ export const useCategoryTickets = (category?: string) => {
       try {
         setIsLoading(true);
         
+        // Convert category name to ID if needed
         const categoryId = category ? getCategoryIdFromName(category) : '';
         
         let query = supabase
           .from('tickets')
-          .select('*')
+          .select('*, categories(name)')
           .eq('status', 'available');
           
         if (category && categoryId) {
-          // Filter by category if provided - make sure to filter by the right field
+          // Filter by category if provided
           query = query.eq('category_id', categoryId);
         }
         

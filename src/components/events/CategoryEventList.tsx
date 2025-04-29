@@ -79,9 +79,6 @@ export function CategoryEventList() {
 
   // Filter tickets based on search query and category
   const filteredTickets = allCategoryTickets.filter(ticket => {
-    // Only show tickets for this category
-    if (categoryId && ticket.category !== categoryId) return false;
-    
     // Text search filter
     return searchQuery
       ? ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
