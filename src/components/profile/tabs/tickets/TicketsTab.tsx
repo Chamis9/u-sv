@@ -41,12 +41,19 @@ export function TicketsTab({ user }: TicketsTabProps) {
     console.log("TicketsTab mounted or user changed, forcing refresh");
     refreshTickets();
   }, [user.id]);
+
+  console.log("TicketsTab render - Current user:", user);
+  console.log("TicketsTab render - Added tickets:", addedTickets.length);
+  console.log("TicketsTab render - Purchased tickets:", purchasedTickets.length);
   
   return (
     <Card>
       <TicketsHeader 
         onAddTicket={() => setAddTicketOpen(true)} 
-        onRefresh={refreshTickets}
+        onRefresh={() => {
+          console.log("Manual refresh triggered");
+          refreshTickets();
+        }}
       />
       
       <CardContent>

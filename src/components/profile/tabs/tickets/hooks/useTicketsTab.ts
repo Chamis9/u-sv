@@ -33,7 +33,8 @@ export function useTicketsTab(user: User) {
   console.log("Filtered tickets:", {
     total: tickets.length,
     added: addedTickets.length,
-    purchased: purchasedTickets.length
+    purchased: purchasedTickets.length,
+    ticketDetails: tickets
   });
   
   const handleDeleteTicket = (ticketId: string) => {
@@ -50,10 +51,19 @@ export function useTicketsTab(user: User) {
     queryClient.invalidateQueries({ queryKey: ['user-tickets', user.id] });
   };
   
-  // Automatically refresh tickets when component mounts
+  // Automatically refresh tickets when component mounts and every 30 seconds
   useEffect(() => {
     refreshTickets();
-  }, []);
+    
+    // Set up periodic refresh
+    const intervalId = setInterval(() => {
+      refreshTickets();
+    }, 30000); // 30 seconds
+    
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [user.id]);
   
   return {
     tickets,
