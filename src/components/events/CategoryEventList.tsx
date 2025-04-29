@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,6 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 import { useEvents } from '@/hooks/useEvents';
 import { supabase } from "@/integrations/supabase/client";
-import { useState, useEffect } from "react";
 import { UserTicket } from "@/hooks/tickets/types";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -50,7 +50,7 @@ export function CategoryEventList() {
         category: ticket.category_id || "",
         price: ticket.price,
         event_id: ticket.event_id,
-        status: 'available' as const, // Type assertion to match UserTicket.status
+        status: 'available' as const,
         file_path: ticket.file_path,
         created_at: ticket.created_at,
         seller_id: ticket.seller_id,
@@ -161,6 +161,25 @@ export function CategoryEventList() {
         return name;
     }
   };
+  
+  // Get category name for display
+  const getCategoryDisplayName = (categoryId: string): string => {
+    if (currentLanguage.code === 'lv') {
+      switch(categoryId.toLowerCase()) {
+        case 'theatre': return 'Teātris';
+        case 'concerts': return 'Koncerti';
+        case 'sports': return 'Sports';
+        default: return categoryId;
+      }
+    } else {
+      switch(categoryId.toLowerCase()) {
+        case 'theatre': return 'Theatre';
+        case 'concerts': return 'Concerts';
+        case 'sports': return 'Sports';
+        default: return categoryId;
+      }
+    }
+  };
 
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
@@ -172,6 +191,9 @@ export function CategoryEventList() {
     );
   }
 
+  // Determine category display name
+  const categoryDisplayName = category ? getCategoryDisplayName(getCategoryIdFromName(category)) : '';
+
   return (
     <ThemeProvider>
       <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-gray-50 to-gray-100 dark:from-black dark:via-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
@@ -180,24 +202,27 @@ export function CategoryEventList() {
         <main className="flex-grow pt-24 pb-12">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="max-w-7xl mx-auto">
-              <div className="mb-6">
-                <Link to="/events">
-                  <Button variant="ghost" className="mb-4">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    {backButtonText[currentLanguage.code as keyof typeof backButtonText]}
-                  </Button>
-                </Link>
+              <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <Link to="/events">
+                    <Button variant="ghost" className="mb-4">
+                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      {backButtonText[currentLanguage.code as keyof typeof backButtonText]}
+                    </Button>
+                  </Link>
+                  <h1 className="text-3xl font-bold">{categoryDisplayName}</h1>
+                </div>
               </div>
               
               {/* All Available Tickets Section */}
-              {allCategoryTickets.length > 0 && (
+              {allCategoryTickets.length > 0 ? (
                 <div className="mb-8">
                   <h2 className="text-2xl font-bold mb-4">
                     {t("Pieejamās biļetes", "Available Tickets")}
                   </h2>
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {allCategoryTickets.map((ticket) => (
-                      <Card key={ticket.id} className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
+                      <Card key={ticket.id} className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">
                             <Ticket className="h-5 w-5 text-orange-500" />
@@ -227,8 +252,19 @@ export function CategoryEventList() {
                     ))}
                   </div>
                 </div>
+              ) : (
+                <div className="text-center py-8 mb-8 bg-gray-100/50 dark:bg-gray-800/50 rounded-lg">
+                  <Ticket className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-medium">
+                    {t("Nav pieejamu biļešu", "No available tickets")}
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-400 mt-2">
+                    {t("Šajā kategorijā pašlaik nav pieejamu biļešu", "There are no tickets available in this category at the moment")}
+                  </p>
+                </div>
               )}
 
+              {/* Events Section */}
               <h2 className="text-2xl font-bold mb-4">
                 {t("Pasākumi", "Events")}
               </h2>
@@ -239,10 +275,10 @@ export function CategoryEventList() {
                     <div key={i} className="h-64 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
                   ))}
                 </div>
-              ) : (
+              ) : events && events.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                  {events?.map((event) => (
-                    <Card key={event.id} className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
+                  {events.map((event) => (
+                    <Card key={event.id} className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
                       <CardHeader>
                         <CardTitle>{event.title}</CardTitle>
                         <CardDescription>
@@ -302,13 +338,14 @@ export function CategoryEventList() {
                     </Card>
                   ))}
                 </div>
-              )}
-
-              {/* No tickets found message */}
-              {!isLoading && events?.length === 0 && allCategoryTickets.length === 0 && (
-                <div className="text-center py-8">
-                  <p className="text-xl text-gray-600 dark:text-gray-400">
-                    {t('Šajā kategorijā nav pieejami pasākumi vai biļetes', 'No events or tickets available in this category')}
+              ) : (
+                <div className="text-center py-8 bg-gray-100/50 dark:bg-gray-800/50 rounded-lg">
+                  <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-medium">
+                    {t("Nav atrasts neviens pasākums", "No events found")}
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-400 mt-2">
+                    {t("Šajā kategorijā pašlaik nav pasākumu", "There are no events in this category at the moment")}
                   </p>
                 </div>
               )}

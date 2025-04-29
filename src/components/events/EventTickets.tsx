@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -185,14 +186,14 @@ export function EventTickets() {
               </div>
 
               {/* User posted available tickets */}
-              {availableTickets.length > 0 && (
+              {availableTickets.length > 0 ? (
                 <div className="mt-8">
                   <h2 className="text-2xl font-semibold mb-4">
                     {t("Pieejamās biļetes no lietotājiem", "User submitted tickets")}
                   </h2>
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {availableTickets.map((ticket) => (
-                      <div key={ticket.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border border-gray-200 dark:border-gray-700">
+                      <div key={ticket.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
                         <div className="flex justify-between items-start">
                           <div>
                             <h3 className="font-semibold text-lg">{ticket.title}</h3>
@@ -204,7 +205,7 @@ export function EventTickets() {
                         </div>
                         
                         <div className="mt-4 flex justify-end">
-                          <Button onClick={() => openPurchaseDialog(ticket)}>
+                          <Button onClick={() => openPurchaseDialog(ticket)} variant="orange">
                             <Ticket className="mr-2 h-4 w-4" />
                             {t("Pirkt biļeti", "Buy ticket")}
                           </Button>
@@ -212,6 +213,16 @@ export function EventTickets() {
                       </div>
                     ))}
                   </div>
+                </div>
+              ) : (
+                <div className="mt-8 text-center py-8 bg-gray-100/50 dark:bg-gray-800/50 rounded-lg">
+                  <Ticket className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-medium">
+                    {t("Nav pieejamu biļešu no lietotājiem", "No user submitted tickets available")}
+                  </h3>
+                  <p className="text-gray-500 dark:text-gray-400 mt-2">
+                    {t("Šim pasākumam pašlaik nav pārdošanā biļetes no lietotājiem", "There are no user tickets for sale for this event at the moment")}
+                  </p>
                 </div>
               )}
             </div>
