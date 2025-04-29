@@ -150,6 +150,53 @@ export type Database = {
         }
         Relationships: []
       }
+      tickets: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string | null
+          event_id: string | null
+          file_path: string | null
+          id: string
+          price: number
+          seat_info: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_id?: string | null
+          file_path?: string | null
+          id?: string
+          price: number
+          seat_info?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_id?: string | null
+          file_path?: string | null
+          id?: string
+          price?: number
+          seat_info?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tickets_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

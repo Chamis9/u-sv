@@ -49,7 +49,7 @@ export function useUserTickets(userId?: string) {
       // Use a direct SQL query with RPC instead
       const { data, error } = await supabase
         .from('tickets')
-        .select('*, events(title, category_id, categories:categories(name))')
+        .select('*, categories(name)')
         .eq('user_id', userId);
       
       if (error) {
@@ -59,9 +59,9 @@ export function useUserTickets(userId?: string) {
       // Transform the data to match UserTicket interface
       return data.map(ticket => ({
         id: ticket.id,
-        title: ticket.description || ticket.events?.title || "Custom Ticket",
+        title: ticket.description || "Custom Ticket",
         description: ticket.description,
-        category: ticket.events?.categories?.name || "Other",
+        category: ticket.categories?.name || "Other",
         price: ticket.price,
         event_id: ticket.event_id,
         status: ticket.status as 'available' | 'sold' | 'expired',
@@ -88,6 +88,7 @@ export function useUserTickets(userId?: string) {
             file_path: ticketData.file_path,
             seat_info: ticketData.seat_info,
             status: 'available',
+            category_id: ticketData.category_id,
             event_id: null
           }])
           .select()
