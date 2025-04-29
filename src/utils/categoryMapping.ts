@@ -20,9 +20,8 @@ export const getCategoryTableName = (category?: string): string => {
     'giftcards': 'tickets_giftcards',
     // Latvian
     'teātris': 'tickets_theatre',
-    'teatris': 'tickets_theatre',
+    'teatris': 'tickets_theatre', // This was likely the duplicate
     'koncerti': 'tickets_concerts',
-    'sports': 'tickets_sports',
     'festivāli': 'tickets_festivals',
     'festivali': 'tickets_festivals',
     'kino': 'tickets_cinema',
@@ -88,20 +87,13 @@ export const getCategoryDisplayName = (urlPath: string, languageCode: string): s
     },
     'lv': {
       'theatre': 'Teātris',
-      'teatris': 'Teātris',
       'concerts': 'Koncerti',
-      'koncerti': 'Koncerti',
       'sports': 'Sports',
       'festivals': 'Festivāli',
-      'festivali': 'Festivāli',
       'cinema': 'Kino',
-      'kino': 'Kino',
       'children': 'Bērniem',
-      'berniem': 'Bērniem',
       'travel': 'Ceļojumi',
-      'celojumi': 'Ceļojumi',
       'giftcards': 'Dāvanu kartes',
-      'davanukartes': 'Dāvanu kartes',
       'other': 'Citi'
     }
   };
