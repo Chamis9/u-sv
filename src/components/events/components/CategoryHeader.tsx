@@ -25,7 +25,7 @@ export const CategoryHeader: React.FC<CategoryHeaderProps> = ({ categoryDisplayN
           {backButtonText[currentLanguage.code as keyof typeof backButtonText]}
         </Button>
       </Link>
-      <h1 className="text-4xl font-bold mb-8">{categoryDisplayName}</h1>
+      <h1 className="text-4xl font-bold mb-8 text-orange-500">{categoryDisplayName}</h1>
     </div>
   );
 };

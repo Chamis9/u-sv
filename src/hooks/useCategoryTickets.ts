@@ -21,7 +21,7 @@ export const useCategoryTickets = (category?: string) => {
           .select('*')
           .eq('status', 'available');
           
-        if (category) {
+        if (category && categoryId) {
           // Filter by category if provided
           query = query.eq('category_id', categoryId);
         }
@@ -31,6 +31,8 @@ export const useCategoryTickets = (category?: string) => {
         if (fetchError) {
           throw fetchError;
         }
+        
+        console.log('Fetched tickets for category:', category, 'categoryId:', categoryId, 'count:', ticketsData?.length);
         
         // Transform the data to match UserTicket type
         const formattedTickets: UserTicket[] = (ticketsData || []).map(ticket => ({

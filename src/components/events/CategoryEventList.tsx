@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useLanguage } from "@/features/language";
 import { Header } from "@/components/Header";
@@ -15,11 +15,14 @@ import { PurchaseDialog } from './components/PurchaseDialog';
 import { useCategoryTickets } from '@/hooks/useCategoryTickets';
 import { useTicketPurchase } from '@/hooks/useTicketPurchase';
 import { Toaster } from "@/components/ui/toaster";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 export function CategoryEventList() {
   const { category } = useParams<{ category: string }>();
   const { data: events, isLoading, error } = useEvents(category);
   const { currentLanguage } = useLanguage();
+  const [searchQuery, setSearchQuery] = useState('');
   
   const {
     allCategoryTickets,
@@ -44,6 +47,20 @@ export function CategoryEventList() {
     }
   };
 
+  // Filter events based on search query
+  const filteredEvents = events?.filter(event =>
+    event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (event.description && event.description.toLowerCase().includes(searchQuery.toLowerCase()))
+  ) || [];
+
+  // Filter tickets based on search query
+  const filteredTickets = searchQuery
+    ? allCategoryTickets.filter(ticket =>
+        ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (ticket.description && ticket.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
+    : allCategoryTickets;
+
   if (error) {
     return (
       <div className="text-center p-8">
@@ -66,10 +83,22 @@ export function CategoryEventList() {
             <div className="max-w-7xl mx-auto">
               <CategoryHeader categoryDisplayName={categoryDisplayName} />
               
+              {/* Search Input */}
+              <div className="mb-8 relative">
+                <Input
+                  type="search"
+                  placeholder={currentLanguage.code === 'lv' ? "Meklēt pasākumus un biļetes..." : "Search events and tickets..."}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              </div>
+              
               {/* Events Grid */}
               <EventsGrid 
-                events={events || []}
-                availableTickets={allCategoryTickets} 
+                events={filteredEvents}
+                availableTickets={filteredTickets} 
                 isLoading={isLoading || ticketsLoading}
                 onPurchase={openPurchaseDialog}
               />
