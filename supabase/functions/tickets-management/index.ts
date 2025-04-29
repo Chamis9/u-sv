@@ -8,6 +8,49 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 }
 
+// Function to determine the table name based on category
+function getCategoryTableName(category?: string): string {
+  if (!category) return 'tickets_other';
+  
+  // Convert to lowercase and normalize
+  const normalizedCategory = category.toLowerCase().trim();
+  
+  const categoryToTable: Record<string, string> = {
+    // English
+    'theatre': 'tickets_theatre',
+    'concerts': 'tickets_concerts',
+    'sports': 'tickets_sports',
+    'festivals': 'tickets_festivals',
+    'cinema': 'tickets_cinema',
+    'children': 'tickets_children',
+    'travel': 'tickets_travel',
+    'giftcards': 'tickets_giftcards',
+    // Latvian
+    'teātris': 'tickets_theatre',
+    'koncerti': 'tickets_concerts',
+    'festivāli': 'tickets_festivals',
+    'kino': 'tickets_cinema',
+    'bērniem': 'tickets_children',
+    'ceļojumi': 'tickets_travel',
+    'dāvanu kartes': 'tickets_giftcards'
+  };
+  
+  // Try direct match first
+  if (categoryToTable[normalizedCategory]) {
+    return categoryToTable[normalizedCategory];
+  }
+  
+  // If no direct match, look for partial matches
+  for (const [key, value] of Object.entries(categoryToTable)) {
+    if (normalizedCategory.includes(key)) {
+      return value;
+    }
+  }
+  
+  // Default fallback
+  return 'tickets_other';
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -87,30 +130,9 @@ serve(async (req) => {
       const body = await req.json()
       const { title, price, categoryName, description, filePath, eventDate, venue } = body
       
-      // Determine table name from category
-      let tableName = 'tickets_other'
-      
-      if (categoryName) {
-        const categoryToTable: Record<string, string> = {
-          'Theatre': 'tickets_theatre',
-          'Teātris': 'tickets_theatre',
-          'Concerts': 'tickets_concerts',
-          'Koncerti': 'tickets_concerts',
-          'Sports': 'tickets_sports',
-          'Festivals': 'tickets_festivals',
-          'Festivāli': 'tickets_festivals',
-          'Cinema': 'tickets_cinema',
-          'Kino': 'tickets_cinema',
-          'Children': 'tickets_children',
-          'Bērniem': 'tickets_children',
-          'Travel': 'tickets_travel',
-          'Ceļojumi': 'tickets_travel',
-          'Gift Cards': 'tickets_giftcards',
-          'Dāvanu kartes': 'tickets_giftcards'
-        }
-        
-        tableName = categoryToTable[categoryName] || 'tickets_other'
-      }
+      // Determine table name from category using our utility function
+      const tableName = getCategoryTableName(categoryName);
+      console.log(`Creating ticket in table: ${tableName} for category: ${categoryName}`);
       
       // Get category ID if provided
       let categoryId = null

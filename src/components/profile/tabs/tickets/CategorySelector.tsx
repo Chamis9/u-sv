@@ -19,6 +19,7 @@ import {
 import { UseFormReturn } from "react-hook-form";
 import { TicketFormValues } from "./schema";
 import { getAllCategories } from "./services/CategoryService";
+import { getCategoryTableName } from "@/utils/categoryMapping";
 
 interface CategorySelectorProps {
   form: UseFormReturn<TicketFormValues>;
@@ -37,6 +38,14 @@ export function CategorySelector({ form }: CategorySelectorProps) {
     staleTime: 60000, // Cache for 1 minute
   });
 
+  const handleCategoryChange = (value: string) => {
+    form.setValue("category", value);
+    
+    // Log the table that will be used for this category
+    const tableName = getCategoryTableName(value);
+    console.log(`Selected category: ${value}, will use table: ${tableName}`);
+  };
+
   return (
     <FormField
       control={form.control}
@@ -44,7 +53,13 @@ export function CategorySelector({ form }: CategorySelectorProps) {
       render={({ field }) => (
         <FormItem>
           <FormLabel>{t("Kategorija", "Category")}</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
+          <Select 
+            onValueChange={(value) => {
+              field.onChange(value);
+              handleCategoryChange(value);
+            }} 
+            defaultValue={field.value}
+          >
             <FormControl>
               <SelectTrigger>
                 <SelectValue placeholder={t("Izvēlieties kategoriju", "Select a category")} />

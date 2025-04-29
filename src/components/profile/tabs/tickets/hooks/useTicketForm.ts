@@ -9,6 +9,7 @@ import { useUserTickets } from "@/hooks/tickets";
 import { getCategoryIdByName } from "../services/CategoryService";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
+import { getCategoryTableName } from "@/utils/categoryMapping";
 
 export function useTicketForm({ onClose }: { onClose: () => void }) {
   const { currentLanguage } = useLanguage();
@@ -76,7 +77,9 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       // Format event date if provided
       const formattedEventDate = values.eventDate ? values.eventDate.toISOString().split('T')[0] : null;
       
-      console.log("Adding ticket with category ID:", categoryId);
+      // Determine the correct table name based on the category
+      const tableName = getCategoryTableName(values.category);
+      console.log(`Using table ${tableName} for category: ${values.category}`);
       
       // Add the ticket
       addTicket({
@@ -89,7 +92,8 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
         category_id: categoryId,
         event_id: null,
         event_date: formattedEventDate,
-        venue: values.venue
+        venue: values.venue,
+        table_name: tableName // Pass the table name to the addTicket function
       });
       
       toast({

@@ -20,7 +20,7 @@ export const getCategoryTableName = (category?: string): string => {
     'giftcards': 'tickets_giftcards',
     // Latvian
     'teātris': 'tickets_theatre',
-    'teatris': 'tickets_theatre', // This was likely the duplicate
+    // Remove the duplicate 'teatris' entry that caused the error
     'koncerti': 'tickets_concerts',
     'festivāli': 'tickets_festivals',
     'festivali': 'tickets_festivals',

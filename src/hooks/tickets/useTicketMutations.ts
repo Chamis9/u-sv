@@ -17,7 +17,10 @@ export function useTicketMutations(userId?: string) {
     setLoading(true);
     try {
       const ticketId = uuidv4();
-      const tableName = getCategoryTableName(data.category_name || 'Other');
+      // Use the provided table_name or determine it from the category
+      const tableName = data.table_name || getCategoryTableName(data.category_name || 'Other');
+      
+      console.log(`Adding ticket to table: ${tableName}`);
       
       // Insert ticket into the right table
       const { data: responseData, error } = await supabase
@@ -62,7 +65,8 @@ export function useTicketMutations(userId?: string) {
         buyer_id: undefined,
         owner_id: userId,
         event_date: data.event_date || undefined,
-        venue: data.venue || undefined
+        venue: data.venue || undefined,
+        table_name: tableName
       };
       
       return { success: true, ticket };

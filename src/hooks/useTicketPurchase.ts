@@ -26,11 +26,13 @@ export const useTicketPurchase = () => {
         throw new Error("No authenticated user found");
       }
       
-      // Determine the correct table for this ticket
-      const tableName = getCategoryTableName(ticket.category);
+      // Use the ticket's table_name property if available, otherwise determine from category
+      const tableName = ticket.table_name || getCategoryTableName(ticket.category);
       if (!tableName) {
         throw new Error(`Invalid ticket category: ${ticket.category}`);
       }
+      
+      console.log(`Purchasing ticket from table: ${tableName}`);
       
       // Update the ticket status in the specific table
       // Use type assertion to satisfy TypeScript
