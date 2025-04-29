@@ -31,7 +31,7 @@ export const useSubscribeForm = () => {
       const now = Date.now();
       const lastSubmit = sessionStorage.getItem('lastEmailSubmit');
       
-      if (lastSubmit && now - parseInt(lastSubmit) < 1000 * 30) { // 30s rate limit
+      if (lastSubmit && now - parseInt(lastSubmit) < 1000 * 30) { // Reduced from 60s to 30s
         setFormError(getTranslations(currentLanguage.code).rateLimit);
         return;
       }
@@ -46,13 +46,9 @@ export const useSubscribeForm = () => {
     setIsLoading(true);
     
     try {
-      console.log("Attempting to subscribe with email:", email);
-      
-      const { error, data } = await supabase
+      const { error } = await supabase
         .from('newsletter_subscribers')
         .insert([{ email: email.toLowerCase().trim() }]);
-      
-      console.log("Supabase response:", { error, data });
       
       if (error) {
         if (error.code === '23505') { // Unique violation error code
@@ -74,9 +70,9 @@ export const useSubscribeForm = () => {
       console.error("Failed to subscribe:", error);
       const texts = getTranslations(currentLanguage.code);
       toast({
-        variant: "destructive",
         title: texts.errorTitle,
         description: texts.errorMessage,
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);

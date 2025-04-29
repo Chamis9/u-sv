@@ -10,16 +10,11 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
-import { useFilteredEvents } from '@/hooks/useFilteredEvents';
-import { Badge } from '@/components/ui/badge';
+import { useEvents } from '@/hooks/useEvents';
 
 export function CategoryEventList() {
-  const { categoryId } = useParams<{ categoryId: string }>();
-  // Get both official events and user listings
-  const { data: events, isLoading, error } = useFilteredEvents({ 
-    categoryId,
-    includeUserListings: true 
-  });
+  const { category } = useParams<{ category: string }>();
+  const { data: events, isLoading, error } = useEvents(category);
   const { currentLanguage } = useLanguage();
 
   const backButtonText = {
@@ -63,14 +58,7 @@ export function CategoryEventList() {
                   {events?.map((event) => (
                     <Card key={event.id} className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
                       <CardHeader>
-                        <div className="flex justify-between items-start">
-                          <CardTitle>{event.title}</CardTitle>
-                          {event.status === 'temp_listing' && (
-                            <Badge className="bg-orange-500">
-                              {currentLanguage.code === 'lv' ? 'Lietotāja biļete' : 'User ticket'}
-                            </Badge>
-                          )}
-                        </div>
+                        <CardTitle>{event.title}</CardTitle>
                         <CardDescription>
                           <div className="flex items-center gap-2 text-orange-500">
                             <Calendar className="h-4 w-4" />
@@ -79,21 +67,16 @@ export function CategoryEventList() {
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-gray-600 dark:text-gray-400 line-clamp-3">
+                        <p className="text-gray-600 dark:text-gray-400">
                           {event.description}
                         </p>
-                        {event.ticketCount > 0 && (
-                          <div className="mt-4 text-sm font-medium text-orange-500">
-                            {event.ticketCount} {currentLanguage.code === 'lv' ? 'biļetes pieejamas' : 'tickets available'}
-                          </div>
-                        )}
                       </CardContent>
                       <CardFooter className="mt-auto">
                         <div className="flex justify-between items-center w-full">
                           <span className="text-lg font-semibold">
-                            {event.price_range ? `${event.price_range.lower} - ${event.price_range.upper} €` : ''}
+                            {event.price_range ? `${event.price_range[0]} - ${event.price_range[1]} €` : ''}
                           </span>
-                          <Link to={`/events/${categoryId}/${event.id}`}>
+                          <Link to={`/events/${category}/${event.id}`}>
                             <Button variant="outline">
                               <Ticket className="mr-2 h-4 w-4" />
                               {currentLanguage.code === 'lv' ? 'Biļetes' : 'Tickets'}
@@ -103,23 +86,6 @@ export function CategoryEventList() {
                       </CardFooter>
                     </Card>
                   ))}
-                </div>
-              )}
-
-              {events && events.length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-lg text-gray-600 dark:text-gray-400">
-                    {currentLanguage.code === 'lv' 
-                      ? "Nav atrasti pasākumi šajā kategorijā" 
-                      : "No events found in this category"}
-                  </p>
-                  <Link to="/profile" className="mt-4 inline-block">
-                    <Button>
-                      {currentLanguage.code === 'lv' 
-                        ? "Pievienot savu biļeti" 
-                        : "Add your ticket"}
-                    </Button>
-                  </Link>
                 </div>
               )}
             </div>

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { SEO } from "@/components/SEO";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -28,11 +28,16 @@ const Profile = () => {
       />
       <Header />
       <div className="flex-1">
-        <ProfileContainer 
-          isAuthenticated={isAuthenticated}
-          isLoading={isAuthLoading}
-          userId={user.id}
-        />
+        <Routes>
+          <Route path="/" element={<Navigate to={`/profile/${user.id}/account`} replace />} />
+          <Route path="/:userId/*" element={
+            <ProfileContainer 
+              isAuthenticated={isAuthenticated}
+              isLoading={isAuthLoading}
+              userId={user.id}
+            />
+          } />
+        </Routes>
       </div>
       <Footer />
     </div>

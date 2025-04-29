@@ -1,9 +1,7 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/features/language";
 import { useSubscribeForm } from "@/hooks/useSubscribeForm";
-import { useState, useEffect } from "react";
 
 export function SubscribeForm() {
   const { currentLanguage } = useLanguage();
@@ -15,20 +13,8 @@ export function SubscribeForm() {
     setFormError, 
     handleSubmit 
   } = useSubscribeForm();
-  
-  const [submissionAttempted, setSubmissionAttempted] = useState(false);
 
-  useEffect(() => {
-    // Reset submission attempt indicator when email changes
-    if (submissionAttempted && email) {
-      setSubmissionAttempted(false);
-    }
-  }, [email, submissionAttempted]);
-
-  const onSubmit = async (e: React.FormEvent) => {
-    setSubmissionAttempted(true);
-    await handleSubmit(e);
-  };
+  const texts = getTranslations(currentLanguage.code);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -48,9 +34,8 @@ export function SubscribeForm() {
 
   return (
     <form 
-      onSubmit={onSubmit} 
+      onSubmit={handleSubmit} 
       className="flex flex-col sm:flex-row gap-3 w-full max-w-md bg-transparent p-0 subscribe-form"
-      data-testid="subscribe-form"
     >
       <div className="relative flex-grow">
         <Input
@@ -62,7 +47,6 @@ export function SubscribeForm() {
           required
           aria-invalid={formError ? "true" : "false"}
           className="flex-grow h-12 text-base font-playfair placeholder-orange-500/70 bg-white dark:bg-gray-800 dark:text-white border-orange-300/50" 
-          disabled={isLoading}
         />
         
         {formError && (
@@ -75,9 +59,8 @@ export function SubscribeForm() {
         disabled={isLoading} 
         className="bg-orange-500 hover:bg-orange-600 text-white h-12 text-lg px-6 font-semibold font-playfair" 
         aria-busy={isLoading}
-        data-testid="subscribe-button"
       >
-        {isLoading ? getTranslations(currentLanguage.code).sending : getTranslations(currentLanguage.code).button}
+        {isLoading ? texts.sending : texts.button}
       </Button>
     </form>
   );

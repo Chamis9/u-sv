@@ -22,7 +22,7 @@ export function ProfileContent({ activeTab, user, onUserUpdate, isLoading }: Pro
     );
   }
 
-  // Render the appropriate tab based on the activeTab prop
+  // Renderējam atbilstošo sadaļu atkarībā no aktīvā taba
   switch (activeTab) {
     case "account":
       return <AccountTab user={user} onUserUpdate={onUserUpdate} />;

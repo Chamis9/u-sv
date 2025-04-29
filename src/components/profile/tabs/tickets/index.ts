@@ -1,2 +1,0 @@
-
-export { TicketsTabContent } from "./TicketsTabContent";

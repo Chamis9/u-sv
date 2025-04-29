@@ -1,68 +1,122 @@
-
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from "sonner";
-
-// Pages
-import Index from './pages/Index';
-import NotFound from './pages/NotFound';
-import Events from './pages/Events';
-import { CategoryEventList } from './components/events/CategoryEventList';
-import { EventTickets } from './components/events/EventTickets';
-import { AddNewEvent } from './pages/AddNewEvent';
-import Contact from './pages/Contact';
-import AboutUs from './pages/AboutUs';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import Profile from './pages/Profile';
-import Tickets from './pages/Tickets';
-import Registration from './pages/Registration';
-import Admin from './pages/Admin';
-
-// Context providers
+import React, { useEffect, useState, lazy, Suspense } from "react";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { LanguageProvider } from "./features/language";
-import { AuthProvider } from './contexts/AuthContext';
+import { CookieConsent } from "./components/CookieConsent";
+import { clearAllCookies } from "./utils/cookieManager";
+import { ThemeProvider } from "./components/theme/ThemeProvider";
+import { AuthProvider } from "./contexts/AuthContext";
 
-// Create a client
+// Import directly instead of lazy loading to fix dynamic import issues
+import Index from "./pages/Index";
+import Contact from "./pages/Contact";
+import Events from "./pages/Events";
+import Tickets from "./pages/Tickets";
+import AboutUs from "./pages/AboutUs";
+
+// Lazy load other pages for better performance
+const NotFound = lazy(() => import("./pages/NotFound"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const Admin = lazy(() => import("./pages/Admin"));
+const Profile = lazy(() => import("./pages/Profile"));
+
+// Import the CategoryEventList component
+import { CategoryEventList } from "./components/events/CategoryEventList";
+
+// Import the EventTickets component
+import { EventTickets } from "./components/events/EventTickets";
+
+// Create a loading component
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+  </div>
+);
+
+// Create the query client only once
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5000,
-      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
     },
   },
 });
 
-function App() {
+// Global logout function - updated for local auth
+const handleLogout = () => {
+  clearAllCookies();
+  localStorage.removeItem('admin_authenticated');
+  console.log("User logged out and cookies cleared");
+};
+
+// Make the logout function globally available
+window.logout = handleLogout;
+
+const App = () => {
+  const [isInitializing, setIsInitializing] = useState(true);
+  
+  useEffect(() => {
+    // Simplified initialization
+    const timer = setTimeout(() => {
+      setIsInitializing(false);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isInitializing) {
+    return <PageLoader />;
+  }
+
   return (
-    <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
-        <LanguageProvider>
-          <AuthProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/events/add" element={<AddNewEvent />} />
-                <Route path="/events/:categoryId" element={<CategoryEventList />} />
-                <Route path="/events/:categoryId/:eventId" element={<EventTickets />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/about" element={<AboutUs />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/profile/*" element={<Profile />} />
-                <Route path="/tickets" element={<Tickets />} />
-                <Route path="/registration" element={<Registration />} />
-                <Route path="/admin/*" element={<Admin />} />
-                <Route path="/404" element={<NotFound />} />
-                <Route path="*" element={<Navigate to="/404" replace />} />
-              </Routes>
-            </BrowserRouter>
-            <Toaster position="top-center" />
-          </AuthProvider>
-        </LanguageProvider>
-      </QueryClientProvider>
-    </HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider>
+        <TooltipProvider>
+          <ThemeProvider defaultTheme="light" storageKey="ui-theme">
+            <AuthProvider>
+              <LanguageProvider>
+                <Toaster />
+                <Sonner />
+                <CookieConsent />
+                <BrowserRouter>
+                  <Suspense fallback={<PageLoader />}>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/events" element={<Events />} />
+                      <Route path="/events/:category" element={<CategoryEventList />} />
+                      <Route path="/events/:category/:eventId" element={<EventTickets />} />
+                      <Route path="/tickets" element={<Tickets />} />
+                      <Route path="/about-us" element={<AboutUs />} />
+                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/admin/*" element={<Admin />} />
+                      <Route path="/profile/*" element={<Profile />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
+                </BrowserRouter>
+              </LanguageProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </TooltipProvider>
+      </HelmetProvider>
+    </QueryClientProvider>
   );
+}
+
+// Update TypeScript declaration
+declare global {
+  interface Window {
+    logout?: () => void;
+    openCookieSettings?: () => void;
+    manageCookieConsent?: () => void;
+    clearAllCookiesOnLogout?: () => void;
+  }
 }
 
 export default App;

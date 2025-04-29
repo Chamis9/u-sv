@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from "@/components/Header";
@@ -6,12 +7,11 @@ import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Drama, Music, Film, Trophy, PartyPopper, Baby, Gift, MoreHorizontal, Plane, PlusCircle } from "lucide-react";
+import { Drama, Music, Film, Trophy, PartyPopper, Baby, Gift, MoreHorizontal, Plane } from "lucide-react";
 import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 import { useCategories } from '@/hooks/useCategories';
 import { EventFilters } from '@/components/events/EventFilters';
 import { useFilteredEvents } from '@/hooks/useFilteredEvents';
-import { Button } from '@/components/ui/button';
 
 const categoryIcons = {
   "Teātris": Drama,
@@ -29,23 +29,18 @@ const Events = () => {
   const { translations, currentLanguage } = useLanguage();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>();
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
 
-  // Get events including user listings
   const { data: events, isLoading: eventsLoading } = useFilteredEvents({
-    categoryId: selectedCategoryId,
+    category: selectedCategory === 'all' ? undefined : selectedCategory,
     startDate,
     endDate,
-    searchQuery,
-    includeUserListings: true // Include tickets added by users
+    searchQuery
   });
 
   const isLoading = categoriesLoading || eventsLoading;
-
-  // Translate helper
-  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
   if (isLoading) {
     return (
@@ -69,7 +64,7 @@ const Events = () => {
     );
   }
 
-  if (events && (selectedCategoryId || searchQuery || startDate)) {
+  if (events && (selectedCategory !== 'all' || searchQuery || startDate)) {
     return (
       <ThemeProvider>
         <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-gray-50 to-gray-100 dark:from-black dark:via-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
@@ -78,36 +73,27 @@ const Events = () => {
           <main className="flex-grow pt-24 pb-12">
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-7xl mx-auto">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-                  <h1 className="text-4xl md:text-5xl font-bold">
-                    <span className="text-orange-500">
-                      {translations.events?.title || "Pasākumi"}
-                    </span>
-                  </h1>
-                  
-                  <Link to="/events/add">
-                    <Button className="mt-4 sm:mt-0">
-                      <PlusCircle className="mr-2 h-4 w-4" />
-                      {t("Pievienot jaunu pasākumu", "Add new event")}
-                    </Button>
-                  </Link>
-                </div>
+                <h1 className="text-4xl md:text-5xl font-bold mb-6">
+                  <span className="text-orange-500">
+                    {translations.events?.title || "Pasākumi"}
+                  </span>
+                </h1>
                 
                 <EventFilters
                   onSearchChange={setSearchQuery}
-                  onCategoryChange={setSelectedCategoryId}
+                  onCategoryChange={setSelectedCategory}
                   onDateChange={(start, end) => {
                     setStartDate(start);
                     setEndDate(end);
                   }}
-                  selectedCategoryId={selectedCategoryId}
+                  selectedCategory={selectedCategory}
                   selectedStartDate={startDate}
                   selectedEndDate={endDate}
                 />
 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {events.map((event) => (
-                    <Link to={`/events/${event.category_id}/${event.id}`} key={event.id}>
+                    <Link to={`/events/${event.category.toLowerCase()}/${event.id}`} key={event.id}>
                       <Card className="h-full transition-transform hover:scale-105 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
                         <CardHeader>
                           <CardTitle>{event.title}</CardTitle>
@@ -116,16 +102,6 @@ const Events = () => {
                             {event.description && (
                               <p className="mt-2 text-sm">{event.description}</p>
                             )}
-                            {event.status === 'temp_listing' && (
-                              <div className="mt-2 text-sm text-orange-500 font-medium">
-                                {currentLanguage.code === 'lv' ? 'Lietotāja pievienota biļete' : 'User added ticket'}
-                              </div>
-                            )}
-                            <div className="mt-1 text-xs text-gray-500">
-                              {event.ticketCount > 0 && (
-                                <span>{event.ticketCount} {currentLanguage.code === 'lv' ? 'biļetes pieejamas' : 'tickets available'}</span>
-                              )}
-                            </div>
                           </CardDescription>
                         </CardHeader>
                       </Card>
@@ -160,42 +136,31 @@ const Events = () => {
         <main className="flex-grow pt-24 pb-12">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="max-w-7xl mx-auto">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-                <h1 className="text-4xl md:text-5xl font-bold">
-                  <span className="text-orange-500">
-                    {translations.events?.title || "Pasākumi"}
-                  </span>
-                </h1>
-                
-                <Link to="/events/add">
-                  <Button className="mt-4 sm:mt-0">
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    {t("Pievienot jaunu pasākumu", "Add new event")}
-                  </Button>
-                </Link>
-              </div>
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">
+                <span className="text-orange-500">
+                  {translations.events?.title || "Pasākumi"}
+                </span>
+              </h1>
 
               <EventFilters
                 onSearchChange={setSearchQuery}
-                onCategoryChange={setSelectedCategoryId}
+                onCategoryChange={setSelectedCategory}
                 onDateChange={(start, end) => {
                   setStartDate(start);
                   setEndDate(end);
                 }}
-                selectedCategoryId={selectedCategoryId}
+                selectedCategory={selectedCategory}
                 selectedStartDate={startDate}
                 selectedEndDate={endDate}
               />
 
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {categories?.map((category) => {
                   const IconComponent = categoryIcons[category.name as keyof typeof categoryIcons] || MoreHorizontal;
-                  // Get count of tickets in this category
-                  const categoryEvents = events?.filter(event => event.category_id === category.id) || [];
-                  const ticketCount = categoryEvents.reduce((sum, event) => sum + (event.ticketCount || 0), 0);
+                  const route = category.name.toLowerCase().replace(/\s+/g, '-');
                   
                   return (
-                    <Link to={`/events/${category.id}`} key={category.id}>
+                    <Link to={`/events/${route}`} key={category.id}>
                       <Card className="h-full transition-transform hover:scale-105 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">
@@ -204,11 +169,6 @@ const Events = () => {
                           </CardTitle>
                           <CardDescription>
                             {category.description}
-                            {ticketCount > 0 && (
-                              <p className="mt-2 text-sm font-medium text-orange-500">
-                                {ticketCount} {currentLanguage.code === 'lv' ? 'biļetes pieejamas' : 'tickets available'}
-                              </p>
-                            )}
                           </CardDescription>
                         </CardHeader>
                       </Card>

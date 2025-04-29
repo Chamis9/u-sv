@@ -111,7 +111,7 @@ export type Database = {
       events: {
         Row: {
           admin_id: string | null
-          category_id: string
+          category: string
           created_at: string
           created_by: string | null
           description: string | null
@@ -127,7 +127,7 @@ export type Database = {
         }
         Insert: {
           admin_id?: string | null
-          category_id: string
+          category: string
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -143,7 +143,7 @@ export type Database = {
         }
         Update: {
           admin_id?: string | null
-          category_id?: string
+          category?: string
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -163,13 +163,6 @@ export type Database = {
             columns: ["venue_id"]
             isOneToOne: false
             referencedRelation: "venues"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_category"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
         ]
@@ -266,88 +259,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
-      }
-      ticket_purchases: {
-        Row: {
-          buyer_id: string
-          id: string
-          purchase_date: string
-          seller_id: string
-          status: string
-          ticket_id: string
-        }
-        Insert: {
-          buyer_id: string
-          id?: string
-          purchase_date?: string
-          seller_id: string
-          status?: string
-          ticket_id: string
-        }
-        Update: {
-          buyer_id?: string
-          id?: string
-          purchase_date?: string
-          seller_id?: string
-          status?: string
-          ticket_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ticket_purchases_ticket_id_fkey"
-            columns: ["ticket_id"]
-            isOneToOne: false
-            referencedRelation: "tickets"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tickets: {
-        Row: {
-          created_at: string
-          description: string | null
-          event_id: string
-          file_path: string | null
-          id: string
-          price: number
-          seat_info: string | null
-          status: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          event_id: string
-          file_path?: string | null
-          id?: string
-          price: number
-          seat_info?: string | null
-          status?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          event_id?: string
-          file_path?: string | null
-          id?: string
-          price?: number
-          seat_info?: string | null
-          status?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tickets_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       venues: {
         Row: {

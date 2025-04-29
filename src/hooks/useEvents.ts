@@ -6,40 +6,28 @@ export interface Event {
   id: string;
   title: string;
   description: string | null;
-  category_id: string;
+  category: string;
   start_date: string;
   end_date: string | null;
   price_range: any;
   venue_id: string | null;
   image_url: string | null;
   status: string | null;
-  created_by: string | null;
-  tickets?: any[];
-  ticketCount?: number;
 }
 
-export const useEvents = (categoryId?: string, includeUserListings = false) => {
+export const useEvents = (category?: string) => {
   return useQuery({
-    queryKey: ['events', categoryId, includeUserListings],
+    queryKey: ['events', category],
     queryFn: async (): Promise<Event[]> => {
-      let query = supabase.from('events').select(`
-        *,
-        categories:category_id(name),
-        tickets(count)
-      `);
+      let query = supabase.from('events').select('*');
       
-      if (categoryId) {
-        query = query.eq('category_id', categoryId);
-      }
-      
-      // Include user listings if requested
-      if (includeUserListings) {
-        query = query.in('status', ['published', 'temp_listing']);
-      } else {
-        query = query.eq('status', 'published');
+      if (category) {
+        query = query.eq('category', category);
       }
       
       const { data, error } = await query
+        .eq('status', 'published')
+        .gte('start_date', new Date().toISOString())
         .order('start_date', { ascending: true });
       
       if (error) {
@@ -47,13 +35,7 @@ export const useEvents = (categoryId?: string, includeUserListings = false) => {
         throw error;
       }
       
-      // Post-process the results to add ticket count
-      const processedData = data?.map(event => ({
-        ...event,
-        ticketCount: event.tickets ? event.tickets.length : 0
-      })) || [];
-      
-      return processedData;
+      return data || [];
     }
   });
 };

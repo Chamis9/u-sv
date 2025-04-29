@@ -4,27 +4,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { Event } from "@/hooks/useEvents";
 
 interface FilterOptions {
-  categoryId?: string;
+  category?: string;
   startDate?: Date;
   endDate?: Date;
   venueId?: string;
   searchQuery?: string;
-  includeUserListings?: boolean;
 }
 
-export const useFilteredEvents = (filters: FilterOptions = {}) => {
+export const useFilteredEvents = (filters: FilterOptions) => {
   return useQuery({
     queryKey: ['filtered-events', filters],
     queryFn: async (): Promise<Event[]> => {
-      let query = supabase.from('events').select(`
-        *,
-        categories:category_id(name),
-        tickets(count)
-      `);
+      let query = supabase.from('events').select('*');
       
       // Apply category filter
-      if (filters.categoryId) {
-        query = query.eq('category_id', filters.categoryId);
+      if (filters.category) {
+        query = query.eq('category', filters.category);
       }
 
       // Apply date filters
@@ -46,29 +41,17 @@ export const useFilteredEvents = (filters: FilterOptions = {}) => {
         query = query.or(`title.ilike.%${filters.searchQuery}%,description.ilike.%${filters.searchQuery}%`);
       }
 
-      // Filter by status - include temporary listings from users if requested
-      if (filters.includeUserListings) {
-        query = query.in('status', ['published', 'temp_listing']);
-      } else {
-        // Regular published events
-        query = query.eq('status', 'published');
-      }
-
-      // Order by start date
-      const { data, error } = await query.order('start_date', { ascending: true });
+      // Always show only published events and order by start date
+      const { data, error } = await query
+        .eq('status', 'published')
+        .order('start_date', { ascending: true });
       
       if (error) {
         console.error('Error fetching filtered events:', error);
         throw error;
       }
       
-      // Post-process the results to add ticket count information
-      const processedData = data.map(event => ({
-        ...event,
-        ticketCount: event.tickets ? event.tickets.length : 0
-      }));
-      
-      return processedData || [];
+      return data || [];
     }
   });
 };
