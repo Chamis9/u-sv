@@ -55,7 +55,7 @@ export function useTicketQueries(userId?: string) {
           category: ticket.categories?.name || "Other",
           price: ticket.price,
           event_id: ticket.event_id,
-          status: 'purchased',
+          status: 'purchased' as const,
           file_path: ticket.file_path,
           created_at: ticket.created_at
         })))
@@ -65,7 +65,7 @@ export function useTicketQueries(userId?: string) {
       console.log(`- ${createdTickets?.length || 0} created tickets`);
       console.log(`- ${purchasedTickets?.length || 0} purchased tickets`);
       
-      return allTickets || [];
+      return allTickets;
     },
     enabled: !!userId,
     staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
