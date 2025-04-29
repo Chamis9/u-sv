@@ -10,7 +10,6 @@ import { EmailInput } from "../EmailInput";
 import { PasswordInput } from "../PasswordInput";
 import { getRegistrationFormSchema, type RegistrationFormData } from "../schema";
 import { PhoneField } from "./components/PhoneField";
-import { TermsCheckbox } from "./components/TermsCheckbox";
 import { NameFields } from "./components/NameFields";
 
 interface RegistrationFormProps {
@@ -42,6 +41,8 @@ export function RegistrationForm({ translations, onClose }: RegistrationFormProp
     setIsLoading(true);
     
     try {
+      console.log("Registration data:", values);
+      
       // Using signUp with email verification disabled (in Supabase admin)
       const { error } = await supabase.auth.signUp({
         email: values.email,
