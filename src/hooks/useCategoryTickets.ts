@@ -14,17 +14,22 @@ export const useCategoryTickets = (category?: string) => {
       try {
         setIsLoading(true);
         
-        // Convert category name to normalized category ID
-        const categoryId = category ? getCategoryIdFromName(category) : '';
+        console.log('Fetching tickets for category:', category);
         
         let query = supabase
           .from('tickets')
           .select('*, categories(name)')
           .eq('status', 'available');
           
-        // Only add the category filter if we have a valid category ID
-        if (categoryId) {
-          query = query.eq('category_id', categoryId);
+        // Only filter by category if one is provided
+        if (category) {
+          // Get the normalized category ID
+          const categoryId = getCategoryIdFromName(category);
+          console.log('Normalized category ID:', categoryId);
+          
+          if (categoryId) {
+            query = query.eq('category_id', categoryId);
+          }
         }
         
         const { data: ticketsData, error: fetchError } = await query;
@@ -33,7 +38,7 @@ export const useCategoryTickets = (category?: string) => {
           throw fetchError;
         }
         
-        console.log('Fetched tickets for category:', category, 'categoryId:', categoryId, 'count:', ticketsData?.length);
+        console.log('Fetched tickets:', ticketsData);
         
         // Transform the data to match UserTicket type
         const formattedTickets: UserTicket[] = (ticketsData || []).map(ticket => ({

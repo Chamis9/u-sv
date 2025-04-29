@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useLanguage } from "@/features/language";
 import { Header } from "@/components/Header";
@@ -30,15 +30,19 @@ export function CategoryEventList() {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   
-  // Get category ID for filtering tickets
-  const categoryId = category ? getCategoryIdFromName(category) : '';
-  
   const {
     allCategoryTickets,
     isLoading: ticketsLoading,
+    error: ticketsError,
     removeTicketFromState
   } = useCategoryTickets(category);
   
+  // Log category and tickets for debugging
+  useEffect(() => {
+    console.log('Current category:', category);
+    console.log('All category tickets:', allCategoryTickets);
+  }, [category, allCategoryTickets]);
+
   const {
     selectedTicket,
     isPurchaseDialogOpen,
@@ -86,6 +90,11 @@ export function CategoryEventList() {
       : true;
   });
 
+  // Display error if there's an issue fetching tickets
+  if (ticketsError) {
+    console.error('Ticket loading error:', ticketsError);
+  }
+
   if (error) {
     return (
       <div className="text-center p-8">
@@ -95,7 +104,7 @@ export function CategoryEventList() {
   }
 
   // Determine category display name
-  const categoryDisplayName = category ? getCategoryDisplayName(categoryId, currentLanguage.code) : '';
+  const categoryDisplayName = category ? getCategoryDisplayName(category, currentLanguage.code) : '';
   
   // Format the date range for display
   const dateButtonText = startDate && endDate
