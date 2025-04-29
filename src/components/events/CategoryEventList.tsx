@@ -12,6 +12,7 @@ import { EventSearchFilter } from './components/EventSearchFilter';
 import { EventTicketPurchaseContainer } from './components/EventTicketPurchaseContainer';
 import { EventsPageLayout } from './components/EventsPageLayout';
 import { UserTicket } from '@/hooks/tickets';
+import { UserTickets } from './components/UserTickets';
 
 export function CategoryEventList() {
   const { category } = useParams<{ category: string }>();
@@ -74,11 +75,23 @@ export function CategoryEventList() {
       />
       
       <EventTicketPurchaseContainer removeTicketFromState={removeTicketFromState}>
-        <EventsGrid 
-          events={filteredEvents}
-          availableTickets={filteredTickets} 
-          isLoading={isLoading || ticketsLoading}
-          onPurchase={dummyOnPurchase} // This will be overridden by EventTicketPurchaseContainer
+        {filteredEvents.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">
+              {currentLanguage.code === 'lv' ? 'Pasākumi' : 'Events'}
+            </h2>
+            <EventsGrid 
+              events={filteredEvents}
+              availableTickets={[]} 
+              isLoading={isLoading}
+              onPurchase={dummyOnPurchase} 
+            />
+          </div>
+        )}
+        
+        <UserTickets
+          availableTickets={filteredTickets}
+          onPurchase={dummyOnPurchase}
         />
       </EventTicketPurchaseContainer>
     </EventsPageLayout>

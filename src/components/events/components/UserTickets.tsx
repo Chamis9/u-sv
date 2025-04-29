@@ -2,8 +2,9 @@
 import React from 'react';
 import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
-import { Ticket } from "lucide-react";
+import { Ticket, Calendar, MapPin, Clock, Tag, Eye } from "lucide-react";
 import { UserTicket } from "@/hooks/tickets";
+import { formatDate, formatPrice } from "@/utils/formatters";
 
 interface UserTicketsProps {
   availableTickets: UserTicket[];
@@ -31,26 +32,80 @@ export const UserTickets: React.FC<UserTicketsProps> = ({ availableTickets, onPu
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-semibold mb-4">
-        {t("Pieejamās biļetes no lietotājiem", "User submitted tickets")}
+        {t("Pieejamās biļetes", "Available tickets")}
       </h2>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {availableTickets.map((ticket) => (
-          <div key={ticket.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-semibold text-lg">{ticket.title}</h3>
-                {ticket.description && (
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mt-1">{ticket.description}</p>
-                )}
-              </div>
-              <div className="text-lg font-bold">{ticket.price} €</div>
-            </div>
+          <div key={ticket.id} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            {/* Ticket color band */}
+            <div className="h-2 bg-green-500"></div>
             
-            <div className="mt-4 flex justify-end">
-              <Button onClick={() => onPurchase(ticket)} variant="orange">
-                <Ticket className="mr-2 h-4 w-4" />
-                {t("Pirkt biļeti", "Buy ticket")}
-              </Button>
+            <div className="p-4">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg mb-1 truncate">{ticket.title}</h3>
+                  <div className="flex items-center text-sm text-muted-foreground mb-1">
+                    <Calendar className="h-4 w-4 mr-1" />
+                    {ticket.event_date 
+                      ? formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')
+                      : formatDate(ticket.created_at, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
+                    {ticket.event_time && (
+                      <span className="ml-2 flex items-center">
+                        <Clock className="h-3 w-3 mr-1" />
+                        {ticket.event_time}
+                      </span>
+                    )}
+                  </div>
+                  
+                  {ticket.venue && (
+                    <div className="flex items-center text-sm text-muted-foreground mb-3">
+                      <MapPin className="h-4 w-4 mr-1" />
+                      {ticket.venue}
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center mb-4">
+                    <Tag className="h-4 w-4 mr-1 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">{ticket.category}</span>
+                  </div>
+                  
+                  <div className="text-xl font-bold text-primary">
+                    {formatPrice(ticket.price)}
+                  </div>
+                  
+                  {ticket.quantity && ticket.quantity > 1 && (
+                    <div className="text-sm text-muted-foreground mt-1">
+                      {ticket.quantity} {t("biļetes", "tickets")} × {ticket.price_per_unit && formatPrice(ticket.price_per_unit)}
+                    </div>
+                  )}
+                </div>
+                
+                <div className="ml-4 mt-1">
+                  <Ticket className="h-10 w-10 text-muted-foreground opacity-20" />
+                </div>
+              </div>
+              
+              <div className="mt-4 flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {/* View ticket details implementation could be added here */}}
+                  className="flex-1"
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  {t("Skatīt", "View")}
+                </Button>
+                
+                <Button
+                  variant="orange"
+                  size="sm"
+                  onClick={() => onPurchase(ticket)}
+                  className="flex-1"
+                >
+                  <Ticket className="h-4 w-4 mr-2" />
+                  {t("Pirkt biļeti", "Buy ticket")}
+                </Button>
+              </div>
             </div>
           </div>
         ))}

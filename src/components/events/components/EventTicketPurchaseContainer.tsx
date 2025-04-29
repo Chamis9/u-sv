@@ -4,19 +4,18 @@ import { UserTicket } from '@/hooks/tickets';
 import { useTicketPurchase } from '@/hooks/useTicketPurchase';
 import { PurchaseDialog } from './PurchaseDialog';
 
-// Define a type for components that can receive the onPurchase prop
 interface WithOnPurchase {
-  onPurchase?: (ticket: UserTicket) => void;
+  onPurchase: (ticket: UserTicket) => void;
 }
 
-interface EventTicketPurchaseContainerProps {
-  removeTicketFromState: (ticketId: string) => void;
+export interface EventTicketPurchaseContainerProps {
   children: React.ReactNode;
+  removeTicketFromState: (ticketId: string) => void;
 }
 
-export const EventTicketPurchaseContainer: React.FC<EventTicketPurchaseContainerProps> = ({ 
-  removeTicketFromState,
-  children 
+export const EventTicketPurchaseContainer: React.FC<EventTicketPurchaseContainerProps> = ({
+  children,
+  removeTicketFromState
 }) => {
   const {
     selectedTicket,
@@ -26,34 +25,40 @@ export const EventTicketPurchaseContainer: React.FC<EventTicketPurchaseContainer
     purchaseTicket
   } = useTicketPurchase();
 
-  const handlePurchaseConfirm = async (ticket: typeof selectedTicket) => {
-    if (!ticket) return;
-    
-    const success = await purchaseTicket(ticket);
-    if (success) {
-      removeTicketFromState(ticket.id);
+  // Handler for purchasing a ticket
+  const handlePurchase = async (ticket: UserTicket) => {
+    openPurchaseDialog(ticket);
+  };
+
+  // Handler for confirming the purchase
+  const handleConfirmPurchase = async () => {
+    if (selectedTicket) {
+      const success = await purchaseTicket(selectedTicket);
+      if (success) {
+        removeTicketFromState(selectedTicket.id);
+      }
     }
   };
 
+  // Clone all children and inject the onPurchase prop
+  const childrenWithProps = React.Children.map(children, (child) => {
+    if (React.isValidElement<WithOnPurchase>(child)) {
+      return React.cloneElement(child, {
+        onPurchase: handlePurchase
+      });
+    }
+    return child;
+  });
+
   return (
     <>
-      {React.Children.map(children, child => {
-        // Check if the child is a valid React element
-        if (React.isValidElement<WithOnPurchase>(child)) {
-          // Clone and pass the onPurchase prop
-          return React.cloneElement(child, { 
-            onPurchase: openPurchaseDialog 
-          });
-        }
-        // Return the child as is if not a valid React element
-        return child;
-      })}
+      {childrenWithProps}
       
-      <PurchaseDialog
+      <PurchaseDialog 
+        open={isPurchaseDialogOpen}
+        setOpen={setIsPurchaseDialogOpen}
         ticket={selectedTicket}
-        isOpen={isPurchaseDialogOpen}
-        onOpenChange={setIsPurchaseDialogOpen}
-        onPurchaseConfirm={handlePurchaseConfirm}
+        onConfirm={handleConfirmPurchase}
       />
     </>
   );
