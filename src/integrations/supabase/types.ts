@@ -206,6 +206,246 @@ export type Database = {
           },
         ]
       }
+      tickets_concerts: {
+        Row: {
+          buyer_id: string | null
+          created_at: string
+          description: string | null
+          event_date: string | null
+          event_id: string | null
+          file_path: string | null
+          id: string
+          owner_id: string
+          price: number
+          seat_info: string | null
+          seller_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          buyer_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          event_id?: string | null
+          file_path?: string | null
+          id?: string
+          owner_id?: string
+          price: number
+          seat_info?: string | null
+          seller_id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          buyer_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          event_id?: string | null
+          file_path?: string | null
+          id?: string
+          owner_id?: string
+          price?: number
+          seat_info?: string | null
+          seller_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      tickets_festivals: {
+        Row: {
+          buyer_id: string | null
+          created_at: string
+          description: string | null
+          event_date: string | null
+          event_id: string | null
+          file_path: string | null
+          id: string
+          owner_id: string
+          price: number
+          seat_info: string | null
+          seller_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          buyer_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          event_id?: string | null
+          file_path?: string | null
+          id?: string
+          owner_id?: string
+          price: number
+          seat_info?: string | null
+          seller_id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          buyer_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          event_id?: string | null
+          file_path?: string | null
+          id?: string
+          owner_id?: string
+          price?: number
+          seat_info?: string | null
+          seller_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      tickets_other: {
+        Row: {
+          buyer_id: string | null
+          created_at: string
+          description: string | null
+          event_date: string | null
+          event_id: string | null
+          file_path: string | null
+          id: string
+          owner_id: string
+          price: number
+          seat_info: string | null
+          seller_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          buyer_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          event_id?: string | null
+          file_path?: string | null
+          id?: string
+          owner_id?: string
+          price: number
+          seat_info?: string | null
+          seller_id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          buyer_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          event_id?: string | null
+          file_path?: string | null
+          id?: string
+          owner_id?: string
+          price?: number
+          seat_info?: string | null
+          seller_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      tickets_sports: {
+        Row: {
+          buyer_id: string | null
+          created_at: string
+          description: string | null
+          event_date: string | null
+          event_id: string | null
+          file_path: string | null
+          id: string
+          owner_id: string
+          price: number
+          seat_info: string | null
+          seller_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          buyer_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          event_id?: string | null
+          file_path?: string | null
+          id?: string
+          owner_id?: string
+          price: number
+          seat_info?: string | null
+          seller_id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          buyer_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          event_id?: string | null
+          file_path?: string | null
+          id?: string
+          owner_id?: string
+          price?: number
+          seat_info?: string | null
+          seller_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      tickets_theatre: {
+        Row: {
+          buyer_id: string | null
+          created_at: string
+          description: string | null
+          event_date: string | null
+          event_id: string | null
+          file_path: string | null
+          id: string
+          owner_id: string
+          price: number
+          seat_info: string | null
+          seller_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          buyer_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          event_id?: string | null
+          file_path?: string | null
+          id?: string
+          owner_id?: string
+          price: number
+          seat_info?: string | null
+          seller_id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          buyer_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string | null
+          event_id?: string | null
+          file_path?: string | null
+          id?: string
+          owner_id?: string
+          price?: number
+          seat_info?: string | null
+          seller_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

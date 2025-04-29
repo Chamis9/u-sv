@@ -16,23 +16,32 @@ export const useCategoryTickets = (category?: string) => {
         
         console.log('Fetching tickets for category:', category);
         
-        let query = supabase
-          .from('tickets')
-          .select('*, categories(name)')
-          .eq('status', 'available');
-          
-        // Only filter by category if one is provided
+        // Determine which table to query based on the category
+        let tableName = 'tickets'; // Default table
+        
         if (category) {
-          // Get the normalized category ID
-          const categoryId = getCategoryIdFromName(category);
-          console.log('Normalized category ID:', categoryId);
+          const normalizedCategory = category.toLowerCase();
           
-          if (categoryId) {
-            query = query.eq('category_id', categoryId);
+          if (normalizedCategory === 'teātris' || normalizedCategory === 'theatre') {
+            tableName = 'tickets_theatre';
+          } else if (normalizedCategory === 'koncerti' || normalizedCategory === 'concerts') {
+            tableName = 'tickets_concerts';
+          } else if (normalizedCategory === 'sports') {
+            tableName = 'tickets_sports';
+          } else if (normalizedCategory === 'festivāli' || normalizedCategory === 'festivals') {
+            tableName = 'tickets_festivals';
+          } else {
+            tableName = 'tickets_other';
           }
         }
         
-        const { data: ticketsData, error: fetchError } = await query;
+        console.log(`Using table ${tableName} for category: ${category}`);
+        
+        // Query the appropriate table
+        const { data: ticketsData, error: fetchError } = await supabase
+          .from(tableName)
+          .select('*, categories(name)')
+          .eq('status', 'available');
         
         if (fetchError) {
           throw fetchError;
@@ -53,7 +62,8 @@ export const useCategoryTickets = (category?: string) => {
           created_at: ticket.created_at,
           seller_id: ticket.seller_id,
           buyer_id: ticket.buyer_id,
-          owner_id: ticket.owner_id
+          owner_id: ticket.owner_id,
+          event_date: ticket.event_date
         }));
         
         setAllCategoryTickets(formattedTickets);

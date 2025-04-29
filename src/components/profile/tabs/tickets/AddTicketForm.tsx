@@ -17,11 +17,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { useTicketStorage } from "@/hooks/tickets";
 import { useUserTickets } from "@/hooks/tickets";
 import { useAuth } from "@/contexts/AuthContext";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, CalendarIcon } from "lucide-react";
 import { TicketFileUpload } from "./TicketFileUpload";
 import { CategorySelector } from "./CategorySelector";
 import { ticketFormSchema, TicketFormValues } from "./schema";
 import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface AddTicketFormProps {
   onClose: () => void;
@@ -76,6 +80,9 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
         .eq('name', values.category)
         .maybeSingle();
       
+      // Format event date if provided
+      const formattedEventDate = values.eventDate ? values.eventDate.toISOString().split('T')[0] : null;
+      
       // Then create the ticket entry
       addTicket({
         title: values.title,
@@ -85,7 +92,8 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
         file_path: filePath,
         category_name: values.category,
         category_id: categories?.id,
-        event_id: null // Required property for AddTicketData
+        event_id: null, // Required property for AddTicketData
+        event_date: formattedEventDate
       });
       
       console.log("Ticket added successfully");
@@ -138,6 +146,46 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
         />
 
         <CategorySelector form={form} />
+        
+        <FormField
+          control={form.control}
+          name="eventDate"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>{t("Pasākuma datums", "Event date")}</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full pl-3 text-left font-normal",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value ? (
+                        format(field.value, "dd.MM.yyyy")
+                      ) : (
+                        <span>{t("Izvēlies datumu", "Pick a date")}</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         
         <FormField
           control={form.control}

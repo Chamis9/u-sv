@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -47,6 +48,9 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       
       const category = await getCategoryByName(values.category);
       
+      // Format event date if provided
+      const formattedEventDate = values.eventDate ? values.eventDate.toISOString().split('T')[0] : null;
+      
       addTicket({
         title: values.title,
         description: values.description,
@@ -55,7 +59,8 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
         file_path: filePath,
         category_name: values.category,
         category_id: category?.id,
-        event_id: null
+        event_id: null,
+        event_date: formattedEventDate
       });
       
       onClose();

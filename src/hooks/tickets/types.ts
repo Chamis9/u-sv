@@ -14,6 +14,7 @@ export interface UserTicket {
   seller_id?: string;
   buyer_id?: string;
   owner_id: string;
+  event_date?: string | null;
 }
 
 export interface AddTicketData {
@@ -27,6 +28,7 @@ export interface AddTicketData {
   category_name?: string;
   category_id?: string;
   quantity?: number;
+  event_date?: string | null;
 }
 
 export interface TicketMutationResult {

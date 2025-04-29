@@ -40,9 +40,30 @@ export function useTicketMutations(userId?: string) {
         
         console.log("Adding ticket:", ticketData);
         
-        // Create the ticket (custom tickets don't have event_id)
+        // Determine which ticket table to use based on category
+        let tableName = 'tickets'; // Default table
+        
+        if (ticketData.category_name) {
+          const categoryName = ticketData.category_name.toLowerCase();
+          
+          if (categoryName === 'teātris' || categoryName === 'theatre') {
+            tableName = 'tickets_theatre';
+          } else if (categoryName === 'koncerti' || categoryName === 'concerts') {
+            tableName = 'tickets_concerts';
+          } else if (categoryName === 'sports') {
+            tableName = 'tickets_sports';
+          } else if (categoryName === 'festivāli' || categoryName === 'festivals') {
+            tableName = 'tickets_festivals';
+          } else {
+            tableName = 'tickets_other';
+          }
+        }
+        
+        console.log(`Using table ${tableName} for ticket category: ${ticketData.category_name}`);
+        
+        // Create the ticket in the appropriate category table
         const { data, error } = await supabase
-          .from('tickets')
+          .from(tableName)
           .insert([{
             description: ticketData.title,
             price: ticketData.price,
@@ -51,13 +72,14 @@ export function useTicketMutations(userId?: string) {
             seat_info: ticketData.seat_info,
             status: 'available',
             category_id: ticketData.category_id,
-            event_id: ticketData.event_id
+            event_id: ticketData.event_id,
+            event_date: ticketData.event_date
           }])
           .select()
           .single();
         
         if (error) {
-          console.error("Error creating ticket:", error);
+          console.error(`Error creating ticket in ${tableName}:`, error);
           throw error;
         }
         
