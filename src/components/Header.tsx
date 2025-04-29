@@ -41,9 +41,9 @@ export function Header() {
     register: t("Reģistrēties", "Register", "Регистрация"),
     registrationLoading: t("Reģistrējas...", "Registering...", "Регистрация..."),
     registrationSuccessful: t(
-      "Reģistrācija veiksmīga! Lūdzu pārbaudiet e-pastu, lai apstiprinātu kontu.",
-      "Registration successful! Please check your email to confirm your account.",
-      "Регистрация успешна! Пожалуйста, проверьте электронную почту, чтобы подтвердить аккаунт."
+      "Reģistrācija veiksmīga! Gaidiet apstiprinājumu no administratora.",
+      "Registration successful! Please wait for admin confirmation.",
+      "Регистрация успешна! Пожалуйста, дождитесь подтверждения от администратора."
     ),
     registrationError: t(
       "Kļūda reģistrācijas laikā. Lūdzu, mēģiniet vēlreiz.",
@@ -95,6 +95,11 @@ export function Header() {
       "Я согласен с правилами и условиями"
     ),
     languageCode: currentLanguage.code,
+    manualConfirmation: t(
+      "Reģistrācija veiksmīga! Gaidiet apstiprinājumu no administratora.",
+      "Registration successful! Please wait for admin confirmation.",
+      "Регистрация успешна! Пожалуйста, дождитесь подтверждения от администратора."
+    ),
   };
   
   return (
@@ -177,8 +182,8 @@ export function Header() {
                   
                   <TabsContent value="register" className="p-4">
                     <RegistrationForm 
-                      translations={translations} 
-                      onClose={() => setKeepHoverOpen(false)} 
+                      translations={translations}
+                      onClose={() => setKeepHoverOpen(false)}
                     />
                   </TabsContent>
                 </Tabs>

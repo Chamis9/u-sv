@@ -108,39 +108,6 @@ export type Database = {
         }
         Relationships: []
       }
-      profiles: {
-        Row: {
-          avatar_url: string | null
-          created_at: string
-          first_name: string | null
-          id: string
-          last_name: string | null
-          newsletter: boolean | null
-          phone: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string
-          first_name?: string | null
-          id: string
-          last_name?: string | null
-          newsletter?: boolean | null
-          phone?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          newsletter?: boolean | null
-          phone?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       registered_users: {
         Row: {
           auth_user_id: string | null

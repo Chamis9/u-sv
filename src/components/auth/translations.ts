@@ -30,10 +30,11 @@ export const registrationFormTranslations = {
     terms: "Es piekrītu lietošanas noteikumiem",
     register: "Reģistrēties",
     registrationLoading: "Reģistrējos...",
-    registrationSuccessful: "Reģistrācija veiksmīga! Lūdzu, pārbaudiet savu e-pastu, lai apstiprinātu savu kontu.",
+    registrationSuccessful: "Reģistrācija veiksmīga! Gaidiet apstiprinājumu no administratora.",
     genericError: "Reģistrācijas kļūda. Lūdzu, mēģiniet vēlreiz.",
     languageCode: "lv",
     emailRateLimitExceeded: "E-pasta sūtīšanas limits ir pārsniegts. Lūdzu, mēģiniet vēlāk.",
+    manualConfirmation: "Reģistrācija veiksmīga! Gaidiet apstiprinājumu no administratora.",
   },
   en: {
     firstName: "First Name",
@@ -45,10 +46,11 @@ export const registrationFormTranslations = {
     terms: "I agree to the terms and conditions",
     register: "Register",
     registrationLoading: "Registering...",
-    registrationSuccessful: "Registration successful! Please check your email to confirm your account.",
+    registrationSuccessful: "Registration successful! Please wait for admin confirmation.",
     genericError: "Registration error. Please try again.",
     languageCode: "en",
     emailRateLimitExceeded: "Email rate limit exceeded. Please try again later.",
+    manualConfirmation: "Registration successful! Please wait for admin confirmation.",
   },
 };
 
