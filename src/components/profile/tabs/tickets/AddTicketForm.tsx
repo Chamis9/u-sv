@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ticketSchema, TicketFormValues } from "./schema";
+import { ticketFormSchema, TicketFormValues } from "./schema";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,27 +32,27 @@ export function AddTicketForm({
   const { toast } = useToast();
   
   const form = useForm<TicketFormValues>({
-    resolver: zodResolver(ticketSchema),
+    resolver: zodResolver(ticketFormSchema),
     defaultValues: isEditing && ticketToEdit ? {
       title: ticketToEdit.title,
       description: ticketToEdit.description || "",
       price: ticketToEdit.price.toString(),
       category: ticketToEdit.category,
-      event_date: ticketToEdit.event_date || "",
+      eventDate: ticketToEdit.event_date || "",
       venue: ticketToEdit.venue || "",
       quantity: ticketToEdit.quantity?.toString() || "1",
-      price_per_unit: ticketToEdit.price_per_unit?.toString() || ticketToEdit.price?.toString() || "0",
-      event_time: ticketToEdit.event_time || "",
+      pricePerUnit: ticketToEdit.price_per_unit?.toString() || ticketToEdit.price?.toString() || "0",
+      eventTime: ticketToEdit.event_time || "",
     } : {
       title: "",
       description: "",
       price: "",
       category: "",
-      event_date: "",
+      eventDate: "",
       venue: "",
       quantity: "1",
-      price_per_unit: "",
-      event_time: "",
+      pricePerUnit: "",
+      eventTime: "",
     },
   });
   
@@ -73,8 +73,8 @@ export function AddTicketForm({
       let filePath = undefined;
       
       // Handle file upload if a file was selected
-      if (values.file && values.file[0]) {
-        const uploadResult = await uploadTicketFile(values.file[0]);
+      if (values.file) {
+        const uploadResult = await uploadTicketFile(values.file);
         if (uploadResult.error) {
           toast({
             title: t("Kļūda augšupielādējot failu", "File upload error"),
@@ -83,7 +83,7 @@ export function AddTicketForm({
           });
           return;
         }
-        filePath = uploadResult.filePath;
+        filePath = uploadResult.path;
       }
       
       // Prepare ticket data
@@ -93,11 +93,11 @@ export function AddTicketForm({
         price: parseFloat(values.price),
         user_id: user.id,
         category_name: values.category,
-        event_date: values.event_date || undefined,
+        event_date: values.eventDate || undefined,
         venue: values.venue || undefined,
         quantity: values.quantity ? parseInt(values.quantity) : 1,
-        price_per_unit: values.price_per_unit ? parseFloat(values.price_per_unit) : parseFloat(values.price),
-        event_time: values.event_time || undefined
+        price_per_unit: values.pricePerUnit ? parseFloat(values.pricePerUnit) : parseFloat(values.price),
+        event_time: values.eventTime || undefined
       };
       
       // If we have a file path, add it
@@ -238,10 +238,12 @@ export function AddTicketForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("Kategorija", "Category")}</FormLabel>
-                <CategorySelector 
-                  value={field.value} 
-                  onChange={field.onChange}
-                />
+                <FormControl>
+                  <CategorySelector 
+                    value={field.value} 
+                    onChange={field.onChange}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -251,7 +253,7 @@ export function AddTicketForm({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="event_date"
+            name="eventDate"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("Pasākuma datums", "Event date")}</FormLabel>
@@ -268,7 +270,7 @@ export function AddTicketForm({
           
           <FormField
             control={form.control}
-            name="event_time"
+            name="eventTime"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("Pasākuma laiks", "Event time")}</FormLabel>
@@ -324,7 +326,7 @@ export function AddTicketForm({
           
           <FormField
             control={form.control}
-            name="price_per_unit"
+            name="pricePerUnit"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("Cena par biļeti", "Price per ticket")}</FormLabel>
@@ -350,9 +352,9 @@ export function AddTicketForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("Biļetes fails", "Ticket file")}</FormLabel>
-                <TicketFileUpload 
-                  onChange={(files) => field.onChange(files)} 
-                />
+                <FormControl>
+                  <TicketFileUpload onChange={(file) => field.onChange(file)} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

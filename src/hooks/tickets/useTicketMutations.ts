@@ -35,7 +35,7 @@ export function useTicketMutations(userId?: string) {
         event_date: data.event_date,
         venue: data.venue,
         file_path: data.file_path,
-        status: 'available',
+        status: 'available' as 'available' | 'sold' | 'expired',
         event_id: data.event_id || null,
         category_id: data.category_id,
         category_name: data.category_name,

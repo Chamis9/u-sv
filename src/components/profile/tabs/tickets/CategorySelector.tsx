@@ -3,28 +3,20 @@ import React from "react";
 import { useLanguage } from "@/features/language";
 import { useQuery } from "@tanstack/react-query";
 import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UseFormReturn } from "react-hook-form";
-import { TicketFormValues } from "./schema";
 import { getAllCategories } from "./services/CategoryService";
 
 interface CategorySelectorProps {
-  form: UseFormReturn<TicketFormValues>;
+  value: string;
+  onChange: (value: string) => void;
 }
 
-export function CategorySelector({ form }: CategorySelectorProps) {
+export function CategorySelector({ value, onChange }: CategorySelectorProps) {
   const { currentLanguage } = useLanguage();
   
   const t = (lvText: string, enText: string) => 
@@ -38,40 +30,28 @@ export function CategorySelector({ form }: CategorySelectorProps) {
   });
 
   return (
-    <FormField
-      control={form.control}
-      name="category"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>{t("Kategorija", "Category")}</FormLabel>
-          <Select 
-            onValueChange={field.onChange} 
-            defaultValue={field.value}
-          >
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder={t("Izvēlieties kategoriju", "Select a category")} />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              {isLoading ? (
-                <SelectItem value="loading" disabled>
-                  {t("Ielādē...", "Loading...")}
-                </SelectItem>
-              ) : categories.length > 0 ? (
-                categories.map((category) => (
-                  <SelectItem key={category.id} value={category.name}>
-                    {category.name}
-                  </SelectItem>
-                ))
-              ) : (
-                <SelectItem value="other">{t("Cits", "Other")}</SelectItem>
-              )}
-            </SelectContent>
-          </Select>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
+    <Select 
+      value={value} 
+      onValueChange={onChange}
+    >
+      <SelectTrigger>
+        <SelectValue placeholder={t("Izvēlieties kategoriju", "Select a category")} />
+      </SelectTrigger>
+      <SelectContent>
+        {isLoading ? (
+          <SelectItem value="loading" disabled>
+            {t("Ielādē...", "Loading...")}
+          </SelectItem>
+        ) : categories.length > 0 ? (
+          categories.map((category) => (
+            <SelectItem key={category.id} value={category.name}>
+              {category.name}
+            </SelectItem>
+          ))
+        ) : (
+          <SelectItem value="other">{t("Cits", "Other")}</SelectItem>
+        )}
+      </SelectContent>
+    </Select>
   );
 }

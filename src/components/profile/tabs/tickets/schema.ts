@@ -19,9 +19,10 @@ export const ticketFormSchema = z.object({
   ),
   description: z.string().optional(),
   category: z.string().optional(),
-  eventDate: z.date().optional(),
+  eventDate: z.string().optional(),
   eventTime: z.string().optional(),
   venue: z.string().optional(),
+  file: z.any().optional(),
 });
 
 export type TicketFormValues = z.infer<typeof ticketFormSchema>;

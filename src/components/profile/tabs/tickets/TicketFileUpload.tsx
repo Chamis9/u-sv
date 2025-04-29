@@ -5,12 +5,12 @@ import { FormLabel } from "@/components/ui/form";
 import { UploadCloud } from "lucide-react";
 
 interface TicketFileUploadProps {
-  file: File | null;
-  onFileChange: (file: File | null) => void;
+  onChange: (file: File | null) => void;
 }
 
-export function TicketFileUpload({ file, onFileChange }: TicketFileUploadProps) {
+export function TicketFileUpload({ onChange }: TicketFileUploadProps) {
   const { currentLanguage } = useLanguage();
+  const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   
   const t = (lvText: string, enText: string) => 
@@ -28,7 +28,8 @@ export function TicketFileUpload({ file, onFileChange }: TicketFileUploadProps) 
           "Neatbalstīts faila formāts. Lūdzu, izvēlieties PDF, JPG vai PNG failu",
           "Unsupported file format. Please select a PDF, JPG or PNG file"
         ));
-        onFileChange(null);
+        setFile(null);
+        onChange(null);
         return;
       }
       
@@ -38,18 +39,19 @@ export function TicketFileUpload({ file, onFileChange }: TicketFileUploadProps) 
           "Faila izmērs nedrīkst pārsniegt 10MB",
           "File size cannot exceed 10MB"
         ));
-        onFileChange(null);
+        setFile(null);
+        onChange(null);
         return;
       }
       
-      onFileChange(selectedFile);
+      setFile(selectedFile);
+      onChange(selectedFile);
       setFileError(null);
     }
   };
 
   return (
     <div className="space-y-2">
-      <FormLabel>{t("Biļetes fails", "Ticket File")}</FormLabel>
       <div className="border border-input rounded-md p-2">
         <label htmlFor="file-upload" className="cursor-pointer">
           <div className="flex flex-col items-center justify-center py-4 text-center">

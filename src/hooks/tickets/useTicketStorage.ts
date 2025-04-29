@@ -5,6 +5,12 @@ import { generateUuid } from "@/utils/uuid-helper";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/features/language";
 
+interface FileUploadResult {
+  path?: string;
+  url?: string;
+  error?: string;
+}
+
 export function useTicketStorage() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,20 +50,30 @@ export function useTicketStorage() {
     }
   };
   
-  const uploadTicketFile = async (file: File, userId: string) => {
+  const uploadTicketFile = async (file: File): Promise<FileUploadResult> => {
     if (!file) {
-      setError(t("Nav izvēlēts fails", "No file selected"));
+      const errorMessage = t("Nav izvēlēts fails", "No file selected");
+      setError(errorMessage);
       toast({
         variant: "destructive",
         title: t("Kļūda", "Error"),
-        description: t("Nav izvēlēts fails", "No file selected"),
+        description: errorMessage,
       });
-      return null;
+      return { error: errorMessage };
     }
     
     try {
       setUploading(true);
       setError(null);
+      
+      // Get current user
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !sessionData.session) {
+        const errorMessage = t("Nepieciešama autentifikācija", "Authentication required");
+        throw new Error(errorMessage);
+      }
+      
+      const userId = sessionData.session.user.id;
       
       // Check if the file is valid (PDF, JPG, PNG)
       const fileType = file.type;
@@ -86,14 +102,8 @@ export function useTicketStorage() {
       
       console.log("Uploading file to path:", filePath);
       
-      // Get the current authenticated user
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !sessionData.session) {
-        throw new Error(t("Nepieciešama autentifikācija", "Authentication required"));
-      }
-      
       // Upload file to storage
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('tickets')
         .upload(filePath, file, {
           cacheControl: '3600',
@@ -122,14 +132,15 @@ export function useTicketStorage() {
         url: publicUrl.publicUrl
       };
     } catch (err: any) {
-      setError(err.message || t("Kļūda augšupielādējot failu", "Error uploading file"));
+      const errorMessage = err.message || t("Kļūda augšupielādējot failu", "Error uploading file");
+      setError(errorMessage);
       toast({
         variant: "destructive",
         title: t("Kļūda", "Error"),
-        description: err.message || t("Kļūda augšupielādējot failu", "Error uploading file"),
+        description: errorMessage,
       });
       console.error("Upload error:", err);
-      return null;
+      return { error: errorMessage };
     } finally {
       setUploading(false);
     }
