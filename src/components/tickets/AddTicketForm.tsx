@@ -32,6 +32,10 @@ const formSchema = z.object({
     (val) => (val === "" ? undefined : Number(val)),
     z.number().min(1, "Price must be positive")
   ),
+  quantity: z.preprocess(
+    (val) => (val === "" ? undefined : Number(val)),
+    z.number().min(1, "Quantity must be positive").default(1)
+  ),
   seat_info: z.string().optional(),
   description: z.string().optional(),
   ticketFile: z
@@ -56,6 +60,7 @@ export function AddTicketForm({ eventId, onSuccess }: AddTicketFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       price: undefined,
+      quantity: 1,
       seat_info: "",
       description: "",
     },
@@ -98,6 +103,7 @@ export function AddTicketForm({ eventId, onSuccess }: AddTicketFormProps) {
     const ticketData: AddTicketData = {
       event_id: eventId,
       price: values.price!,
+      quantity: values.quantity || 1,  // Always provide a quantity, default to 1
       seat_info: values.seat_info,
       description: values.description,
       file_path: filePath,
@@ -134,6 +140,29 @@ export function AddTicketForm({ eventId, onSuccess }: AddTicketFormProps) {
                   </FormControl>
                   <FormDescription>
                     {t("Norādiet biļetes cenu eiro", "Enter the ticket price in euros")}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="quantity"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("Daudzums", "Quantity")}</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number" 
+                      min="1"
+                      placeholder="1" 
+                      {...field}
+                      value={field.value || '1'}
+                      onChange={e => field.onChange(e.target.value)}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    {t("Norādiet biļešu skaitu", "Enter the number of tickets")}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

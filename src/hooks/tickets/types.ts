@@ -12,6 +12,10 @@ export interface Ticket {
   updated_at: string;
   file_path?: string | null;
   image_path?: string | null;
+  events?: {
+    title: string;
+    start_date: string;
+  };
 }
 
 export interface AddTicketData {

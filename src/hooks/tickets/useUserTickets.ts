@@ -23,7 +23,13 @@ export const useUserTickets = () => {
         throw error;
       }
       
-      return data as Ticket[];
+      // Ensure each ticket has a quantity value, defaulting to 1 if not present
+      const ticketsWithQuantity = data.map(ticket => ({
+        ...ticket,
+        quantity: ticket.quantity || 1
+      })) as Ticket[];
+      
+      return ticketsWithQuantity;
     },
     enabled: isAuthenticated && !!user
   });
