@@ -9,7 +9,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getLoginTranslations } from "./translations";
+import { loginFormTranslations, registrationFormTranslations } from "./translations";
 import { LoginForm } from "./forms/LoginForm";
 import { RegistrationForm } from "./forms/RegistrationForm";
 
@@ -21,22 +21,23 @@ interface LoginDialogProps {
 
 export function LoginDialog({ isOpen, onClose, defaultTab = "login" }: LoginDialogProps) {
   const { currentLanguage } = useLanguage();
-  const translations = getLoginTranslations(currentLanguage.code);
+  const translations = loginFormTranslations[currentLanguage.code] || loginFormTranslations.en;
+  const regTranslations = registrationFormTranslations[currentLanguage.code] || registrationFormTranslations.en;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
-          <DialogTitle>{translations.title}</DialogTitle>
+          <DialogTitle>{translations.login}</DialogTitle>
           <DialogDescription>
-            {translations.loginDescription}
+            {translations.email}
           </DialogDescription>
         </DialogHeader>
         
         <Tabs defaultValue={defaultTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">{translations.login}</TabsTrigger>
-            <TabsTrigger value="register">{translations.register}</TabsTrigger>
+            <TabsTrigger value="register">{regTranslations.register}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="login" className="space-y-4">
@@ -48,8 +49,7 @@ export function LoginDialog({ isOpen, onClose, defaultTab = "login" }: LoginDial
           
           <TabsContent value="register" className="space-y-4">
             <RegistrationForm 
-              translations={translations}
-              languageCode={currentLanguage.code}
+              translations={regTranslations}
               onClose={onClose}
             />
           </TabsContent>

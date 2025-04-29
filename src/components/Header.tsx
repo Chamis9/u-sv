@@ -40,7 +40,7 @@ export function Header() {
     loginLoading: t("Ieeja...", "Logging in...", "Вход..."),
     register: t("Reģistrēties", "Register", "Регистрация"),
     registrationLoading: t("Reģistrējas...", "Registering...", "Регистрация..."),
-    registrationSuccess: t(
+    registrationSuccessful: t(
       "Reģistrācija veiksmīga! Lūdzu pārbaudiet e-pastu, lai apstiprinātu kontu.",
       "Registration successful! Please check your email to confirm your account.",
       "Регистрация успешна! Пожалуйста, проверьте электронную почту, чтобы подтвердить аккаунт."
@@ -79,6 +79,22 @@ export function Header() {
       "Password must be at least 6 characters",
       "Пароль должен содержать не менее 6 символов"
     ),
+    emailRateLimitExceeded: t(
+      "E-pasta sūtīšanas limits ir pārsniegts. Lūdzu, mēģiniet vēlāk.",
+      "Email rate limit exceeded. Please try again later.",
+      "Превышен лимит отправки электронной почты. Пожалуйста, попробуйте позже."
+    ),
+    genericError: t(
+      "Kļūda reģistrācijas laikā. Lūdzu, mēģiniet vēlreiz.",
+      "Registration error. Please try again.",
+      "Ошибка при регистрации. Пожалуйста, попробуйте снова."
+    ),
+    terms: t(
+      "Es piekrītu lietošanas noteikumiem",
+      "I agree to the terms and conditions",
+      "Я согласен с правилами и условиями"
+    ),
+    languageCode: currentLanguage.code,
   };
   
   return (
@@ -162,7 +178,6 @@ export function Header() {
                   <TabsContent value="register" className="p-4">
                     <RegistrationForm 
                       translations={translations} 
-                      languageCode={currentLanguage.code} 
                       onClose={() => setKeepHoverOpen(false)} 
                     />
                   </TabsContent>
