@@ -18,6 +18,7 @@ import Contact from "./pages/Contact";
 import Events from "./pages/Events";
 import Tickets from "./pages/Tickets";
 import AboutUs from "./pages/AboutUs";
+// Import Profile page directly instead of using dynamic import
 import Profile from "./pages/Profile";
 
 // Lazy load other pages for better performance

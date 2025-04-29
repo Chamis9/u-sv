@@ -19,21 +19,21 @@ export function useTicketsTab(user: User) {
     isLoading, 
     loading, 
     deleteTicket 
-  } = useUserTickets(user.id);
+  } = useUserTickets(user?.id || '');
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
   
   // Filter tickets based on seller_id and buyer_id
   const addedTickets = tickets.filter(ticket => 
-    ticket.seller_id === user.id
+    ticket.seller_id === user?.id
   );
   
   const purchasedTickets = tickets.filter(ticket => 
-    ticket.buyer_id === user.id
+    ticket.buyer_id === user?.id
   );
   
-  console.log("Current auth state:", { isAuthenticated, userId: user.id });
+  console.log("Current auth state:", { isAuthenticated, userId: user?.id });
   console.log("Filtered tickets:", {
     total: tickets.length,
     added: addedTickets.length,
@@ -60,7 +60,7 @@ export function useTicketsTab(user: User) {
   };
 
   const refreshTickets = () => {
-    console.log("Refreshing tickets for user:", user.id);
+    console.log("Refreshing tickets for user:", user?.id);
     if (!isAuthenticated) {
       console.log("User not authenticated, cannot refresh tickets");
       toast({
@@ -71,22 +71,24 @@ export function useTicketsTab(user: User) {
       return;
     }
     
-    queryClient.invalidateQueries({ queryKey: ['user-tickets', user.id] });
-    toast({
-      title: t("Biļetes atjaunotas", "Tickets refreshed"),
-      description: t("Biļešu saraksts ir atjaunots", "Ticket list has been updated")
-    });
+    if (user?.id) {
+      queryClient.invalidateQueries({ queryKey: ['user-tickets', user.id] });
+      toast({
+        title: t("Biļetes atjaunotas", "Tickets refreshed"),
+        description: t("Biļešu saraksts ir atjaunots", "Ticket list has been updated")
+      });
+    }
   };
   
   // Only refresh tickets once when component mounts
   useEffect(() => {
-    if (isAuthenticated && user.id) {
+    if (isAuthenticated && user?.id) {
       console.log("Initial ticket refresh for user:", user.id);
       refreshTickets();
     } else {
       console.log("Not authenticated or no user ID, skipping ticket refresh");
     }
-  }, [user.id, isAuthenticated]);
+  }, [user?.id, isAuthenticated]);
   
   return {
     tickets,

@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { SEO } from "@/components/SEO";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -9,10 +9,15 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const Profile = () => {
   const { isAuthenticated, isAuthLoading, user } = useAuth();
+  const navigate = useNavigate();
 
   // If loading, show nothing (prevent flash)
   if (isAuthLoading) {
-    return null;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
   // If not authenticated, redirect to login
