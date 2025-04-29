@@ -7,7 +7,6 @@ import { Plus } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useLanguage } from '@/features/language';
 import { AdminEventRow } from './events/AdminEventRow';
-import { Event } from '@/hooks/useEvents';
 
 export function AdminEventsList() {
   const { currentLanguage } = useLanguage();
@@ -17,7 +16,7 @@ export function AdminEventsList() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('events')
-        .select('*')
+        .select('*, categories(name)')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -51,7 +50,7 @@ export function AdminEventsList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {events?.map((event: Event) => (
+            {events?.map((event) => (
               <AdminEventRow key={event.id} event={event} onUpdate={refetch} />
             ))}
           </TableBody>

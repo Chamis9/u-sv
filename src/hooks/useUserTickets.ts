@@ -37,7 +37,7 @@ export const useUserTickets = () => {
   
   // Get all tickets for display in categories
   const { data: allTickets, isLoading: isLoadingAll } = useQuery({
-    queryKey: ['tickets'],
+    queryKey: ['user_tickets'],
     queryFn: async (): Promise<UserTicket[]> => {
       const { data, error } = await supabase
         .from('user_tickets')
@@ -53,7 +53,7 @@ export const useUserTickets = () => {
   
   // Get tickets by category
   const getTicketsByCategory = (category: string) => {
-    return allTickets?.filter(ticket => ticket.category === category) || [];
+    return allTickets?.filter(ticket => ticket.category.toLowerCase() === category.toLowerCase()) || [];
   };
   
   // Get user's tickets
@@ -94,7 +94,7 @@ export const useUserTickets = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tickets'] });
+      queryClient.invalidateQueries({ queryKey: ['user_tickets'] });
       queryClient.invalidateQueries({ queryKey: ['userTickets', user?.id] });
     }
   });
@@ -113,7 +113,7 @@ export const useUserTickets = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tickets'] });
+      queryClient.invalidateQueries({ queryKey: ['user_tickets'] });
       queryClient.invalidateQueries({ queryKey: ['userTickets', user?.id] });
     }
   });

@@ -26,16 +26,21 @@ export const useTicketStorage = () => {
       const filePath = `${uuidv4()}.${fileExt}`;
       const fullPath = `tickets/${filePath}`;
       
+      // Create a custom event handler for tracking upload progress
+      const handleProgress = (e: ProgressEvent) => {
+        if (e.lengthComputable) {
+          const percent = (e.loaded / e.total) * 100;
+          setUploadProgress(percent);
+          options?.onProgress?.(percent);
+        }
+      };
+      
+      // Upload the file
       const { error } = await supabase.storage
         .from('tickets')
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: false,
-          onUploadProgress: (progress) => {
-            const percent = (progress.loaded / progress.total) * 100;
-            setUploadProgress(percent);
-            options?.onProgress?.(percent);
-          }
+          upsert: false
         });
       
       if (error) throw error;
