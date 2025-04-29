@@ -1,3 +1,4 @@
+
 import { LanguageSelector } from "@/features/language";
 import { Logo } from "./header/Logo";
 import { Navigation, getNavigationLinks } from "./header/Navigation";
@@ -14,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { LoginForm } from "./auth/forms/LoginForm";
 import { RegistrationForm } from "./auth/forms/RegistrationForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { loginFormTranslations, registrationFormTranslations } from "./auth/translations";
 
 export function Header() {
   const navigationLinks = getNavigationLinks();
@@ -34,7 +36,7 @@ export function Header() {
     navigate('/');
   };
   
-  // Use the translated values directly from the translation files
+  // Get the translated values from the imported translation files
   const loginTranslations = loginFormTranslations[currentLanguage.code] || loginFormTranslations.en;
   const regTranslations = registrationFormTranslations[currentLanguage.code] || registrationFormTranslations.en;
   
