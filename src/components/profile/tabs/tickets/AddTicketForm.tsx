@@ -1,8 +1,6 @@
-
 import React, { useState } from "react";
 import { useLanguage } from "@/features/language";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,28 +16,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { useTicketStorage } from "@/hooks/useTicketStorage";
 import { useUserTickets } from "@/hooks/useUserTickets";
 import { useAuth } from "@/contexts/AuthContext";
-import { LoaderCircle, UploadCloud } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useQuery } from "@tanstack/react-query";
+import { LoaderCircle } from "lucide-react";
+import { TicketFileUpload } from "./TicketFileUpload";
+import { CategorySelector } from "./CategorySelector";
+import { ticketFormSchema, TicketFormValues } from "./schema";
 import { supabase } from "@/integrations/supabase/client";
-
-const formSchema = z.object({
-  title: z.string().min(3, {
-    message: "Title must be at least 3 characters.",
-  }),
-  price: z.string().refine(
-    (val) => !isNaN(Number(val)) && Number(val) > 0,
-    { message: "Price must be a valid number greater than 0" }
-  ),
-  description: z.string().optional(),
-  category: z.string().optional(),
-});
 
 interface AddTicketFormProps {
   onClose: () => void;
@@ -51,32 +32,12 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
   const { uploadTicketFile, uploading: fileUploading } = useTicketStorage();
   const { addTicket, loading: ticketLoading } = useUserTickets(user?.id);
   const [file, setFile] = useState<File | null>(null);
-  const [fileError, setFileError] = useState<string | null>(null);
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
-
-  // Fetch categories
-  const { data: categories = [] } = useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .eq('status', 'active')
-        .order('priority', { ascending: true });
-
-      if (error) {
-        console.error("Error fetching categories:", error);
-        throw error;
-      }
-
-      return data || [];
-    },
-  });
   
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<TicketFormValues>({
+    resolver: zodResolver(ticketFormSchema),
     defaultValues: {
       title: "",
       price: "",
@@ -85,38 +46,7 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
     },
   });
   
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      // Check if file is valid (PDF, JPG, PNG)
-      const fileType = selectedFile.type;
-      const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
-      
-      if (!validTypes.includes(fileType)) {
-        setFileError(t(
-          "Neatbalstīts faila formāts. Lūdzu, izvēlieties PDF, JPG vai PNG failu",
-          "Unsupported file format. Please select a PDF, JPG or PNG file"
-        ));
-        setFile(null);
-        return;
-      }
-      
-      // Check file size (max 10MB)
-      if (selectedFile.size > 10 * 1024 * 1024) {
-        setFileError(t(
-          "Faila izmērs nedrīkst pārsniegt 10MB",
-          "File size cannot exceed 10MB"
-        ));
-        setFile(null);
-        return;
-      }
-      
-      setFile(selectedFile);
-      setFileError(null);
-    }
-  };
-  
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: TicketFormValues) => {
     if (!user) {
       return;
     }
@@ -138,8 +68,12 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
         }
       }
       
-      // Find category id if a category was selected
-      const selectedCategory = categories.find(cat => cat.name === values.category);
+      // Find category id using CategoryService
+      const { data: categories } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('name', values.category)
+        .maybeSingle();
       
       // Then create the ticket entry
       addTicket({
@@ -149,8 +83,8 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
         user_id: user.id,
         file_path: filePath,
         category_name: values.category,
-        category_id: selectedCategory?.id,
-        event_id: null  // Add the missing required property with null value
+        category_id: categories?.id,
+        event_id: null // Required property for AddTicketData
       });
       
       console.log("Ticket added successfully");
@@ -202,34 +136,7 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("Kategorija", "Category")}</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t("Izvēlieties kategoriju", "Select a category")} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {categories.length > 0 ? (
-                    categories.map((category) => (
-                      <SelectItem key={category.id} value={category.name}>
-                        {category.name}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="other">{t("Cits", "Other")}</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <CategorySelector form={form} />
         
         <FormField
           control={form.control}
@@ -248,30 +155,7 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
           )}
         />
         
-        <div className="space-y-2">
-          <FormLabel>{t("Biļetes fails", "Ticket File")}</FormLabel>
-          <div className="border border-input rounded-md p-2">
-            <label htmlFor="file-upload" className="cursor-pointer">
-              <div className="flex flex-col items-center justify-center py-4 text-center">
-                <UploadCloud className="h-8 w-8 text-muted-foreground mb-2" />
-                <p className="text-sm font-medium">
-                  {file ? file.name : t("Izvēlieties failu vai velciet to šeit", "Click to browse or drag and drop")}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {t("PDF, JPG, PNG (max. 10MB)", "PDF, JPG, PNG (max. 10MB)")}
-                </p>
-              </div>
-              <input
-                id="file-upload"
-                type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-            </label>
-          </div>
-          {fileError && <p className="text-sm text-destructive">{fileError}</p>}
-        </div>
+        <TicketFileUpload file={file} onFileChange={setFile} />
         
         <div className="flex justify-end gap-3 pt-4">
           <Button type="button" variant="outline" onClick={onClose}>
