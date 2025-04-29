@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/features/language';
 import { UserTicket } from '@/hooks/tickets';
 import { 
@@ -15,7 +15,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Eye, Download, Trash2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useState } from 'react';
 
 interface TicketsListProps {
   tickets: UserTicket[];
@@ -24,9 +23,29 @@ interface TicketsListProps {
   ticketType: "added" | "purchased";
 }
 
+// Use a globally accessible state for the selected ticket
+let globalSelectedTicket: UserTicket | null = null;
+let setGlobalSelectedTicket: ((ticket: UserTicket | null) => void) | null = null;
+
 export function TicketsList({ tickets, onDelete, isLoading, ticketType }: TicketsListProps) {
   const { currentLanguage } = useLanguage();
   const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
+  
+  // Save references to the state setter for external components to use
+  useEffect(() => {
+    setGlobalSelectedTicket = setSelectedTicket;
+    return () => {
+      setGlobalSelectedTicket = null;
+    };
+  }, []);
+  
+  // Update local state when global state changes
+  useEffect(() => {
+    if (globalSelectedTicket && globalSelectedTicket !== selectedTicket) {
+      setSelectedTicket(globalSelectedTicket);
+      globalSelectedTicket = null;
+    }
+  }, [selectedTicket]);
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
@@ -166,4 +185,12 @@ export function TicketsList({ tickets, onDelete, isLoading, ticketType }: Ticket
       </Dialog>
     </>
   );
+}
+
+// Expose a function to open the dialog from other components
+export function openTicketDialog(ticket: UserTicket) {
+  globalSelectedTicket = ticket;
+  if (setGlobalSelectedTicket) {
+    setGlobalSelectedTicket(ticket);
+  }
 }
