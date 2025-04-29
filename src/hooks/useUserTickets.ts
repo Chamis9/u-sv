@@ -46,13 +46,13 @@ export function useUserTickets(userId?: string) {
     queryFn: async (): Promise<UserTicket[]> => {
       if (!userId) return [];
       
-      // Use a direct SQL query with RPC instead
       const { data, error } = await supabase
         .from('tickets')
         .select('*, categories(name)')
         .eq('user_id', userId);
       
       if (error) {
+        console.error("Error fetching tickets:", error);
         throw error;
       }
       
@@ -78,6 +78,22 @@ export function useUserTickets(userId?: string) {
       setLoading(true);
       
       try {
+        // Get the current authenticated user
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) throw sessionError;
+        
+        if (!sessionData.session || !sessionData.session.user) {
+          throw new Error(t('Nepieciešama autentifikācija', 'Authentication required'));
+        }
+        
+        // Ensure the user_id matches the authenticated user's id
+        const authenticatedUserId = sessionData.session.user.id;
+        if (ticketData.user_id !== authenticatedUserId) {
+          console.warn("User ID mismatch, using authenticated user ID");
+          ticketData.user_id = authenticatedUserId;
+        }
+        
         // Create the ticket (custom tickets don't have event_id)
         const { data, error } = await supabase
           .from('tickets')
@@ -94,7 +110,11 @@ export function useUserTickets(userId?: string) {
           .select()
           .single();
         
-        if (error) throw error;
+        if (error) {
+          console.error("Error creating ticket:", error);
+          throw error;
+        }
+        
         return data;
       } finally {
         setLoading(false);

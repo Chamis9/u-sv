@@ -70,7 +70,13 @@ export function AddTicketForm({ onClose }: { onClose: () => void }) {
   };
   
   const onSubmit = async (values: CustomFormValues) => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      console.error("No authenticated user found");
+      form.setError("root", { 
+        message: t("Nepieciešama autentifikācija", "Authentication required") 
+      });
+      return;
+    }
     
     setIsSubmitting(true);
     try {
@@ -87,6 +93,8 @@ export function AddTicketForm({ onClose }: { onClose: () => void }) {
       
       // Get category name
       const categoryName = categories?.find(cat => cat.id === values.categoryId)?.name || '';
+      
+      console.log("Creating ticket with user ID:", user.id);
       
       // Add ticket to database, creating multiple tickets based on quantity
       for (let i = 0; i < values.quantity; i++) {
@@ -110,6 +118,16 @@ export function AddTicketForm({ onClose }: { onClose: () => void }) {
       setIsSubmitting(false);
     }
   };
+  
+  // If user is not authenticated, show an error message
+  if (!user) {
+    return (
+      <div className="p-4 text-center">
+        <p className="text-destructive">{t("Nepieciešama autentifikācija, lai pievienotu biļetes", "Authentication required to add tickets")}</p>
+        <Button onClick={onClose} className="mt-4">{t("Aizvērt", "Close")}</Button>
+      </div>
+    );
+  }
   
   return (
     <div>
@@ -234,6 +252,10 @@ export function AddTicketForm({ onClose }: { onClose: () => void }) {
               {t("Atbalstīti formāti: PDF, JPG, PNG", "Supported formats: PDF, JPG, PNG")}
             </p>
           </FormItem>
+          
+          {form.formState.errors.root && (
+            <p className="text-sm text-destructive">{form.formState.errors.root.message}</p>
+          )}
           
           <div className="flex justify-end space-x-2 pt-4">
             <Button 

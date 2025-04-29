@@ -37,6 +37,7 @@ serve(async (req) => {
     // Get user info
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
     if (userError || !user) {
+      console.error("Authentication error:", userError);
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -72,6 +73,7 @@ serve(async (req) => {
       const body = await req.json()
       const { title, price, categoryId, description, filePath } = body
       
+      // Always use the authenticated user's ID
       const { data, error } = await supabaseClient
         .from('tickets')
         .insert({
@@ -95,6 +97,64 @@ serve(async (req) => {
       
       return new Response(JSON.stringify({ ticket: data }), {
         status: 201,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    } else if (req.method === 'DELETE' && path === 'delete-ticket') {
+      // Delete a ticket
+      const body = await req.json()
+      const { ticketId } = body
+      
+      // First check if the ticket belongs to the user
+      const { data: ticketData, error: fetchError } = await supabaseClient
+        .from('tickets')
+        .select('user_id, file_path')
+        .eq('id', ticketId)
+        .single()
+      
+      if (fetchError) {
+        console.error('Error fetching ticket:', fetchError)
+        return new Response(JSON.stringify({ error: fetchError.message }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+      
+      // Verify ownership
+      if (ticketData.user_id !== user.id) {
+        return new Response(JSON.stringify({ error: 'Unauthorized: You can only delete your own tickets' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+      
+      // Delete any associated file
+      if (ticketData.file_path) {
+        const { error: storageError } = await supabaseClient.storage
+          .from('tickets')
+          .remove([ticketData.file_path])
+        
+        if (storageError) {
+          console.warn('Error deleting file:', storageError)
+          // Continue with ticket deletion even if file deletion fails
+        }
+      }
+      
+      // Delete the ticket
+      const { error: deleteError } = await supabaseClient
+        .from('tickets')
+        .delete()
+        .eq('id', ticketId)
+      
+      if (deleteError) {
+        console.error('Error deleting ticket:', deleteError)
+        return new Response(JSON.stringify({ error: deleteError.message }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+      
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     } else {

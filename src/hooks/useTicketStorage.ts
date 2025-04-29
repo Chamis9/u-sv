@@ -14,6 +14,35 @@ export function useTicketStorage() {
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
   
+  const createTicketsBucket = async () => {
+    try {
+      // Check if tickets bucket exists
+      const { data: buckets } = await supabase.storage.listBuckets();
+      if (!buckets?.find(bucket => bucket.name === 'tickets')) {
+        // Create the bucket with public access
+        await supabase.storage.createBucket('tickets', {
+          public: true,
+          allowedMimeTypes: ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'],
+          fileSizeLimit: 10485760, // 10MB
+        });
+        
+        // Ensure proper policies are set for the new bucket
+        const { error } = await supabase.rpc('create_storage_policy', {
+          bucket_name: 'tickets',
+          policy_definition: `(auth.uid() = '${supabase.auth.getUser()}'::uuid)`
+        });
+        
+        if (error) {
+          console.warn("Error creating storage policy:", error);
+        }
+      }
+      return true;
+    } catch (err) {
+      console.error("Error creating bucket:", err);
+      return false;
+    }
+  };
+  
   const uploadTicketFile = async (file: File, userId: string) => {
     if (!file) {
       setError(t("Nav izvēlēts fails", "No file selected"));
@@ -40,29 +69,30 @@ export function useTicketStorage() {
         ));
       }
       
-      // Check if tickets bucket exists, if not create it
-      const { data: buckets } = await supabase.storage.listBuckets();
-      if (!buckets?.find(bucket => bucket.name === 'tickets')) {
-        await supabase.storage.createBucket('tickets', {
-          public: true,
-          allowedMimeTypes: ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'],
-          fileSizeLimit: 10485760, // 10MB
-        });
-      }
+      // Ensure tickets bucket exists
+      await createTicketsBucket();
       
       // Generate a unique filename with original extension
       const fileExt = file.name.split('.').pop();
       const fileName = `${generateUuid()}.${fileExt}`;
       const filePath = `${userId}/${fileName}`;
       
+      // Get the current authenticated user
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !sessionData.session) {
+        throw new Error(t("Nepieciešama autentifikācija", "Authentication required"));
+      }
+      
       // Upload file to storage
       const { error: uploadError, data } = await supabase.storage
         .from('tickets')
         .upload(filePath, file, {
-          cacheControl: '3600'
+          cacheControl: '3600',
+          upsert: false
         });
       
       if (uploadError) {
+        console.error("Upload error:", uploadError);
         throw uploadError;
       }
       
@@ -95,13 +125,23 @@ export function useTicketStorage() {
   };
   
   const deleteTicketFile = async (path: string) => {
+    if (!path) return true;
+    
     try {
       setError(null);
+      
+      // Get the current authenticated user
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !sessionData.session) {
+        throw new Error(t("Nepieciešama autentifikācija", "Authentication required"));
+      }
+      
       const { error } = await supabase.storage
         .from('tickets')
         .remove([path]);
       
       if (error) {
+        console.error("Delete error:", error);
         throw error;
       }
       
