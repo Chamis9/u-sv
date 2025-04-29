@@ -1,64 +1,86 @@
 
-// Helper functions for category related operations
+// Utility functions for mapping category names to display names and vice versa
 
-export const getCategoryIdFromName = (name: string): string => {
-  switch(name.toLowerCase()) {
-    case 'teatris':
-    case 'theatre':
-      return 'theatre';
-    case 'koncerti':
-    case 'concerts':
-      return 'concerts';
-    case 'sports':
-      return 'sports';
-    case 'festivali':
-    case 'festivāli':
-    case 'festivals':
-      return 'festivals';
-    case 'kino':
-    case 'cinema':
-      return 'cinema';
-    case 'berniem':
-    case 'bērniem':
-    case 'children':
-      return 'children';
-    case 'celojumi':
-    case 'ceļojumi':
-    case 'travel':
-      return 'travel';
-    case 'davanu kartes':
-    case 'dāvanu kartes':
-    case 'gift cards':
-      return 'giftcards';
-    default:
-      return name;
-  }
+// Map from URL slug to internal category ID
+export const urlToCategoryId: Record<string, string> = {
+  'teatris': 'theatre',
+  'koncerti': 'concerts',
+  'sports': 'sports',
+  'festivali': 'festivals',
+  'kino': 'cinema',
+  'berniem': 'children',
+  'celojumi': 'travel',
+  'davanu-kartes': 'gift-cards',
+  'citi': 'other'
 };
 
-export const getCategoryDisplayName = (categoryId: string, languageCode: string): string => {
-  if (languageCode === 'lv') {
-    switch(categoryId.toLowerCase()) {
-      case 'theatre': return 'Teātris';
-      case 'concerts': return 'Koncerti';
-      case 'sports': return 'Sports';
-      case 'festivals': return 'Festivāli';
-      case 'cinema': return 'Kino';
-      case 'children': return 'Bērniem';
-      case 'travel': return 'Ceļojumi';
-      case 'giftcards': return 'Dāvanu kartes';
-      default: return categoryId;
+// Convert URL path to display name
+export const getCategoryDisplayName = (urlPath: string, languageCode: string): string => {
+  // Normalize the path: remove dashes, spaces, and convert to lowercase
+  const normalizedPath = urlPath.toLowerCase().replace(/[-\s]/g, '');
+  
+  const displayNames: Record<string, Record<string, string>> = {
+    'en': {
+      'theatre': 'Theatre',
+      'teatris': 'Theatre',
+      'concerts': 'Concerts',
+      'koncerti': 'Concerts',
+      'sports': 'Sports',
+      'festivals': 'Festivals',
+      'festivali': 'Festivals',
+      'cinema': 'Cinema',
+      'kino': 'Cinema',
+      'children': 'Children',
+      'berniem': 'Children',
+      'travel': 'Travel',
+      'celojumi': 'Travel',
+      'giftcards': 'Gift Cards',
+      'davankartes': 'Gift Cards',
+      'davanukartes': 'Gift Cards',
+      'other': 'Other',
+      'citi': 'Other'
+    },
+    'lv': {
+      'theatre': 'Teātris',
+      'teatris': 'Teātris',
+      'concerts': 'Koncerti',
+      'koncerti': 'Koncerti',
+      'sports': 'Sports',
+      'festivals': 'Festivāli',
+      'festivali': 'Festivāli',
+      'cinema': 'Kino',
+      'kino': 'Kino',
+      'children': 'Bērniem',
+      'berniem': 'Bērniem',
+      'travel': 'Ceļojumi',
+      'celojumi': 'Ceļojumi',
+      'giftcards': 'Dāvanu kartes',
+      'davankartes': 'Dāvanu kartes',
+      'davanukartes': 'Dāvanu kartes',
+      'other': 'Citi',
+      'citi': 'Citi'
     }
-  } else {
-    switch(categoryId.toLowerCase()) {
-      case 'theatre': return 'Theatre';
-      case 'concerts': return 'Concerts';
-      case 'sports': return 'Sports';
-      case 'festivals': return 'Festivals';
-      case 'cinema': return 'Cinema';
-      case 'children': return 'For Children';
-      case 'travel': return 'Travel';
-      case 'giftcards': return 'Gift Cards';
-      default: return categoryId;
+  };
+  
+  const langMap = displayNames[languageCode] || displayNames['en'];
+  
+  // Try direct match first
+  if (langMap[normalizedPath]) {
+    return langMap[normalizedPath];
+  }
+  
+  // If no direct match, look for partial matches
+  for (const [key, value] of Object.entries(langMap)) {
+    if (normalizedPath.includes(key)) {
+      return value;
     }
   }
+  
+  // Default fallback
+  return languageCode === 'lv' ? 'Citi' : 'Other';
+};
+
+// Get internal category ID from URL slug
+export const getCategoryIdFromUrl = (urlSlug: string): string => {
+  return urlToCategoryId[urlSlug] || urlSlug;
 };
