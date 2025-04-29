@@ -3,7 +3,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useLanguage } from "@/features/language";
 import { useEvents } from '@/hooks/useEvents';
-import { getCategoryDisplayName, getCategoryIdFromUrl } from './utils/categoryUtils';
+import { getCategoryDisplayName } from './utils/categoryUtils';
 import { CategoryHeader } from './components/CategoryHeader';
 import { EventsGrid } from './components/EventsGrid';
 import { useCategoryTickets } from '@/hooks/useCategoryTickets';
@@ -14,9 +14,8 @@ import { EventsPageLayout } from './components/EventsPageLayout';
 import { UserTicket } from '@/hooks/tickets';
 
 export function CategoryEventList() {
-  const { category: categorySlug } = useParams<{ category: string }>();
-  const categoryId = categorySlug ? getCategoryIdFromUrl(categorySlug) : undefined;
-  const { data: events, isLoading, error } = useEvents(categoryId);
+  const { category } = useParams<{ category: string }>();
+  const { data: events, isLoading, error } = useEvents(category);
   const { currentLanguage } = useLanguage();
   
   const {
@@ -24,7 +23,7 @@ export function CategoryEventList() {
     isLoading: ticketsLoading,
     error: ticketsError,
     removeTicketFromState
-  } = useCategoryTickets(categorySlug);
+  } = useCategoryTickets(category);
 
   const {
     searchQuery,
@@ -54,7 +53,7 @@ export function CategoryEventList() {
   }
 
   // Determine category display name
-  const categoryDisplayName = categorySlug ? getCategoryDisplayName(categorySlug, currentLanguage.code) : '';
+  const categoryDisplayName = category ? getCategoryDisplayName(category, currentLanguage.code) : '';
 
   return (
     <EventsPageLayout 

@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
-import { urlToCategoryId } from "@/components/events/utils/categoryUtils";
 
 export const useCategoryTickets = (category?: string) => {
   const [allCategoryTickets, setAllCategoryTickets] = useState<UserTicket[]>([]);
@@ -22,14 +21,13 @@ export const useCategoryTickets = (category?: string) => {
         
         // Normalize category name for comparison (convert to lowercase, handle hyphens, etc)
         const normalizedCategory = category.toLowerCase();
-        const internalCategoryId = urlToCategoryId[normalizedCategory] || normalizedCategory;
         
         // Map URL slugs to possible database category names
         const categoryMapping: Record<string, string[]> = {
           'sports': ['Sports', 'sports', 'Sport', 'sport'],
-          'teatris': ['Teātris', 'teatris', 'teātris', 'Teatris', 'Theatre'],
-          'koncerti': ['Koncerti', 'koncerti', 'Koncerts', 'koncerts', 'Concerts'],
-          'festivali': ['Festivāli', 'festivali', 'festivāli', 'Festivali', 'Festivals']
+          'teatris': ['Teātris', 'teatris', 'teātris', 'Teatris'],
+          'koncerti': ['Koncerti', 'koncerti', 'Koncerts', 'koncerts'],
+          'festivali': ['Festivāli', 'festivali', 'festivāli', 'Festivali']
         };
         
         // Get possible category names from mapping or use the original
