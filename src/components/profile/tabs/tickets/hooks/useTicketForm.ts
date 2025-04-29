@@ -35,16 +35,16 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
     },
   });
   
-  // Calculate price per unit when price or quantity changes
+  // Calculate total price when price per unit or quantity changes
   useEffect(() => {
-    const price = Number(form.watch("price"));
+    const pricePerUnit = Number(form.watch("pricePerUnit"));
     const quantity = Number(form.watch("quantity") || "1");
     
-    if (price > 0 && quantity > 0) {
-      const pricePerUnit = (price / quantity).toFixed(2);
-      form.setValue("pricePerUnit", pricePerUnit);
+    if (pricePerUnit > 0 && quantity > 0) {
+      const totalPrice = (pricePerUnit * quantity).toFixed(2);
+      form.setValue("price", totalPrice);
     }
-  }, [form.watch("price"), form.watch("quantity")]);
+  }, [form.watch("pricePerUnit"), form.watch("quantity")]);
   
   const isLoading = fileUploading || ticketLoading;
   

@@ -44,7 +44,7 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
             <FormItem>
               <FormLabel>{t("Nosaukums", "Title")}</FormLabel>
               <FormControl>
-                <Input placeholder={t("Biļetes nosaukums", "Ticket title")} {...field} />
+                <Input placeholder={t("Pasākuma nosaukums", "Event title")} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -54,10 +54,10 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="price"
+            name="pricePerUnit"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("Kopējā cena (€)", "Total Price (€)")}</FormLabel>
+                <FormLabel>{t("Cena par vienību (€)", "Price Per Unit (€)")}</FormLabel>
                 <FormControl>
                   <Input type="number" step="0.01" min="0" placeholder="0.00" {...field} />
                 </FormControl>
@@ -83,10 +83,10 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
         
         <FormField
           control={form.control}
-          name="pricePerUnit"
+          name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("Cena par vienību (€)", "Price Per Unit (€)")}</FormLabel>
+              <FormLabel>{t("Kopējā cena (€)", "Total Price (€)")}</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
@@ -94,6 +94,8 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
                   min="0" 
                   placeholder={t("Aprēķināsies automātiski", "Will be calculated automatically")} 
                   {...field} 
+                  readOnly 
+                  className="bg-gray-50"
                 />
               </FormControl>
               <FormMessage />
@@ -172,8 +174,7 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
                     <Clock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input 
                       type="time"
-                      className="pl-10" 
-                      placeholder="18:00" 
+                      className="pl-10"
                       {...field} 
                     />
                   </div>
