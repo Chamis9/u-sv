@@ -152,38 +152,47 @@ export type Database = {
       }
       tickets: {
         Row: {
+          buyer_id: string | null
           category_id: string | null
           created_at: string
           description: string | null
           event_id: string | null
           file_path: string | null
           id: string
+          owner_id: string
           price: number
           seat_info: string | null
+          seller_id: string
           status: string
           user_id: string
         }
         Insert: {
+          buyer_id?: string | null
           category_id?: string | null
           created_at?: string
           description?: string | null
           event_id?: string | null
           file_path?: string | null
           id?: string
+          owner_id?: string
           price: number
           seat_info?: string | null
+          seller_id?: string
           status?: string
           user_id: string
         }
         Update: {
+          buyer_id?: string | null
           category_id?: string | null
           created_at?: string
           description?: string | null
           event_id?: string | null
           file_path?: string | null
           id?: string
+          owner_id?: string
           price?: number
           seat_info?: string | null
+          seller_id?: string
           status?: string
           user_id?: string
         }

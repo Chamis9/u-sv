@@ -11,6 +11,9 @@ export interface UserTicket {
   status: 'available' | 'sold' | 'expired' | 'purchased';
   file_path?: string;
   created_at: string;
+  seller_id?: string;
+  buyer_id?: string;
+  owner_id: string;
 }
 
 export interface AddTicketData {

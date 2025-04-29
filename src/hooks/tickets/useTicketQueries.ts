@@ -16,7 +16,7 @@ export function useTicketQueries(userId?: string) {
       const { data: createdTickets, error: createdError } = await supabase
         .from('tickets')
         .select('*, categories(name)')
-        .eq('user_id', userId);
+        .eq('seller_id', userId);
       
       if (createdError) {
         console.error("Error fetching created tickets:", createdError);
@@ -36,7 +36,7 @@ export function useTicketQueries(userId?: string) {
       }
       
       // Combine both sets
-      const allTickets = [
+      const allTickets: UserTicket[] = [
         ...(createdTickets || []).map(ticket => ({
           id: ticket.id,
           title: ticket.description || "Custom Ticket",
@@ -46,7 +46,10 @@ export function useTicketQueries(userId?: string) {
           event_id: ticket.event_id,
           status: ticket.status as 'available' | 'sold' | 'expired' | 'purchased',
           file_path: ticket.file_path,
-          created_at: ticket.created_at
+          created_at: ticket.created_at,
+          seller_id: ticket.seller_id,
+          buyer_id: ticket.buyer_id,
+          owner_id: ticket.owner_id
         })),
         ...((purchasedTickets || []).map(ticket => ({
           id: ticket.id,
@@ -57,7 +60,10 @@ export function useTicketQueries(userId?: string) {
           event_id: ticket.event_id,
           status: 'purchased' as const,
           file_path: ticket.file_path,
-          created_at: ticket.created_at
+          created_at: ticket.created_at,
+          seller_id: ticket.seller_id,
+          buyer_id: ticket.buyer_id,
+          owner_id: ticket.owner_id
         })))
       ];
       
