@@ -3,7 +3,7 @@ import React from "react";
 import { UserTicket } from "@/hooks/tickets/types";
 import { formatPrice, formatDate } from "@/utils/formatters";
 import { Badge } from "@/components/ui/badge";
-import { Ticket as TicketIcon, Calendar, Tag, Download, Eye } from "lucide-react";
+import { Ticket as TicketIcon, Calendar, Tag, Download, Eye, MapPin } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
 
@@ -55,10 +55,19 @@ export function VisualTicket({ ticket, onView, onDelete, ticketType }: VisualTic
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h3 className="font-semibold text-lg mb-1 truncate">{ticket.title}</h3>
-            <div className="flex items-center text-sm text-muted-foreground mb-3">
+            <div className="flex items-center text-sm text-muted-foreground mb-1">
               <Calendar className="h-4 w-4 mr-1" />
-              {formatDate(ticket.created_at, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
+              {ticket.event_date 
+                ? formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')
+                : formatDate(ticket.created_at, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
             </div>
+            
+            {ticket.venue && (
+              <div className="flex items-center text-sm text-muted-foreground mb-3">
+                <MapPin className="h-4 w-4 mr-1" />
+                {ticket.venue}
+              </div>
+            )}
             
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">

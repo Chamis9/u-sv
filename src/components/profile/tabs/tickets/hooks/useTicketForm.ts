@@ -25,7 +25,8 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       title: "",
       price: "",
       description: "",
-      category: "other"
+      category: "other",
+      venue: ""
     },
   });
   
@@ -60,7 +61,8 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
         category_name: values.category,
         category_id: category?.id,
         event_id: null,
-        event_date: formattedEventDate
+        event_date: formattedEventDate,
+        venue: values.venue
       });
       
       onClose();

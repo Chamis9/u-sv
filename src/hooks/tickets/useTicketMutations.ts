@@ -71,7 +71,8 @@ export function useTicketMutations(userId?: string) {
             status: 'available',
             category_id: ticketData.category_id,
             event_id: ticketData.event_id,
-            event_date: ticketData.event_date
+            event_date: ticketData.event_date,
+            venue: ticketData.venue
           }])
           .select()
           .single();

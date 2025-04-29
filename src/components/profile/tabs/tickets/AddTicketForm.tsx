@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useTicketStorage } from "@/hooks/tickets";
 import { useUserTickets } from "@/hooks/tickets";
 import { useAuth } from "@/contexts/AuthContext";
-import { LoaderCircle, CalendarIcon } from "lucide-react";
+import { LoaderCircle, CalendarIcon, MapPin } from "lucide-react";
 import { TicketFileUpload } from "./TicketFileUpload";
 import { CategorySelector } from "./CategorySelector";
 import { ticketFormSchema, TicketFormValues } from "./schema";
@@ -47,7 +47,8 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
       title: "",
       price: "",
       description: "",
-      category: "other"
+      category: "other",
+      venue: ""
     },
   });
   
@@ -92,6 +93,7 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
         file_path: filePath,
         category_name: values.category,
         category_id: categories?.id,
+        venue: values.venue,
         event_id: null, // Required property for AddTicketData
         event_date: formattedEventDate
       });
@@ -146,6 +148,23 @@ export function AddTicketForm({ onClose }: AddTicketFormProps) {
         />
 
         <CategorySelector form={form} />
+        
+        <FormField
+          control={form.control}
+          name="venue"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("Norises vieta", "Venue")}</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input className="pl-10" placeholder={t("Pasākuma norises vieta", "Event venue")} {...field} />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         
         <FormField
           control={form.control}

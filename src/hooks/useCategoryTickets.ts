@@ -65,7 +65,8 @@ export const useCategoryTickets = (category?: string) => {
             seller_id: ticket.seller_id || undefined,
             buyer_id: ticket.buyer_id || undefined,
             owner_id: ticket.owner_id,
-            event_date: null // Default value
+            event_date: null, // Default value
+            venue: ticket.venue || null // Add venue property
           };
           
           // Handle optional category_id if available

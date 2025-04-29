@@ -165,6 +165,7 @@ export type Database = {
           seller_id: string
           status: string
           user_id: string
+          venue: string | null
         }
         Insert: {
           buyer_id?: string | null
@@ -180,6 +181,7 @@ export type Database = {
           seller_id?: string
           status?: string
           user_id: string
+          venue?: string | null
         }
         Update: {
           buyer_id?: string | null
@@ -195,6 +197,7 @@ export type Database = {
           seller_id?: string
           status?: string
           user_id?: string
+          venue?: string | null
         }
         Relationships: [
           {
@@ -221,6 +224,7 @@ export type Database = {
           seller_id: string
           status: string
           user_id: string
+          venue: string | null
         }
         Insert: {
           buyer_id?: string | null
@@ -236,6 +240,7 @@ export type Database = {
           seller_id?: string
           status?: string
           user_id: string
+          venue?: string | null
         }
         Update: {
           buyer_id?: string | null
@@ -251,6 +256,7 @@ export type Database = {
           seller_id?: string
           status?: string
           user_id?: string
+          venue?: string | null
         }
         Relationships: []
       }
@@ -269,6 +275,7 @@ export type Database = {
           seller_id: string
           status: string
           user_id: string
+          venue: string | null
         }
         Insert: {
           buyer_id?: string | null
@@ -284,6 +291,7 @@ export type Database = {
           seller_id?: string
           status?: string
           user_id: string
+          venue?: string | null
         }
         Update: {
           buyer_id?: string | null
@@ -299,6 +307,7 @@ export type Database = {
           seller_id?: string
           status?: string
           user_id?: string
+          venue?: string | null
         }
         Relationships: []
       }
@@ -317,6 +326,7 @@ export type Database = {
           seller_id: string
           status: string
           user_id: string
+          venue: string | null
         }
         Insert: {
           buyer_id?: string | null
@@ -332,6 +342,7 @@ export type Database = {
           seller_id?: string
           status?: string
           user_id: string
+          venue?: string | null
         }
         Update: {
           buyer_id?: string | null
@@ -347,6 +358,7 @@ export type Database = {
           seller_id?: string
           status?: string
           user_id?: string
+          venue?: string | null
         }
         Relationships: []
       }
@@ -365,6 +377,7 @@ export type Database = {
           seller_id: string
           status: string
           user_id: string
+          venue: string | null
         }
         Insert: {
           buyer_id?: string | null
@@ -380,6 +393,7 @@ export type Database = {
           seller_id?: string
           status?: string
           user_id: string
+          venue?: string | null
         }
         Update: {
           buyer_id?: string | null
@@ -395,6 +409,7 @@ export type Database = {
           seller_id?: string
           status?: string
           user_id?: string
+          venue?: string | null
         }
         Relationships: []
       }
@@ -413,6 +428,7 @@ export type Database = {
           seller_id: string
           status: string
           user_id: string
+          venue: string | null
         }
         Insert: {
           buyer_id?: string | null
@@ -428,6 +444,7 @@ export type Database = {
           seller_id?: string
           status?: string
           user_id: string
+          venue?: string | null
         }
         Update: {
           buyer_id?: string | null
@@ -443,6 +460,7 @@ export type Database = {
           seller_id?: string
           status?: string
           user_id?: string
+          venue?: string | null
         }
         Relationships: []
       }
