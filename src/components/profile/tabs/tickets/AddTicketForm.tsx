@@ -1,8 +1,5 @@
 
-import React, { useState } from "react";
-import { useLanguage } from "@/features/language";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,111 +11,32 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useTicketStorage } from "@/hooks/tickets";
-import { useUserTickets } from "@/hooks/tickets";
-import { useAuth } from "@/contexts/AuthContext";
 import { LoaderCircle, CalendarIcon, MapPin } from "lucide-react";
-import { TicketFileUpload } from "./TicketFileUpload";
-import { CategorySelector } from "./CategorySelector";
-import { ticketFormSchema, TicketFormValues } from "./schema";
-import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { TicketFileUpload } from "./TicketFileUpload";
+import { CategorySelector } from "./CategorySelector";
+import { useTicketForm } from "./hooks/useTicketForm";
 
 interface AddTicketFormProps {
   onClose: () => void;
 }
 
 export function AddTicketForm({ onClose }: AddTicketFormProps) {
-  const { currentLanguage } = useLanguage();
-  const { user } = useAuth();
-  const { uploadTicketFile, uploading: fileUploading } = useTicketStorage();
-  const { addTicket, loading: ticketLoading } = useUserTickets(user?.id);
-  const [file, setFile] = useState<File | null>(null);
-  
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
-  
-  const form = useForm<TicketFormValues>({
-    resolver: zodResolver(ticketFormSchema),
-    defaultValues: {
-      title: "",
-      price: "",
-      description: "",
-      category: "other",
-      venue: ""
-    },
-  });
-  
-  const onSubmit = async (values: TicketFormValues) => {
-    if (!user) {
-      return;
-    }
-    
-    try {
-      console.log("Submitting form with values:", values);
-      
-      // First upload the file if provided
-      let filePath = null;
-      let fileUrl = null;
-      
-      if (file) {
-        console.log("Uploading file:", file.name);
-        const uploadResult = await uploadTicketFile(file, user.id);
-        if (uploadResult) {
-          filePath = uploadResult.path;
-          fileUrl = uploadResult.url;
-          console.log("File uploaded successfully:", filePath);
-        }
-      }
-      
-      // Find category id using CategoryService
-      const { data: categories } = await supabase
-        .from('categories')
-        .select('*')
-        .eq('name', values.category)
-        .maybeSingle();
-      
-      // Format event date if provided
-      const formattedEventDate = values.eventDate ? values.eventDate.toISOString().split('T')[0] : null;
-      
-      // Then create the ticket entry
-      addTicket({
-        title: values.title,
-        description: values.description,
-        price: Number(values.price),
-        user_id: user.id,
-        file_path: filePath,
-        category_name: values.category,
-        category_id: categories?.id,
-        venue: values.venue,
-        event_id: null, // Required property for AddTicketData
-        event_date: formattedEventDate
-      });
-      
-      console.log("Ticket added successfully");
-      
-      // Close the form
-      onClose();
-      
-    } catch (err: any) {
-      console.error("Error adding ticket:", err);
-      form.setError("root", { 
-        message: t(
-          "Kļūda pievienojot biļeti", 
-          "Error adding ticket"
-        ) 
-      });
-    }
-  };
-  
-  const isLoading = fileUploading || ticketLoading;
+  const {
+    form,
+    file,
+    setFile,
+    isLoading,
+    handleSubmit,
+    t
+  } = useTicketForm({ onClose });
   
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="title"
