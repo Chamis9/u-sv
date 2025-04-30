@@ -10,7 +10,7 @@ export const aboutUsTranslations = {
   lv: {
     title: "Par mums",
     content: [
-      "Mēs esam platforma, kas palīdz cilvēkiem atrast un iegādāties biļetes uz visdažādākajiem kultūras un izklaides pasākumiem Latvijā.",
+      "netieku.es ir platforma, kas palīdz cilvēkiem atrast un iegādāties biļetes uz visdažādākajiem kultūras un izklaides pasākumiem Latvijā.",
       "Mūsu platforma ļauj lietotājiem tiešā veidā pārdot un iegādāties biļetes no citiem lietotājiem. Lai nodrošinātu drošību, tikai verificēti lietotāji var veikt darījumus.",
       "Mēs balstāmies uz trim galvenajām vērtībām: godīgums, drošība un klientu apmierinātība. Mēs garantējam 100% drošas transakcijas."
     ]
@@ -18,7 +18,7 @@ export const aboutUsTranslations = {
   en: {
     title: "About Us",
     content: [
-      "We are a platform that helps people find and purchase tickets for various cultural and entertainment events in Latvia.",
+      "netieku.es is a platform that helps people find and purchase tickets for various cultural and entertainment events in Latvia.",
       "Our platform allows users to directly sell and purchase tickets from other users. To ensure security, only verified users can perform transactions.",
       "We are based on three core values: honesty, security, and customer satisfaction. We guarantee 100% secure transactions."
     ]
@@ -26,7 +26,7 @@ export const aboutUsTranslations = {
   ru: {
     title: "О нас",
     content: [
-      "Мы - платформа, которая помогает людям находить и покупать билеты на различные культурные и развлекательные мероприятия в Латвии.",
+      "netieku.es - платформа, которая помогает людям находить и покупать билеты на различные культурные и развлекательные мероприятия в Латвии.",
       "Наша платформа позволяет пользователям напрямую продавать и покупать билеты у других пользователей. Для обеспечения безопасности только проверенные пользователи могут совершать сделки.",
       "Мы основываемся на трех основных ценностях: честность, безопасность и удовлетворенность клиентов. Мы гарантируем 100% безопасные транзакции."
     ]

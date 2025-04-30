@@ -81,12 +81,13 @@ const AboutUs = () => {
         <main className="flex-grow pt-24 pb-12">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                <span className="text-orange-500">{translations.aboutUs?.title || "Par mums"}</span>
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-center">
+                {translations.aboutUs?.title || "Par mums"}
               </h1>
-              <p className="text-xl mb-12 text-gray-600 dark:text-gray-300">
-                Platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem
-              </p>
+              
+              <div className="text-xl mb-12 text-gray-600 dark:text-gray-300 text-center">
+                <span className="text-orange-500 font-semibold">netieku.es</span> ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem
+              </div>
             
               <div className="grid gap-8 md:grid-cols-3">
                 {content.map((section, index) => (
