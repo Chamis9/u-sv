@@ -1,7 +1,6 @@
 
+import { useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
-import { useLanguage } from "@/features/language";
 
 interface UseTicketRefreshProps {
   userId?: string;
@@ -10,32 +9,30 @@ interface UseTicketRefreshProps {
 
 export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshProps) {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-  const { currentLanguage } = useLanguage();
   
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
-  
-  const refreshTickets = () => {
-    console.log("Refreshing tickets for user:", userId);
-    if (!isAuthenticated) {
-      console.log("User not authenticated, cannot refresh tickets");
-      toast({
-        title: t("Nav pieslēgts", "Not logged in"),
-        description: t("Lai redzētu biļetes, lūdzu pieslēdzieties", "Please log in to see tickets"),
-        variant: "destructive"
-      });
+  const refreshTickets = useCallback(async () => {
+    if (!userId || !isAuthenticated) {
+      console.log("Cannot refresh tickets: user not authenticated or missing user ID");
       return;
     }
     
-    if (userId) {
-      queryClient.invalidateQueries({ queryKey: ['user-tickets', userId] });
-      toast({
-        title: t("Biļetes atjaunotas", "Tickets refreshed"),
-        description: t("Biļešu saraksts ir atjaunots", "Ticket list has been updated")
+    console.log(`Refreshing tickets for user: ${userId}`);
+    await queryClient.invalidateQueries({ 
+      queryKey: ['user-tickets', userId],
+      exact: true
+    });
+    
+    // Force refetch
+    try {
+      await queryClient.refetchQueries({ 
+        queryKey: ['user-tickets', userId],
+        exact: true
       });
+      console.log("Tickets refreshed successfully");
+    } catch (error) {
+      console.error("Error refreshing tickets:", error);
     }
-  };
+  }, [userId, isAuthenticated, queryClient]);
   
   return { refreshTickets };
 }

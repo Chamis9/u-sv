@@ -8,7 +8,7 @@ export function useTicketQueries(userId?: string) {
   const { isAuthenticated } = useAuth();
   
   // Fetch user tickets with enhanced error handling
-  const { data: tickets = [], isLoading, error } = useQuery({
+  const { data: tickets = [], isLoading, error, refetch } = useQuery({
     queryKey: ['user-tickets', userId],
     queryFn: async (): Promise<UserTicket[]> => {
       if (!userId) {
@@ -28,7 +28,8 @@ export function useTicketQueries(userId?: string) {
         const { data: ticketsData, error } = await supabase
           .from('tickets')
           .select('*, categories(name)')
-          .or(`seller_id.eq.${userId},buyer_id.eq.${userId}`);
+          .or(`seller_id.eq.${userId},buyer_id.eq.${userId}`)
+          .order('created_at', { ascending: false });
         
         if (error) {
           console.error(`Error fetching tickets:`, error);
@@ -77,9 +78,16 @@ export function useTicketQueries(userId?: string) {
     refetchOnWindowFocus: true
   });
 
+  // Function to force refresh tickets
+  const refreshTickets = async () => {
+    console.log("Manually refreshing tickets...");
+    return await refetch();
+  };
+
   return {
     tickets,
     isLoading,
-    error
+    error,
+    refreshTickets
   };
 }

@@ -27,24 +27,51 @@ export function useTicketOperations({
     currentLanguage.code === 'lv' ? lvText : enText;
   
   const handleDeleteTicket = async (ticketId: string) => {
+    if (!ticketId || !userId) {
+      console.error('Missing ticketId or userId for ticket deletion');
+      toast({
+        title: t("Kļūda", "Error"),
+        description: t(
+          "Neizdevās dzēst biļeti. Nepietiekama informācija.", 
+          "Failed to delete the ticket. Insufficient information."
+        ),
+        variant: "destructive"
+      });
+      return false;
+    }
+    
     if (window.confirm(t(
       "Vai tiešām vēlaties dzēst šo biļeti?", 
       "Are you sure you want to delete this ticket?"
     ))) {
-      const success = await deleteTicket(ticketId);
-      
-      if (success) {
-        toast({
-          title: t("Biļete dzēsta", "Ticket deleted"),
-          description: t(
-            "Biļete ir veiksmīgi dzēsta", 
-            "The ticket has been successfully deleted"
-          )
-        });
+      try {
+        const success = await deleteTicket(ticketId);
         
-        // Refresh tickets list
-        queryClient.invalidateQueries({ queryKey: ['user-tickets', userId] });
-      } else {
+        if (success) {
+          toast({
+            title: t("Biļete dzēsta", "Ticket deleted"),
+            description: t(
+              "Biļete ir veiksmīgi dzēsta", 
+              "The ticket has been successfully deleted"
+            )
+          });
+          
+          // Refresh tickets list to update UI
+          await queryClient.invalidateQueries({ queryKey: ['user-tickets', userId] });
+          return true;
+        } else {
+          toast({
+            title: t("Kļūda", "Error"),
+            description: t(
+              "Neizdevās dzēst biļeti. Lūdzu mēģiniet vēlreiz.", 
+              "Failed to delete the ticket. Please try again."
+            ),
+            variant: "destructive"
+          });
+          return false;
+        }
+      } catch (err) {
+        console.error('Error in handleDeleteTicket:', err);
         toast({
           title: t("Kļūda", "Error"),
           description: t(
@@ -53,8 +80,10 @@ export function useTicketOperations({
           ),
           variant: "destructive"
         });
+        return false;
       }
     }
+    return false;
   };
 
   const handleUpdateTicket = async (ticketId: string, data: Partial<AddTicketData>) => {
@@ -70,8 +99,8 @@ export function useTicketOperations({
           )
         });
         
-        // Refresh tickets list
-        queryClient.invalidateQueries({ queryKey: ['user-tickets', userId] });
+        // Refresh tickets list to update UI
+        await queryClient.invalidateQueries({ queryKey: ['user-tickets', userId] });
         return { success: true };
       } else {
         toast({
