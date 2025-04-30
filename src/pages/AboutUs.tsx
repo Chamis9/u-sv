@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, Users, Info } from "lucide-react";
+import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 
 const AboutUs = () => {
   const { translations } = useLanguage();
@@ -20,7 +21,7 @@ const AboutUs = () => {
       },
       {
         title: "Mūsu vērtības",
-        content: "Mēs balstāmies uz trim galvenajām vērtībām: godīgums, drošība un klientu apmierinātība. Mēs garantējam 100% drošas transakcijas un autentiskas biļetes.",
+        content: "Mēs balstāmies uz trim galvenajām vērtībām: godīgums, drošība un klientu apmierinātība. Mēs garantējam 100% drošas transakcijas.",
         icon: <Info className="h-8 w-8 text-orange-500" />
       },
       {
@@ -37,7 +38,7 @@ const AboutUs = () => {
       },
       {
         title: "Our Values",
-        content: "We are based on three core values: honesty, security, and customer satisfaction. We guarantee 100% secure transactions and authentic tickets.",
+        content: "We are based on three core values: honesty, security, and customer satisfaction. We guarantee 100% secure transactions.",
         icon: <Info className="h-8 w-8 text-orange-500" />
       },
       {
@@ -54,7 +55,7 @@ const AboutUs = () => {
       },
       {
         title: "Наши ценности",
-        content: "Мы основываемся на трех основных ценностях: честность, безопасность и удовлетворенность клиентов. Мы гарантируем 100% безопасные транзакции и подлинные билеты.",
+        content: "Мы основываемся на трех основных ценностях: честность, безопасность и удовлетворенность клиентов. Мы гарантируем 100% безопасные транзакции.",
         icon: <Info className="h-8 w-8 text-orange-500" />
       },
       {
@@ -70,61 +71,64 @@ const AboutUs = () => {
   
   return (
     <ThemeProvider defaultTheme="light" disableToggle={false}>
-      <div className="min-h-screen flex flex-col dark:bg-gray-900">
+      <div className="min-h-screen flex flex-col dark:bg-gradient-to-b dark:from-black dark:via-gray-900 dark:to-gray-800 bg-white text-gray-900 dark:text-white">
         <SEO 
           title={translations.aboutUs?.title || "Par mums - netieku.es"}
           description={translations.aboutUs?.content?.[0] || "Mūsu mērķis ir radīt inovatīvu un uzticamu platformu biļešu tirdzniecībai"}
         />
         <Header />
-        <main className="flex-grow container mx-auto px-4 py-8 mt-20">
-          <section className="max-w-4xl mx-auto">
-            <div className="mb-8 text-center">
-              <h1 className="text-4xl font-bold dark:text-white mb-4">
-                {translations.aboutUs?.title || "Par mums"}
+        
+        <main className="flex-grow pt-24 pb-12">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="max-w-4xl mx-auto">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">
+                <span className="text-orange-500">{translations.aboutUs?.title || "Par mums"}</span>
               </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              <p className="text-xl mb-12 text-gray-600 dark:text-gray-300">
                 Platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem
               </p>
-            </div>
             
-            <div className="grid gap-8 md:grid-cols-3">
-              {content.map((section, index) => (
-                <Card key={index} className="transition-all hover:shadow-lg border-t-4 border-t-orange-500">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center mb-4">
-                      {section.icon}
-                      <h2 className="text-xl font-semibold ml-3 text-orange-500">
-                        {section.title}
-                      </h2>
-                    </div>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      {section.content}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+              <div className="grid gap-8 md:grid-cols-3">
+                {content.map((section, index) => (
+                  <Card key={index} className="transition-all hover:shadow-lg border-t-4 border-t-orange-500">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center mb-4">
+                        {section.icon}
+                        <h2 className="text-xl font-semibold ml-3 text-orange-500">
+                          {section.title}
+                        </h2>
+                      </div>
+                      <p className="text-gray-600 dark:text-gray-300">
+                        {section.content}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
 
-            <div className="mt-12 bg-orange-50 dark:bg-gray-800 p-6 rounded-lg">
-              <h2 className="text-2xl font-semibold mb-4 text-orange-500">
-                {currentLanguage.code === 'lv' ? "Verificēti lietotāji" : 
-                 currentLanguage.code === 'ru' ? "Проверенные пользователи" : 
-                 "Verified Users"}
-              </h2>
-              <div className="flex items-start">
-                <Check className="h-6 w-6 text-green-500 mt-1 mr-3 flex-shrink-0" />
-                <p className="text-gray-600 dark:text-gray-300">
-                  {currentLanguage.code === 'lv' ? 
-                    "Mūsu platformā var darboties tikai verificēti lietotāji. Tas nodrošina augstākā līmeņa drošību un uzticamību visiem mūsu lietotājiem. Katra biļete tiek pārbaudīta, un katra darījuma drošība tiek garantēta." : 
-                   currentLanguage.code === 'ru' ? 
-                    "На нашей платформе могут работать только проверенные пользователи. Это обеспечивает высочайший уровень безопасности и надежности для всех наших пользователей. Каждый билет проверяется, и безопасность каждой транзакции гарантируется." :
-                    "Only verified users can operate on our platform. This ensures the highest level of security and reliability for all our users. Each ticket is verified, and the security of each transaction is guaranteed."}
-                </p>
+              <div className="mt-12 bg-orange-50 dark:bg-gray-800 p-6 rounded-lg">
+                <h2 className="text-2xl font-semibold mb-4 text-orange-500">
+                  {currentLanguage.code === 'lv' ? "Verificēti lietotāji" : 
+                  currentLanguage.code === 'ru' ? "Проверенные пользователи" : 
+                  "Verified Users"}
+                </h2>
+                <div className="flex items-start">
+                  <Check className="h-6 w-6 text-green-500 mt-1 mr-3 flex-shrink-0" />
+                  <p className="text-gray-600 dark:text-gray-300">
+                    {currentLanguage.code === 'lv' ? 
+                      "Mūsu platformā var darboties tikai verificēti lietotāji. Tas nodrošina augstākā līmeņa drošību un uzticamību visiem mūsu lietotājiem. Katra biļete tiek pārbaudīta, un katra darījuma drošība tiek garantēta." : 
+                    currentLanguage.code === 'ru' ? 
+                      "На нашей платформе могут работать только проверенные пользователи. Это обеспечивает высочайший уровень безопасности и надежности для всех наших пользователей. Каждый билет проверяется, и безопасность каждой транзакции гарантируется." :
+                      "Only verified users can operate on our platform. This ensures the highest level of security and reliability for all our users. Each ticket is verified, and the security of each transaction is guaranteed."}
+                  </p>
+                </div>
               </div>
             </div>
-          </section>
+          </div>
         </main>
+        
         <Footer />
+        <GlobalThemeToggle />
       </div>
     </ThemeProvider>
   );
