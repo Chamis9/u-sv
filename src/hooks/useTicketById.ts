@@ -20,7 +20,7 @@ export const useTicketById = () => {
         .from('tickets')
         .select('*, categories(name)')
         .eq('id', id)
-        .single();
+        .maybeSingle(); // Changed from .single() to .maybeSingle()
       
       if (error) {
         console.error(`No ticket found:`, error.message);

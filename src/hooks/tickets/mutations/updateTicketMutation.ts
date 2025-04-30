@@ -38,7 +38,7 @@ export async function updateTicketMutation(
       .eq('id', ticketId)
       .eq('owner_id', userId)  // Security check: ensure user owns the ticket
       .select('*')
-      .single();
+      .maybeSingle(); // Changed from .single() to .maybeSingle()
       
     if (error) {
       console.error(`Error updating ticket:`, error);
@@ -49,7 +49,7 @@ export async function updateTicketMutation(
     
     // Type check and create the ticket object with fallback values
     if (!responseData) {
-      throw new Error('No data returned after update');
+      return { success: false, error: 'No data returned after update. Ticket might not exist or you may not have permission to update it.' };
     }
     
     // Create the ticket object with the response data
