@@ -81,7 +81,7 @@ const AboutUs = () => {
         <main className="flex-grow pt-24 pb-12">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-center">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-left text-orange-500">
                 {translations.aboutUs?.title || "Par mums"}
               </h1>
               
@@ -117,7 +117,7 @@ const AboutUs = () => {
                   <Check className="h-6 w-6 text-green-500 mt-1 mr-3 flex-shrink-0" />
                   <p className="text-gray-600 dark:text-gray-300">
                     {currentLanguage.code === 'lv' ? 
-                      "Mūsu platformā var darboties tikai verificēti lietotāji. Tas nodrošina augstākā līmeņa drošību un uzticamību visiem mūsu lietotājiem. Katra biļete tiek pārbaudīta, un katra darījuma drošība tiek garantēta." : 
+                      "Mūsu platformā pirkt vai pārdot var tikai verificēti lietotāji. Tas nodrošina augstākā līmeņa drošību un uzticamību visiem mūsu lietotājiem. Katra darījuma drošība tiek garantēta." : 
                     currentLanguage.code === 'ru' ? 
                       "На нашей платформе могут работать только проверенные пользователи. Это обеспечивает высочайший уровень безопасности и надежности для всех наших пользователей. Каждый билет проверяется, и безопасность каждой транзакции гарантируется." :
                       "Only verified users can operate on our platform. This ensures the highest level of security and reliability for all our users. Each ticket is verified, and the security of each transaction is guaranteed."}
