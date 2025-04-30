@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -5,6 +6,7 @@ import { SEO } from "@/components/SEO";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 import { Card, CardContent } from "@/components/ui/card";
+import { Check, Users, Info } from "lucide-react";
 
 const AboutUs = () => {
   const { translations } = useLanguage();
@@ -13,43 +15,52 @@ const AboutUs = () => {
     lv: [
       {
         title: "Mūsu vīzija",
-        content: "Mūsu mērķis ir radīt inovatīvu un uzticamu platformu biļešu tirdzniecībai, kas vieno pasākumu organizētājus ar apmeklētājiem, nodrošinot drošu un ērtu biļešu iegādes procesu."
+        content: "Mūsu mērķis ir radīt inovatīvu un uzticamu platformu biļešu tirdzniecībai, kas vieno pasākumu apmeklētājus ar citiem apmeklētājiem, nodrošinot drošu un ērtu biļešu iegādes procesu.",
+        icon: <Users className="h-8 w-8 text-orange-500" />
       },
       {
         title: "Mūsu vērtības",
-        content: "Mēs balstāmies uz trim galvenajām vērtībām: godīgums, drošība un klientu apmierinātība. Mēs garantējam 100% drošas transakcijas un autentiskas biļetes."
+        content: "Mēs balstāmies uz trim galvenajām vērtībām: godīgums, drošība un klientu apmierinātība. Mēs garantējam 100% drošas transakcijas un autentiskas biļetes.",
+        icon: <Info className="h-8 w-8 text-orange-500" />
       },
       {
         title: "Ko mēs piedāvājam",
-        content: "Mēs nodrošinām plašu pasākumu klāstu - no teātra izrādēm līdz sporta notikumiem. Mūsu platforma ļauj ērti pārdot un iegādāties biļetes, kā arī pārvaldīt savas biļetes digitālā formātā."
+        content: "Mūsu platforma ļauj lietotājiem tiešā veidā pārdot un iegādāties biļetes no citiem lietotājiem. Lai nodrošinātu drošību, tikai verificēti lietotāji var veikt darījumus mūsu platformā.",
+        icon: <Check className="h-8 w-8 text-orange-500" />
       }
     ],
     en: [
       {
         title: "Our Vision",
-        content: "Our goal is to create an innovative and reliable ticket trading platform that connects event organizers with attendees, ensuring a secure and convenient ticket purchasing process."
+        content: "Our goal is to create an innovative and reliable ticket trading platform that connects event attendees with other attendees, ensuring a secure and convenient ticket purchasing process.",
+        icon: <Users className="h-8 w-8 text-orange-500" />
       },
       {
         title: "Our Values",
-        content: "We are based on three core values: honesty, security, and customer satisfaction. We guarantee 100% secure transactions and authentic tickets."
+        content: "We are based on three core values: honesty, security, and customer satisfaction. We guarantee 100% secure transactions and authentic tickets.",
+        icon: <Info className="h-8 w-8 text-orange-500" />
       },
       {
         title: "What We Offer",
-        content: "We provide a wide range of events - from theater performances to sports events. Our platform allows you to easily sell and purchase tickets, as well as manage your tickets digitally."
+        content: "Our platform allows users to directly sell and purchase tickets from other users. To ensure security, only verified users can perform transactions on our platform.",
+        icon: <Check className="h-8 w-8 text-orange-500" />
       }
     ],
     ru: [
       {
         title: "Наше видение",
-        content: "Наша цель - создать инновационную и надежную платформу для продажи билетов, которая объединяет организаторов мероприятий с посетителями, обеспечивая безопасный и удобный процесс покупки билетов."
+        content: "Наша цель - создать инновационную и надежную платформу для продажи билетов, которая объединяет посетителей мероприятий с другими посетителями, обеспечивая безопасный и удобный процесс покупки билетов.",
+        icon: <Users className="h-8 w-8 text-orange-500" />
       },
       {
         title: "Наши ценности",
-        content: "Мы основываемся на трех основных ценностях: честность, безопасность и удовлетворенность клиентов. Мы гарантируем 100% безопасные транзакции и подлинные билеты."
+        content: "Мы основываемся на трех основных ценностях: честность, безопасность и удовлетворенность клиентов. Мы гарантируем 100% безопасные транзакции и подлинные билеты.",
+        icon: <Info className="h-8 w-8 text-orange-500" />
       },
       {
         title: "Что мы предлагаем",
-        content: "Мы предоставляем широкий спектр мероприятий - от театральных постановок до спортивных событий. Наша платформа позволяет легко продавать и покупать билеты, а также управлять своими билетами в цифровом формате."
+        content: "Наша платформа позволяет пользователям напрямую продавать и покупать билеты у других пользователей. Для обеспечения безопасности только проверенные пользователи могут совершать сделки на нашей платформе.",
+        icon: <Check className="h-8 w-8 text-orange-500" />
       }
     ]
   };
@@ -60,29 +71,56 @@ const AboutUs = () => {
   return (
     <ThemeProvider defaultTheme="light" disableToggle={false}>
       <div className="min-h-screen flex flex-col dark:bg-gray-900">
-        <SEO />
+        <SEO 
+          title={translations.aboutUs?.title || "Par mums - netieku.es"}
+          description={translations.aboutUs?.content?.[0] || "Mūsu mērķis ir radīt inovatīvu un uzticamu platformu biļešu tirdzniecībai"}
+        />
         <Header />
         <main className="flex-grow container mx-auto px-4 py-8 mt-20">
           <section className="max-w-4xl mx-auto">
-            <div className="mb-8">
-              <h1 className="text-4xl font-bold dark:text-white">
+            <div className="mb-8 text-center">
+              <h1 className="text-4xl font-bold dark:text-white mb-4">
                 {translations.aboutUs?.title || "Par mums"}
               </h1>
+              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                Platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem
+              </p>
             </div>
             
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 md:grid-cols-3">
               {content.map((section, index) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow">
+                <Card key={index} className="transition-all hover:shadow-lg border-t-4 border-t-orange-500">
                   <CardContent className="pt-6">
-                    <h2 className="text-xl font-semibold mb-4 text-orange-500">
-                      {section.title}
-                    </h2>
+                    <div className="flex items-center mb-4">
+                      {section.icon}
+                      <h2 className="text-xl font-semibold ml-3 text-orange-500">
+                        {section.title}
+                      </h2>
+                    </div>
                     <p className="text-gray-600 dark:text-gray-300">
                       {section.content}
                     </p>
                   </CardContent>
                 </Card>
               ))}
+            </div>
+
+            <div className="mt-12 bg-orange-50 dark:bg-gray-800 p-6 rounded-lg">
+              <h2 className="text-2xl font-semibold mb-4 text-orange-500">
+                {currentLanguage.code === 'lv' ? "Verificēti lietotāji" : 
+                 currentLanguage.code === 'ru' ? "Проверенные пользователи" : 
+                 "Verified Users"}
+              </h2>
+              <div className="flex items-start">
+                <Check className="h-6 w-6 text-green-500 mt-1 mr-3 flex-shrink-0" />
+                <p className="text-gray-600 dark:text-gray-300">
+                  {currentLanguage.code === 'lv' ? 
+                    "Mūsu platformā var darboties tikai verificēti lietotāji. Tas nodrošina augstākā līmeņa drošību un uzticamību visiem mūsu lietotājiem. Katra biļete tiek pārbaudīta, un katra darījuma drošība tiek garantēta." : 
+                   currentLanguage.code === 'ru' ? 
+                    "На нашей платформе могут работать только проверенные пользователи. Это обеспечивает высочайший уровень безопасности и надежности для всех наших пользователей. Каждый билет проверяется, и безопасность каждой транзакции гарантируется." :
+                    "Only verified users can operate on our platform. This ensures the highest level of security and reliability for all our users. Each ticket is verified, and the security of each transaction is guaranteed."}
+                </p>
+              </div>
             </div>
           </section>
         </main>
