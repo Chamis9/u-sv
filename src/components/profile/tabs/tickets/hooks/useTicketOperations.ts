@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { UserTicket, AddTicketData } from "@/hooks/tickets";
@@ -29,10 +30,12 @@ export function useTicketOperations({
     currentLanguage.code === 'lv' ? lvText : enText;
   
   const openDeleteConfirmation = (ticketId: string) => {
+    console.log(`Opening delete confirmation dialog for ticket: ${ticketId}`);
     setTicketToDelete(ticketId);
   };
   
   const cancelDelete = () => {
+    console.log('Delete operation canceled');
     setTicketToDelete(null);
   };
   
@@ -52,7 +55,7 @@ export function useTicketOperations({
     
     try {
       setIsDeleting(true);
-      console.log(`Attempting to delete ticket: ${ticketToDelete}`);
+      console.log(`Attempting to delete ticket: ${ticketToDelete} for user: ${userId}`);
       const success = await deleteTicket(ticketToDelete);
       
       if (success) {
@@ -82,8 +85,8 @@ export function useTicketOperations({
         toast({
           title: t("Kļūda", "Error"),
           description: t(
-            "Neizdevās dzēst biļeti. Lūdzu mēģiniet vēlreiz.", 
-            "Failed to delete the ticket. Please try again."
+            "Neizdevās dzēst biļeti. Pārbaudiet, vai biļete nav jau pārdota.", 
+            "Failed to delete the ticket. Please check if the ticket has already been sold."
           ),
           variant: "destructive"
         });

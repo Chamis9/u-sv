@@ -10,26 +10,10 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
   try {
     console.log(`Deleting ticket with ID: ${ticketId}, User ID: ${userId}`);
     
-    // First try to use the edge function (bypasses RLS)
-    const { data: edgeData, error: edgeError } = await supabase.functions.invoke('tickets-management', {
-      body: { 
-        ticketId, 
-        action: 'delete-ticket' 
-      }
-    });
-
-    if (!edgeError && edgeData?.success) {
-      console.log(`Successfully deleted ticket with ID: ${ticketId} using edge function`);
-      return true;
-    }
-
-    // If edge function fails, fallback to direct database operation
-    console.log("Edge function failed, trying direct database operation:", edgeError || "No error details");
-    
-    // Verify the ticket exists and belongs to the user before deletion
+    // First verify the ticket exists and belongs to the user before deletion
     const { data: ticketData, error: checkError } = await supabase
       .from('tickets')
-      .select('id, file_path, owner_id')
+      .select('id, file_path, owner_id, seller_id, buyer_id')
       .eq('id', ticketId)
       .single();
       
@@ -38,9 +22,9 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       return false;
     }
     
-    // Extra check to ensure ticket belongs to user
-    if (ticketData.owner_id !== userId) {
-      console.error('Ticket does not belong to the current user');
+    // Extra check to ensure ticket belongs to user and hasn't been sold
+    if (ticketData.owner_id !== userId || ticketData.seller_id !== userId || ticketData.buyer_id !== null) {
+      console.error('Cannot delete: Ticket does not belong to the current user or has already been sold');
       return false;
     }
     
@@ -62,11 +46,14 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
     const { error } = await supabase
       .from('tickets')
       .delete()
-      .eq('id', ticketId);
+      .eq('id', ticketId)
+      .eq('owner_id', userId)
+      .eq('seller_id', userId)
+      .is('buyer_id', null);
       
     if (error) {
       console.error(`Error deleting ticket:`, error);
-      throw error;
+      return false;
     }
     
     console.log(`Successfully deleted ticket with ID: ${ticketId}`);

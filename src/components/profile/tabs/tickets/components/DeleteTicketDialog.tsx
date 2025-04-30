@@ -32,26 +32,29 @@ export function DeleteTicketDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={(isOpen) => !isOpen && onCancel()}>
-      <AlertDialogContent>
+      <AlertDialogContent className="max-w-md mx-auto">
         <AlertDialogHeader>
-          <AlertDialogTitle>
+          <AlertDialogTitle className="text-center">
             {t("Vai tiešām vēlaties dzēst šo biļeti?", "Delete this ticket?")}
           </AlertDialogTitle>
-          <AlertDialogDescription>
+          <AlertDialogDescription className="text-center">
             {t(
               "Šī darbība ir neatgriezeniska. Biļete tiks neatgriezeniski izdzēsta.", 
               "This action cannot be undone. This ticket will be permanently deleted."
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>
+        <AlertDialogFooter className="flex justify-center gap-3 sm:justify-center">
+          <AlertDialogCancel 
+            disabled={isDeleting}
+            className="min-w-24"
+          >
             {t("Atcelt", "Cancel")}
           </AlertDialogCancel>
           <AlertDialogAction 
             onClick={onConfirm}
             disabled={isDeleting}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="min-w-24 bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             {isDeleting ? 
               t("Dzēšana...", "Deleting...") : 
