@@ -11,7 +11,7 @@ import { TicketFileUpload } from "./TicketFileUpload";
 import { useAddTicketForm } from "./hooks/useAddTicketForm";
 import {
   BasicInfoFields,
-  PriceCategoryFields,
+  CategoryField,
   EventDetailsFields,
   QuantityPriceFields,
   FormActions
@@ -75,7 +75,7 @@ export function AddTicketForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {/* Field order as requested */}
         <BasicInfoFields form={form} t={t} />
-        <PriceCategoryFields form={form} t={t} />
+        <CategoryField form={form} t={t} />
         <EventDetailsFields form={form} t={t} />
         <QuantityPriceFields form={form} t={t} />
 
