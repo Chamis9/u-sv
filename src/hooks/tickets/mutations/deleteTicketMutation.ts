@@ -13,13 +13,18 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
     // Verify the ticket exists and belongs to the user before deletion
     const { data: ticketData, error: checkError } = await supabase
       .from('tickets')
-      .select('id, file_path')
+      .select('id, file_path, owner_id')
       .eq('id', ticketId)
-      .eq('owner_id', userId)
       .single();
       
     if (checkError || !ticketData) {
       console.error(`Error verifying ticket ownership:`, checkError || 'Ticket not found');
+      return false;
+    }
+    
+    // Extra check to ensure ticket belongs to user
+    if (ticketData.owner_id !== userId) {
+      console.error('Ticket does not belong to the current user');
       return false;
     }
     
@@ -41,7 +46,7 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
     const { error } = await supabase
       .from('tickets')
       .delete()
-      .match({ id: ticketId, owner_id: userId });
+      .eq('id', ticketId);
       
     if (error) {
       console.error(`Error deleting ticket:`, error);

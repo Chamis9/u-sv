@@ -17,9 +17,10 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
     }
     
     console.log(`Refreshing tickets for user: ${userId}`);
+    
+    // Invalidate and immediately refetch
     await queryClient.invalidateQueries({ 
-      queryKey: ['user-tickets', userId],
-      exact: true
+      queryKey: ['user-tickets', userId]
     });
     
     // Force refetch

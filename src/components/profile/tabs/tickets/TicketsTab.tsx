@@ -44,10 +44,10 @@ export function TicketsTab({ user }: TicketsTabProps) {
     isAuthenticated
   } = useTicketsTab(user);
   
-  // Force refresh only on component mount and when user changes
+  // Force refresh on component mount and when user changes
   useEffect(() => {
-    console.log("TicketsTab mounted or user changed");
-    if (isAuthenticated) {
+    console.log("TicketsTab mounted or user changed, refreshing tickets");
+    if (isAuthenticated && user?.id) {
       refreshTickets();
     }
   }, [user.id, isAuthenticated]);
@@ -101,7 +101,10 @@ export function TicketsTab({ user }: TicketsTabProps) {
             <TicketsContent 
               tickets={addedTickets}
               isLoading={isLoading}
-              onDelete={handleDeleteTicket}
+              onDelete={(ticketId) => {
+                console.log("Deleting ticket:", ticketId);
+                handleDeleteTicket(ticketId);
+              }}
               onEdit={(ticket) => {
                 setCurrentEditTicket(ticket);
                 setEditTicketOpen(true);

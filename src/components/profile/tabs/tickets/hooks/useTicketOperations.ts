@@ -45,6 +45,7 @@ export function useTicketOperations({
       "Are you sure you want to delete this ticket?"
     ))) {
       try {
+        console.log(`Attempting to delete ticket: ${ticketId}`);
         const success = await deleteTicket(ticketId);
         
         if (success) {
@@ -56,8 +57,18 @@ export function useTicketOperations({
             )
           });
           
-          // Refresh tickets list to update UI
-          await queryClient.invalidateQueries({ queryKey: ['user-tickets', userId] });
+          // Force invalidate the tickets query to refresh UI
+          console.log('Invalidating tickets query after deletion');
+          await queryClient.invalidateQueries({ 
+            queryKey: ['user-tickets', userId]
+          });
+          
+          // Force refetch to update UI immediately
+          await queryClient.refetchQueries({
+            queryKey: ['user-tickets', userId],
+            exact: true
+          });
+          
           return true;
         } else {
           toast({
