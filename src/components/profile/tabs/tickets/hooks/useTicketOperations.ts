@@ -1,4 +1,4 @@
-
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { UserTicket, AddTicketData } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
@@ -22,12 +22,22 @@ export function useTicketOperations({
   const { currentLanguage } = useLanguage();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [ticketToDelete, setTicketToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
   
-  const handleDeleteTicket = async (ticketId: string) => {
-    if (!ticketId || !userId) {
+  const openDeleteConfirmation = (ticketId: string) => {
+    setTicketToDelete(ticketId);
+  };
+  
+  const cancelDelete = () => {
+    setTicketToDelete(null);
+  };
+  
+  const confirmDelete = async () => {
+    if (!ticketToDelete || !userId) {
       console.error('Missing ticketId or userId for ticket deletion');
       toast({
         title: t("Kļūda", "Error"),
@@ -40,49 +50,35 @@ export function useTicketOperations({
       return false;
     }
     
-    if (window.confirm(t(
-      "Vai tiešām vēlaties dzēst šo biļeti?", 
-      "Are you sure you want to delete this ticket?"
-    ))) {
-      try {
-        console.log(`Attempting to delete ticket: ${ticketId}`);
-        const success = await deleteTicket(ticketId);
+    try {
+      setIsDeleting(true);
+      console.log(`Attempting to delete ticket: ${ticketToDelete}`);
+      const success = await deleteTicket(ticketToDelete);
+      
+      if (success) {
+        toast({
+          title: t("Biļete dzēsta", "Ticket deleted"),
+          description: t(
+            "Biļete ir veiksmīgi dzēsta", 
+            "The ticket has been successfully deleted"
+          )
+        });
         
-        if (success) {
-          toast({
-            title: t("Biļete dzēsta", "Ticket deleted"),
-            description: t(
-              "Biļete ir veiksmīgi dzēsta", 
-              "The ticket has been successfully deleted"
-            )
-          });
-          
-          // Force invalidate the tickets query to refresh UI
-          console.log('Invalidating tickets query after deletion');
-          await queryClient.invalidateQueries({ 
-            queryKey: ['user-tickets', userId]
-          });
-          
-          // Force refetch to update UI immediately
-          await queryClient.refetchQueries({
-            queryKey: ['user-tickets', userId],
-            exact: true
-          });
-          
-          return true;
-        } else {
-          toast({
-            title: t("Kļūda", "Error"),
-            description: t(
-              "Neizdevās dzēst biļeti. Lūdzu mēģiniet vēlreiz.", 
-              "Failed to delete the ticket. Please try again."
-            ),
-            variant: "destructive"
-          });
-          return false;
-        }
-      } catch (err) {
-        console.error('Error in handleDeleteTicket:', err);
+        // Force invalidate the tickets query to refresh UI
+        console.log('Invalidating tickets query after deletion');
+        await queryClient.invalidateQueries({ 
+          queryKey: ['user-tickets', userId]
+        });
+        
+        // Force refetch to update UI immediately
+        await queryClient.refetchQueries({
+          queryKey: ['user-tickets', userId],
+          exact: true
+        });
+        
+        setTicketToDelete(null);
+        return true;
+      } else {
         toast({
           title: t("Kļūda", "Error"),
           description: t(
@@ -93,8 +89,20 @@ export function useTicketOperations({
         });
         return false;
       }
+    } catch (err) {
+      console.error('Error in confirmDelete:', err);
+      toast({
+        title: t("Kļūda", "Error"),
+        description: t(
+          "Neizdevās dzēst biļeti. Lūdzu mēģiniet vēlreiz.", 
+          "Failed to delete the ticket. Please try again."
+        ),
+        variant: "destructive"
+      });
+      return false;
+    } finally {
+      setIsDeleting(false);
     }
-    return false;
   };
 
   const handleUpdateTicket = async (ticketId: string, data: Partial<AddTicketData>) => {
@@ -138,7 +146,11 @@ export function useTicketOperations({
   };
   
   return {
-    handleDeleteTicket,
+    openDeleteConfirmation,
+    confirmDelete,
+    cancelDelete,
+    ticketToDelete,
+    isDeleting,
     handleUpdateTicket,
     t
   };

@@ -18,6 +18,7 @@ import {
   TicketsHeader,
   TicketsContent
 } from "./components";
+import { DeleteTicketDialog } from "./components/DeleteTicketDialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
@@ -33,7 +34,11 @@ export function TicketsTab({ user }: TicketsTabProps) {
     loading,
     addTicketOpen,
     setAddTicketOpen,
-    handleDeleteTicket,
+    openDeleteConfirmation,
+    confirmDelete,
+    cancelDelete,
+    ticketToDelete,
+    isDeleting,
     handleUpdateTicket,
     refreshTickets,
     editTicketOpen,
@@ -102,14 +107,14 @@ export function TicketsTab({ user }: TicketsTabProps) {
               tickets={addedTickets}
               isLoading={isLoading}
               onDelete={(ticketId) => {
-                console.log("Deleting ticket:", ticketId);
-                handleDeleteTicket(ticketId);
+                console.log("Opening delete confirmation for ticket:", ticketId);
+                openDeleteConfirmation(ticketId);
               }}
               onEdit={(ticket) => {
                 setCurrentEditTicket(ticket);
                 setEditTicketOpen(true);
               }}
-              loadingDelete={loading}
+              loadingDelete={isDeleting}
               ticketType="added"
             />
           </TabsContent>
@@ -118,14 +123,15 @@ export function TicketsTab({ user }: TicketsTabProps) {
             <TicketsContent 
               tickets={purchasedTickets}
               isLoading={isLoading}
-              onDelete={handleDeleteTicket}
-              loadingDelete={loading}
+              onDelete={openDeleteConfirmation}
+              loadingDelete={isDeleting}
               ticketType="purchased"
             />
           </TabsContent>
         </Tabs>
       </CardContent>
       
+      {/* Add Ticket Dialog */}
       <Dialog open={addTicketOpen} onOpenChange={setAddTicketOpen}>
         <DialogContent>
           <DialogHeader>
@@ -138,6 +144,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
         </DialogContent>
       </Dialog>
       
+      {/* Edit Ticket Dialog */}
       <Dialog open={editTicketOpen} onOpenChange={setEditTicketOpen}>
         <DialogContent>
           <DialogHeader>
@@ -156,6 +163,14 @@ export function TicketsTab({ user }: TicketsTabProps) {
           )}
         </DialogContent>
       </Dialog>
+      
+      {/* Delete Confirmation Dialog */}
+      <DeleteTicketDialog
+        open={ticketToDelete !== null}
+        onCancel={cancelDelete}
+        onConfirm={confirmDelete}
+        isDeleting={isDeleting}
+      />
     </Card>
   );
 }

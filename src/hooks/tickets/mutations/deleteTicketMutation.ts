@@ -10,6 +10,22 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
   try {
     console.log(`Deleting ticket with ID: ${ticketId}, User ID: ${userId}`);
     
+    // First try to use the edge function (bypasses RLS)
+    const { data: edgeData, error: edgeError } = await supabase.functions.invoke('tickets-management', {
+      body: { 
+        ticketId, 
+        action: 'delete-ticket' 
+      }
+    });
+
+    if (!edgeError && edgeData?.success) {
+      console.log(`Successfully deleted ticket with ID: ${ticketId} using edge function`);
+      return true;
+    }
+
+    // If edge function fails, fallback to direct database operation
+    console.log("Edge function failed, trying direct database operation:", edgeError || "No error details");
+    
     // Verify the ticket exists and belongs to the user before deletion
     const { data: ticketData, error: checkError } = await supabase
       .from('tickets')

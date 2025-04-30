@@ -31,7 +31,15 @@ export function useTicketsTab(user: User) {
     updateTicket
   } = useUserTickets(user?.id || '');
   
-  const { handleDeleteTicket, handleUpdateTicket, t } = useTicketOperations({
+  const { 
+    openDeleteConfirmation, 
+    confirmDelete, 
+    cancelDelete, 
+    ticketToDelete, 
+    isDeleting, 
+    handleUpdateTicket, 
+    t 
+  } = useTicketOperations({
     userId: user?.id || '',
     deleteTicket,
     updateTicket
@@ -81,7 +89,11 @@ export function useTicketsTab(user: User) {
     setEditTicketOpen,
     currentEditTicket,
     setCurrentEditTicket,
-    handleDeleteTicket,
+    openDeleteConfirmation,
+    confirmDelete,
+    cancelDelete,
+    ticketToDelete,
+    isDeleting,
     handleUpdateTicket,
     refreshTickets,
     t,

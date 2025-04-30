@@ -148,7 +148,10 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
             <Button
               variant="destructive"
               size="sm"
-              onClick={() => onDelete(ticket.id)}
+              onClick={() => {
+                console.log("Delete button clicked for ticket:", ticket.id);
+                onDelete(ticket.id);
+              }}
               className="flex-1"
             >
               {t("Dzēst", "Delete")}
