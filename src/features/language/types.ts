@@ -8,7 +8,8 @@ import {
   NavigationTranslations,
   ThemeTranslations,
   LanguageSelectorTranslations,
-  EventsTranslations
+  EventsTranslations,
+  AboutUsTranslations
 } from './translations/features';
 
 export interface TranslationObject {
@@ -31,7 +32,7 @@ export interface Translations {
   theme?: ThemeTranslations;
   language?: LanguageSelectorTranslations;
   events?: EventsTranslations;
-  aboutUs?: { title: string; }; // Added this property
+  aboutUs?: AboutUsTranslations; // Now using the full AboutUsTranslations type
 }
 
 export type { 
@@ -43,5 +44,6 @@ export type {
   NavigationTranslations,
   ThemeTranslations,
   LanguageSelectorTranslations,
-  EventsTranslations
+  EventsTranslations,
+  AboutUsTranslations
 };
