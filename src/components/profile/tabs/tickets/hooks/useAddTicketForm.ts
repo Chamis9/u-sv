@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
@@ -62,17 +63,22 @@ export function useAddTicketForm({
         filePath = uploadResult.path;
       }
       
+      // Calculate total price based on price per unit and quantity
+      const pricePerUnit = parseFloat(values.pricePerUnit);
+      const quantity = parseInt(values.quantity);
+      const totalPrice = pricePerUnit * quantity;
+      
       // Prepare ticket data
       const ticketData: AddTicketData = {
         title: values.title,
         description: values.description || undefined,
-        price: parseFloat(values.price),
+        price: totalPrice,
         user_id: userId,
         category_name: values.category,
         event_date: values.eventDate || undefined,
         venue: values.venue || undefined,
-        quantity: values.quantity ? parseInt(values.quantity) : 1,
-        price_per_unit: values.pricePerUnit ? parseFloat(values.pricePerUnit) : parseFloat(values.price),
+        quantity: quantity,
+        price_per_unit: pricePerUnit,
         event_time: values.eventTime || undefined
       };
       

@@ -39,23 +39,23 @@ export function AddTicketForm({
     defaultValues: isEditing && ticketToEdit ? {
       title: ticketToEdit.title,
       description: ticketToEdit.description || "",
-      price: ticketToEdit.price.toString(),
       category: ticketToEdit.category,
-      eventDate: ticketToEdit.event_date || "",
       venue: ticketToEdit.venue || "",
-      quantity: ticketToEdit.quantity?.toString() || "1",
-      pricePerUnit: ticketToEdit.price_per_unit?.toString() || ticketToEdit.price?.toString() || "0",
+      eventDate: ticketToEdit.event_date || "",
       eventTime: ticketToEdit.event_time || "",
+      quantity: ticketToEdit.quantity?.toString() || "1",
+      pricePerUnit: ticketToEdit.price_per_unit?.toString() || "",
+      price: ticketToEdit.price?.toString() || "0",
     } : {
       title: "",
       description: "",
-      price: "",
       category: "",
-      eventDate: "",
       venue: "",
+      eventDate: "",
+      eventTime: "",
       quantity: "1",
       pricePerUnit: "",
-      eventTime: "",
+      price: "0",
     },
   });
   
@@ -73,6 +73,7 @@ export function AddTicketForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Field order as requested */}
         <BasicInfoFields form={form} t={t} />
         <PriceCategoryFields form={form} t={t} />
         <EventDetailsFields form={form} t={t} />
