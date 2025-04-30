@@ -10,7 +10,7 @@ export const aboutUsTranslations = {
   lv: {
     title: "Par mums",
     content: [
-      "netieku.es ir platforma, kas palīdz cilvēkiem atrast un iegādāties biļetes uz visdažādākajiem kultūras un izklaides pasākumiem Latvijā.",
+      "netieku.es ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem.",
       "Mūsu platforma ļauj lietotājiem tiešā veidā pārdot un iegādāties biļetes no citiem lietotājiem. Lai nodrošinātu drošību, tikai verificēti lietotāji var veikt darījumus.",
       "Mēs balstāmies uz trim galvenajām vērtībām: godīgums, drošība un klientu apmierinātība. Mēs garantējam 100% drošas transakcijas."
     ]
@@ -18,7 +18,7 @@ export const aboutUsTranslations = {
   en: {
     title: "About Us",
     content: [
-      "netieku.es is a platform that helps people find and purchase tickets for various cultural and entertainment events in Latvia.",
+      "netieku.es is a platform where users can safely sell and purchase tickets from other users.",
       "Our platform allows users to directly sell and purchase tickets from other users. To ensure security, only verified users can perform transactions.",
       "We are based on three core values: honesty, security, and customer satisfaction. We guarantee 100% secure transactions."
     ]

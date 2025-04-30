@@ -86,7 +86,9 @@ const AboutUs = () => {
               </h1>
               
               <div className="text-xl mb-12 text-gray-600 dark:text-gray-300 text-center">
-                <span className="text-orange-500 font-semibold">netieku.es</span> ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem
+                <span className="text-orange-500 font-semibold">netieku.es</span> {currentLanguage.code === 'en' ? 
+                  "is a platform where users can safely sell and purchase tickets from other users" : 
+                  "ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem"}
               </div>
             
               <div className="grid gap-8 md:grid-cols-3">
@@ -120,7 +122,7 @@ const AboutUs = () => {
                       "Mūsu platformā pirkt vai pārdot var tikai verificēti lietotāji. Tas nodrošina augstākā līmeņa drošību un uzticamību visiem mūsu lietotājiem. Katra darījuma drošība tiek garantēta." : 
                     currentLanguage.code === 'ru' ? 
                       "На нашей платформе могут работать только проверенные пользователи. Это обеспечивает высочайший уровень безопасности и надежности для всех наших пользователей. Каждый билет проверяется, и безопасность каждой транзакции гарантируется." :
-                      "Only verified users can operate on our platform. This ensures the highest level of security and reliability for all our users. Each ticket is verified, and the security of each transaction is guaranteed."}
+                      "Only verified users can buy or sell on our platform. This ensures the highest level of security and reliability for all our users. The security of each transaction is guaranteed."}
                   </p>
                 </div>
               </div>
