@@ -31,10 +31,27 @@ export const useEventFilters = (events?: Event[]) => {
   // Helper function to filter tickets with the search query
   const filterTickets = (tickets: any[]) => {
     return tickets.filter(ticket => {
-      return searchQuery
+      // Apply text search
+      const matchesSearch = searchQuery
         ? ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           (ticket.description && ticket.description.toLowerCase().includes(searchQuery.toLowerCase()))
         : true;
+      
+      // Apply date filters if event_date is available
+      let matchesDateRange = true;
+      if (ticket.event_date && (startDate || endDate)) {
+        const ticketDate = new Date(ticket.event_date);
+        
+        if (startDate) {
+          matchesDateRange = ticketDate >= startDate;
+        }
+        
+        if (endDate && matchesDateRange) {
+          matchesDateRange = ticketDate <= endDate;
+        }
+      }
+      
+      return matchesSearch && matchesDateRange;
     });
   };
 

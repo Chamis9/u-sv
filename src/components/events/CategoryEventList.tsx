@@ -37,7 +37,7 @@ export function CategoryEventList() {
     filterTickets
   } = useEventFilters(events);
 
-  // Filter tickets based on search query
+  // Filter tickets based on search query and date range
   const filteredTickets = filterTickets(allCategoryTickets);
 
   // Dummy function to satisfy type checking - this will be replaced by the container
