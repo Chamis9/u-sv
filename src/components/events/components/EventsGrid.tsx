@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Ticket } from "lucide-react";
 import { useLanguage } from "@/features/language";
@@ -8,6 +9,7 @@ import { format } from 'date-fns';
 import { lv, enUS } from 'date-fns/locale';
 import { Event } from "@/hooks/useEvents";
 import { formatPrice } from "@/utils/formatters";
+import { TicketPreviewDialog } from "./TicketPreviewDialog";
 
 interface EventsGridProps {
   events: Event[];
@@ -23,9 +25,16 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
   onPurchase 
 }) => {
   const { currentLanguage } = useLanguage();
+  const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
   const locale = currentLanguage.code === 'lv' ? lv : enUS;
+
+  const handleViewTicket = (ticket: UserTicket) => {
+    setSelectedTicket(ticket);
+    setIsPreviewOpen(true);
+  };
 
   // Group tickets by event ID for easier access
   const ticketsByEvent = availableTickets.reduce((acc, ticket) => {
@@ -172,20 +181,36 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
                     </div>
                   </div>
                   
-                  <Button 
-                    onClick={() => onPurchase(ticket)} 
-                    className="whitespace-nowrap" 
-                    variant="orange"
-                  >
-                    <Ticket className="h-4 w-4 mr-1" />
-                    {t('Pirkt biļeti', 'Buy ticket')}
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={() => handleViewTicket(ticket)} 
+                      className="whitespace-nowrap" 
+                      variant="ghost"
+                    >
+                      {t('Skatīt', 'View')}
+                    </Button>
+                    <Button 
+                      onClick={() => onPurchase(ticket)} 
+                      className="whitespace-nowrap" 
+                      variant="orange"
+                    >
+                      <Ticket className="h-4 w-4 mr-1" />
+                      {t('Pirkt biļeti', 'Buy ticket')}
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
       )}
+
+      {/* Ticket Preview Dialog */}
+      <TicketPreviewDialog
+        ticket={selectedTicket}
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+      />
     </div>
   );
 }

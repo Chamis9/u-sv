@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
 import { Ticket, Calendar, MapPin, Clock, Tag, Eye } from "lucide-react";
 import { UserTicket } from "@/hooks/tickets";
 import { formatDate, formatPrice } from "@/utils/formatters";
+import { TicketPreviewDialog } from "./TicketPreviewDialog";
 
 interface UserTicketsProps {
   availableTickets: UserTicket[];
@@ -13,7 +14,15 @@ interface UserTicketsProps {
 
 export const UserTickets: React.FC<UserTicketsProps> = ({ availableTickets, onPurchase }) => {
   const { currentLanguage } = useLanguage();
+  const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
+
+  const handleViewTicket = (ticket: UserTicket) => {
+    setSelectedTicket(ticket);
+    setIsPreviewOpen(true);
+  };
 
   if (availableTickets.length === 0) {
     return (
@@ -88,7 +97,7 @@ export const UserTickets: React.FC<UserTicketsProps> = ({ availableTickets, onPu
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {/* View ticket details implementation could be added here */}}
+                  onClick={() => handleViewTicket(ticket)}
                   className="flex-1"
                 >
                   <Eye className="h-4 w-4 mr-2" />
@@ -109,6 +118,13 @@ export const UserTickets: React.FC<UserTicketsProps> = ({ availableTickets, onPu
           </div>
         ))}
       </div>
+      
+      {/* Ticket Preview Dialog */}
+      <TicketPreviewDialog
+        ticket={selectedTicket}
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+      />
     </div>
   );
 };
