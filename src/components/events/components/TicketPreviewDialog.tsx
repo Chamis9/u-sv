@@ -6,17 +6,20 @@ import { useLanguage } from "@/features/language";
 import { Calendar, MapPin, Clock, Tag, Ticket, User } from "lucide-react";
 import { formatDate, formatPrice } from "@/utils/formatters";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 interface TicketPreviewDialogProps {
   ticket: UserTicket | null;
   isOpen: boolean;
   onClose: () => void;
+  onPurchase?: (ticket: UserTicket) => void;
 }
 
 export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
   ticket,
   isOpen,
-  onClose
+  onClose,
+  onPurchase
 }) => {
   const { currentLanguage } = useLanguage();
   const [sellerName, setSellerName] = useState<string | null>(null);
@@ -55,6 +58,13 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
   }, [ticket, isOpen]);
 
   if (!ticket) return null;
+
+  const handlePurchase = () => {
+    if (onPurchase && ticket) {
+      onPurchase(ticket);
+      onClose();
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -123,9 +133,24 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
                 {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
               </div>
             </div>
+            
+            {/* Add purchase button */}
+            {onPurchase && (
+              <div className="flex justify-end mt-4">
+                <Button 
+                  variant="orange" 
+                  onClick={handlePurchase}
+                  className="flex items-center"
+                >
+                  <Ticket className="h-4 w-4 mr-2" />
+                  {t('Pirkt biļeti', 'Buy ticket')}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>
     </Dialog>
   );
 };
+

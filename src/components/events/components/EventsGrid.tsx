@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Ticket } from "lucide-react";
@@ -205,11 +204,12 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
         </div>
       )}
 
-      {/* Ticket Preview Dialog */}
+      {/* Ticket Preview Dialog - Updated to include onPurchase */}
       <TicketPreviewDialog
         ticket={selectedTicket}
         isOpen={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
+        onPurchase={onPurchase}
       />
     </div>
   );

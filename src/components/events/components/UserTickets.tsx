@@ -119,12 +119,14 @@ export const UserTickets: React.FC<UserTicketsProps> = ({ availableTickets, onPu
         ))}
       </div>
       
-      {/* Ticket Preview Dialog */}
+      {/* Ticket Preview Dialog - Updated to include onPurchase */}
       <TicketPreviewDialog
         ticket={selectedTicket}
         isOpen={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
+        onPurchase={onPurchase}
       />
     </div>
   );
 };
+
