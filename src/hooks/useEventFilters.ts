@@ -7,7 +7,7 @@ export const useEventFilters = (events?: Event[]) => {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
 
-  // Filter events based on search query and dates
+  // Filter events based on search query and dates, then sort by start_date
   const filteredEvents = events?.filter(event => {
     // Text search filter
     const matchesSearch = 
@@ -26,11 +26,18 @@ export const useEventFilters = (events?: Event[]) => {
     }
     
     return matchesSearch && matchesDateRange;
+  })
+  // Sort events by start_date (ascending - earlier events first)
+  .sort((a, b) => {
+    const dateA = new Date(a.start_date);
+    const dateB = new Date(b.start_date);
+    return dateA.getTime() - dateB.getTime();
   }) || [];
 
   // Helper function to filter tickets with the search query
   const filterTickets = (tickets: any[]) => {
-    return tickets.filter(ticket => {
+    // Filter tickets first
+    const filtered = tickets.filter(ticket => {
       // Apply text search
       const matchesSearch = searchQuery
         ? ticket.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -52,6 +59,16 @@ export const useEventFilters = (events?: Event[]) => {
       }
       
       return matchesSearch && matchesDateRange;
+    });
+
+    // Sort tickets by event_date if available (ascending - earlier events first)
+    return filtered.sort((a, b) => {
+      if (!a.event_date) return 1; // Items without dates go to the end
+      if (!b.event_date) return -1;
+      
+      const dateA = new Date(a.event_date);
+      const dateB = new Date(b.event_date);
+      return dateA.getTime() - dateB.getTime();
     });
   };
 
