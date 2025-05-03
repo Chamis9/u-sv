@@ -1,13 +1,12 @@
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Calendar, Ticket } from "lucide-react";
 import { useLanguage } from "@/features/language";
-import { Button } from "@/components/ui/button";
+import { Ticket } from "lucide-react";
 import { UserTicket } from "@/hooks/tickets";
-import { format } from 'date-fns';
-import { lv, enUS } from 'date-fns/locale';
 import { Event } from "@/hooks/useEvents";
-import { formatPrice } from "@/utils/formatters";
+import { EmptyStateMessage } from "./EmptyStateMessage";
+import { EventCard } from "./EventCard";
+import { StandaloneTicketCard } from "./StandaloneTicketCard";
 import { TicketPreviewDialog } from "./TicketPreviewDialog";
 
 interface EventsGridProps {
@@ -28,7 +27,6 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
-  const locale = currentLanguage.code === 'lv' ? lv : enUS;
 
   const handleViewTicket = (ticket: UserTicket) => {
     setSelectedTicket(ticket);
@@ -56,16 +54,19 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
   // Handle case with no events or tickets
   if (events.length === 0 && availableTickets.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-lg text-gray-500 dark:text-gray-400">
-          {t('Šajā kategorijā nav pasākumu vai biļešu', 'No events or tickets in this category')}
-        </p>
-      </div>
+      <EmptyStateMessage 
+        message={{
+          lv: 'Šajā kategorijā nav pasākumu vai biļešu',
+          en: 'No events or tickets in this category'
+        }}
+      />
     );
   }
 
   // Get standalone tickets (not associated with events or associated with events that aren't in our events array)
-  const standAloneTickets = availableTickets.filter(ticket => !ticket.event_id || !events.some(event => String(event.id) === ticket.event_id));
+  const standAloneTickets = availableTickets.filter(ticket => 
+    !ticket.event_id || !events.some(event => String(event.id) === ticket.event_id)
+  );
   
   return (
     <div className="space-y-12">
@@ -73,74 +74,21 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
       {events.length > 0 && (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {events.map((event) => {
-            // Convert event ID to string for comparison with ticket event_id
             const eventId = String(event.id);
             const eventTickets = ticketsByEvent[eventId] || [];
-            const lowestPrice = eventTickets.length > 0 
-              ? Math.min(...eventTickets.map(t => Number(t.price))) 
-              : 0;
-            const highestPrice = eventTickets.length > 0 
-              ? Math.max(...eventTickets.map(t => Number(t.price))) 
-              : 0;
             
-            // Format price range
-            let priceDisplay = '';
-            if (eventTickets.length > 0) {
-              if (lowestPrice === highestPrice) {
-                priceDisplay = `${lowestPrice} €`;
-              } else {
-                priceDisplay = `${lowestPrice} - ${highestPrice} €`;
-              }
-            }
-
-            // Format date
-            let formattedDate = '';
-            try {
-              formattedDate = format(new Date(event.start_date), 'dd.MM.yyyy', { locale });
-            } catch (e) {
-              formattedDate = event.start_date;
-            }
-
             return (
-              <div key={event.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
-                <div className="p-4 flex-grow">
-                  <h3 className="text-xl font-bold mb-2">{event.title}</h3>
-                  <div className="flex items-center text-sm mb-2 text-gray-600 dark:text-gray-300">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    {formattedDate}
-                  </div>
-                  {event.description && (
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
-                      {event.description}
-                    </p>
-                  )}
-                </div>
-                
-                <div className="p-4 bg-gray-50 dark:bg-gray-900 flex items-center justify-between">
-                  {eventTickets.length > 0 ? (
-                    <div className="text-lg font-bold">
-                      {priceDisplay}
-                    </div>
-                  ) : (
-                    <div className="text-gray-500 text-sm">
-                      {t('Nav pieejamu biļešu', 'No tickets available')}
-                    </div>
-                  )}
-                  
-                  <Link to={`/events/${event.category}/${event.id}`}>
-                    <Button className="whitespace-nowrap" variant="ghost">
-                      <Ticket className="h-4 w-4 mr-1" />
-                      {t('Biļetes', 'Tickets')}
-                    </Button>
-                  </Link>
-                </div>
-              </div>
+              <EventCard 
+                key={event.id}
+                event={event}
+                eventTickets={eventTickets}
+              />
             );
           })}
         </div>
       )}
 
-      {/* Standalone tickets section - always show this section if there are any standalone tickets */}
+      {/* Standalone tickets section */}
       {standAloneTickets.length > 0 && (
         <div>
           <h2 className="text-2xl font-bold mb-4 text-orange-500">
@@ -148,57 +96,12 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
           </h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {standAloneTickets.map((ticket) => (
-              <div key={ticket.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
-                <div className="p-4 flex-grow">
-                  <h3 className="text-xl font-bold mb-2">{ticket.title}</h3>
-                  {ticket.description && (
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                      {ticket.description}
-                    </p>
-                  )}
-                  {ticket.venue && (
-                    <div className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                      {t('Vieta', 'Venue')}: {ticket.venue}
-                    </div>
-                  )}
-                  {ticket.event_date && (
-                    <div className="text-sm text-gray-600 dark:text-gray-300 mb-3 flex items-center">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      {format(new Date(ticket.event_date), 'dd.MM.yyyy', { locale })}
-                    </div>
-                  )}
-                </div>
-                
-                <div className="p-4 bg-gray-50 dark:bg-gray-900 flex items-center justify-between">
-                  <div>
-                    <div className="text-lg font-bold">
-                      {formatPrice(ticket.price)}
-                    </div>
-                    {/* Always show quantity and price per unit, even for single tickets */}
-                    <div className="text-sm text-gray-500">
-                      {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <Button 
-                      onClick={() => handleViewTicket(ticket)} 
-                      className="whitespace-nowrap" 
-                      variant="ghost"
-                    >
-                      {t('Skatīt', 'View')}
-                    </Button>
-                    <Button 
-                      onClick={() => onPurchase(ticket)} 
-                      className="whitespace-nowrap" 
-                      variant="orange"
-                    >
-                      <Ticket className="h-4 w-4 mr-1" />
-                      {t('Pirkt biļeti', 'Buy ticket')}
-                    </Button>
-                  </div>
-                </div>
-              </div>
+              <StandaloneTicketCard
+                key={ticket.id}
+                ticket={ticket}
+                onViewTicket={handleViewTicket}
+                onPurchase={onPurchase}
+              />
             ))}
           </div>
         </div>
