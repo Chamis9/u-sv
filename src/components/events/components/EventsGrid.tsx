@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Ticket } from "lucide-react";
@@ -8,6 +7,7 @@ import { UserTicket } from "@/hooks/tickets";
 import { format } from 'date-fns';
 import { lv, enUS } from 'date-fns/locale';
 import { Event } from "@/hooks/useEvents";
+import { formatPrice } from "@/utils/formatters";
 
 interface EventsGridProps {
   events: Event[];
@@ -162,8 +162,14 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
                 </div>
                 
                 <div className="p-4 bg-gray-50 dark:bg-gray-900 flex items-center justify-between">
-                  <div className="text-lg font-bold">
-                    {ticket.price} €
+                  <div>
+                    <div className="text-lg font-bold">
+                      {formatPrice(ticket.price)}
+                    </div>
+                    {/* Always show quantity and price per unit, even for single tickets */}
+                    <div className="text-sm text-gray-500">
+                      {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
+                    </div>
                   </div>
                   
                   <Button 

@@ -73,11 +73,10 @@ export const UserTickets: React.FC<UserTicketsProps> = ({ availableTickets, onPu
                     {formatPrice(ticket.price)}
                   </div>
                   
-                  {ticket.quantity && ticket.quantity > 1 && (
-                    <div className="text-sm text-muted-foreground mt-1">
-                      {ticket.quantity} {t("biļetes", "tickets")} × {ticket.price_per_unit && formatPrice(ticket.price_per_unit)}
-                    </div>
-                  )}
+                  {/* Always show quantity and price per unit, even for single tickets */}
+                  <div className="text-sm text-muted-foreground mt-1">
+                    {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
+                  </div>
                 </div>
                 
                 <div className="ml-4 mt-1">
