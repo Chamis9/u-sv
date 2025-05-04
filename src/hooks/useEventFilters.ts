@@ -29,8 +29,17 @@ export const useEventFilters = (events?: Event[]) => {
   })
   // Sort events by start_date (ascending - earlier events first)
   .sort((a, b) => {
+    // Ensure we have valid date strings before creating Date objects
+    if (!a.start_date) return 1;
+    if (!b.start_date) return -1;
+    
     const dateA = new Date(a.start_date);
     const dateB = new Date(b.start_date);
+    
+    // Check for invalid dates
+    if (isNaN(dateA.getTime())) return 1;
+    if (isNaN(dateB.getTime())) return -1;
+    
     return dateA.getTime() - dateB.getTime();
   }) || [];
 
@@ -63,11 +72,18 @@ export const useEventFilters = (events?: Event[]) => {
 
     // Sort tickets by event_date if available (ascending - earlier events first)
     return filtered.sort((a, b) => {
+      // Handle cases where event_date is missing
+      if (!a.event_date && !b.event_date) return 0;
       if (!a.event_date) return 1; // Items without dates go to the end
       if (!b.event_date) return -1;
       
       const dateA = new Date(a.event_date);
       const dateB = new Date(b.event_date);
+      
+      // Check for invalid dates
+      if (isNaN(dateA.getTime())) return 1;
+      if (isNaN(dateB.getTime())) return -1;
+      
       return dateA.getTime() - dateB.getTime();
     });
   };
