@@ -75,6 +75,7 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
+      // Use the shared deleteTicketMutation function to ensure consistent behavior
       const success = await deleteTicketMutation(ticketId, userId);
       
       if (!success) {

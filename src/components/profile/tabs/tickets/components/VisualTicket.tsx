@@ -59,6 +59,13 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
     onView(ticket);
   };
   
+  const handleDeleteClick = () => {
+    if (onDelete) {
+      console.log("Delete button clicked for ticket:", ticket.id);
+      onDelete(ticket.id);
+    }
+  };
+  
   return (
     <>
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
@@ -155,10 +162,7 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => {
-                  console.log("Delete button clicked for ticket:", ticket.id);
-                  onDelete(ticket.id);
-                }}
+                onClick={handleDeleteClick}
                 className="flex-1"
               >
                 {t("Dzēst", "Delete")}

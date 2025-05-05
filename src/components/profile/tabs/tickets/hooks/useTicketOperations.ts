@@ -1,13 +1,13 @@
-
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { UserTicket, AddTicketData } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
+import { deleteTicketMutation } from "@/hooks/tickets/mutations/deleteTicketMutation";
 
 interface UseTicketOperationsProps {
   userId: string;
-  deleteTicket: (ticketId: string) => Promise<boolean>;
+  deleteTicket?: (ticketId: string) => Promise<boolean>;
   updateTicket: (ticketId: string, data: Partial<AddTicketData>) => Promise<{
     success: boolean;
     ticket?: UserTicket;
@@ -56,7 +56,9 @@ export function useTicketOperations({
     try {
       setIsDeleting(true);
       console.log(`Attempting to delete ticket: ${ticketToDelete} for user: ${userId}`);
-      const success = await deleteTicket(ticketToDelete);
+      
+      // Use the direct mutation function to ensure tickets are properly deleted from Supabase
+      const success = await deleteTicketMutation(ticketToDelete, userId);
       
       if (success) {
         toast({
