@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1"
 
@@ -111,12 +112,21 @@ serve(async (req) => {
       const body = await req.json()
       const { ticketId } = body
       
+      if (!ticketId) {
+        return new Response(JSON.stringify({ error: 'No ticket ID provided' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+      
+      console.log(`Attempting to delete ticket: ${ticketId} for user: ${user.id}`);
+      
       // First check if the ticket belongs to the user
       const { data: ticketData, error: fetchError } = await supabaseClient
         .from('tickets')
         .select('user_id, seller_id, owner_id, buyer_id, file_path')
         .eq('id', ticketId)
-        .single()
+        .maybeSingle()
       
       if (fetchError) {
         console.error('Error fetching ticket:', fetchError)
@@ -126,8 +136,23 @@ serve(async (req) => {
         })
       }
       
+      if (!ticketData) {
+        console.error('Ticket not found:', ticketId)
+        return new Response(JSON.stringify({ error: 'Ticket not found' }), {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+      
       // Verify ownership
       if (ticketData.seller_id !== user.id || ticketData.owner_id !== user.id || ticketData.buyer_id !== null) {
+        console.error('Unauthorized delete attempt:', {
+          ticketId,
+          userId: user.id,
+          sellerId: ticketData.seller_id,
+          ownerId: ticketData.owner_id,
+          buyerId: ticketData.buyer_id
+        })
         return new Response(JSON.stringify({ error: 'Unauthorized: You can only delete your own unsold tickets' }), {
           status: 403,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -136,6 +161,7 @@ serve(async (req) => {
       
       // Delete any associated file
       if (ticketData.file_path) {
+        console.log(`Deleting file from storage: ${ticketData.file_path}`)
         const { error: storageError } = await supabaseClient.storage
           .from('tickets')
           .remove([ticketData.file_path])
@@ -151,6 +177,9 @@ serve(async (req) => {
         .from('tickets')
         .delete()
         .eq('id', ticketId)
+        .eq('seller_id', user.id)
+        .eq('owner_id', user.id)
+        .is('buyer_id', null)
       
       if (deleteError) {
         console.error('Error deleting ticket:', deleteError)
@@ -160,6 +189,7 @@ serve(async (req) => {
         })
       }
       
+      console.log(`Successfully deleted ticket: ${ticketId}`)
       return new Response(JSON.stringify({ success: true }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

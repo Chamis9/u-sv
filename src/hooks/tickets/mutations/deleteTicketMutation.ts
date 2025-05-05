@@ -15,15 +15,20 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       .from('tickets')
       .select('id, file_path, owner_id, seller_id, buyer_id')
       .eq('id', ticketId)
-      .single();
+      .maybeSingle();
       
-    if (checkError || !ticketData) {
-      console.error(`Error verifying ticket ownership:`, checkError || 'Ticket not found');
+    if (checkError) {
+      console.error(`Error verifying ticket ownership:`, checkError);
+      return false;
+    }
+    
+    if (!ticketData) {
+      console.error('Ticket not found');
       return false;
     }
     
     // Extra check to ensure ticket belongs to user and hasn't been sold
-    if (ticketData.owner_id !== userId || ticketData.seller_id !== userId || ticketData.buyer_id !== null) {
+    if (ticketData.seller_id !== userId || ticketData.owner_id !== userId || ticketData.buyer_id !== null) {
       console.error('Cannot delete: Ticket does not belong to the current user or has already been sold');
       return false;
     }
@@ -43,13 +48,16 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
     }
     
     // Now delete the ticket record
-    const { error } = await supabase
+    const { error: deleteError } = await supabase
       .from('tickets')
       .delete()
-      .eq('id', ticketId);
+      .eq('id', ticketId)
+      .eq('owner_id', userId) // Ensure user owns the ticket
+      .eq('seller_id', userId) // Ensure user is the seller
+      .is('buyer_id', null);   // Ensure ticket hasn't been sold
       
-    if (error) {
-      console.error(`Error deleting ticket:`, error);
+    if (deleteError) {
+      console.error(`Error deleting ticket:`, deleteError);
       return false;
     }
     
