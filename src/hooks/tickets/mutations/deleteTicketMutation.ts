@@ -46,10 +46,7 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
     const { error } = await supabase
       .from('tickets')
       .delete()
-      .eq('id', ticketId)
-      .eq('owner_id', userId)
-      .eq('seller_id', userId)
-      .is('buyer_id', null);
+      .eq('id', ticketId);
       
     if (error) {
       console.error(`Error deleting ticket:`, error);

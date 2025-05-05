@@ -5,7 +5,7 @@ import { AddTicketData, UserTicket } from "./types";
 import { useTicketStorage } from "./useTicketStorage";
 
 export function useUserTickets(userId?: string) {
-  const { tickets, isLoading, error: queryError } = useTicketQueries(userId);
+  const { tickets, isLoading, error: queryError, refreshTickets } = useTicketQueries(userId);
   const { loading, addTicket, deleteTicket, updateTicket, error: mutationError } = useTicketMutations(userId);
   const { uploadTicketFile, deleteTicketFile, uploading, error: storageError } = useTicketStorage();
   
@@ -22,7 +22,8 @@ export function useUserTickets(userId?: string) {
     updateTicket,
     uploadTicketFile,
     deleteTicketFile,
-    uploading
+    uploading,
+    refreshTickets
   };
 }
 

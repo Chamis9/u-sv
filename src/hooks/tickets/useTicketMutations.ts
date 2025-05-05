@@ -1,8 +1,6 @@
 
 import { useState } from 'react';
-import { supabase } from "@/integrations/supabase/client";
 import { AddTicketData, UserTicket } from "./types";
-import { v4 as uuidv4 } from 'uuid';
 import { addTicketMutation } from './mutations/addTicketMutation';
 import { updateTicketMutation } from './mutations/updateTicketMutation';
 import { deleteTicketMutation } from './mutations/deleteTicketMutation';
