@@ -4,3 +4,5 @@ export * from "./EmptyTicketState";
 export * from "./TicketsContent";
 export * from "./TicketsGrid";
 export * from "./visual-ticket";
+export * from "./ticket-list";
+

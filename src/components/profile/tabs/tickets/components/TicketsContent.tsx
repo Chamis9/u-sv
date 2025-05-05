@@ -1,9 +1,8 @@
 
 import React from 'react';
 import { UserTicket } from '@/hooks/tickets/types';
-import { Pencil } from 'lucide-react';
 import { TicketsGrid } from './TicketsGrid';
-import { TicketsList, openTicketDialog } from '../../tickets/TicketsList';
+import { TicketsList, openTicketDialog } from './ticket-list';
 import { EmptyTicketState } from './EmptyTicketState';
 
 interface TicketsContentProps {
