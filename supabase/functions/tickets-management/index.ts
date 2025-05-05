@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1"
 
@@ -115,7 +114,7 @@ serve(async (req) => {
       // First check if the ticket belongs to the user
       const { data: ticketData, error: fetchError } = await supabaseClient
         .from('tickets')
-        .select('user_id, file_path')
+        .select('user_id, seller_id, owner_id, buyer_id, file_path')
         .eq('id', ticketId)
         .single()
       
@@ -128,8 +127,8 @@ serve(async (req) => {
       }
       
       // Verify ownership
-      if (ticketData.user_id !== user.id) {
-        return new Response(JSON.stringify({ error: 'Unauthorized: You can only delete your own tickets' }), {
+      if (ticketData.seller_id !== user.id || ticketData.owner_id !== user.id || ticketData.buyer_id !== null) {
+        return new Response(JSON.stringify({ error: 'Unauthorized: You can only delete your own unsold tickets' }), {
           status: 403,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })

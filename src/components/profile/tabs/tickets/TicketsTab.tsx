@@ -55,7 +55,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
     if (isAuthenticated && user?.id) {
       refreshTickets();
     }
-  }, [user.id, isAuthenticated]);
+  }, [user.id, isAuthenticated, refreshTickets]);
 
   console.log("TicketsTab render - Current user:", user);
   console.log("TicketsTab render - Authentication state:", isAuthenticated);

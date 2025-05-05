@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
@@ -8,21 +7,29 @@ import { formatDate, formatPrice } from "@/utils/formatters";
 import { TicketPreviewDialog } from "./TicketPreviewDialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { deleteTicketMutation } from "@/hooks/tickets/mutations/deleteTicketMutation";
 
 interface UserTicketsProps {
   availableTickets: UserTicket[];
   onPurchase: (ticket: UserTicket) => void;
   onDelete?: (ticketId: string) => void;
+  onTicketsChanged?: () => void;
 }
 
-export const UserTickets: React.FC<UserTicketsProps> = ({ availableTickets, onPurchase, onDelete }) => {
+export const UserTickets: React.FC<UserTicketsProps> = ({ 
+  availableTickets, 
+  onPurchase, 
+  onDelete,
+  onTicketsChanged 
+}) => {
   const { currentLanguage } = useLanguage();
   const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [ticketToDelete, setTicketToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const { user, isAuthenticated } = useAuth();
+  const { toast } = useToast();
   
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
@@ -36,18 +43,39 @@ export const UserTickets: React.FC<UserTicketsProps> = ({ availableTickets, onPu
   };
   
   const confirmDelete = async () => {
-    if (!ticketToDelete || !onDelete) return;
+    if (!ticketToDelete || !user?.id) return;
     
     try {
       setIsDeleting(true);
-      // Call the delete handler passed from parent
-      onDelete(ticketToDelete);
-      setTicketToDelete(null);
       
-      toast({
-        title: t("Biļete dzēsta", "Ticket deleted"),
-        description: t("Biļete ir veiksmīgi dzēsta", "Ticket has been successfully deleted")
-      });
+      // Use the direct mutation function to ensure proper deletion
+      if (onDelete) {
+        // If parent provided a delete handler, use it
+        onDelete(ticketToDelete);
+      } else {
+        // Otherwise, use the direct mutation
+        const success = await deleteTicketMutation(ticketToDelete, user.id);
+        
+        if (success) {
+          toast({
+            title: t("Biļete dzēsta", "Ticket deleted"),
+            description: t("Biļete ir veiksmīgi dzēsta", "Ticket has been successfully deleted")
+          });
+          
+          // Notify parent component to refresh tickets
+          if (onTicketsChanged) {
+            onTicketsChanged();
+          }
+        } else {
+          toast({
+            title: t("Kļūda", "Error"),
+            description: t("Neizdevās dzēst biļeti", "Failed to delete ticket"),
+            variant: "destructive"
+          });
+        }
+      }
+      
+      setTicketToDelete(null);
     } catch (error) {
       console.error("Error deleting ticket:", error);
       toast({
@@ -145,7 +173,7 @@ export const UserTickets: React.FC<UserTicketsProps> = ({ availableTickets, onPu
                 </Button>
                 
                 {/* Show Delete button if user is the owner of this ticket */}
-                {isAuthenticated && user?.id === ticket.seller_id && onDelete && (
+                {isAuthenticated && user?.id === ticket.seller_id && (
                   <Button
                     variant="destructive"
                     size="sm"

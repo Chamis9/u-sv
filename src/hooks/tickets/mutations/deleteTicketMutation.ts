@@ -42,7 +42,7 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       }
     }
     
-    // Delete the ticket from the database
+    // Now delete the ticket record
     const { error } = await supabase
       .from('tickets')
       .delete()
