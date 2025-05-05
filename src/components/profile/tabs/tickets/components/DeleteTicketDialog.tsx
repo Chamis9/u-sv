@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useLanguage } from "@/features/language";
-import {
+import { 
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -11,55 +11,62 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Loader2 } from "lucide-react";
 
 interface DeleteTicketDialogProps {
   open: boolean;
   onCancel: () => void;
-  onConfirm: () => void;
+  onConfirm: () => Promise<boolean>;
   isDeleting: boolean;
 }
 
-export function DeleteTicketDialog({ 
-  open, 
-  onCancel, 
-  onConfirm, 
-  isDeleting 
+export function DeleteTicketDialog({
+  open,
+  onCancel,
+  onConfirm,
+  isDeleting
 }: DeleteTicketDialogProps) {
   const { currentLanguage } = useLanguage();
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
-
+  
   return (
-    <AlertDialog open={open} onOpenChange={(isOpen) => !isOpen && onCancel()}>
-      <AlertDialogContent className="max-w-md mx-auto">
+    <AlertDialog open={open} onOpenChange={(isOpen) => {
+      if (!isOpen) onCancel();
+    }}>
+      <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-center">
-            {t("Vai tiešām vēlaties dzēst šo biļeti?", "Delete this ticket?")}
+          <AlertDialogTitle>
+            {t("Vai tiešām vēlaties dzēst šo biļeti?", "Are you sure you want to delete this ticket?")}
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-center">
+          <AlertDialogDescription>
             {t(
-              "Šī darbība ir neatgriezeniska. Biļete tiks neatgriezeniski izdzēsta.", 
-              "This action cannot be undone. This ticket will be permanently deleted."
+              "Šī darbība ir neatgriezeniska. Biļete tiks dzēsta pilnībā.",
+              "This action cannot be undone. The ticket will be permanently deleted."
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="flex justify-center gap-3 sm:justify-center">
-          <AlertDialogCancel 
-            disabled={isDeleting}
-            className="min-w-24"
-          >
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={isDeleting}>
             {t("Atcelt", "Cancel")}
           </AlertDialogCancel>
-          <AlertDialogAction 
-            onClick={onConfirm}
+          <AlertDialogAction
+            onClick={(e) => {
+              e.preventDefault();
+              onConfirm();
+            }}
             disabled={isDeleting}
-            className="min-w-24 bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className="bg-destructive hover:bg-destructive/90"
           >
-            {isDeleting ? 
-              t("Dzēšana...", "Deleting...") : 
-              t("Dzēst", "Delete")
-            }
+            {isDeleting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {t("Dzēš...", "Deleting...")}
+              </>
+            ) : (
+              t("Jā, dzēst", "Yes, delete")
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
