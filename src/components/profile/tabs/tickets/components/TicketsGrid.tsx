@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { UserTicket } from '@/hooks/tickets/types';
-import { VisualTicket } from './VisualTicket';
+import { VisualTicket } from './visual-ticket';
 
 interface TicketsGridProps {
   tickets: UserTicket[];
