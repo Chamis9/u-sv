@@ -3,11 +3,19 @@ import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
 import { getCategoryIdFromName } from '@/components/events/utils/categoryUtils';
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
+import { useLanguage } from "@/features/language";
+import { deleteTicketMutation } from './tickets/mutations/deleteTicketMutation';
 
 export const useCategoryTickets = (category?: string) => {
   const [allCategoryTickets, setAllCategoryTickets] = useState<UserTicket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { user, isAuthenticated } = useAuth();
+  const { currentLanguage } = useLanguage();
+
+  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
   useEffect(() => {
     const fetchAvailableTickets = async () => {
@@ -72,8 +80,56 @@ export const useCategoryTickets = (category?: string) => {
   }, [category]);
 
   // Function to update state after ticket purchase
-  const removeTicketFromState = (ticketId: string) => {
-    setAllCategoryTickets(prev => prev.filter(t => t.id !== ticketId));
+  const removeTicketFromState = async (ticketId: string) => {
+    console.log("Attempting to remove ticket from state:", ticketId);
+    
+    if (isAuthenticated && user?.id) {
+      try {
+        // Find the ticket in our local state
+        const ticketToDelete = allCategoryTickets.find(ticket => ticket.id === ticketId);
+        
+        // Check if the user is the seller of this ticket
+        if (!ticketToDelete || ticketToDelete.seller_id !== user.id) {
+          console.error("User is not authorized to delete this ticket or ticket not found");
+          toast({
+            title: t("Kļūda", "Error"),
+            description: t("Nav tiesību dzēst šo biļeti", "You are not authorized to delete this ticket"),
+            variant: "destructive"
+          });
+          return;
+        }
+        
+        // Delete the ticket from Supabase using the mutation function
+        const success = await deleteTicketMutation(ticketId, user.id);
+        
+        if (success) {
+          // If deletion was successful, update the local state
+          setAllCategoryTickets(prev => prev.filter(t => t.id !== ticketId));
+          console.log("Successfully deleted ticket:", ticketId);
+        } else {
+          console.error("Failed to delete ticket from database");
+          toast({
+            title: t("Kļūda", "Error"),
+            description: t("Neizdevās dzēst biļeti", "Failed to delete the ticket"),
+            variant: "destructive"
+          });
+        }
+      } catch (err) {
+        console.error("Error in removeTicketFromState:", err);
+        toast({
+          title: t("Kļūda", "Error"),
+          description: t("Neizdevās dzēst biļeti", "Failed to delete the ticket"),
+          variant: "destructive"
+        });
+      }
+    } else {
+      console.error("User not authenticated, cannot delete ticket");
+      toast({
+        title: t("Nav pieslēgts", "Not logged in"),
+        description: t("Lai dzēstu biļeti, lūdzu pieslēdzieties", "Please log in to delete a ticket"),
+        variant: "destructive"
+      });
+    }
   };
 
   return {

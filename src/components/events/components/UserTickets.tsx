@@ -2,26 +2,66 @@
 import React, { useState } from 'react';
 import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
-import { Ticket, Calendar, MapPin, Clock, Tag, Eye } from "lucide-react";
+import { Ticket, Calendar, MapPin, Clock, Tag, Eye, Trash2 } from "lucide-react";
 import { UserTicket } from "@/hooks/tickets";
 import { formatDate, formatPrice } from "@/utils/formatters";
 import { TicketPreviewDialog } from "./TicketPreviewDialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
 
 interface UserTicketsProps {
   availableTickets: UserTicket[];
   onPurchase: (ticket: UserTicket) => void;
+  onDelete?: (ticketId: string) => void;
 }
 
-export const UserTickets: React.FC<UserTicketsProps> = ({ availableTickets, onPurchase }) => {
+export const UserTickets: React.FC<UserTicketsProps> = ({ availableTickets, onPurchase, onDelete }) => {
   const { currentLanguage } = useLanguage();
   const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [ticketToDelete, setTicketToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { user, isAuthenticated } = useAuth();
   
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
   const handleViewTicket = (ticket: UserTicket) => {
     setSelectedTicket(ticket);
     setIsPreviewOpen(true);
+  };
+  
+  const handleDeleteClick = (ticketId: string) => {
+    setTicketToDelete(ticketId);
+  };
+  
+  const confirmDelete = async () => {
+    if (!ticketToDelete || !onDelete) return;
+    
+    try {
+      setIsDeleting(true);
+      // Call the delete handler passed from parent
+      onDelete(ticketToDelete);
+      setTicketToDelete(null);
+      
+      toast({
+        title: t("Biļete dzēsta", "Ticket deleted"),
+        description: t("Biļete ir veiksmīgi dzēsta", "Ticket has been successfully deleted")
+      });
+    } catch (error) {
+      console.error("Error deleting ticket:", error);
+      toast({
+        title: t("Kļūda", "Error"),
+        description: t("Neizdevās dzēst biļeti", "Failed to delete ticket"),
+        variant: "destructive"
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+  
+  const cancelDelete = () => {
+    setTicketToDelete(null);
   };
 
   if (availableTickets.length === 0) {
@@ -104,15 +144,32 @@ export const UserTickets: React.FC<UserTicketsProps> = ({ availableTickets, onPu
                   {t("Skatīt", "View")}
                 </Button>
                 
-                <Button
-                  variant="orange"
-                  size="sm"
-                  onClick={() => onPurchase(ticket)}
-                  className="flex-1"
-                >
-                  <Ticket className="h-4 w-4 mr-2" />
-                  {t("Pirkt biļeti", "Buy ticket")}
-                </Button>
+                {/* Show Delete button if user is the owner of this ticket */}
+                {isAuthenticated && user?.id === ticket.seller_id && onDelete && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDeleteClick(ticket.id)}
+                    className="flex-1"
+                    disabled={isDeleting}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    {t("Dzēst", "Delete")}
+                  </Button>
+                )}
+                
+                {/* Don't show Buy button if user is the seller */}
+                {(!isAuthenticated || user?.id !== ticket.seller_id) && (
+                  <Button
+                    variant="orange"
+                    size="sm"
+                    onClick={() => onPurchase(ticket)}
+                    className="flex-1"
+                  >
+                    <Ticket className="h-4 w-4 mr-2" />
+                    {t("Pirkt biļeti", "Buy ticket")}
+                  </Button>
+                )}
               </div>
             </div>
           </div>
@@ -126,7 +183,35 @@ export const UserTickets: React.FC<UserTicketsProps> = ({ availableTickets, onPu
         onClose={() => setIsPreviewOpen(false)}
         onPurchase={onPurchase}
       />
+      
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={ticketToDelete !== null} onOpenChange={(open) => !open && cancelDelete()}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t("Vai tiešām vēlaties dzēst šo biļeti?", "Delete this ticket?")}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t(
+                "Šī darbība ir neatgriezeniska. Biļete tiks neatgriezeniski izdzēsta.", 
+                "This action cannot be undone. This ticket will be permanently deleted."
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>
+              {t("Atcelt", "Cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? t("Dzēšana...", "Deleting...") : t("Dzēst", "Delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
-

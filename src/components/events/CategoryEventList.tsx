@@ -40,9 +40,10 @@ export function CategoryEventList() {
   // Filter tickets based on search query and date range
   const filteredTickets = filterTickets(allCategoryTickets);
 
-  // Dummy function to satisfy type checking - this will be replaced by the container
-  const dummyOnPurchase = (ticket: UserTicket) => {
-    console.log("Dummy purchase function called, will be replaced by container", ticket);
+  // Function to handle ticket deletion from the UI
+  const handleTicketDelete = (ticketId: string) => {
+    console.log("Removing ticket from state:", ticketId);
+    removeTicketFromState(ticketId);
   };
 
   if (error) {
@@ -92,8 +93,14 @@ export function CategoryEventList() {
         <UserTickets
           availableTickets={filteredTickets}
           onPurchase={dummyOnPurchase}
+          onDelete={handleTicketDelete}
         />
       </EventTicketPurchaseContainer>
     </EventsPageLayout>
   );
+  
+  // Dummy function to satisfy type checking - this will be replaced by the container
+  function dummyOnPurchase(ticket: UserTicket) {
+    console.log("Dummy purchase function called, will be replaced by container", ticket);
+  }
 }
