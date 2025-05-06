@@ -23,7 +23,7 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
     }
     
     if (!ticketData) {
-      console.error('Ticket not found');
+      console.error('Ticket not found or already deleted');
       return false;
     }
     
@@ -33,8 +33,7 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       return false;
     }
     
-    // Start a transaction using direct database operations instead of the edge function
-    // 1. Copy the ticket to deleted_tickets table
+    // Insert into deleted_tickets first
     const { error: insertError } = await supabase
       .from('deleted_tickets')
       .insert({
@@ -64,7 +63,7 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       return false;
     }
     
-    // 2. Delete the original ticket
+    // Now delete the original ticket
     const { error: deleteError } = await supabase
       .from('tickets')
       .delete()

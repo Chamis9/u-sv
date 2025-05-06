@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { UserTicket, AddTicketData } from "@/hooks/tickets";
@@ -57,7 +58,7 @@ export function useTicketOperations({
       setIsDeleting(true);
       console.log(`Attempting to delete ticket: ${ticketToDelete} for user: ${userId}`);
       
-      // Use the direct mutation function to ensure tickets are properly deleted from Supabase
+      // Use the direct deletion function
       const success = await deleteTicketMutation(ticketToDelete, userId);
       
       if (success) {
@@ -87,8 +88,8 @@ export function useTicketOperations({
         toast({
           title: t("Kļūda", "Error"),
           description: t(
-            "Neizdevās dzēst biļeti. Pārbaudiet, vai biļete nav jau pārdota.", 
-            "Failed to delete the ticket. Please check if the ticket has already been sold."
+            "Neizdevās dzēst biļeti. Pārbaudiet, vai biļete nav jau izdzēsta.", 
+            "Failed to delete the ticket. Please check if the ticket has already been deleted."
           ),
           variant: "destructive"
         });

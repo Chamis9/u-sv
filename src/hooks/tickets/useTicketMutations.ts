@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { AddTicketData, UserTicket } from "./types";
 import { addTicketMutation } from './mutations/addTicketMutation';
@@ -72,7 +73,7 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
-      // Use the direct deletion function that bypasses the edge function
+      // Use the direct deletion function
       const success = await deleteTicketMutation(ticketId, userId);
       
       if (!success) {

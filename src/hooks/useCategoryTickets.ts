@@ -1,9 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
 import { getCategoryIdFromName } from '@/components/events/utils/categoryUtils';
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/features/language";
 import { deleteTicketMutation } from './tickets/mutations/deleteTicketMutation';
 
@@ -13,6 +14,7 @@ export const useCategoryTickets = (category?: string) => {
   const [error, setError] = useState<Error | null>(null);
   const { user, isAuthenticated } = useAuth();
   const { currentLanguage } = useLanguage();
+  const { toast } = useToast();
 
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
@@ -98,7 +100,7 @@ export const useCategoryTickets = (category?: string) => {
           return;
         }
         
-        // Delete the ticket using the updated direct mutation function
+        // Delete the ticket using the direct mutation function
         const success = await deleteTicketMutation(ticketId, user.id);
         
         if (success) {
