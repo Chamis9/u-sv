@@ -33,8 +33,41 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       return false;
     }
     
-    // Delete the original ticket directly without trying to save to deleted_tickets
-    // This is a workaround for the RLS policy issue
+    // Copy ticket to deleted_tickets table with all fields
+    const { error: insertError } = await supabase
+      .from('deleted_tickets')
+      .insert({
+        original_id: ticketData.id,
+        title: ticketData.title,
+        description: ticketData.description,
+        price: ticketData.price,
+        category_name: ticketData.category_name,
+        venue: ticketData.venue,
+        seat_info: ticketData.seat_info,
+        file_path: ticketData.file_path,
+        category_id: ticketData.category_id,
+        event_date: ticketData.event_date,
+        event_time: ticketData.event_time,
+        event_id: ticketData.event_id,
+        price_per_unit: ticketData.price_per_unit || ticketData.price,
+        quantity: ticketData.quantity || 1,
+        user_id: ticketData.user_id,
+        seller_id: ticketData.seller_id,
+        buyer_id: ticketData.buyer_id,
+        owner_id: ticketData.owner_id,
+        created_at: ticketData.created_at,
+        updated_at: ticketData.updated_at
+      });
+      
+    if (insertError) {
+      console.error('Error copying ticket to deleted_tickets table:', insertError);
+      // Continue with deletion even if copying to deleted_tickets fails
+      // This ensures the user can still delete their ticket
+    } else {
+      console.log('Successfully copied ticket to deleted_tickets table');
+    }
+    
+    // Now delete the original ticket
     const { error: deleteError } = await supabase
       .from('tickets')
       .delete()
@@ -44,7 +77,7 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       .is('buyer_id', null);
       
     if (deleteError) {
-      console.error('Error deleting ticket:', deleteError);
+      console.error('Error deleting original ticket:', deleteError);
       return false;
     }
     

@@ -112,6 +112,7 @@ export type Database = {
           seller_id: string
           status: string
           title: string | null
+          updated_at: string | null
           user_id: string
           venue: string | null
         }
@@ -136,6 +137,7 @@ export type Database = {
           seller_id: string
           status?: string
           title?: string | null
+          updated_at?: string | null
           user_id: string
           venue?: string | null
         }
@@ -160,6 +162,7 @@ export type Database = {
           seller_id?: string
           status?: string
           title?: string | null
+          updated_at?: string | null
           user_id?: string
           venue?: string | null
         }
