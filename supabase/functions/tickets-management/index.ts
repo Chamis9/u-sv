@@ -191,18 +191,11 @@ serve(async (req) => {
         })
       }
       
-      // If ticket has a file, but we don't delete it from storage
-      // This way we keep the file accessible in case it needs to be recovered
-      // Just keep a reference to it in the deleted_tickets table
-      
-      // Now delete the original ticket record
+      // Now delete the original ticket record - CRITICAL PART THAT MUST WORK
       const { error: deleteError } = await supabaseClient
         .from('tickets')
         .delete()
         .eq('id', ticketId)
-        .eq('seller_id', user.id)
-        .eq('owner_id', user.id)
-        .is('buyer_id', null)
       
       if (deleteError) {
         console.error('Error deleting original ticket:', deleteError)

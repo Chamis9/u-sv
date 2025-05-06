@@ -58,8 +58,10 @@ export function useTicketOperations({
       setIsDeleting(true);
       console.log(`Attempting to delete ticket: ${ticketToDelete} for user: ${userId}`);
       
-      // Use the direct deletion function
-      const success = await deleteTicketMutation(ticketToDelete, userId);
+      // Use the direct deletion function or the provided one
+      const success = deleteTicket 
+        ? await deleteTicket(ticketToDelete)
+        : await deleteTicketMutation(ticketToDelete, userId);
       
       if (success) {
         toast({

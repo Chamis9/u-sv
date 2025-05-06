@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
@@ -61,6 +62,9 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
             title: t("Biļete dzēsta", "Ticket deleted"),
             description: t("Biļete ir veiksmīgi dzēsta", "Ticket has been successfully deleted")
           });
+          
+          // Remove ticket from local state immediately
+          const updatedTickets = availableTickets.filter(ticket => ticket.id !== ticketToDelete);
           
           // Notify parent component to refresh tickets
           if (onTicketsChanged) {

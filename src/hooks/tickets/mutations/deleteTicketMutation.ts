@@ -8,7 +8,7 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
   }
 
   try {
-    console.log(`Soft deleting ticket with ID: ${ticketId}, User ID: ${userId}`);
+    console.log(`Deleting ticket with ID: ${ticketId}, User ID: ${userId}`);
     
     // First verify the ticket exists and belongs to the user before deletion
     const { data: ticketData, error: checkError } = await supabase
@@ -67,14 +67,12 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       console.log('Successfully copied ticket to deleted_tickets table');
     }
     
-    // Now delete the original ticket
+    // Now delete the original ticket - CRITICAL PART
     const { error: deleteError } = await supabase
       .from('tickets')
       .delete()
       .eq('id', ticketId)
-      .eq('seller_id', userId)
-      .eq('owner_id', userId)
-      .is('buyer_id', null);
+      .eq('seller_id', userId);
       
     if (deleteError) {
       console.error('Error deleting original ticket:', deleteError);
