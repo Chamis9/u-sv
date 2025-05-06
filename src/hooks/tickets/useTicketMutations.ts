@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { AddTicketData, UserTicket } from "./types";
 import { addTicketMutation } from './mutations/addTicketMutation';
