@@ -11,6 +11,8 @@ import { NameFields } from "./components/NameFields";
 import { PhoneField } from "./components/PhoneField";
 import { PasswordFields } from "./components/PasswordFields";
 import { getRegistrationFormSchema, type RegistrationFormData } from "../schema";
+import { useState } from "react";
+import { useUserAuth } from "@/hooks/useUserAuth";
 
 interface RegistrationFormProps {
   translations: any;
@@ -21,6 +23,7 @@ interface RegistrationFormProps {
 export function RegistrationForm({ translations, languageCode, onClose }: RegistrationFormProps) {
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
+  const { register: registerUser } = useUserAuth();
 
   const form = useForm<RegistrationFormData>({
     resolver: zodResolver(getRegistrationFormSchema(languageCode)),
@@ -39,10 +42,7 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
     setIsLoading(true);
     
     try {
-      const phoneNumber = values.phoneNumber 
-        ? `${values.countryCode}${values.phoneNumber}` 
-        : null;
-
+      // Save email in local storage
       const savedEmails = localStorage.getItem('globalPreviousEmails');
       const emails = savedEmails ? JSON.parse(savedEmails) : [];
       if (!emails.includes(values.email)) {
@@ -51,24 +51,15 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
         localStorage.setItem('globalPreviousEmails', JSON.stringify(updatedEmails));
       }
 
-      const { error } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: {
-          data: {
-            first_name: values.firstName,
-            last_name: values.lastName,
-            phone: phoneNumber,
-          }
-        }
+      // Register the user through our custom hook
+      const success = await registerUser(values.email, values.password, {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        countryCode: values.countryCode,
+        phoneNumber: values.phoneNumber,
       });
 
-      if (error) {
-        toast({
-          variant: "destructive",
-          description: translations.registrationError,
-        });
-      } else {
+      if (success) {
         toast({
           description: translations.registrationSuccess,
         });
@@ -85,6 +76,7 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
     }
   };
 
+  // Handle autofill detection
   React.useEffect(() => {
     let observer: MutationObserver | null = null;
     
