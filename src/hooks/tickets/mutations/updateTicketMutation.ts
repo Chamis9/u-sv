@@ -32,13 +32,11 @@ export async function updateTicketMutation(
     
     console.log(`Final update data:`, updateData);
     
-    // Fix: Use select('*') rather than select() to ensure we get all fields back
+    // Use the Supabase RLS policies we just created to handle authorization
     const { data: responseData, error } = await supabase
       .from('tickets')
       .update(updateData)
       .eq('id', ticketId)
-      // Remove owner_id check to allow updating tickets regardless of who created them
-      // as long as they have permission via RLS
       .select('*')
       .maybeSingle();
       
@@ -51,7 +49,10 @@ export async function updateTicketMutation(
     
     // Type check and create the ticket object with fallback values
     if (!responseData) {
-      return { success: false, error: 'No data returned after update. Ticket might not exist or you may not have permission to update it.' };
+      return { 
+        success: false, 
+        error: 'No data returned after update. Ticket might not exist or you may not have permission to update it.' 
+      };
     }
     
     // Create the ticket object with the response data
