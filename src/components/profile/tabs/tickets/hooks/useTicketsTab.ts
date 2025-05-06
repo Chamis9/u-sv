@@ -1,94 +1,78 @@
 
-import { useEffect } from "react";
-import { useUserTickets } from "@/hooks/tickets";
-import { useLanguage } from "@/features/language";
+import { useState, useEffect, useCallback } from "react";
 import { User } from "@/types/users";
+import { useUserTickets, UserTicket, AddTicketData } from "@/hooks/tickets";
+import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
-import { useTicketDialogs } from "./useTicketDialogs";
 import { useTicketOperations } from "./useTicketOperations";
-import { useTicketRefresh } from "./useTicketRefresh";
 
 export function useTicketsTab(user: User) {
-  const { currentLanguage } = useLanguage();
   const { isAuthenticated } = useAuth();
-  
-  // Custom hooks
-  const { 
-    addTicketOpen, 
-    setAddTicketOpen,
-    editTicketOpen,
-    setEditTicketOpen,
-    currentEditTicket,
-    setCurrentEditTicket,
-    openEditTicketDialog
-  } = useTicketDialogs();
-  
-  const { 
-    tickets, 
-    isLoading, 
-    loading, 
-    deleteTicket,
-    updateTicket
-  } = useUserTickets(user?.id || '');
-  
-  const { 
-    openDeleteConfirmation, 
-    confirmDelete, 
-    cancelDelete, 
-    ticketToDelete, 
-    isDeleting, 
-    handleUpdateTicket, 
-    t 
+  const { currentLanguage } = useLanguage();
+  const { tickets, isLoading, refreshTickets, updateTicket } = useUserTickets(user?.id);
+  const [addedTickets, setAddedTickets] = useState<UserTicket[]>([]);
+  const [purchasedTickets, setPurchasedTickets] = useState<UserTicket[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [addTicketOpen, setAddTicketOpen] = useState(false);
+  const [editTicketOpen, setEditTicketOpen] = useState(false);
+  const [currentEditTicket, setCurrentEditTicket] = useState<UserTicket | null>(null);
+
+  // Setup ticket operations (delete, update, etc.)
+  const {
+    openDeleteConfirmation,
+    confirmDelete,
+    cancelDelete,
+    ticketToDelete,
+    isDeleting,
+    handleUpdateTicket,
+    t
   } = useTicketOperations({
     userId: user?.id || '',
-    deleteTicket,
     updateTicket
   });
   
-  const { refreshTickets } = useTicketRefresh({ 
-    userId: user?.id, 
-    isAuthenticated 
-  });
-  
-  // Filter tickets based on seller_id and buyer_id
-  const addedTickets = tickets.filter(ticket => 
-    ticket.seller_id === user?.id
-  );
-  
-  const purchasedTickets = tickets.filter(ticket => 
-    ticket.buyer_id === user?.id
-  );
-  
-  console.log("Current auth state:", { isAuthenticated, userId: user?.id });
-  console.log("Filtered tickets:", {
-    total: tickets.length,
-    added: addedTickets.length,
-    purchased: purchasedTickets.length,
-    ticketDetails: tickets
-  });
-  
-  // Only refresh tickets once when component mounts
+  // Sort tickets into added and purchased categories
   useEffect(() => {
-    if (isAuthenticated && user?.id) {
-      console.log("Initial ticket refresh for user:", user.id);
-      refreshTickets();
-    } else {
-      console.log("Not authenticated or no user ID, skipping ticket refresh");
+    // Skip if not authenticated (prevents premature data fetching)
+    if (!isAuthenticated) {
+      return;
     }
-  }, [user?.id, isAuthenticated]);
-  
+    
+    const filterTickets = () => {
+      const added: UserTicket[] = [];
+      const purchased: UserTicket[] = [];
+      
+      if (!tickets || !user?.id) {
+        return { added, purchased };
+      }
+      
+      tickets.forEach(ticket => {
+        if (ticket.seller_id === user.id) {
+          added.push(ticket);
+        } else if (ticket.buyer_id === user.id) {
+          purchased.push(ticket);
+        }
+      });
+      
+      // Sort tickets by creation date (newest first)
+      return {
+        added: added.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
+        purchased: purchased.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      };
+    };
+    
+    const { added, purchased } = filterTickets();
+    setAddedTickets(added);
+    setPurchasedTickets(purchased);
+  }, [tickets, user?.id, isAuthenticated]);
+
   return {
-    tickets,
     addedTickets,
     purchasedTickets,
-    isLoading,
+    isLoading: isLoading || loading,
     loading,
     addTicketOpen,
     setAddTicketOpen,
-    editTicketOpen,
-    setEditTicketOpen,
-    currentEditTicket,
-    setCurrentEditTicket,
     openDeleteConfirmation,
     confirmDelete,
     cancelDelete,
@@ -96,9 +80,11 @@ export function useTicketsTab(user: User) {
     isDeleting,
     handleUpdateTicket,
     refreshTickets,
+    editTicketOpen,
+    setEditTicketOpen,
+    currentEditTicket,
+    setCurrentEditTicket,
     t,
-    isAuthenticated,
-    // Helper function to open edit dialog
-    onEdit: openEditTicketDialog
+    isAuthenticated
   };
 }

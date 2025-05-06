@@ -1,16 +1,20 @@
 
-import React from 'react';
-import { UserTicket } from '@/hooks/tickets/types';
-import { TicketsGrid } from './TicketsGrid';
-import { TicketsList, openTicketDialog } from './ticket-list';
-import { EmptyTicketState } from './EmptyTicketState';
+import React, { useState } from "react";
+import { UserTicket } from "@/hooks/tickets";
+import { useLanguage } from "@/features/language";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AlertCircle, Ticket } from "lucide-react";
+import { VisualTicket } from "./VisualTicket";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { TicketDetailDialog } from "./ticket-list/TicketDetailDialog";
 
 interface TicketsContentProps {
   tickets: UserTicket[];
   isLoading: boolean;
-  onDelete: (id: string) => void;
+  onDelete: (ticketId: string) => void;
   onEdit?: (ticket: UserTicket) => void;
-  loadingDelete: boolean;
+  loadingDelete?: boolean;
   ticketType: "added" | "purchased";
 }
 
@@ -19,47 +23,66 @@ export function TicketsContent({
   isLoading, 
   onDelete, 
   onEdit,
-  loadingDelete, 
-  ticketType 
+  loadingDelete = false,
+  ticketType
 }: TicketsContentProps) {
-  const handleView = (ticket: UserTicket) => {
-    openTicketDialog(ticket);
-  };
+  const { currentLanguage } = useLanguage();
+  const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
   
+  const t = (lvText: string, enText: string) => 
+    currentLanguage.code === 'lv' ? lvText : enText;
+
   if (isLoading) {
     return (
-      <div className="flex justify-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+      <div className="space-y-4">
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-24 w-full" />
       </div>
     );
   }
-  
+
   if (tickets.length === 0) {
-    return <EmptyTicketState ticketType={ticketType} />;
+    return (
+      <Alert className="bg-gray-50/50 dark:bg-gray-800/50 border-none">
+        <Ticket className="h-5 w-5 text-muted-foreground" />
+        <AlertTitle>{ticketType === "added" 
+          ? t("Nav pievienotu biļešu", "No added tickets") 
+          : t("Nav iegādātu biļešu", "No purchased tickets")}
+        </AlertTitle>
+        <AlertDescription>
+          {ticketType === "added" 
+            ? t("Jūsu pievienotās biļetes parādīsies šeit", "Your added tickets will appear here") 
+            : t("Jūsu iegādātās biļetes parādīsies šeit", "Your purchased tickets will appear here")}
+        </AlertDescription>
+      </Alert>
+    );
   }
-  
+
   return (
-    <div className="space-y-6">
-      <div className="hidden md:block">
-        <TicketsList 
-          tickets={tickets} 
-          onDelete={onDelete} 
-          isLoading={loadingDelete} 
-          ticketType={ticketType}
-          onView={handleView}
-          onEdit={onEdit}
-        />
-      </div>
-      
-      <div className="md:hidden">
-        <TicketsGrid 
-          tickets={tickets} 
-          onDelete={onDelete} 
-          onView={handleView}
-          onEdit={onEdit}
-          ticketType={ticketType} 
-        />
-      </div>
-    </div>
+    <>
+      <ScrollArea className="h-[600px] pr-4">
+        <div className="space-y-4">
+          {tickets.map((ticket) => (
+            <VisualTicket
+              key={ticket.id}
+              ticket={ticket}
+              onView={setSelectedTicket}
+              onEdit={onEdit}
+              onDelete={!loadingDelete ? onDelete : undefined}
+              ticketType={ticketType}
+            />
+          ))}
+        </div>
+      </ScrollArea>
+
+      {/* Ticket Details Dialog */}
+      <TicketDetailDialog 
+        selectedTicket={selectedTicket}
+        setSelectedTicket={setSelectedTicket}
+        onEdit={onEdit}
+        ticketType={ticketType}
+      />
+    </>
   );
 }
