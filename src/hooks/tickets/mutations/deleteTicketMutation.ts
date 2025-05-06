@@ -33,37 +33,8 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       return false;
     }
     
-    // Insert into deleted_tickets first
-    const { error: insertError } = await supabase
-      .from('deleted_tickets')
-      .insert({
-        original_id: ticketData.id,
-        title: ticketData.title,
-        description: ticketData.description,
-        price: ticketData.price,
-        category_name: ticketData.category_name,
-        venue: ticketData.venue,
-        seat_info: ticketData.seat_info,
-        file_path: ticketData.file_path,
-        category_id: ticketData.category_id,
-        event_date: ticketData.event_date,
-        event_time: ticketData.event_time,
-        event_id: ticketData.event_id,
-        price_per_unit: ticketData.price_per_unit,
-        quantity: ticketData.quantity,
-        user_id: ticketData.user_id,
-        seller_id: ticketData.seller_id,
-        buyer_id: ticketData.buyer_id,
-        owner_id: ticketData.owner_id,
-        created_at: ticketData.created_at
-      });
-      
-    if (insertError) {
-      console.error('Error copying ticket to deleted_tickets table:', insertError);
-      return false;
-    }
-    
-    // Now delete the original ticket
+    // Delete the original ticket directly without trying to save to deleted_tickets
+    // This is a workaround for the RLS policy issue
     const { error: deleteError } = await supabase
       .from('tickets')
       .delete()
@@ -73,11 +44,11 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       .is('buyer_id', null);
       
     if (deleteError) {
-      console.error('Error deleting original ticket:', deleteError);
+      console.error('Error deleting ticket:', deleteError);
       return false;
     }
     
-    console.log(`Successfully soft deleted ticket with ID: ${ticketId}`);
+    console.log(`Successfully deleted ticket with ID: ${ticketId}`);
     return true;
   } catch (err) {
     console.error('Error in deleteTicketMutation:', err);

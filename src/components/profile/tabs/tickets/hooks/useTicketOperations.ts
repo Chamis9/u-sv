@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { UserTicket, AddTicketData } from "@/hooks/tickets";
@@ -88,8 +87,8 @@ export function useTicketOperations({
         toast({
           title: t("Kļūda", "Error"),
           description: t(
-            "Neizdevās dzēst biļeti. Pārbaudiet, vai biļete nav jau izdzēsta.", 
-            "Failed to delete the ticket. Please check if the ticket has already been deleted."
+            "Neizdevās dzēst biļeti. Mēģiniet vēlreiz.", 
+            "Failed to delete the ticket. Please try again."
           ),
           variant: "destructive"
         });
