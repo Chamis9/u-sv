@@ -1,3 +1,4 @@
+
 export interface CountryCode {
   code: string;
   country: string;
@@ -9,6 +10,9 @@ export interface CountryCode {
 export const countryCodes: CountryCode[] = [
   { code: "+371", country: "lv", name: "Latvija", format: "+371 XXXXXXXX", digits: [8] }
 ];
+
+// Import the Supabase client
+import { supabase } from '@/integrations/supabase/client';
 
 // Validate email format
 export const validateEmail = (email: string): boolean => {
