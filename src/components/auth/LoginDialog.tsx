@@ -25,7 +25,7 @@ export function LoginDialog({ isOpen, onClose, defaultTab = "login" }: LoginDial
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[400px]">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{translations.title}</DialogTitle>
           <DialogDescription>
@@ -39,14 +39,14 @@ export function LoginDialog({ isOpen, onClose, defaultTab = "login" }: LoginDial
             <TabsTrigger value="register">{translations.register}</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="login" className="space-y-4">
+          <TabsContent value="login" className="space-y-4 pt-4">
             <LoginForm 
               translations={translations}
               onClose={onClose}
             />
           </TabsContent>
           
-          <TabsContent value="register" className="space-y-4">
+          <TabsContent value="register" className="space-y-4 pt-4">
             <RegistrationForm 
               translations={translations}
               languageCode={currentLanguage.code}

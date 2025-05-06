@@ -1,9 +1,9 @@
 
 import React, { useState } from "react";
 import { UserCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { LoginDialog } from "@/components/auth/LoginDialog";
+import { LoginButton } from "@/components/auth/LoginButton";
 import { LoadingSpinner } from "./components/LoadingSpinner";
+import { useLanguage } from "@/features/language";
 
 interface ProfileAuthGuardProps {
   children: React.ReactNode;
@@ -12,7 +12,13 @@ interface ProfileAuthGuardProps {
 }
 
 export function ProfileAuthGuard({ children, isAuthenticated, isLoading = false }: ProfileAuthGuardProps) {
-  const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
+  const { currentLanguage } = useLanguage();
+  
+  const t = (lvText: string, enText: string, ruText?: string) => {
+    if (currentLanguage.code === 'lv') return lvText;
+    if (currentLanguage.code === 'ru') return ruText || enText;
+    return enText;
+  };
 
   if (isLoading) {
     return (
@@ -25,22 +31,17 @@ export function ProfileAuthGuard({ children, isAuthenticated, isLoading = false 
   if (!isAuthenticated) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center">
-        <h2 className="text-2xl font-semibold mb-4">Pieeja liegta</h2>
+        <h2 className="text-2xl font-semibold mb-4">
+          {t("Pieeja liegta", "Access denied", "Доступ запрещен")}
+        </h2>
         <p className="text-muted-foreground mb-6">
-          Lai piekļūtu šai lapai, lūdzu, piesakieties savā kontā
+          {t(
+            "Lai piekļūtu šai lapai, lūdzu, piesakieties savā kontā", 
+            "Please sign in to access this page", 
+            "Пожалуйста, войдите в систему для доступа к этой странице"
+          )}
         </p>
-        <Button
-          onClick={() => setShowLoginModal(true)}
-          variant="default"
-          className="gap-2"
-        >
-          <UserCircle className="h-5 w-5" />
-          Pieslēgties
-        </Button>
-        <LoginDialog 
-          isOpen={showLoginModal} 
-          onClose={() => setShowLoginModal(false)} 
-        />
+        <LoginButton variant="default" className="gap-2" />
       </div>
     );
   }
