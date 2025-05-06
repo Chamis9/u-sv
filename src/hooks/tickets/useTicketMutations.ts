@@ -73,7 +73,7 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
-      // Use the shared deleteTicketMutation function to ensure consistent behavior
+      // Use the direct deletion function that bypasses the edge function
       const success = await deleteTicketMutation(ticketId, userId);
       
       if (!success) {

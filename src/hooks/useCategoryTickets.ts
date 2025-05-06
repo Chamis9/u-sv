@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
@@ -98,7 +99,7 @@ export const useCategoryTickets = (category?: string) => {
           return;
         }
         
-        // Delete the ticket using the updated mutation function
+        // Delete the ticket using the updated direct mutation function
         const success = await deleteTicketMutation(ticketId, user.id);
         
         if (success) {

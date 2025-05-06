@@ -33,20 +33,48 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       return false;
     }
     
-    // Start a transaction using the edge function that will handle:
+    // Start a transaction using direct database operations instead of the edge function
     // 1. Copy the ticket to deleted_tickets table
-    // 2. Delete the original ticket
-    // 3. Handle file deletion if necessary
-    const { error: deleteError } = await supabase.functions.invoke('tickets-management', {
-      body: {
-        action: 'soft-delete-ticket',
-        ticketId: ticketId,
-        userId: userId
-      }
-    });
+    const { error: insertError } = await supabase
+      .from('deleted_tickets')
+      .insert({
+        original_id: ticketData.id,
+        title: ticketData.title,
+        description: ticketData.description,
+        price: ticketData.price,
+        category_name: ticketData.category_name,
+        venue: ticketData.venue,
+        seat_info: ticketData.seat_info,
+        file_path: ticketData.file_path,
+        category_id: ticketData.category_id,
+        event_date: ticketData.event_date,
+        event_time: ticketData.event_time,
+        event_id: ticketData.event_id,
+        price_per_unit: ticketData.price_per_unit,
+        quantity: ticketData.quantity,
+        user_id: ticketData.user_id,
+        seller_id: ticketData.seller_id,
+        buyer_id: ticketData.buyer_id,
+        owner_id: ticketData.owner_id,
+        created_at: ticketData.created_at
+      });
+      
+    if (insertError) {
+      console.error('Error copying ticket to deleted_tickets table:', insertError);
+      return false;
+    }
     
+    // 2. Delete the original ticket
+    const { error: deleteError } = await supabase
+      .from('tickets')
+      .delete()
+      .eq('id', ticketId)
+      .eq('seller_id', userId)
+      .eq('owner_id', userId)
+      .is('buyer_id', null);
+      
     if (deleteError) {
-      console.error(`Error soft deleting ticket:`, deleteError);
+      console.error('Error deleting original ticket:', deleteError);
       return false;
     }
     

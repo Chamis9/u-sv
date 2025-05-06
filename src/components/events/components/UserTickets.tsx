@@ -48,7 +48,7 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
     try {
       setIsDeleting(true);
       
-      // Use the direct mutation function to ensure proper deletion
+      // Use the direct mutation function to ensure tickets are properly deleted
       if (onDelete) {
         // If parent provided a delete handler, use it
         onDelete(ticketToDelete);
