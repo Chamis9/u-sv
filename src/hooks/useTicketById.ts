@@ -16,8 +16,8 @@ export const useTicketById = () => {
       setIsLoading(true);
       setError(null);
       
-      // Get the Supabase anon key from the client
-      const apiKey = supabase.supabaseKey;
+      // No need to get the key directly, use the client's built-in methods
+      // which already include the proper authentication
       
       // Query the consolidated tickets table
       const { data, error } = await supabase
