@@ -179,7 +179,8 @@ serve(async (req) => {
           seller_id: ticketData.seller_id,
           buyer_id: ticketData.buyer_id,
           owner_id: ticketData.owner_id,
-          created_at: ticketData.created_at
+          created_at: ticketData.created_at,
+          updated_at: ticketData.updated_at
         })
       
       if (insertError) {
