@@ -99,25 +99,25 @@ export function LoginButton({ className, defaultTab = "login", onClose, variant 
         {props.children || translations.login}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] border-border bg-background">
           <DialogHeader>
-            <CardTitle>{translations.title}</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-foreground">{translations.title}</CardTitle>
+            <CardDescription className="text-muted-foreground">
               {translations.loginDescription}
             </CardDescription>
           </DialogHeader>
           
           <div className="grid gap-4">
             <Tabs defaultValue={defaultTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">{translations.login}</TabsTrigger>
-                <TabsTrigger value="register">{translations.register}</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-muted">
+                <TabsTrigger value="login" className="data-[state=active]:bg-background data-[state=active]:text-foreground">{translations.login}</TabsTrigger>
+                <TabsTrigger value="register" className="data-[state=active]:bg-background data-[state=active]:text-foreground">{translations.register}</TabsTrigger>
               </TabsList>
               <TabsContent value="login">
                 <LoginForm translations={translations} onClose={handleCloseModal} />
                 <div className="relative mt-4">
                   <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
+                    <span className="w-full border-t border-border" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
                     <span className="bg-background px-2 text-muted-foreground">
