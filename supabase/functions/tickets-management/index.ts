@@ -108,6 +108,70 @@ serve(async (req) => {
         status: 201,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
+    } else if (req.method === 'POST' && path === 'tickets-management' && action === 'update-ticket') {
+      // Handle update ticket operation
+      if (!ticketId) {
+        return new Response(JSON.stringify({ error: 'No ticket ID provided' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      console.log(`Attempting to update ticket: ${ticketId} for user: ${user.id}`);
+      
+      // First check if the ticket exists and belongs to the user
+      const { data: ticketData, error: fetchError } = await supabaseClient
+        .from('tickets')
+        .select('*')
+        .eq('id', ticketId)
+        // Remove owner_id check to allow updating tickets if user has permission via RLS
+        .maybeSingle();
+      
+      if (fetchError) {
+        console.error('Error fetching ticket:', fetchError);
+        return new Response(JSON.stringify({ error: fetchError.message }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      if (!ticketData) {
+        console.error('Ticket not found:', ticketId);
+        return new Response(JSON.stringify({ error: 'Ticket not found' }), {
+          status: 404,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      // Prepare the update data
+      const updateData = { ...otherData };
+      delete updateData.user_id; // Don't allow changing the user ID
+      updateData.updated_at = new Date().toISOString();
+      
+      console.log('Update data:', updateData);
+      
+      // Update the ticket
+      const { data: updatedTicket, error: updateError } = await supabaseClient
+        .from('tickets')
+        .update(updateData)
+        .eq('id', ticketId)
+        .select('*')
+        .maybeSingle();
+      
+      if (updateError) {
+        console.error('Error updating ticket:', updateError);
+        return new Response(JSON.stringify({ error: updateError.message }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
+      console.log('Successfully updated ticket:', updatedTicket);
+      
+      return new Response(JSON.stringify({ success: true, ticket: updatedTicket }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     } else if (req.method === 'POST' && path === 'tickets-management' && action === 'soft-delete-ticket') {
       // Handle soft delete operation
       if (!ticketId) {

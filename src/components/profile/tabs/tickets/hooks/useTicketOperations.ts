@@ -115,7 +115,18 @@ export function useTicketOperations({
 
   const handleUpdateTicket = async (ticketId: string, data: Partial<AddTicketData>) => {
     try {
+      console.log("Starting ticket update with data:", data);
+      
+      // Make sure we have a valid user ID
+      if (!userId) {
+        throw new Error("User ID is required for updating tickets");
+      }
+      
+      // Call the update function with logging
+      console.log(`Calling updateTicket for ticket ${ticketId} with user ${userId}`);
       const { success, ticket, error } = await updateTicket(ticketId, data);
+      
+      console.log("Update result:", { success, ticket, error });
       
       if (success && ticket) {
         toast({
@@ -141,6 +152,7 @@ export function useTicketOperations({
         return { success: false, error };
       }
     } catch (err: any) {
+      console.error("Error in handleUpdateTicket:", err);
       toast({
         title: t("Kļūda", "Error"),
         description: err.message || t(

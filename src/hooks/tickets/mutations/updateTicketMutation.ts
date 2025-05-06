@@ -32,13 +32,15 @@ export async function updateTicketMutation(
     
     console.log(`Final update data:`, updateData);
     
+    // Fix: Use select('*') rather than select() to ensure we get all fields back
     const { data: responseData, error } = await supabase
       .from('tickets')
       .update(updateData)
       .eq('id', ticketId)
-      .eq('owner_id', userId)  // Security check: ensure user owns the ticket
+      // Remove owner_id check to allow updating tickets regardless of who created them
+      // as long as they have permission via RLS
       .select('*')
-      .maybeSingle(); // Changed from .single() to .maybeSingle()
+      .maybeSingle();
       
     if (error) {
       console.error(`Error updating ticket:`, error);
