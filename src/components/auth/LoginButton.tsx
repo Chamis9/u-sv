@@ -15,16 +15,10 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/features/language";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+} from "@/components/ui/dialog";
 import {
   Tabs,
   TabsContent,
@@ -89,6 +83,11 @@ export function LoginButton({ className, defaultTab = "login", onClose, variant 
     }
   };
 
+  const handleCloseModal = () => {
+    setOpen(false);
+    if (onClose) onClose();
+  };
+
   return (
     <>
       <Button
@@ -99,54 +98,46 @@ export function LoginButton({ className, defaultTab = "login", onClose, variant 
       >
         {props.children || translations.login}
       </Button>
-      <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogContent style={{ maxWidth: '400px' }} onFocus={(e) => {
-            e.stopPropagation();
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}>
-          <Card>
-            <CardHeader>
-              <AlertDialogHeader>
-                <CardTitle>{translations.title}</CardTitle>
-                <CardDescription>
-                  {translations.loginDescription}
-                </CardDescription>
-              </AlertDialogHeader>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <Tabs defaultValue={defaultTab} className="w-full">
-                <TabsList>
-                  <TabsTrigger value="login">{translations.login}</TabsTrigger>
-                  <TabsTrigger value="register">{translations.register}</TabsTrigger>
-                </TabsList>
-                <TabsContent value="login">
-                  <LoginForm translations={translations} onClose={() => setOpen(false)} />
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">
-                        Or continue with
-                      </span>
-                    </div>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <CardTitle>{translations.title}</CardTitle>
+            <CardDescription>
+              {translations.loginDescription}
+            </CardDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4">
+            <Tabs defaultValue={defaultTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="login">{translations.login}</TabsTrigger>
+                <TabsTrigger value="register">{translations.register}</TabsTrigger>
+              </TabsList>
+              <TabsContent value="login">
+                <LoginForm translations={translations} onClose={handleCloseModal} />
+                <div className="relative mt-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
                   </div>
-                  <CardFooter className="justify-center">
-                    <Button variant="secondary" disabled>
-                      Google
-                    </Button>
-                  </CardFooter>
-                </TabsContent>
-                <TabsContent value="register">
-                  <RegistrationForm translations={translations} languageCode={languageCode} onClose={() => setOpen(false)} />
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
-        </AlertDialogContent>
-      </AlertDialog>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                      Or continue with
+                    </span>
+                  </div>
+                </div>
+                <div className="flex justify-center mt-4">
+                  <Button variant="secondary" disabled>
+                    Google
+                  </Button>
+                </div>
+              </TabsContent>
+              <TabsContent value="register">
+                <RegistrationForm translations={translations} languageCode={languageCode} onClose={handleCloseModal} />
+              </TabsContent>
+            </Tabs>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
