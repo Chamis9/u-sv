@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
+import { prepareSupabaseHeaders } from './tickets/mutations/helpers';
 
 export const useTicketById = () => {
   const [ticket, setTicket] = useState<UserTicket | null>(null);
@@ -15,12 +16,15 @@ export const useTicketById = () => {
       setIsLoading(true);
       setError(null);
       
+      // Get the Supabase anon key from the client
+      const apiKey = supabase.supabaseKey;
+      
       // Query the consolidated tickets table
       const { data, error } = await supabase
         .from('tickets')
         .select('*, categories(name)')
         .eq('id', id)
-        .maybeSingle(); // Changed from .single() to .maybeSingle()
+        .maybeSingle();
       
       if (error) {
         console.error(`No ticket found:`, error.message);

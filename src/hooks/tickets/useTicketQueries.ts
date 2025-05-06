@@ -28,7 +28,7 @@ export function useTicketQueries(userId?: string) {
         const { data: ticketsData, error } = await supabase
           .from('tickets')
           .select('*, categories(name)')
-          .or(`seller_id.eq.${userId},buyer_id.eq.${userId}`)
+          .or(`seller_id.eq.${userId},buyer_id.eq.${userId},owner_id.eq.${userId}`)
           .order('created_at', { ascending: false });
         
         if (error) {
@@ -55,7 +55,6 @@ export function useTicketQueries(userId?: string) {
             owner_id: ticket.owner_id,
             event_date: ticket.event_date || null,
             venue: ticket.venue || null,
-            category_name: ticket.category_name,
             quantity: ticket.quantity || 1,
             price_per_unit: ticket.price_per_unit || ticket.price || 0,
             event_time: ticket.event_time || null

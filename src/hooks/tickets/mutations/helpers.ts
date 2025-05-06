@@ -23,3 +23,13 @@ export function createTicketObject(responseData: any, ticketId: string, userId: 
     event_time: responseData.event_time || null,
   };
 }
+
+// Helper function to prepare supabase fetch headers
+export function prepareSupabaseHeaders(apiKey: string) {
+  return {
+    'apikey': apiKey,
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Prefer': 'return=representation'
+  };
+}
