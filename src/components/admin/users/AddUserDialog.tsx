@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
-import { validateEmail, validatePhoneNumber, formatPhoneNumber, checkEmailExists, checkPhoneExists } from "@/utils/phoneUtils";
+import { validateEmail, validatePhoneNumber, formatPhoneNumber } from "@/utils/phoneUtils";
 import type { User } from "@/types/users";
 import { createUser } from "@/utils/user/userOperations";
 import { AddUserForm } from "./AddUserForm";
@@ -72,32 +72,10 @@ export function AddUserDialog({ open, onClose, onUserAdded }: AddUserDialogProps
     setIsSubmitting(true);
     
     try {
-      // Check if email already exists
-      const emailExists = await checkEmailExists(formData.email);
-      if (emailExists) {
-        setErrors({
-          ...errors,
-          email: t('Šis e-pasts jau ir reģistrēts', 'This email is already registered')
-        });
-        setIsSubmitting(false);
-        return;
-      }
-      
-      // Format and check phone if provided
+      // Format phone if provided
       let formattedPhone = null;
       if (formData.phoneNumber.trim()) {
         formattedPhone = formatPhoneNumber(formData.phoneNumber);
-        
-        // Check if phone already exists
-        const phoneExists = await checkPhoneExists(formattedPhone);
-        if (phoneExists) {
-          setErrors({
-            ...errors,
-            phone: t('Šis telefona numurs jau ir reģistrēts', 'This phone number is already registered')
-          });
-          setIsSubmitting(false);
-          return;
-        }
       }
       
       const { success, data, error } = await createUser({

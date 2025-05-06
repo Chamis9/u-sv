@@ -38,12 +38,9 @@ export async function createUser(userData: CreateUserParams) {
   try {
     console.log(`Creating new user:`, userData);
     
-    // Check if email already exists
-    const { data: existingUsers, error: checkError } = await supabase
-      .from('registered_users')
-      .select('id')
-      .eq('email', userData.email)
-      .limit(1);
+    // Check if email already exists using our secure function
+    const { data: emailExists, error: checkError } = await supabase
+      .rpc('check_email_exists', { check_email: userData.email });
       
     if (checkError) {
       console.error(`Error checking existing user:`, checkError);
@@ -54,7 +51,7 @@ export async function createUser(userData: CreateUserParams) {
       };
     }
     
-    if (existingUsers && existingUsers.length > 0) {
+    if (emailExists) {
       return {
         success: false,
         error: 'E-pasta adrese jau ir reģistrēta',
@@ -62,17 +59,14 @@ export async function createUser(userData: CreateUserParams) {
       };
     }
     
-    // Check if phone already exists (if provided)
+    // Check if phone already exists using secure function (if provided)
     if (userData.phone) {
-      const { data: existingPhones, error: phoneCheckError } = await supabase
-        .from('registered_users')
-        .select('id')
-        .eq('phone', userData.phone)
-        .limit(1);
+      const { data: phoneExists, error: phoneCheckError } = await supabase
+        .rpc('check_phone_exists', { check_phone: userData.phone });
         
       if (phoneCheckError) {
         console.error(`Error checking existing phone:`, phoneCheckError);
-      } else if (existingPhones && existingPhones.length > 0) {
+      } else if (phoneExists) {
         return {
           success: false,
           error: 'Telefona numurs jau ir reģistrēts',

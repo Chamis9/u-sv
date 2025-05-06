@@ -1,4 +1,3 @@
-
 export interface CountryCode {
   code: string;
   country: string;
@@ -64,32 +63,28 @@ export const extractPhoneComponents = (fullPhone: string | null): {
 
 // Check if email already exists in database
 export const checkEmailExists = async (email: string): Promise<boolean> => {
-  const { supabase } = await import('@/integrations/supabase/client');
-  
   try {
-    const { data, error } = await supabase.rpc('check_email_exists', { check_email: email });
-    
+    const { data, error } = await supabase
+      .rpc('check_email_exists', { check_email: email });
+      
     if (error) throw error;
-    return data || false;
-  } catch (err) {
-    console.error("Error checking email:", err);
+    return !!data;
+  } catch (error) {
+    console.error("Error checking if email exists:", error);
     return false;
   }
 };
 
 // Check if phone already exists in database
-export const checkPhoneExists = async (fullPhone: string): Promise<boolean> => {
-  if (!fullPhone) return false;
-  
-  const { supabase } = await import('@/integrations/supabase/client');
-  
+export const checkPhoneExists = async (phone: string): Promise<boolean> => {
   try {
-    const { data, error } = await supabase.rpc('check_phone_exists', { check_phone: fullPhone });
-    
+    const { data, error } = await supabase
+      .rpc('check_phone_exists', { check_phone: phone });
+      
     if (error) throw error;
-    return data || false;
-  } catch (err) {
-    console.error("Error checking phone:", err);
+    return !!data;
+  } catch (error) {
+    console.error("Error checking if phone exists:", error);
     return false;
   }
 };

@@ -321,6 +321,10 @@ export type Database = {
         Args: { check_phone: string }
         Returns: boolean
       }
+      check_user_exists_by_email: {
+        Args: { check_email: string }
+        Returns: boolean
+      }
       get_activities: {
         Args: { page_size: number; page_number: number }
         Returns: Json[]
