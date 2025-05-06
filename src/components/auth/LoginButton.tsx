@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,13 +36,16 @@ import { RegistrationForm } from "./forms/RegistrationForm";
 import { useSearchParams } from "react-router-dom";
 import { getLoginTranslations } from "./translations";
 import { useAuth } from "@/contexts/AuthContext";
+import { ButtonProps } from "@/components/ui/button";
 
 interface LoginButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   defaultTab?: "login" | "register";
   onClose?: () => void;
+  variant?: string;
+  showIcon?: boolean;
 }
 
-export function LoginButton({ className, defaultTab = "login", onClose, ...props }: LoginButtonProps) {
+export function LoginButton({ className, defaultTab = "login", onClose, variant = "default", showIcon = true, ...props }: LoginButtonProps) {
   const [open, setOpen] = React.useState(false);
   const { toast } = useToast();
   const { currentLanguage } = useLanguage();
@@ -70,7 +74,7 @@ export function LoginButton({ className, defaultTab = "login", onClose, ...props
         toast({
           description: languageCode === 'lv' ? 'Veiksmīga pieslēgšanās' : 'Successfully logged in'
         });
-        onClose();
+        onClose?.();
       } else {
         console.log('Login failed');
       }
@@ -88,7 +92,7 @@ export function LoginButton({ className, defaultTab = "login", onClose, ...props
   return (
     <>
       <Button
-        variant="default"
+        variant={variant as any}
         onClick={() => setOpen(true)}
         className={cn(className)}
         {...props}
@@ -118,7 +122,7 @@ export function LoginButton({ className, defaultTab = "login", onClose, ...props
                   <TabsTrigger value="register">{translations.register}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="login">
-                  <LoginForm translations={translations} languageCode={languageCode} onClose={() => setOpen(false)} />
+                  <LoginForm translations={translations} onClose={() => setOpen(false)} />
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
                       <span className="w-full border-t" />

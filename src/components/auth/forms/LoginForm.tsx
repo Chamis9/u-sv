@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,10 +13,11 @@ import { usePreviousEmails } from "@/hooks/usePreviousEmails";
 
 interface LoginFormProps {
   translations: any;
+  languageCode?: string;
   onClose: () => void;
 }
 
-export function LoginForm({ translations, onClose }: LoginFormProps) {
+export function LoginForm({ translations, languageCode, onClose }: LoginFormProps) {
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
   const { previousEmails, showDropdown, setShowDropdown } = usePreviousEmails();
