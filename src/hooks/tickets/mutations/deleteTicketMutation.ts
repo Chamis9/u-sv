@@ -8,12 +8,12 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
   }
 
   try {
-    console.log(`Deleting ticket with ID: ${ticketId}, User ID: ${userId}`);
+    console.log(`Soft deleting ticket with ID: ${ticketId}, User ID: ${userId}`);
     
     // First verify the ticket exists and belongs to the user before deletion
     const { data: ticketData, error: checkError } = await supabase
       .from('tickets')
-      .select('id, file_path, owner_id, seller_id, buyer_id')
+      .select('*')  // Select all columns to copy to deleted_tickets table
       .eq('id', ticketId)
       .maybeSingle();
       
@@ -33,35 +33,24 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       return false;
     }
     
-    // If ticket has a file, delete it from storage first
-    if (ticketData.file_path) {
-      console.log(`Deleting ticket file: ${ticketData.file_path}`);
-      const { error: storageError } = await supabase
-        .storage
-        .from('tickets')
-        .remove([ticketData.file_path]);
-        
-      if (storageError) {
-        console.warn(`Warning: couldn't delete ticket file:`, storageError);
-        // Continue with ticket deletion even if file deletion fails
+    // Start a transaction using the edge function that will handle:
+    // 1. Copy the ticket to deleted_tickets table
+    // 2. Delete the original ticket
+    // 3. Handle file deletion if necessary
+    const { error: deleteError } = await supabase.functions.invoke('tickets-management', {
+      body: {
+        action: 'soft-delete-ticket',
+        ticketId: ticketId,
+        userId: userId
       }
-    }
+    });
     
-    // Now delete the ticket record
-    const { error: deleteError } = await supabase
-      .from('tickets')
-      .delete()
-      .eq('id', ticketId)
-      .eq('owner_id', userId) // Ensure user owns the ticket
-      .eq('seller_id', userId) // Ensure user is the seller
-      .is('buyer_id', null);   // Ensure ticket hasn't been sold
-      
     if (deleteError) {
-      console.error(`Error deleting ticket:`, deleteError);
+      console.error(`Error soft deleting ticket:`, deleteError);
       return false;
     }
     
-    console.log(`Successfully deleted ticket with ID: ${ticketId}`);
+    console.log(`Successfully soft deleted ticket with ID: ${ticketId}`);
     return true;
   } catch (err) {
     console.error('Error in deleteTicketMutation:', err);

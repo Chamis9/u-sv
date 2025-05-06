@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "@/hooks/tickets";
@@ -79,7 +78,7 @@ export const useCategoryTickets = (category?: string) => {
     fetchAvailableTickets();
   }, [category]);
 
-  // Function to update state after ticket purchase
+  // Function to update state after ticket deletion
   const removeTicketFromState = async (ticketId: string) => {
     console.log("Attempting to remove ticket from state:", ticketId);
     
@@ -99,13 +98,18 @@ export const useCategoryTickets = (category?: string) => {
           return;
         }
         
-        // Delete the ticket from Supabase using the mutation function
+        // Delete the ticket using the updated mutation function
         const success = await deleteTicketMutation(ticketId, user.id);
         
         if (success) {
           // If deletion was successful, update the local state
           setAllCategoryTickets(prev => prev.filter(t => t.id !== ticketId));
           console.log("Successfully deleted ticket:", ticketId);
+          
+          toast({
+            title: t("Biļete dzēsta", "Ticket deleted"),
+            description: t("Biļete ir veiksmīgi dzēsta", "The ticket has been successfully deleted")
+          });
         } else {
           console.error("Failed to delete ticket from database");
           toast({

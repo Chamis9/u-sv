@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1"
 
@@ -44,6 +43,9 @@ serve(async (req) => {
       })
     }
 
+    // Parse request body
+    const { action, ticketId, userId, ...otherData } = await req.json()
+    
     // Parse request URL to get the path
     const url = new URL(req.url)
     const path = url.pathname.split('/').pop()
@@ -70,10 +72,9 @@ serve(async (req) => {
       })
     } else if (req.method === 'POST' && path === 'create-ticket') {
       // Create a new ticket
-      const body = await req.json()
-      const { title, price, categoryName, description, filePath, eventDate, venue, categoryId } = body
+      const { title, price, categoryName, description, filePath, eventDate, venue, categoryId } = otherData
       
-      console.log(`Creating ticket with data:`, JSON.stringify(body, null, 2));
+      console.log(`Creating ticket with data:`, JSON.stringify(otherData, null, 2));
       
       // Always use the authenticated user's ID
       const { data, error } = await supabaseClient
@@ -107,11 +108,8 @@ serve(async (req) => {
         status: 201,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
-    } else if (req.method === 'DELETE' && path === 'delete-ticket') {
-      // Delete a ticket
-      const body = await req.json()
-      const { ticketId } = body
-      
+    } else if (req.method === 'POST' && path === 'tickets-management' && action === 'soft-delete-ticket') {
+      // Handle soft delete operation
       if (!ticketId) {
         return new Response(JSON.stringify({ error: 'No ticket ID provided' }), {
           status: 400,
@@ -119,12 +117,12 @@ serve(async (req) => {
         })
       }
       
-      console.log(`Attempting to delete ticket: ${ticketId} for user: ${user.id}`);
+      console.log(`Attempting to soft delete ticket: ${ticketId} for user: ${user.id}`);
       
       // First check if the ticket belongs to the user
       const { data: ticketData, error: fetchError } = await supabaseClient
         .from('tickets')
-        .select('user_id, seller_id, owner_id, buyer_id, file_path')
+        .select('*')
         .eq('id', ticketId)
         .maybeSingle()
       
@@ -159,20 +157,44 @@ serve(async (req) => {
         })
       }
       
-      // Delete any associated file
-      if (ticketData.file_path) {
-        console.log(`Deleting file from storage: ${ticketData.file_path}`)
-        const { error: storageError } = await supabaseClient.storage
-          .from('tickets')
-          .remove([ticketData.file_path])
-        
-        if (storageError) {
-          console.warn('Error deleting file:', storageError)
-          // Continue with ticket deletion even if file deletion fails
-        }
+      // Now copy the ticket to deleted_tickets table
+      const { error: insertError } = await supabaseClient
+        .from('deleted_tickets')
+        .insert({
+          original_id: ticketData.id,
+          title: ticketData.title,
+          description: ticketData.description,
+          price: ticketData.price,
+          category_name: ticketData.category_name,
+          venue: ticketData.venue,
+          seat_info: ticketData.seat_info,
+          file_path: ticketData.file_path,
+          category_id: ticketData.category_id,
+          event_date: ticketData.event_date,
+          event_time: ticketData.event_time,
+          event_id: ticketData.event_id,
+          price_per_unit: ticketData.price_per_unit,
+          quantity: ticketData.quantity,
+          user_id: ticketData.user_id,
+          seller_id: ticketData.seller_id,
+          buyer_id: ticketData.buyer_id,
+          owner_id: ticketData.owner_id,
+          created_at: ticketData.created_at
+        })
+      
+      if (insertError) {
+        console.error('Error copying ticket to deleted_tickets:', insertError)
+        return new Response(JSON.stringify({ error: insertError.message }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
       }
       
-      // Delete the ticket
+      // If ticket has a file, but we don't delete it from storage
+      // This way we keep the file accessible in case it needs to be recovered
+      // Just keep a reference to it in the deleted_tickets table
+      
+      // Now delete the original ticket record
       const { error: deleteError } = await supabaseClient
         .from('tickets')
         .delete()
@@ -182,18 +204,46 @@ serve(async (req) => {
         .is('buyer_id', null)
       
       if (deleteError) {
-        console.error('Error deleting ticket:', deleteError)
+        console.error('Error deleting original ticket:', deleteError)
         return new Response(JSON.stringify({ error: deleteError.message }), {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
       }
       
-      console.log(`Successfully deleted ticket: ${ticketId}`)
+      console.log(`Successfully soft deleted ticket: ${ticketId}`)
       return new Response(JSON.stringify({ success: true }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
+    } else if (req.method === 'DELETE' && path === 'delete-ticket') {
+      // For backward compatibility, redirect to soft-delete functionality
+      const { ticketId } = otherData
+      
+      if (!ticketId) {
+        return new Response(JSON.stringify({ error: 'No ticket ID provided' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+      
+      console.log(`Delete request redirecting to soft-delete for ticket: ${ticketId}`);
+      
+      // Call the soft-delete implementation
+      const softDeleteResponse = await fetch(new URL(req.url).origin + '/tickets-management', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': authHeader
+        },
+        body: JSON.stringify({
+          action: 'soft-delete-ticket',
+          ticketId,
+          userId: user.id
+        })
+      });
+      
+      return softDeleteResponse;
     } else {
       return new Response(JSON.stringify({ error: 'Not Found' }), {
         status: 404,

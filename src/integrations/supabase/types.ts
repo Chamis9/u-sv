@@ -90,6 +90,81 @@ export type Database = {
         }
         Relationships: []
       }
+      deleted_tickets: {
+        Row: {
+          buyer_id: string | null
+          category_id: string | null
+          category_name: string | null
+          created_at: string
+          deleted_at: string
+          description: string | null
+          event_date: string | null
+          event_id: string | null
+          event_time: string | null
+          file_path: string | null
+          id: string
+          original_id: string
+          owner_id: string
+          price: number
+          price_per_unit: number
+          quantity: number
+          seat_info: string | null
+          seller_id: string
+          status: string
+          title: string | null
+          user_id: string
+          venue: string | null
+        }
+        Insert: {
+          buyer_id?: string | null
+          category_id?: string | null
+          category_name?: string | null
+          created_at: string
+          deleted_at?: string
+          description?: string | null
+          event_date?: string | null
+          event_id?: string | null
+          event_time?: string | null
+          file_path?: string | null
+          id?: string
+          original_id: string
+          owner_id: string
+          price: number
+          price_per_unit?: number
+          quantity?: number
+          seat_info?: string | null
+          seller_id: string
+          status?: string
+          title?: string | null
+          user_id: string
+          venue?: string | null
+        }
+        Update: {
+          buyer_id?: string | null
+          category_id?: string | null
+          category_name?: string | null
+          created_at?: string
+          deleted_at?: string
+          description?: string | null
+          event_date?: string | null
+          event_id?: string | null
+          event_time?: string | null
+          file_path?: string | null
+          id?: string
+          original_id?: string
+          owner_id?: string
+          price?: number
+          price_per_unit?: number
+          quantity?: number
+          seat_info?: string | null
+          seller_id?: string
+          status?: string
+          title?: string | null
+          user_id?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           created_at: string
