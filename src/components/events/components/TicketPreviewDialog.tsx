@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { UserTicket } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
 import { Calendar, MapPin, Clock, Tag, Ticket, User } from "lucide-react";
-import { formatDate, formatPrice } from "@/utils/formatters";
+import { formatDate, formatPrice, formatTime } from "@/utils/formatters";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
@@ -96,7 +96,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
               {ticket.event_time && (
                 <div className="flex items-center text-sm">
                   <Clock className="h-4 w-4 mr-2 text-gray-500" />
-                  <span>{ticket.event_time}</span>
+                  <span>{formatTime(ticket.event_time)}</span>
                 </div>
               )}
               
@@ -153,4 +153,3 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
     </Dialog>
   );
 };
-

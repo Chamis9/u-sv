@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { Calendar, Ticket } from "lucide-react";
+import { Calendar, Ticket, Clock } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
 import { UserTicket } from "@/hooks/tickets";
 import { format } from 'date-fns';
 import { lv, enUS } from 'date-fns/locale';
-import { formatPrice } from "@/utils/formatters";
+import { formatPrice, formatTime } from "@/utils/formatters";
 
 interface StandaloneTicketCardProps {
   ticket: UserTicket;
@@ -37,12 +37,20 @@ export const StandaloneTicketCard: React.FC<StandaloneTicketCardProps> = ({
             {t('Vieta', 'Venue')}: {ticket.venue}
           </div>
         )}
-        {ticket.event_date && (
-          <div className="text-sm text-gray-600 dark:text-gray-300 mb-3 flex items-center">
-            <Calendar className="h-4 w-4 mr-1" />
-            {format(new Date(ticket.event_date), 'dd.MM.yyyy', { locale })}
-          </div>
-        )}
+        <div className="text-sm text-gray-600 dark:text-gray-300 mb-3 flex flex-wrap items-center gap-2">
+          {ticket.event_date && (
+            <span className="flex items-center">
+              <Calendar className="h-4 w-4 mr-1" />
+              {format(new Date(ticket.event_date), 'dd.MM.yyyy', { locale })}
+            </span>
+          )}
+          {ticket.event_time && (
+            <span className="flex items-center">
+              <Clock className="h-4 w-4 mr-1" />
+              {formatTime(ticket.event_time)}
+            </span>
+          )}
+        </div>
       </div>
       
       <div className="p-4 bg-gray-50 dark:bg-gray-900 flex items-center justify-between">
