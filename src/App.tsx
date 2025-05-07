@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { LanguageProvider } from "./features/language";
-import { CookieConsent } from "./components/CookieConsent";
 import { clearAllCookies } from "./utils/cookieManager";
 import { ThemeProvider } from "./components/theme/ThemeProvider";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -84,7 +83,6 @@ const App = () => {
               <LanguageProvider>
                 <Toaster />
                 <Sonner />
-                <CookieConsent />
                 <BrowserRouter>
                   <Suspense fallback={<PageLoader />}>
                     <Routes>
@@ -115,9 +113,6 @@ const App = () => {
 declare global {
   interface Window {
     logout?: () => void;
-    openCookieSettings?: () => void;
-    manageCookieConsent?: () => void;
-    clearAllCookiesOnLogout?: () => void;
   }
 }
 
