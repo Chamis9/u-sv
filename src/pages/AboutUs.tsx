@@ -93,7 +93,7 @@ const AboutUs = () => {
             
               <div className="grid gap-8 md:grid-cols-3">
                 {content.map((section, index) => (
-                  <Card key={index} className="transition-all hover:shadow-lg border-t-4 border-t-orange-500">
+                  <Card key={index} className="transition-all hover:shadow-lg border-t-4 border-t-orange-500 dark:bg-gray-800">
                     <CardContent className="pt-6">
                       <div className="flex items-center mb-4">
                         {section.icon}
