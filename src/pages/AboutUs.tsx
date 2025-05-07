@@ -93,7 +93,7 @@ const AboutUs = () => {
             
               <div className="grid gap-8 md:grid-cols-3">
                 {content.map((section, index) => (
-                  <Card key={index} className="transition-all hover:shadow-lg border-t-4 border-t-orange-500 dark:bg-gray-800">
+                  <Card key={index} className="transition-all hover:shadow-lg border-t-4 border-t-orange-500 dark:bg-gray-800 bg-orange-50/70">
                     <CardContent className="pt-6">
                       <div className="flex items-center mb-4">
                         {section.icon}
@@ -109,7 +109,7 @@ const AboutUs = () => {
                 ))}
               </div>
 
-              <div className="mt-12 bg-orange-50 dark:bg-gray-800 p-6 rounded-lg">
+              <div className="mt-12 bg-orange-50/70 dark:bg-gray-800 p-6 rounded-lg">
                 <h2 className="text-2xl font-semibold mb-4 text-orange-500">
                   {currentLanguage.code === 'lv' ? "Verificēti lietotāji" : 
                   currentLanguage.code === 'ru' ? "Проверенные пользователи" : 
