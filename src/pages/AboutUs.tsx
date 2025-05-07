@@ -33,7 +33,7 @@ const AboutUs = () => {
     en: [
       {
         title: "Our Vision",
-        content: "Our goal is to create an innovative and reliable ticket trading platform that connects event attendees with other attendees, ensuring a secure and convenient ticket purchasing process.",
+        content: "Our goal is to create a reliable ticket trading platform that connects event attendees with other attendees, ensuring a secure and convenient ticket purchasing process.",
         icon: <Users className="h-8 w-8 text-orange-500" />
       },
       {
@@ -43,7 +43,7 @@ const AboutUs = () => {
       },
       {
         title: "What We Offer",
-        content: "Our platform allows users to directly sell and purchase tickets from other users. To ensure security, only verified users can perform transactions on our platform.",
+        content: "Our platform allows its users to sell and purchase tickets from other users. To ensure security, only verified users can perform transactions on our platform.",
         icon: <Check className="h-8 w-8 text-orange-500" />
       }
     ],
@@ -122,7 +122,7 @@ const AboutUs = () => {
                       "Mūsu platformā pārdot var tikai verificēti lietotāji. Tas nodrošina augstākā līmeņa drošību un uzticamību visiem mūsu lietotājiem. Katra darījuma drošība tiek garantēta." : 
                     currentLanguage.code === 'ru' ? 
                       "На нашей платформе могут работать только проверенные пользователи. Это обеспечивает высочайший уровень безопасности и надежности для всех наших пользователей. Каждый билет проверяется, и безопасность каждой транзакции гарантируется." :
-                      "Only verified users can buy or sell on our platform. This ensures the highest level of security and reliability for all our users. The security of each transaction is guaranteed."}
+                      "Only verified users can sell on our platform. This ensures the highest level of security and reliability for all our users. The security of each transaction is guaranteed."}
                   </p>
                 </div>
               </div>

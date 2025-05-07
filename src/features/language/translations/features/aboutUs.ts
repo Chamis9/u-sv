@@ -19,7 +19,7 @@ export const aboutUsTranslations = {
     title: "About Us",
     content: [
       "netieku.es is a platform where users can safely sell and purchase tickets from other users.",
-      "Our platform allows users to directly sell and purchase tickets from other users. To ensure security, only verified users can perform transactions.",
+      "Our platform allows its users to sell and purchase tickets from other users. To ensure security, only verified users can perform transactions on our platform.",
       "We are based on three core values: honesty, security, and customer satisfaction. We guarantee 100% secure transactions."
     ]
   },
