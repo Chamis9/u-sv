@@ -3,6 +3,7 @@ import { memo } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
 import { Helmet } from "react-helmet-async";
+import { TicketVerifyIcon } from "@/components/icons/TicketVerifyIcon";
 
 export const Hero = memo(function Hero() {
   const { translations } = useLanguage();
@@ -11,7 +12,7 @@ export const Hero = memo(function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-[90vh] md:min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-300 via-orange-400 to-orange-500 dark:from-orange-950 dark:via-orange-900 dark:to-orange-800"
+      className="relative min-h-[90vh] md:min-h-[80vh] flex items-center justify-center overflow-hidden bg-ticket-bg dark:bg-ticket-bg"
     >
       <Helmet>
         <script type="application/ld+json">
@@ -28,23 +29,45 @@ export const Hero = memo(function Hero() {
         </script>
       </Helmet>
       
-      <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-transparent dark:from-black/20 dark:to-transparent"></div>
+      <div className="absolute inset-0 bg-ticket-bg/90"></div>
 
       <div className="container mx-auto px-4 z-10 text-center py-12 md:py-20">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4 md:mb-6 drop-shadow-md">
-            {hero.title}{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-100 to-white dark:from-orange-200 dark:to-orange-100">
-              {hero.titleHighlight}
-            </span>
-          </h1>
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 mb-10">
+            <div className="md:text-left">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-ticket-text mb-4 md:mb-6">
+                <span className="block mb-2">Netiec uz</span>
+                <span className="block mb-2">pasākumu?</span>
+                <span className="block">
+                  Pārdod <span className="text-ticket-accent">biļeti</span>
+                  <span className=""> droši</span>
+                </span>
+              </h1>
+              
+              <p className="text-xl sm:text-2xl md:text-3xl text-ticket-text/90 mb-8 md:mb-12">
+                {hero.subtitle}
+              </p>
+            </div>
+            
+            <div className="flex-shrink-0">
+              <TicketVerifyIcon size={180} />
+            </div>
+          </div>
           
-          <p className="text-lg sm:text-xl md:text-2xl text-white mb-8 md:mb-12 drop-shadow">
-            {hero.subtitle}
-          </p>
+          <div className="mt-8 md:mt-12">
+            <p className="text-xl md:text-2xl text-ticket-text mb-8 max-w-3xl mx-auto">
+              Gribi uz koncertu, bet biļetes izpārdotas? Ieskaties
+              <span className="text-ticket-accent font-bold"> NETIEKU.ES</span>!
+            </p>
+            
+            <p className="text-lg md:text-xl text-ticket-text/90 mb-6 max-w-3xl mx-auto">
+              Pērc vai pārdod biļetes uz koncertiem, teātri, sporta
+              pasākumiem u.c.
+            </p>
+          </div>
           
-          <div className="flex flex-col items-center space-y-6 bg-white/10 dark:bg-gray-950/20 rounded-xl p-4 sm:p-6 md:p-8">
-            <p className="text-white text-base md:text-lg">
+          <div className="flex flex-col items-center space-y-6 bg-ticket-accent/10 dark:bg-ticket-accent/5 rounded-xl p-4 sm:p-6 md:p-8 mt-8 border border-ticket-text/10">
+            <p className="text-ticket-text text-base md:text-lg">
               {hero.subscribeText}
             </p>
             <div className="w-full max-w-md mx-auto">
@@ -52,29 +75,13 @@ export const Hero = memo(function Hero() {
             </div>
           </div>
           
-          <div className="pt-8 md:pt-12">
-            <a
-              href="#how-it-works"
-              className="inline-flex items-center text-white hover:text-orange-100 transition-colors"
-              aria-label="Learn more about how it works"
-            >
-              <span className="mr-2">{hero.learnMoreBtn}</span>
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                className="animate-bounce"
-                aria-hidden="true"
-              >
-                <path d="M12 5v14M5 12l7 7 7-7"/>
-              </svg>
-            </a>
+          <div className="pt-8 md:pt-12 flex justify-between items-center max-w-3xl mx-auto">
+            <div className="text-ticket-text/80 text-lg">
+              Droša apmaksa un verifikācija
+            </div>
+            <div className="text-ticket-accent font-bold text-xl tracking-wider">
+              DRĪZUMĀ
+            </div>
           </div>
         </div>
       </div>

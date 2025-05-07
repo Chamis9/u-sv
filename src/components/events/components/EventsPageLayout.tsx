@@ -5,7 +5,6 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { Toaster } from "@/components/ui/toaster";
-import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 
 interface EventsPageLayoutProps {
   children: React.ReactNode;
@@ -20,7 +19,7 @@ export const EventsPageLayout: React.FC<EventsPageLayoutProps> = ({
 }) => {
   return (
     <ThemeProvider>
-      <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-gray-50 to-gray-100 dark:from-black dark:via-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
+      <div className="min-h-screen flex flex-col bg-ticket-bg text-ticket-text">
         <SEO title={title} description={description} />
         <Header />
         <main className="flex-grow pt-24 pb-12">
@@ -31,7 +30,6 @@ export const EventsPageLayout: React.FC<EventsPageLayoutProps> = ({
           </div>
         </main>
         <Footer />
-        <GlobalThemeToggle />
         <Toaster />
       </div>
     </ThemeProvider>
