@@ -72,7 +72,7 @@ export function AddTicketForm({
   
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[60vh] overflow-y-auto px-1">
         {/* Field order as requested */}
         <BasicInfoFields form={form} t={t} />
         <CategoryField form={form} t={t} />

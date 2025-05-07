@@ -21,6 +21,8 @@ import {
 import { DeleteTicketDialog } from "./components/DeleteTicketDialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { TicketDetailDialog } from "./components/ticket-list/TicketDetailDialog";
+import { useTicketDialog } from "./hooks/useTicketDialogs";
 
 interface TicketsTabProps {
   user: User;
@@ -48,6 +50,8 @@ export function TicketsTab({ user }: TicketsTabProps) {
     t,
     isAuthenticated
   } = useTicketsTab(user);
+  
+  const { selectedTicket, setSelectedTicket } = useTicketDialog();
   
   // Force refresh on component mount and when user changes
   useEffect(() => {
@@ -107,7 +111,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
               tickets={addedTickets}
               onDelete={openDeleteConfirmation}
               onView={(ticket) => {
-                setCurrentEditTicket(ticket);
+                setSelectedTicket(ticket);
                 console.log("Viewing ticket:", ticket.id);
               }}
               onEdit={(ticket) => {
@@ -124,7 +128,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
               tickets={purchasedTickets}
               onDelete={openDeleteConfirmation}
               onView={(ticket) => {
-                setCurrentEditTicket(ticket);
+                setSelectedTicket(ticket);
                 console.log("Viewing ticket:", ticket.id);
               }}
               isLoading={isLoading}
@@ -136,7 +140,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
       
       {/* Add Ticket Dialog */}
       <Dialog open={addTicketOpen} onOpenChange={setAddTicketOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>{t("Pievienot biļeti", "Add Ticket")}</DialogTitle>
           </DialogHeader>
@@ -149,7 +153,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
       
       {/* Edit Ticket Dialog */}
       <Dialog open={editTicketOpen} onOpenChange={setEditTicketOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>{t("Rediģēt biļeti", "Edit Ticket")}</DialogTitle>
           </DialogHeader>
@@ -173,6 +177,17 @@ export function TicketsTab({ user }: TicketsTabProps) {
         onCancel={cancelDelete}
         onConfirm={confirmDelete}
         isDeleting={isDeleting}
+      />
+      
+      {/* Ticket Detail View Dialog */}
+      <TicketDetailDialog
+        selectedTicket={selectedTicket}
+        setSelectedTicket={setSelectedTicket}
+        onEdit={(ticket) => {
+          setCurrentEditTicket(ticket);
+          setEditTicketOpen(true);
+        }}
+        ticketType={selectedTicket?.seller_id === user.id ? "added" : "purchased"}
       />
     </Card>
   );
