@@ -23,12 +23,15 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { TicketDetailDialog } from "./components/ticket-list/TicketDetailDialog";
 import { useTicketDialog } from "./hooks/useTicketDialog";
+import { useTicketRefresh } from "./hooks/useTicketRefresh";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface TicketsTabProps {
   user: User;
 }
 
 export function TicketsTab({ user }: TicketsTabProps) {
+  const { isAuthenticated } = useAuth();
   const {
     addedTickets,
     purchasedTickets,
@@ -42,24 +45,37 @@ export function TicketsTab({ user }: TicketsTabProps) {
     ticketToDelete,
     isDeleting,
     handleUpdateTicket,
-    refreshTickets,
+    refreshTickets: refreshTicketsFromTab,
     editTicketOpen,
     setEditTicketOpen,
     currentEditTicket,
     setCurrentEditTicket,
     t,
-    isAuthenticated
   } = useTicketsTab(user);
   
+  // Use the enhanced refresh functionality
+  const { refreshTickets } = useTicketRefresh({
+    userId: user?.id,
+    isAuthenticated
+  });
+  
   const { selectedTicket, setSelectedTicket } = useTicketDialog();
+  
+  // Function to handle refresh button click
+  const handleRefreshClick = async () => {
+    console.log("Manual refresh triggered from button");
+    await refreshTickets();
+    // Also refresh using the tab's function to ensure UI consistency
+    refreshTicketsFromTab();
+  };
   
   // Force refresh on component mount and when user changes
   useEffect(() => {
     console.log("TicketsTab mounted or user changed, refreshing tickets");
     if (isAuthenticated && user?.id) {
-      refreshTickets();
+      refreshTicketsFromTab();
     }
-  }, [user.id, isAuthenticated, refreshTickets]);
+  }, [user.id, isAuthenticated, refreshTicketsFromTab]);
 
   console.log("TicketsTab render - Current user:", user);
   console.log("TicketsTab render - Authentication state:", isAuthenticated);
@@ -89,10 +105,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
     <Card className="bg-card dark:bg-gray-900">
       <TicketsHeader 
         onAddTicket={() => setAddTicketOpen(true)} 
-        onRefresh={() => {
-          console.log("Manual refresh triggered");
-          refreshTickets();
-        }}
+        onRefresh={handleRefreshClick}
       />
       
       <CardContent>
