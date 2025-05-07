@@ -68,7 +68,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
   
   if (!isAuthenticated) {
     return (
-      <Card>
+      <Card className="bg-card dark:bg-gray-900">
         <CardContent className="pt-6">
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
@@ -86,7 +86,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
   }
   
   return (
-    <Card>
+    <Card className="bg-card dark:bg-gray-900">
       <TicketsHeader 
         onAddTicket={() => setAddTicketOpen(true)} 
         onRefresh={() => {

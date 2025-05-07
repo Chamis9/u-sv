@@ -1,148 +1,84 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { 
   Card, 
   CardContent, 
+  CardDescription, 
   CardHeader, 
-  CardTitle
+  CardTitle 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/features/language";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { useForm } from "react-hook-form";
-import { PasswordInput } from "@/components/auth/PasswordInput";
+import { AlertTriangle } from "lucide-react";
 
 export function SecurityCard() {
   const { currentLanguage } = useLanguage();
-  const { toast } = useToast();
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
-
-  const form = useForm({
-    defaultValues: {
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    }
-  });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (form.getValues('newPassword') !== form.getValues('confirmPassword')) {
-      toast({
-        variant: "destructive",
-        title: t("Kļūda!", "Error!"),
-        description: t(
-          "Jaunā parole un apstiprinājuma parole nesakrīt",
-          "New password and confirmation password do not match"
-        )
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: form.getValues('newPassword')
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: t("Veiksmīgi!", "Success!"),
-        description: t(
-          "Jūsu parole ir veiksmīgi atjaunināta",
-          "Your password has been successfully updated"
-        )
-      });
-      
-      setIsChangingPassword(false);
-      form.reset();
-    } catch (error) {
-      console.error('Error updating password:', error);
-      toast({
-        variant: "destructive",
-        title: t("Kļūda!", "Error!"),
-        description: t(
-          "Neizdevās atjaunināt paroli. Lūdzu, mēģiniet vēlreiz",
-          "Failed to update password. Please try again"
-        )
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  
   return (
-    <Card>
+    <Card className="bg-card dark:bg-gray-900">
       <CardHeader>
-        <CardTitle>{t("Konta drošība", "Account Security")}</CardTitle>
+        <CardTitle>{t("Drošība", "Security")}</CardTitle>
+        <CardDescription>
+          {t(
+            "Pārvaldiet sava konta drošības iestatījumus", 
+            "Manage your account security settings"
+          )}
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!isChangingPassword ? (
-          <div className="space-y-2">
-            <Label>{t("Parole", "Password")}</Label>
-            <div className="flex items-center">
-              <p className="flex-1">••••••••</p>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setIsChangingPassword(true)}
-              >
-                {t("Mainīt paroli", "Change Password")}
-              </Button>
+        <div className="rounded-md bg-amber-50 dark:bg-amber-950/50 p-4 border border-amber-200 dark:border-amber-900">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <AlertTriangle className="h-5 w-5 text-amber-500" />
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-amber-800 dark:text-amber-300">
+                {t("Drošības iestatījumi", "Security Settings")}
+              </h3>
+              <div className="mt-2 text-sm text-amber-700 dark:text-amber-400">
+                <p>
+                  {t(
+                    "Drošības iestatījumu pārvaldība pagaidām nav pieejama.", 
+                    "Security settings management is not available at this time."
+                  )}
+                </p>
+              </div>
             </div>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <PasswordInput
-              form={form}
-              name="currentPassword"
-              label={t("Pašreizējā parole", "Current Password")}
-              placeholder={t("Ievadiet pašreizējo paroli", "Enter current password")}
-            />
-            
-            <PasswordInput
-              form={form}
-              name="newPassword"
-              label={t("Jaunā parole", "New Password")}
-              placeholder={t("Ievadiet jauno paroli", "Enter new password")}
-            />
-            
-            <PasswordInput
-              form={form}
-              name="confirmPassword"
-              label={t("Apstiprināt jauno paroli", "Confirm New Password")}
-              placeholder={t("Apstiprināt jauno paroli", "Confirm new password")}
-            />
-            
-            <div className="flex gap-2">
-              <Button 
-                type="submit" 
-                disabled={isLoading}
-              >
-                {t("Saglabāt", "Save")}
-              </Button>
-              <Button 
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setIsChangingPassword(false);
-                  form.reset();
-                }}
-                disabled={isLoading}
-              >
-                {t("Atcelt", "Cancel")}
-              </Button>
-            </div>
-          </form>
-        )}
+        </div>
+        
+        <div>
+          <h3 className="text-lg font-medium mb-2">
+            {t("Parole", "Password")}
+          </h3>
+          <p className="text-muted-foreground mb-4">
+            {t(
+              "Mainiet paroli, lai uzlabotu konta drošību", 
+              "Change your password to improve account security"
+            )}
+          </p>
+          <Button variant="outline">
+            {t("Mainīt paroli", "Change Password")}
+          </Button>
+        </div>
+        
+        <div className="border-t pt-4">
+          <h3 className="text-lg font-medium mb-2">
+            {t("Divpakāpju autentifikācija", "Two-Factor Authentication")}
+          </h3>
+          <p className="text-muted-foreground mb-4">
+            {t(
+              "Uzlabojiet konta drošību ar divpakāpju autentifikāciju", 
+              "Enhance account security with two-factor authentication"
+            )}
+          </p>
+          <Button variant="outline">
+            {t("Iestatīt 2FA", "Set up 2FA")}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

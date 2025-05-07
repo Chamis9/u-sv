@@ -3,6 +3,7 @@ import React from "react";
 import { User } from "@/types/users";
 import { AppearanceAndLanguage } from "@/components/shared/AppearanceAndLanguage";
 import { useLanguage } from "@/features/language";
+import { Card } from "@/components/ui/card";
 
 interface SettingsTabProps {
   user: User;
@@ -20,19 +21,21 @@ export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
   
   return (
     <div className="space-y-6">
-      <AppearanceAndLanguage 
-        cardTitle={t("Izskata iestatījumi", "Appearance Settings", "Настройки внешнего вида")}
-        cardDescription={t(
-          "Pielāgojiet aplikācijas izskatu", 
-          "Customize how the application looks", 
-          "Настройте внешний вид приложения"
-        )}
-        formDescriptionText={t(
-          "Izvēlieties profila valodu", 
-          "Choose your profile language",
-          "Выберите язык профиля"
-        )}
-      />
+      <Card className="bg-card dark:bg-gray-900">
+        <AppearanceAndLanguage 
+          cardTitle={t("Izskata iestatījumi", "Appearance Settings", "Настройки внешнего вида")}
+          cardDescription={t(
+            "Pielāgojiet aplikācijas izskatu", 
+            "Customize how the application looks", 
+            "Настройте внешний вид приложения"
+          )}
+          formDescriptionText={t(
+            "Izvēlieties profila valodu", 
+            "Choose your profile language",
+            "Выберите язык профиля"
+          )}
+        />
+      </Card>
     </div>
   );
 }

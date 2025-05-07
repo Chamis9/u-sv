@@ -53,7 +53,7 @@ export function PaymentsTab({ user }: PaymentsTabProps) {
   ];
   
   return (
-    <Card>
+    <Card className="bg-card dark:bg-gray-900">
       <CardHeader>
         <CardTitle>{t("Maksājumu vēsture", "Payment History")}</CardTitle>
       </CardHeader>
