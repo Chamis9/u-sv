@@ -36,8 +36,8 @@ export function TicketsHeader({ onAddTicket, onRefresh }: TicketsHeaderProps) {
         <Button onClick={handleRefresh} size="sm" variant="outline" disabled={isRefreshing}>
           <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
           {isRefreshing 
-            ? t("Atsvaidzina...", "Refreshing...") 
-            : t("Atsvaidzināt", "Refresh")
+            ? t("Atjaunojās...", "Refreshing...") 
+            : t("Atjaunot", "Refresh")
           }
         </Button>
         <Button onClick={onAddTicket} size="sm">

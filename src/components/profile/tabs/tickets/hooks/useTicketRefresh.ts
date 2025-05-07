@@ -39,7 +39,7 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
       
       // Show a success toast
       toast({
-        title: t("Biļetes atsvaidzinātas", "Tickets refreshed"),
+        title: t("Biļetes atjaunotas", "Tickets refreshed"),
         description: t("Biļešu saraksts ir atjaunināts", "Ticket list has been updated"),
       });
       
@@ -50,7 +50,7 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
       // Show an error toast
       toast({
         title: t("Kļūda", "Error"),
-        description: t("Neizdevās atsvaidzināt biļetes", "Failed to refresh tickets"),
+        description: t("Neizdevās atjaunot biļetes", "Failed to refresh tickets"),
         variant: "destructive"
       });
       
