@@ -1,22 +1,43 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { User } from "@/types/users";
 
 interface PersonalInfoFormProps {
-  formData: {
-    first_name: string;
-    last_name: string;
-    email: string;
-    phone: string;
-  };
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  user: User;
+  onSave: (updatedUser: User) => void;
+  onCancel: () => void;
   t: (lvText: string, enText: string) => string;
 }
 
-export function PersonalInfoForm({ formData, onChange, t }: PersonalInfoFormProps) {
+export function PersonalInfoForm({ user, onSave, onCancel, t }: PersonalInfoFormProps) {
+  const [formData, setFormData] = useState({
+    first_name: user.first_name || '',
+    last_name: user.last_name || '',
+    email: user.email || '',
+    phone: user.phone || ''
+  });
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave({
+      ...user,
+      ...formData
+    });
+  };
+
   return (
-    <div className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <Label htmlFor="first_name">{t("Vārds", "First Name")}</Label>
         <Input
@@ -61,6 +82,13 @@ export function PersonalInfoForm({ formData, onChange, t }: PersonalInfoFormProp
           placeholder={t("Ievadiet tālruni", "Enter your phone")}
         />
       </div>
-    </div>
+
+      <div className="flex space-x-2 pt-2">
+        <Button type="submit">{t("Saglabāt", "Save")}</Button>
+        <Button type="button" variant="outline" onClick={onCancel}>
+          {t("Atcelt", "Cancel")}
+        </Button>
+      </div>
+    </form>
   );
 }

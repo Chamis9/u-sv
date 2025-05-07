@@ -45,10 +45,11 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
               setIsEditing(false);
             }}
             onCancel={() => setIsEditing(false)}
+            t={t}
           />
         ) : (
           <div className="space-y-4">
-            <PersonalInfoDisplay user={user} />
+            <PersonalInfoDisplay user={user} t={t} />
             <Button 
               onClick={() => setIsEditing(true)}
               className="mt-4"
