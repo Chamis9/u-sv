@@ -1,5 +1,5 @@
 
-import { Landmark, Cookie, Shield, Mail, Building2, Heart } from "lucide-react";
+import { Landmark, Shield, Mail, Building2, Heart } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
@@ -7,12 +7,6 @@ import { Link } from "react-router-dom";
 export function Footer() {
   const { translations } = useLanguage();
   const { footer } = translations;
-
-  const handleOpenCookieSettings = () => {
-    if (window.openCookieSettings) {
-      window.openCookieSettings();
-    }
-  };
 
   const handleLinkClick = () => {
     window.scrollTo(0, 0);
@@ -44,15 +38,6 @@ export function Footer() {
               <Mail size={14} className="hidden sm:inline" />
               <span>{footer.contactLink || "Kontakti"}</span>
             </Link>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={handleOpenCookieSettings}
-              className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1 h-7 px-2 text-xs bg-transparent hover:bg-transparent"
-            >
-              <Cookie className="h-3 w-3 mr-1 sm:h-4 sm:w-4 sm:mr-2" />
-              <span>{footer.cookieSettings}</span>
-            </Button>
             <Button 
               variant="ghost" 
               size="sm"
