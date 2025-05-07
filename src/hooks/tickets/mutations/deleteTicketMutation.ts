@@ -68,17 +68,20 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
     }
     
     // Now delete the original ticket - CRITICAL PART
-    const { error: deleteError } = await supabase
+    console.log(`Executing DELETE from tickets where id=${ticketId} AND seller_id=${userId}`);
+    const { data: deleteData, error: deleteError } = await supabase
       .from('tickets')
       .delete()
       .eq('id', ticketId)
-      .eq('seller_id', userId);
+      .eq('seller_id', userId)
+      .select();
       
     if (deleteError) {
       console.error('Error deleting original ticket:', deleteError);
       return false;
     }
     
+    console.log(`Delete operation result:`, deleteData);
     console.log(`Successfully deleted ticket with ID: ${ticketId}`);
     return true;
   } catch (err) {

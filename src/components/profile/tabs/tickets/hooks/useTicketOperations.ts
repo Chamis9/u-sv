@@ -5,6 +5,7 @@ import { UserTicket, AddTicketData } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/hooks/use-toast";
 import { deleteTicketMutation } from "@/hooks/tickets/mutations/deleteTicketMutation";
+import { deleteTicketSimple } from "@/hooks/tickets/mutations/deleteTicketSimple";
 
 interface UseTicketOperationsProps {
   userId: string;
@@ -58,10 +59,24 @@ export function useTicketOperations({
       setIsDeleting(true);
       console.log(`Attempting to delete ticket: ${ticketToDelete} for user: ${userId}`);
       
-      // Use the direct deletion function or the provided one
-      const success = deleteTicket 
-        ? await deleteTicket(ticketToDelete)
-        : await deleteTicketMutation(ticketToDelete, userId);
+      // First try with the provided deletion function
+      let success = false;
+      if (deleteTicket) {
+        console.log('Using provided deleteTicket function');
+        success = await deleteTicket(ticketToDelete);
+      }
+      
+      // If that doesn't work or isn't provided, try the standard deletion
+      if (!success && !deleteTicket) {
+        console.log('Using standard deleteTicketMutation function');
+        success = await deleteTicketMutation(ticketToDelete, userId);
+      }
+      
+      // If standard deletion doesn't work, try simplified deletion as last resort
+      if (!success) {
+        console.log('Standard deletion failed, trying simple deletion');
+        success = await deleteTicketSimple(ticketToDelete);
+      }
       
       if (success) {
         toast({
