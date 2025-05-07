@@ -58,6 +58,8 @@ export function EventDetailsFields({ form, t }: EventDetailsFieldsProps) {
                 <Input 
                   {...field} 
                   type="time"
+                  inputMode="numeric"
+                  pattern="[0-9]{2}:[0-9]{2}"
                 />
               </FormControl>
               <FormMessage />
