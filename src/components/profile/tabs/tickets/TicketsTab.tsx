@@ -22,7 +22,7 @@ import { DeleteTicketDialog } from "./components/DeleteTicketDialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { TicketDetailDialog } from "./components/ticket-list/TicketDetailDialog";
-import { useTicketDialog } from "./hooks/useTicketDialogs";
+import { useTicketDialog } from "./hooks/useTicketDialog";
 
 interface TicketsTabProps {
   user: User;
