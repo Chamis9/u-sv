@@ -16,7 +16,7 @@ import { AddTicketForm } from "./AddTicketForm";
 import { useTicketsTab } from "./hooks/useTicketsTab";
 import { 
   TicketsHeader,
-  TicketsContent
+  TicketsList
 } from "./components";
 import { DeleteTicketDialog } from "./components/DeleteTicketDialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -103,28 +103,31 @@ export function TicketsTab({ user }: TicketsTabProps) {
           </TabsList>
           
           <TabsContent value="added">
-            <TicketsContent 
+            <TicketsList
               tickets={addedTickets}
-              isLoading={isLoading}
-              onDelete={(ticketId) => {
-                console.log("Opening delete confirmation for ticket:", ticketId);
-                openDeleteConfirmation(ticketId);
+              onDelete={openDeleteConfirmation}
+              onView={(ticket) => {
+                setCurrentEditTicket(ticket);
+                console.log("Viewing ticket:", ticket.id);
               }}
               onEdit={(ticket) => {
                 setCurrentEditTicket(ticket);
                 setEditTicketOpen(true);
               }}
-              loadingDelete={isDeleting}
+              isLoading={isLoading}
               ticketType="added"
             />
           </TabsContent>
           
           <TabsContent value="purchased">
-            <TicketsContent 
+            <TicketsList
               tickets={purchasedTickets}
-              isLoading={isLoading}
               onDelete={openDeleteConfirmation}
-              loadingDelete={isDeleting}
+              onView={(ticket) => {
+                setCurrentEditTicket(ticket);
+                console.log("Viewing ticket:", ticket.id);
+              }}
+              isLoading={isLoading}
               ticketType="purchased"
             />
           </TabsContent>

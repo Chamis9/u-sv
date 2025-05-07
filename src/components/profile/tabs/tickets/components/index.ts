@@ -1,8 +1,5 @@
 
-export * from "./TicketsHeader";
-export * from "./EmptyTicketState";
-export * from "./TicketsContent";
-export * from "./TicketsGrid";
-export * from "./visual-ticket";
-export * from "./ticket-list";
-
+export { EmptyTicketState } from './EmptyTicketState';
+export { TicketsHeader } from './TicketsHeader';
+export { TicketsContent } from './TicketsContent';
+export { TicketsList } from './ticket-list/TicketsList';
