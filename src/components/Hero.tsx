@@ -31,10 +31,10 @@ export const Hero = memo(function Hero() {
       
       <div className="absolute inset-0 bg-ticket-bg/90"></div>
 
-      <div className="container mx-auto px-4 z-10 text-center py-12 md:py-20">
+      <div className="container mx-auto px-4 z-10 py-12 md:py-20">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 mb-10">
-            <div className="md:text-left">
+            <div className="text-left w-full md:w-1/2">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-ticket-text mb-4 md:mb-6">
                 <span className="block mb-2">Netiec uz</span>
                 <span className="block mb-2">pasākumu?</span>
@@ -45,25 +45,23 @@ export const Hero = memo(function Hero() {
               </h1>
               
               <p className="text-xl sm:text-2xl md:text-3xl text-ticket-text/90 mb-8 md:mb-12">
-                {hero.subtitle}
+                Pirmā platforma biļešu apmaiņai Latvijā
               </p>
             </div>
             
-            <div className="flex-shrink-0">
-              <TicketVerifyIcon size={180} />
+            <div className="flex-shrink-0 w-full md:w-1/2">
+              <div className="md:text-right">
+                <p className="text-xl md:text-2xl text-ticket-text mb-4">
+                  Gribi uz koncertu, bet biļetes izpārdotas? Ieskaties
+                  <span className="text-ticket-accent font-bold"> NETIEKU.ES</span>!
+                </p>
+                
+                <p className="text-lg md:text-xl text-ticket-text/90">
+                  Pērc vai pārdod biļetes uz koncertiem, teātri, sporta
+                  pasākumiem u.c.
+                </p>
+              </div>
             </div>
-          </div>
-          
-          <div className="mt-8 md:mt-12">
-            <p className="text-xl md:text-2xl text-ticket-text mb-8 max-w-3xl mx-auto">
-              Gribi uz koncertu, bet biļetes izpārdotas? Ieskaties
-              <span className="text-ticket-accent font-bold"> NETIEKU.ES</span>!
-            </p>
-            
-            <p className="text-lg md:text-xl text-ticket-text/90 mb-6 max-w-3xl mx-auto">
-              Pērc vai pārdod biļetes uz koncertiem, teātri, sporta
-              pasākumiem u.c.
-            </p>
           </div>
           
           <div className="flex flex-col items-center space-y-6 bg-ticket-accent/10 dark:bg-ticket-accent/5 rounded-xl p-4 sm:p-6 md:p-8 mt-8 border border-ticket-text/10">
