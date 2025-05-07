@@ -38,17 +38,6 @@ export function Footer() {
               <Mail size={14} className="hidden sm:inline" />
               <span>{footer.contactLink || "Kontakti"}</span>
             </Link>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="text-gray-400 hover:text-orange-400 transition-colors flex items-center gap-1 h-7 px-2 text-xs bg-transparent hover:bg-transparent"
-              asChild
-            >
-              <Link to="/privacy-policy" onClick={handleLinkClick}>
-                <Shield className="h-3 w-3 mr-1 sm:h-4 sm:w-4 sm:mr-2" />
-                <span>{footer.privacyPolicy}</span>
-              </Link>
-            </Button>
             <div className="hidden sm:flex items-center text-xs sm:text-sm text-gray-400">
               <span className="flex items-center">
                 {footer.madeWith} 
