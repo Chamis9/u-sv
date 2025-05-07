@@ -16,7 +16,7 @@ const AboutUs = () => {
     lv: [
       {
         title: "Mūsu vīzija",
-        content: "Mūsu mērķis ir radīt inovatīvu un uzticamu platformu biļešu tirdzniecībai, kas vieno pasākumu apmeklētājus ar citiem apmeklētājiem, nodrošinot drošu un ērtu biļešu iegādes procesu.",
+        content: "Mūsu mērķis ir radīt uzticamu platformu biļešu tirdzniecībai, kas vieno pasākumu apmeklētājus ar citiem apmeklētājiem, nodrošinot drošu un ērtu biļešu iegādes procesu.",
         icon: <Users className="h-8 w-8 text-orange-500" />
       },
       {
@@ -26,7 +26,7 @@ const AboutUs = () => {
       },
       {
         title: "Ko mēs piedāvājam",
-        content: "Mūsu platforma ļauj lietotājiem tiešā veidā pārdot un iegādāties biļetes no citiem lietotājiem. Lai nodrošinātu drošību, tikai verificēti lietotāji var veikt darījumus mūsu platformā.",
+        content: "Mūsu platforma ļauj tās lietotājiem pārdot un iegādāties biļetes no citiem lietotājiem. Lai nodrošinātu drošību, tikai verificēti lietotāji var veikt darījumus mūsu platformā.",
         icon: <Check className="h-8 w-8 text-orange-500" />
       }
     ],
@@ -74,7 +74,7 @@ const AboutUs = () => {
       <div className="min-h-screen flex flex-col dark:bg-gradient-to-b dark:from-black dark:via-gray-900 dark:to-gray-800 bg-white text-gray-900 dark:text-white">
         <SEO 
           title={translations.aboutUs?.title || "Par mums - netieku.es"}
-          description={translations.aboutUs?.content?.[0] || "Mūsu mērķis ir radīt inovatīvu un uzticamu platformu biļešu tirdzniecībai"}
+          description={translations.aboutUs?.content?.[0] || "Mūsu mērķis ir radīt uzticamu platformu biļešu tirdzniecībai"}
         />
         <Header />
         
@@ -119,7 +119,7 @@ const AboutUs = () => {
                   <Check className="h-6 w-6 text-green-500 mt-1 mr-3 flex-shrink-0" />
                   <p className="text-gray-600 dark:text-gray-300">
                     {currentLanguage.code === 'lv' ? 
-                      "Mūsu platformā pirkt vai pārdot var tikai verificēti lietotāji. Tas nodrošina augstākā līmeņa drošību un uzticamību visiem mūsu lietotājiem. Katra darījuma drošība tiek garantēta." : 
+                      "Mūsu platformā pārdot var tikai verificēti lietotāji. Tas nodrošina augstākā līmeņa drošību un uzticamību visiem mūsu lietotājiem. Katra darījuma drošība tiek garantēta." : 
                     currentLanguage.code === 'ru' ? 
                       "На нашей платформе могут работать только проверенные пользователи. Это обеспечивает высочайший уровень безопасности и надежности для всех наших пользователей. Каждый билет проверяется, и безопасность каждой транзакции гарантируется." :
                       "Only verified users can buy or sell on our platform. This ensures the highest level of security and reliability for all our users. The security of each transaction is guaranteed."}

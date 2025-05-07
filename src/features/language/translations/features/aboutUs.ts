@@ -11,7 +11,7 @@ export const aboutUsTranslations = {
     title: "Par mums",
     content: [
       "netieku.es ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem.",
-      "Mūsu platforma ļauj lietotājiem tiešā veidā pārdot un iegādāties biļetes no citiem lietotājiem. Lai nodrošinātu drošību, tikai verificēti lietotāji var veikt darījumus.",
+      "Mūsu platforma ļauj tās lietotājiem pārdot un iegādāties biļetes no citiem lietotājiem. Lai nodrošinātu drošību, tikai verificēti lietotāji var veikt darījumus mūsu platformā.",
       "Mēs balstāmies uz trim galvenajām vērtībām: godīgums, drošība un klientu apmierinātība. Mēs garantējam 100% drošas transakcijas."
     ]
   },
