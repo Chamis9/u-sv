@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 import animatePlugin from "tailwindcss-animate";
 
@@ -76,13 +75,6 @@ export default {
 					800: '#9a3412',
 					900: '#7c2d12',
 				},
-				ticket: {
-					bg: '#00635a',        // Teal background from image
-					text: '#f2e8c9',      // Cream/beige text color from image
-					accent: '#f7b731',    // Yellow/gold from the ticket in the image
-					check: '#00635a',     // Teal check color
-					checkbg: '#f2e8c9',   // Cream background for check
-				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -111,10 +103,6 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-orange': 'linear-gradient(90deg, hsla(24, 100%, 83%, 1) 0%, hsla(341, 91%, 68%, 1) 100%)',
-			},
-			fontFamily: {
-				'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-				'display': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
 			}
 		}
 	},

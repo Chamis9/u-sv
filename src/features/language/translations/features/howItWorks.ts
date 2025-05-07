@@ -13,7 +13,7 @@ export type HowItWorksTranslations = {
 export const howItWorksTranslations: Record<string, HowItWorksTranslations> = {
   lv: {
     title: "Kā tas darbojas",
-    subtitle: "Pārdod vai iegādājies biļeti droši un ērti",
+    subtitle: "Vienkāršs un drošs veids, kā pārdot vai iegādāties biļeti uz pasākumiem",
     steps: [
       {
         title: "Reģistrējies un verificē sevi",
@@ -35,7 +35,7 @@ export const howItWorksTranslations: Record<string, HowItWorksTranslations> = {
   },
   en: {
     title: "How it works",
-    subtitle: "Sell or buy tickets safely and conveniently",
+    subtitle: "A simple and secure way to sell or purchase event tickets",
     steps: [
       {
         title: "Register and verify",
@@ -57,7 +57,7 @@ export const howItWorksTranslations: Record<string, HowItWorksTranslations> = {
   },
   ru: {
     title: "Как это работает",
-    subtitle: "Продавайте или покупайте билеты безопасно и удобно",
+    subtitle: "Простой и безопасный способ продать или купить билеты на мероприятия",
     steps: [
       {
         title: "Зарегистрируйся и верифицируй себя",

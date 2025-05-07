@@ -1,22 +1,25 @@
 
 import { Link } from "react-router-dom";
-import { Ticket } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-export function Logo() {
+interface LogoProps {
+  className?: string;
+}
+
+export function Logo({ className }: LogoProps) {
+  const isMobile = useIsMobile();
+  
+  const handleLogoClick = () => {
+    window.scrollTo(0, 0);
+  };
+
   return (
     <Link 
       to="/" 
-      className="flex items-center gap-2"
+      onClick={handleLogoClick}
+      className={`text-2xl font-bold text-white dark:text-white hover:opacity-90 transition-opacity relative z-10 ${isMobile ? 'pl-0' : ''} ${className || ''}`}
     >
-      <div className="flex items-center gap-1.5">
-        <Ticket 
-          size={22} 
-          className="text-ticket-accent" 
-        />
-        <span className="font-bold text-lg md:text-xl text-ticket-text">
-          netieku.es
-        </span>
-      </div>
+      <span className="text-orange-500">netieku</span>.es
     </Link>
   );
 }

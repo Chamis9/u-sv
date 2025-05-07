@@ -29,17 +29,16 @@ export function Header() {
   };
   
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 py-3 md:py-4 px-4 md:px-6 bg-ticket-bg/80 backdrop-blur-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 py-3 md:py-4 px-4 md:px-6 bg-black/40 backdrop-blur-sm">
       <div className="container mx-auto flex justify-between items-center">
-        <div className="flex items-center md:w-1/4">
+        <div className="flex items-center">
           <MobileMenu links={navigationLinks} />
-        </div>
-        
-        <div className="flex justify-center md:w-1/2">
           <Logo />
         </div>
         
-        <div className="flex items-center justify-end gap-2 md:gap-4 text-ticket-text md:w-1/4">
+        <Navigation />
+        
+        <div className="flex items-center gap-2 md:gap-4 text-white">
           <ThemeToggle />
           {isAuthenticated && user ? (
             <UserHoverCard 
@@ -50,10 +49,10 @@ export function Header() {
           ) : (
             <LoginButton 
               variant="ghost" 
-              className="text-ticket-text hover:text-ticket-accent transition-colors hover:bg-transparent"
+              className="text-white hover:text-orange-400 transition-colors hover:bg-transparent"
               showIcon={false}
             >
-              <UserCircle size={20} className="hover:text-ticket-accent" />
+              <UserCircle size={20} className="hover:text-orange-400" />
             </LoginButton>
           )}
           <LanguageSelector />
