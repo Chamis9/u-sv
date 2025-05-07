@@ -7,7 +7,6 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, Users, Info } from "lucide-react";
-import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 
 const AboutUs = () => {
   const { translations } = useLanguage();
@@ -131,7 +130,6 @@ const AboutUs = () => {
         </main>
         
         <Footer />
-        <GlobalThemeToggle />
       </div>
     </ThemeProvider>
   );

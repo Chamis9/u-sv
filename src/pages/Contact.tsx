@@ -7,7 +7,6 @@ import { useLanguage } from "@/features/language";
 import { ContactInfo } from "@/components/contact/ContactInfo";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { contactTranslations } from "@/features/language/translations";
-import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 const Contact = () => {
@@ -41,7 +40,6 @@ const Contact = () => {
           </main>
           
           <Footer />
-          <GlobalThemeToggle />
         </div>
       </ThemeProvider>
     </>
