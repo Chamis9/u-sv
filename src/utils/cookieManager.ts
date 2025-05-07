@@ -48,3 +48,21 @@ export const isCookieEnabled = (type: string): boolean => {
   const cookie = getCookie(`${type}_cookies`);
   return cookie === 'true';
 };
+
+// Set cookies based on user preferences
+export const setCookiesByPreferences = (preferences: { 
+  essential: boolean; 
+  analytics: boolean; 
+  marketing: boolean; 
+}): void => {
+  // Essential cookies are always set regardless of preference (they're required)
+  setCookie('essential_cookies', 'true');
+  
+  // Set analytics cookies based on user preference
+  setCookie('analytics_cookies', preferences.analytics ? 'true' : 'false');
+  
+  // Set marketing cookies based on user preference
+  setCookie('marketing_cookies', preferences.marketing ? 'true' : 'false');
+  
+  console.log('Cookie preferences updated:', preferences);
+};
