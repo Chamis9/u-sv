@@ -10,7 +10,7 @@ export async function deleteTicketSimple(ticketId: string): Promise<boolean> {
   try {
     console.log(`Simple delete for ticket with ID: ${ticketId}`);
     
-    // Direct delete approach
+    // Direct delete approach without any conditions - this is the most direct approach
     const { data, error } = await supabase
       .from('tickets')
       .delete()
