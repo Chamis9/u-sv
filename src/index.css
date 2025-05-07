@@ -111,18 +111,7 @@
   }
 }
 
-@keyframes fall {
-  0% {
-    transform: translateY(-100px) rotate(0deg);
-  }
-  100% {
-    transform: translateY(100vh) rotate(360deg);
-  }
-}
-
-.animate-fall {
-  animation: fall 15s linear infinite;
-}
+/* Removed falling ticket animations */
 
 /* Optimize animations for battery and performance */
 @media (prefers-reduced-motion: reduce) {
@@ -131,9 +120,5 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-  
-  .animate-fall {
-    display: none;
   }
 }

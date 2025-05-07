@@ -2,7 +2,6 @@
 import { memo } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
-import { FallingTickets } from "@/components/FallingTickets";
 import { Helmet } from "react-helmet-async";
 
 export const Hero = memo(function Hero() {
@@ -30,8 +29,6 @@ export const Hero = memo(function Hero() {
       </Helmet>
       
       <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-transparent dark:from-black/20 dark:to-transparent"></div>
-
-      <FallingTickets />
 
       <div className="container mx-auto px-4 z-10 text-center py-12 md:py-20">
         <div className="max-w-4xl mx-auto">
