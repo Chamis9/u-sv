@@ -1,16 +1,18 @@
 
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { AddTicketForm } from "../../AddTicketForm";
 import { useLanguage } from "@/features/language";
+import { AddTicketForm } from "../../AddTicketForm";
 import { UserTicket, AddTicketData } from "@/hooks/tickets";
+import { useTicketRefresh } from "../../hooks/useTicketRefresh";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface EditTicketDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onClose: () => void;
   currentTicket: UserTicket | null;
-  onUpdate: (ticketId: string, data: Partial<AddTicketData>) => Promise<{ success: boolean; error?: string }>;
+  onUpdate: (id: string, data: Partial<AddTicketData>) => Promise<{ success: boolean; ticket?: UserTicket; error?: string }>;
 }
 
 export function EditTicketDialog({ 
@@ -18,27 +20,40 @@ export function EditTicketDialog({
   onOpenChange, 
   onClose, 
   currentTicket,
-  onUpdate
+  onUpdate 
 }: EditTicketDialogProps) {
   const { currentLanguage } = useLanguage();
+  const { isAuthenticated, user } = useAuth();
+  const { refreshTickets } = useTicketRefresh({ 
+    userId: user?.id, 
+    isAuthenticated 
+  });
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
-    
+  
+  const handleClose = () => {
+    // Refresh tickets list when dialog closes
+    refreshTickets();
+    onClose();
+  };
+  
+  if (!currentTicket) return null;
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden">
         <DialogHeader>
-          <DialogTitle>{t("Rediģēt biļeti", "Edit Ticket")}</DialogTitle>
+          <DialogTitle>
+            {t("Rediģēt biļeti", "Edit ticket")}
+          </DialogTitle>
         </DialogHeader>
-        {currentTicket && (
-          <AddTicketForm 
-            onClose={onClose}
-            isEditing={true}
-            ticketToEdit={currentTicket}
-            onUpdate={onUpdate}
-          />
-        )}
+        <AddTicketForm 
+          onClose={handleClose}
+          isEditing={true}
+          ticketToEdit={currentTicket}
+          onUpdate={onUpdate}
+        />
       </DialogContent>
     </Dialog>
   );

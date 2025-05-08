@@ -50,16 +50,11 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
       // Force refetch using authUserId
       await queryClient.refetchQueries({ 
         queryKey: ['user-tickets', authUserId],
-        exact: true
+        exact: true,
+        type: 'active',
       });
       
       console.log("Tickets refreshed successfully");
-      
-      // Show a success toast
-      toast({
-        title: t("Biļetes atjaunotas", "Tickets refreshed"),
-        description: t("Biļešu saraksts ir atjaunināts", "Ticket list has been updated"),
-      });
       
       return true;
     } catch (error) {

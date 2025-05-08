@@ -5,6 +5,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/features/language";
 import { AddTicketData, UserTicket } from "@/hooks/tickets";
 import { TicketFormValues } from "../schema";
+import { useTicketRefresh } from "./useTicketRefresh";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface UseAddTicketFormProps {
   form: UseFormReturn<TicketFormValues>;
@@ -30,6 +32,10 @@ export function useAddTicketForm({
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
   const { currentLanguage } = useLanguage();
+  const { isAuthenticated } = useAuth();
+  
+  // Get the ticket refresh function
+  const { refreshTickets } = useTicketRefresh({ userId, isAuthenticated });
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
@@ -145,6 +151,8 @@ export function useAddTicketForm({
       }
       
       if (success) {
+        // Force refresh the tickets list
+        await refreshTickets();
         onClose();
       }
     } catch (error) {

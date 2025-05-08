@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { User } from "@/types/users";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs } from "@/components/ui/tabs";
@@ -50,12 +50,12 @@ export function TicketsTab({ user }: TicketsTabProps) {
   const { selectedTicket, setSelectedTicket } = useTicketDialog();
   
   // Function to handle refresh button click
-  const handleRefreshClick = async () => {
+  const handleRefreshClick = useCallback(async () => {
     console.log("Manual refresh triggered from button");
     await refreshTickets();
     // Also refresh using the tab's function to ensure UI consistency
     refreshTicketsFromTab();
-  };
+  }, [refreshTickets, refreshTicketsFromTab]);
   
   // Force refresh on component mount and when user changes
   useEffect(() => {
@@ -76,11 +76,23 @@ export function TicketsTab({ user }: TicketsTabProps) {
     verifyAndRefresh();
   }, [isAuthenticated, refreshTicketsFromTab]);
 
-  // Debug logging
-  console.log("TicketsTab render - Current user:", user);
-  console.log("TicketsTab render - Authentication state:", isAuthenticated);
-  console.log("TicketsTab render - Added tickets:", addedTickets.length);
-  console.log("TicketsTab render - Purchased tickets:", purchasedTickets.length);
+  // Set up automatic refreshing when ticket state changes
+  useEffect(() => {
+    // Listen for changes in auth state
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+          console.log("Auth state changed, refreshing tickets");
+          refreshTicketsFromTab();
+        }
+      }
+    );
+
+    return () => {
+      // Clean up the subscription
+      authListener?.subscription.unsubscribe();
+    };
+  }, [refreshTicketsFromTab]);
   
   if (!isAuthenticated) {
     return (
@@ -142,7 +154,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
         onOpenChange={setAddTicketOpen}
         onClose={() => {
           setAddTicketOpen(false);
-          refreshTickets();
+          // No need to call refreshTickets here, it's now handled in AddTicketDialog
         }}
       />
       
@@ -152,7 +164,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
         onOpenChange={setEditTicketOpen}
         onClose={() => {
           setEditTicketOpen(false);
-          refreshTickets();
+          // No need to call refreshTickets here, it's now handled in EditTicketDialog
         }}
         currentTicket={currentEditTicket}
         onUpdate={handleUpdateTicket}
