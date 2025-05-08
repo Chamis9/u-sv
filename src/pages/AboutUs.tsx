@@ -3,7 +3,6 @@ import React from 'react';
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
-import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, Users, Info } from "lucide-react";
@@ -69,69 +68,67 @@ const AboutUs = () => {
   const content = companyInfo[currentLanguage.code as keyof typeof companyInfo] || companyInfo.en;
   
   return (
-    <ThemeProvider defaultTheme="light" disableToggle={false}>
-      <div className="min-h-screen flex flex-col dark:bg-gradient-to-b dark:from-black dark:via-gray-900 dark:to-gray-800 bg-white text-gray-900 dark:text-white">
-        <SEO 
-          title={translations.aboutUs?.title || "Par mums - netieku.es"}
-          description={translations.aboutUs?.content?.[0] || "Mūsu mērķis ir radīt uzticamu platformu biļešu tirdzniecībai"}
-        />
-        <Header />
-        
-        <main className="flex-grow pt-24 pb-12">
-          <div className="container mx-auto px-4 sm:px-6">
-            <div className="max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-left text-orange-500">
-                {translations.aboutUs?.title || "Par mums"}
-              </h1>
-              
-              <div className="text-xl mb-12 text-gray-600 dark:text-gray-300 text-center">
-                <span className="text-orange-500 font-semibold">netieku.es</span> {currentLanguage.code === 'en' ? 
-                  "is a platform where users can safely sell and purchase tickets from other users" : 
-                  "ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem"}
-              </div>
+    <div className="min-h-screen flex flex-col bg-teal-500 text-cream">
+      <SEO 
+        title={translations.aboutUs?.title || "Par mums - netieku.es"}
+        description={translations.aboutUs?.content?.[0] || "Mūsu mērķis ir radīt uzticamu platformu biļešu tirdzniecībai"}
+      />
+      <Header />
+      
+      <main className="flex-grow pt-24 pb-12">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-left text-orange-500">
+              {translations.aboutUs?.title || "Par mums"}
+            </h1>
             
-              <div className="grid gap-8 md:grid-cols-3">
-                {content.map((section, index) => (
-                  <Card key={index} className="transition-all hover:shadow-lg border-t-4 border-t-orange-500 dark:bg-gray-800 bg-orange-50/70">
-                    <CardContent className="pt-6">
-                      <div className="flex items-center mb-4">
-                        {section.icon}
-                        <h2 className="text-xl font-semibold ml-3 text-orange-500">
-                          {section.title}
-                        </h2>
-                      </div>
-                      <p className="text-gray-600 dark:text-gray-300">
-                        {section.content}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+            <div className="text-xl mb-12 text-cream text-center">
+              <span className="text-orange-500 font-semibold">netieku.es</span> {currentLanguage.code === 'en' ? 
+                "is a platform where users can safely sell and purchase tickets from other users" : 
+                "ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem"}
+            </div>
+          
+            <div className="grid gap-8 md:grid-cols-3">
+              {content.map((section, index) => (
+                <Card key={index} className="transition-all hover:shadow-lg border-t-4 border-t-orange-500 bg-teal-600">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center mb-4">
+                      {section.icon}
+                      <h2 className="text-xl font-semibold ml-3 text-orange-500">
+                        {section.title}
+                      </h2>
+                    </div>
+                    <p className="text-cream">
+                      {section.content}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
 
-              <div className="mt-12 bg-orange-50/70 dark:bg-gray-800 p-6 rounded-lg">
-                <h2 className="text-2xl font-semibold mb-4 text-orange-500">
-                  {currentLanguage.code === 'lv' ? "Verificēti lietotāji" : 
-                  currentLanguage.code === 'ru' ? "Проверенные пользователи" : 
-                  "Verified Users"}
-                </h2>
-                <div className="flex items-start">
-                  <Check className="h-6 w-6 text-green-500 mt-1 mr-3 flex-shrink-0" />
-                  <p className="text-gray-600 dark:text-gray-300">
-                    {currentLanguage.code === 'lv' ? 
-                      "Mūsu platformā pārdot var tikai verificēti lietotāji. Tas nodrošina augstākā līmeņa drošību un uzticamību visiem mūsu lietotājiem. Katra darījuma drošība tiek garantēta." : 
-                    currentLanguage.code === 'ru' ? 
-                      "На нашей платформе могут работать только проверенные пользователи. Это обеспечивает высочайший уровень безопасности и надежности для всех наших пользователей. Каждый билет проверяется, и безопасность каждой транзакции гарантируется." :
-                      "Only verified users can sell on our platform. This ensures the highest level of security and reliability for all our users. The security of each transaction is guaranteed."}
-                  </p>
-                </div>
+            <div className="mt-12 bg-teal-600 p-6 rounded-lg">
+              <h2 className="text-2xl font-semibold mb-4 text-orange-500">
+                {currentLanguage.code === 'lv' ? "Verificēti lietotāji" : 
+                currentLanguage.code === 'ru' ? "Проверенные пользователи" : 
+                "Verified Users"}
+              </h2>
+              <div className="flex items-start">
+                <Check className="h-6 w-6 text-green-500 mt-1 mr-3 flex-shrink-0" />
+                <p className="text-cream">
+                  {currentLanguage.code === 'lv' ? 
+                    "Mūsu platformā pārdot var tikai verificēti lietotāji. Tas nodrošina augstākā līmeņa drošību un uzticamību visiem mūsu lietotājiem. Katra darījuma drošība tiek garantēta." : 
+                  currentLanguage.code === 'ru' ? 
+                    "На нашей платформе могут работать только проверенные пользователи. Это обеспечивает высочайший уровень безопасности и надежности для всех наших пользователей. Каждый билет проверяется, и безопасность каждой транзакции гарантируется." :
+                    "Only verified users can sell on our platform. This ensures the highest level of security and reliability for all our users. The security of each transaction is guaranteed."}
+                </p>
               </div>
             </div>
           </div>
-        </main>
-        
-        <Footer />
-      </div>
-    </ThemeProvider>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
   );
 };
 

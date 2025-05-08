@@ -5,7 +5,6 @@ import { UserCircle, Mail, CreditCard, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/profile/UserAvatar";
 import { User } from "@/types/users";
-import { useTheme } from "@/components/theme/ThemeProvider";
 import { useLanguage } from "@/features/language";
 
 interface UserHoverCardProps {
@@ -15,7 +14,6 @@ interface UserHoverCardProps {
 }
 
 export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProps) {
-  const { theme } = useTheme();
   const { currentLanguage } = useLanguage();
   
   const t = (lvText: string, enText: string, ruText?: string) => {
@@ -78,8 +76,7 @@ export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProp
         </Link>
       </HoverCardTrigger>
       <HoverCardContent 
-        className={`w-64 p-0 overflow-hidden 
-          ${theme === 'dark' ? 'dark:bg-gray-800 dark:border-gray-700' : ''}`}
+        className="w-64 p-0 overflow-hidden bg-white border border-gray-200"
         onFocus={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
       >
@@ -105,7 +102,7 @@ export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProp
             <Link
               key={index}
               to={item.path}
-              className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100"
               onClick={onLinkClick}
             >
               {item.icon}
@@ -117,7 +114,7 @@ export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProp
             <Button
               variant="ghost"
               onClick={onLogout}
-              className="flex items-center gap-2 w-full px-4 py-3 justify-start hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="flex items-center gap-2 w-full px-4 py-3 justify-start hover:bg-gray-100"
             >
               <LogOut className="h-4 w-4" />
               <span className="text-sm">{t("Iziet", "Logout", "Выйти")}</span>
