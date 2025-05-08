@@ -4,6 +4,7 @@ import { AddTicketData, UserTicket } from "./types";
 import { addTicketMutation } from './mutations/addTicketMutation';
 import { updateTicketMutation } from './mutations/updateTicketMutation';
 import { deleteTicketMutation } from './mutations/deleteTicketMutation';
+import { supabase } from "@/integrations/supabase/client";
 
 export function useTicketMutations(userId?: string) {
   const [loading, setLoading] = useState(false);
@@ -19,6 +20,23 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
+      // First refresh the auth session
+      try {
+        const { error: refreshError } = await supabase.auth.refreshSession();
+        if (refreshError) {
+          console.error("Error refreshing session before adding ticket:", refreshError);
+        }
+      } catch (refreshErr) {
+        console.error("Exception during session refresh:", refreshErr);
+      }
+      
+      // Get the current session to use the correct auth user ID
+      const { data: sessionData } = await supabase.auth.getSession();
+      const authUserId = sessionData.session?.user.id;
+      
+      console.log("Before adding ticket - Auth User ID:", authUserId);
+      console.log("Before adding ticket - Passed User ID:", userId);
+      
       const result = await addTicketMutation(data, userId);
       
       if (!result.success) {
@@ -46,6 +64,16 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
+      // First refresh the auth session
+      try {
+        const { error: refreshError } = await supabase.auth.refreshSession();
+        if (refreshError) {
+          console.error("Error refreshing session before updating ticket:", refreshError);
+        }
+      } catch (refreshErr) {
+        console.error("Exception during session refresh:", refreshErr);
+      }
+      
       const result = await updateTicketMutation(ticketId, data, userId);
       
       if (!result.success) {
@@ -73,6 +101,16 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
+      // First refresh the auth session
+      try {
+        const { error: refreshError } = await supabase.auth.refreshSession();
+        if (refreshError) {
+          console.error("Error refreshing session before deleting ticket:", refreshError);
+        }
+      } catch (refreshErr) {
+        console.error("Exception during session refresh:", refreshErr);
+      }
+      
       // Use the direct deletion function
       const success = await deleteTicketMutation(ticketId, userId);
       

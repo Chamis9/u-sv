@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { UserTicket, AddTicketData } from "@/hooks/tickets";
@@ -106,6 +107,10 @@ export function useTicketOperations({ onTicketsChanged, t }: UseTicketOperations
     try {
       setIsDeleting(true);
       
+      // First refresh the session to ensure valid tokens
+      console.log("Refreshing auth session before delete operation");
+      await refreshSession();
+      
       // Use performTicketOperation to handle token refresh and error handling
       return await performTicketOperation(
         async () => await deleteTicketMutation(ticketToDelete, user.id),
@@ -125,10 +130,10 @@ export function useTicketOperations({ onTicketsChanged, t }: UseTicketOperations
     }
     
     try {
-      console.log("Updating ticket with user ID:", user.id);
-      
-      // First refresh the session
+      console.log("Refreshing auth session before update operation");
       await refreshSession();
+      
+      console.log("Updating ticket with user ID:", user.id);
       
       // Directly use the updateTicketMutation that we imported
       const result = await updateTicketMutation(ticketId, data, user.id);

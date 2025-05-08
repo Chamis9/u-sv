@@ -17,8 +17,11 @@ export async function addTicketMutation(
       return { success: false, error: "Authentication session is invalid or expired" };
     }
     
-    console.log("Current auth session user ID:", sessionData.session.user.id);
-    console.log("Using user ID for ticket creation:", userId);
+    // Important: Use the authenticated user ID from the session instead of the passed userId
+    const authUserId = sessionData.session.user.id;
+    
+    console.log("Current auth session user ID:", authUserId);
+    console.log("Using passed user ID for reference:", userId);
     
     // Next, refresh the auth session to ensure token is valid
     const { error: refreshError } = await supabase.auth.refreshSession();
@@ -31,14 +34,14 @@ export async function addTicketMutation(
     
     console.log(`Adding ticket to consolidated tickets table`);
     console.log(`Full ticket data:`, JSON.stringify(data, null, 2));
-    console.log(`Current user ID: ${userId}`);
+    console.log(`Auth user ID: ${authUserId}`);
     
     // Create the insert object with all necessary fields
     const insertData = {
       id: ticketId,
-      user_id: userId,
-      owner_id: userId,
-      seller_id: userId,
+      user_id: authUserId, // Use the auth user ID, not the passed userId
+      seller_id: authUserId, // Use the auth user ID, not the passed userId
+      owner_id: authUserId, // Use the auth user ID, not the passed userId
       price: data.price,
       title: data.title || data.description,
       description: data.description,
@@ -54,7 +57,7 @@ export async function addTicketMutation(
       event_time: data.event_time || null
     };
     
-    console.log(`Inserting ticket with ID: ${ticketId}`);
+    console.log(`Inserting ticket with ID: ${ticketId} using auth user ID: ${authUserId}`);
     
     // Get the current auth user to double-check authentication state
     const { data: userData, error: userError } = await supabase.auth.getUser();
@@ -77,10 +80,10 @@ export async function addTicketMutation(
       let errorMessage = `Failed to add ticket: ${error.message}`;
       
       if (error.code === '42501') {
-        errorMessage = `Row Level Security prevented adding ticket. User ID: ${userId}`;
+        errorMessage = `Row Level Security prevented adding ticket. Auth User ID: ${authUserId}, Provided User ID: ${userId}`;
         console.error('RLS error details:', { 
           userId, 
-          authUserId: userData.user.id,
+          authUserId,
           errorCode: error.code,
           errorMessage: error.message
         });
@@ -97,7 +100,7 @@ export async function addTicketMutation(
     }
     
     // Create the ticket object with the response data
-    const ticket = createTicketObject(responseData, ticketId, userId);
+    const ticket = createTicketObject(responseData, ticketId, authUserId);
     
     return { success: true, ticket };
   } catch (err: any) {
