@@ -60,13 +60,14 @@ export function AvatarUpload({ user, onAvatarUpdate }: AvatarUploadProps) {
         .from('avatars')
         .getPublicUrl(fileName);
 
-      const { error: updateError } = await supabase
-        .from('registered_users')
-        .update({ 
-          avatar_url: publicUrl,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', user.id);
+      // Use direct RPC call instead of querying registered_users
+      const { error: updateError } = await supabase.rpc(
+        'update_user_avatar', 
+        { 
+          user_id: user.id, 
+          new_avatar_url: publicUrl
+        }
+      );
 
       if (updateError) {
         throw updateError;

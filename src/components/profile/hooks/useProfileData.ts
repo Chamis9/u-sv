@@ -17,12 +17,10 @@ export function useProfileData() {
         setIsLoading(true);
         
         if (isAuthenticated && userEmail) {
-          // Real user fetching logic for authenticated users
-          const { data, error } = await supabase
-            .from('registered_users')
-            .select('*')
-            .eq('email', userEmail)
-            .single();
+          // Use RPC function to get user data instead of direct query
+          const { data, error } = await supabase.rpc('get_user_by_email', {
+            user_email: userEmail
+          });
             
           if (error) {
             console.error("Error fetching user data:", error);
