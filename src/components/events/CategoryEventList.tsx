@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useLanguage } from "@/features/language";
@@ -12,7 +11,7 @@ import { EventSearchFilter } from './components/EventSearchFilter';
 import { EventTicketPurchaseContainer } from './components/EventTicketPurchaseContainer';
 import { EventsPageLayout } from './components/EventsPageLayout';
 import { UserTicket } from '@/hooks/tickets';
-import { UserTickets } from './components/UserTickets';
+import { UserTickets } from './components/user-tickets';
 
 export function CategoryEventList() {
   const { category } = useParams<{ category: string }>();
