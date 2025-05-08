@@ -64,6 +64,9 @@ export function useUserAuth() {
 
   const register = async (email: string, password: string, userData: any) => {
     try {
+      console.log('Starting registration process for:', email);
+      
+      // Simplified options without email redirect
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -72,8 +75,7 @@ export function useUserAuth() {
             first_name: userData.firstName,
             last_name: userData.lastName,
             phone: userData.phoneNumber ? `${userData.countryCode}${userData.phoneNumber}` : null,
-          },
-          emailRedirectTo: window.location.origin
+          }
         }
       });
       
@@ -87,6 +89,7 @@ export function useUserAuth() {
         return false;
       }
       
+      console.log('Registration successful, user data:', data);
       return true;
     } catch (error) {
       console.error('Registration error:', error);

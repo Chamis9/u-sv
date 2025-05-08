@@ -51,6 +51,8 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
         localStorage.setItem('globalPreviousEmails', JSON.stringify(updatedEmails));
       }
 
+      console.log('Registering user with email:', values.email);
+
       // Register the user through our custom hook
       const success = await registerUser(values.email, values.password, {
         firstName: values.firstName,

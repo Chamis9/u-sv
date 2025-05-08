@@ -38,6 +38,9 @@ refresh_token_reuse_interval = 10
 
 [auth.email]
 enable_confirm = false
+enable_signup = true
+double_confirm_changes = true
+enable_redirect_for_registration = true
 
 [analytics]
 enabled = false
