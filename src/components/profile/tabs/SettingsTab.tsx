@@ -23,11 +23,11 @@ export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
     <div className="space-y-6">
       <Card className="bg-card dark:bg-gray-900">
         <AppearanceAndLanguage 
-          cardTitle={t("Izskata iestatījumi", "Appearance Settings", "Настройки внешнего вида")}
+          cardTitle={t("Valodas iestatījumi", "Language Settings", "Настройки языка")}
           cardDescription={t(
-            "Pielāgojiet aplikācijas izskatu", 
-            "Customize how the application looks", 
-            "Настройте внешний вид приложения"
+            "Izvēlieties aplikācijas valodu", 
+            "Choose your application language", 
+            "Выберите язык приложения"
           )}
           formDescriptionText={t(
             "Izvēlieties profila valodu", 
