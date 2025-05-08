@@ -12,15 +12,27 @@ export async function deleteTicketSimple(ticketId: string): Promise<boolean> {
   }
 
   try {
-    // First, get the ticket data to copy to deleted_tickets
+    // First, check if the ticket exists and get its data
     const { data: ticketData, error: getError } = await supabase
       .from('tickets')
       .select('*')
       .eq('id', ticketId)
       .maybeSingle();
       
-    if (getError || !ticketData) {
+    if (getError) {
       console.error("Error getting ticket data:", getError);
+      return false;
+    }
+    
+    if (!ticketData) {
+      console.error("Ticket not found with ID:", ticketId);
+      return false;
+    }
+    
+    // Check if the user has permission to delete this ticket
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || (ticketData.seller_id !== user.id && ticketData.owner_id !== user.id)) {
+      console.error("User doesn't have permission to delete this ticket");
       return false;
     }
     
