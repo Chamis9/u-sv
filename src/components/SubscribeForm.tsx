@@ -36,7 +36,7 @@ export function SubscribeForm() {
           autoComplete="email"
           required
           aria-invalid={formError ? "true" : "false"}
-          className="flex-grow h-12 text-base bg-ticket-bg/30 border-ticket-text/20 text-ticket-text placeholder:text-ticket-text/50 focus-visible:ring-ticket-accent focus-visible:border-ticket-accent" 
+          className="flex-grow h-12 text-base bg-ticket-bg/30 border-2 border-ticket-accent text-ticket-text placeholder:text-ticket-text/50 focus-visible:ring-ticket-accent focus-visible:border-ticket-accent" 
         />
         
         {formError && (
