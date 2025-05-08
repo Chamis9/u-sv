@@ -5,6 +5,7 @@ import { addTicketMutation } from './mutations/addTicketMutation';
 import { updateTicketMutation } from './mutations/updateTicketMutation';
 import { deleteTicketMutation } from './mutations/deleteTicketMutation';
 import { deleteTicketSimple } from './mutations/deleteTicketSimple';
+import { supabase } from "@/integrations/supabase/client";
 
 export function useTicketMutations(userId?: string) {
   const [loading, setLoading] = useState(false);
@@ -20,8 +21,19 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
-      console.log(`Calling addTicketMutation with userId: ${userId}`);
-      const result = await addTicketMutation(data, userId);
+      console.log(`Preparing to add ticket for user: ${userId}`);
+      
+      // Get the current authenticated user from Supabase
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        const errorMsg = 'Authentication error: User not logged in';
+        console.error(errorMsg, authError);
+        setError(errorMsg);
+        return { success: false, error: errorMsg };
+      }
+      
+      console.log(`Current authenticated user: ${user.id}`);
+      const result = await addTicketMutation(data, user.id);
       
       if (!result.success) {
         console.error('Failed to add ticket:', result.error);
@@ -49,7 +61,13 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
-      const result = await updateTicketMutation(ticketId, data, userId);
+      // Get the current authenticated user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        return { success: false, error: 'Authentication required' };
+      }
+      
+      const result = await updateTicketMutation(ticketId, data, user.id);
       
       if (!result.success) {
         setError(result.error || 'Failed to update ticket');
@@ -76,8 +94,15 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
+      // Get the current authenticated user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setError('Authentication required');
+        return false;
+      }
+      
       // First try the normal deletion function
-      let success = await deleteTicketMutation(ticketId, userId);
+      let success = await deleteTicketMutation(ticketId, user.id);
       
       // If that fails, try the simple deletion function as a fallback
       if (!success) {

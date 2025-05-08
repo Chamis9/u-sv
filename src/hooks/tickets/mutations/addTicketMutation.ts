@@ -6,14 +6,14 @@ import { createTicketObject } from "./helpers";
 
 export async function addTicketMutation(
   data: AddTicketData, 
-  userId: string
+  providedUserId: string
 ): Promise<{ success: boolean; ticket?: UserTicket; error?: string }> {
   try {
     const ticketId = uuidv4();
     
     console.log(`Adding ticket to consolidated tickets table`);
     console.log(`Full ticket data:`, JSON.stringify(data, null, 2));
-    console.log(`Current user ID: ${userId}`);
+    console.log(`Provided user ID: ${providedUserId}`);
     
     // Verify user authentication before proceeding
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -25,21 +25,17 @@ export async function addTicketMutation(
         error: "Authentication is required to add tickets. Please sign in again." 
       };
     }
-    
-    if (user.id !== userId) {
-      console.error("User ID mismatch:", { provided: userId, actual: user.id });
-      return { 
-        success: false, 
-        error: "User identity verification failed." 
-      };
-    }
+
+    // Always use the authenticated user's ID from Supabase
+    const authenticatedUserId = user.id;
+    console.log(`Using authenticated user ID: ${authenticatedUserId}`);
     
     // Create the insert object with all necessary fields
     const insertData = {
       id: ticketId,
-      user_id: userId,
-      owner_id: userId,
-      seller_id: userId,
+      user_id: authenticatedUserId,
+      owner_id: authenticatedUserId,
+      seller_id: authenticatedUserId,
       price: data.price,
       title: data.title || data.description,
       description: data.description,
@@ -69,9 +65,10 @@ export async function addTicketMutation(
       let errorMessage = `Failed to add ticket: ${error.message}`;
       
       if (error.code === '42501') {
-        errorMessage = `Row Level Security prevented adding ticket. User ID: ${userId}`;
+        errorMessage = `Row Level Security prevented adding ticket. User ID: ${authenticatedUserId}`;
         console.error('RLS error details:', { 
-          userId, 
+          providedUserId,
+          authenticatedUserId,
           errorCode: error.code,
           errorMessage: error.message,
           insertData: insertData
@@ -89,7 +86,7 @@ export async function addTicketMutation(
     }
     
     // Create the ticket object with the response data
-    const ticket = createTicketObject(responseData, ticketId, userId);
+    const ticket = createTicketObject(responseData, ticketId, authenticatedUserId);
     
     return { success: true, ticket };
   } catch (err: any) {
