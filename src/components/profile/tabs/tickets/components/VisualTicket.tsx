@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { UserTicket } from "@/hooks/tickets/types";
-import { formatPrice, formatDate, formatTime } from "@/utils/formatters";
+import { formatPrice, formatDate } from "@/utils/formatters";
 import { Badge } from "@/components/ui/badge";
 import { Ticket as TicketIcon, Calendar, Tag, Download, Eye, MapPin, Clock, Pencil } from "lucide-react";
 import { useLanguage } from "@/features/language";
@@ -47,6 +47,11 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
       default:
         return t("Nezināms", "Unknown");
     }
+  };
+
+  const formatTime = (timeStr: string | null) => {
+    if (!timeStr) return null;
+    return timeStr;
   };
   
   const handleViewClick = () => {

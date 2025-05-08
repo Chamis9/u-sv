@@ -2,7 +2,7 @@
 import React from "react";
 import { UserTicket } from "@/hooks/tickets/types";
 import { Calendar, MapPin, Clock } from "lucide-react";
-import { formatDate, formatTime } from "@/utils/formatters";
+import { formatDate } from "@/utils/formatters";
 
 interface TicketHeaderProps {
   ticket: UserTicket;
@@ -10,6 +10,11 @@ interface TicketHeaderProps {
 }
 
 export function TicketHeader({ ticket, currentLanguageCode }: TicketHeaderProps) {
+  const formatTime = (timeStr: string | null) => {
+    if (!timeStr) return null;
+    return timeStr;
+  };
+
   return (
     <div className="flex-1">
       <h3 className="font-semibold text-lg mb-1 truncate">{ticket.title}</h3>

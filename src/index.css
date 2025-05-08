@@ -5,35 +5,65 @@
 
 @layer base {
   :root {
-    --background: 174 100% 22%; /* Teal background */
-    --foreground: 48 45% 90%; /* Cream text */
+    --background: 0 0% 100%;
+    --foreground: 20 14.3% 4.1%;
 
     --card: 0 0% 100%;
-    --card-foreground: 174 100% 22%;
+    --card-foreground: 20 14.3% 4.1%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 174 100% 22%;
+    --popover-foreground: 20 14.3% 4.1%;
 
-    --primary: 48 45% 90%; /* Cream color */
-    --primary-foreground: 174 100% 22%; /* Teal text on cream */
+    --primary: 168 100% 19.6%;
+    --primary-foreground: 60 9.1% 97.8%;
 
-    --secondary: 42 100% 60%; /* Amber color */
-    --secondary-foreground: 174 100% 22%; /* Teal text on amber */
+    --secondary: 60 4.8% 95.9%;
+    --secondary-foreground: 24 9.8% 10%;
 
-    --muted: 174 30% 30%;
-    --muted-foreground: 48 25% 80%;
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
 
-    --accent: 42 100% 60%; /* Amber */
-    --accent-foreground: 174 100% 22%;
+    --accent: 60 4.8% 95.9%;
+    --accent-foreground: 24 9.8% 10%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 48 45% 90%;
+    --destructive-foreground: 60 9.1% 97.8%;
 
-    --border: 48 30% 80%;
-    --input: 48 30% 80%;
-    --ring: 42 100% 60%;
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 24.6 95% 53.1%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 168 100% 19.6%;
+    --foreground: 55 25% 85%;
+
+    --card: 168 100% 19.6%;
+    --card-foreground: 55 25% 85%;
+
+    --popover: 168 100% 19.6%;
+    --popover-foreground: 55 25% 85%;
+
+    --primary: 55 25% 85%;
+    --primary-foreground: 168 100% 19.6%;
+
+    --secondary: 168 74% 29%;
+    --secondary-foreground: 55 25% 85%;
+
+    --muted: 168 74% 29%;
+    --muted-foreground: 55 14% 70%;
+
+    --accent: 168 74% 29%;
+    --accent-foreground: 55 25% 85%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 55 25% 85%;
+
+    --border: 168 74% 29%;
+    --input: 168 74% 29%;
+    --ring: 55 25% 85%;
   }
 }
 
@@ -43,7 +73,7 @@
   }
 
   body {
-    @apply bg-teal-500 text-cream font-sans;
+    @apply bg-background text-foreground font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -60,28 +90,11 @@
     height: auto;
     width: 100%;
   }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-bold text-cream;
-  }
-
-  /* Button styling to match the teal and cream theme */
-  .btn-primary {
-    @apply bg-cream text-teal-500 hover:bg-cream-dark transition-colors;
-  }
-
-  .btn-secondary {
-    @apply bg-amber text-teal-500 hover:bg-amber-dark transition-colors;
-  }
-
-  .ticket-card {
-    @apply bg-amber rounded-lg border border-amber-dark p-4;
-  }
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-r from-cream to-amber bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-ticket-text to-white bg-clip-text text-transparent;
   }
   
   /* Performance optimizations */
@@ -106,4 +119,20 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Add Google font for similar typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Custom styles for teal theme */
+.ticket-icon {
+  @apply bg-ticket-checkbg text-ticket-check rounded-full p-2 inline-flex items-center justify-center;
+}
+
+.app-background {
+  @apply bg-ticket-bg text-ticket-text;
+}
+
+.ticket-card {
+  @apply border-ticket-text/20 bg-ticket-bg/90;
 }

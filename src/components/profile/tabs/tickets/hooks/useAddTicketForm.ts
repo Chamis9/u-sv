@@ -1,10 +1,10 @@
+
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/features/language";
 import { AddTicketData, UserTicket } from "@/hooks/tickets";
 import { TicketFormValues } from "../schema";
-import { supabase } from "@/integrations/supabase/client";
 
 interface UseAddTicketFormProps {
   form: UseFormReturn<TicketFormValues>;
@@ -19,6 +19,7 @@ interface UseAddTicketFormProps {
 
 export function useAddTicketForm({
   form,
+  userId,
   onClose,
   isEditing = false,
   ticketToEdit,
@@ -34,27 +35,17 @@ export function useAddTicketForm({
     currentLanguage.code === 'lv' ? lvText : enText;
   
   const onSubmit = async (values: TicketFormValues) => {
+    if (!userId) {
+      toast({
+        title: t("Kļūda", "Error"),
+        description: t("Lai pievienotu biļeti, lūdzu pieslēdzieties", "Please log in to add a ticket"),
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setSubmitting(true);
-      
-      // First get the current authenticated user
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      
-      if (authError || !user) {
-        toast({
-          title: t("Kļūda", "Error"),
-          description: t(
-            "Lai pievienotu biļeti, lūdzu pieslēdzieties", 
-            "Please log in to add a ticket"
-          ),
-          variant: "destructive",
-        });
-        setSubmitting(false);
-        return;
-      }
-      
-      console.log("Current authenticated user:", user.id);
-      
       let filePath = undefined;
       
       // Handle file upload if a file was selected
@@ -82,7 +73,7 @@ export function useAddTicketForm({
         title: values.title,
         description: values.description || undefined,
         price: totalPrice,
-        user_id: user.id,
+        user_id: userId,
         category_name: values.category,
         event_date: values.eventDate || undefined,
         venue: values.venue || undefined,
@@ -128,8 +119,6 @@ export function useAddTicketForm({
         });
       } else if (addTicket) {
         // Add new ticket
-        console.log("Attempting to add new ticket with data:", ticketData);
-        console.log("User ID used for ticket creation:", user.id);
         const { success: addSuccess, error } = await addTicket(ticketData);
         success = addSuccess;
         

@@ -93,50 +93,40 @@ export function LoginButton({ className, defaultTab = "login", onClose, variant 
       <Button
         variant={variant as any}
         onClick={() => setOpen(true)}
-        className={cn("bg-cream text-teal-500 hover:bg-cream-dark", className)}
+        className={cn(className)}
         {...props}
       >
         {props.children || translations.login}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="bg-teal-600 border border-cream/30 text-cream">
+        <DialogContent className="sm:max-w-[425px] border-border bg-background">
           <DialogHeader>
-            <CardTitle className="text-cream">{translations.title}</CardTitle>
-            <CardDescription className="text-cream/80">
+            <CardTitle className="text-foreground">{translations.title}</CardTitle>
+            <CardDescription className="text-muted-foreground">
               {translations.loginDescription}
             </CardDescription>
           </DialogHeader>
           
           <div className="grid gap-4">
             <Tabs defaultValue={defaultTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-teal-700">
-                <TabsTrigger 
-                  value="login" 
-                  className="data-[state=active]:bg-teal-500 data-[state=active]:text-cream text-cream/70"
-                >
-                  {translations.login}
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="register" 
-                  className="data-[state=active]:bg-teal-500 data-[state=active]:text-cream text-cream/70"
-                >
-                  {translations.register}
-                </TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-muted">
+                <TabsTrigger value="login" className="data-[state=active]:bg-background data-[state=active]:text-foreground">{translations.login}</TabsTrigger>
+                <TabsTrigger value="register" className="data-[state=active]:bg-background data-[state=active]:text-foreground">{translations.register}</TabsTrigger>
               </TabsList>
               <TabsContent value="login">
                 <LoginForm translations={translations} onClose={handleCloseModal} />
                 <div className="relative mt-4">
                   <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-cream/20" />
+                    <span className="w-full border-t border-border" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-teal-600 px-2 text-cream/70">
+                    <span className="bg-background px-2 text-muted-foreground">
                       Or continue with
                     </span>
                   </div>
                 </div>
                 <div className="flex justify-center mt-4">
-                  <Button variant="secondary" disabled className="bg-amber text-teal-500">
+                  <Button variant="secondary" disabled>
                     Google
                   </Button>
                 </div>

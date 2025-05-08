@@ -3,6 +3,7 @@ import type { Config } from "tailwindcss";
 import animatePlugin from "tailwindcss-animate";
 
 export default {
+	darkMode: ["class"],
 	content: [
 		"./pages/**/*.{ts,tsx}",
 		"./components/**/*.{ts,tsx}",
@@ -20,60 +21,38 @@ export default {
 		},
 		extend: {
 			colors: {
-				border: "hsl(var(--border))",
-				input: "hsl(var(--input))",
-				ring: "hsl(var(--ring))",
-				background: "hsl(var(--background))",
-				foreground: "hsl(var(--foreground))",
+				border: 'hsl(var(--border))',
+				input: 'hsl(var(--input))',
+				ring: 'hsl(var(--ring))',
+				background: 'hsl(var(--background))',
+				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: "hsl(var(--primary))",
-					foreground: "hsl(var(--primary-foreground))"
+					DEFAULT: 'hsl(var(--primary))',
+					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
-					DEFAULT: "hsl(var(--secondary))",
-					foreground: "hsl(var(--secondary-foreground))"
+					DEFAULT: 'hsl(var(--secondary))',
+					foreground: 'hsl(var(--secondary-foreground))'
 				},
 				destructive: {
-					DEFAULT: "hsl(var(--destructive))",
-					foreground: "hsl(var(--destructive-foreground))"
+					DEFAULT: 'hsl(var(--destructive))',
+					foreground: 'hsl(var(--destructive-foreground))'
 				},
 				muted: {
-					DEFAULT: "hsl(var(--muted))",
-					foreground: "hsl(var(--muted-foreground))"
+					DEFAULT: 'hsl(var(--muted))',
+					foreground: 'hsl(var(--muted-foreground))'
 				},
 				accent: {
-					DEFAULT: "hsl(var(--accent))",
-					foreground: "hsl(var(--accent-foreground))"
+					DEFAULT: 'hsl(var(--accent))',
+					foreground: 'hsl(var(--accent-foreground))'
 				},
 				popover: {
-					DEFAULT: "hsl(var(--popover))",
-					foreground: "hsl(var(--popover-foreground))"
+					DEFAULT: 'hsl(var(--popover))',
+					foreground: 'hsl(var(--popover-foreground))'
 				},
 				card: {
-					DEFAULT: "hsl(var(--card))",
-					foreground: "hsl(var(--card-foreground))"
-				},
-				teal: {
-					50: '#e6f7f5',
-					100: '#ccefe9',
-					200: '#99dfd3',
-					300: '#66cfbd',
-					400: '#33bfa7',
-					500: '#00af91', // Main teal from the image
-					600: '#008c74',
-					700: '#006957',
-					800: '#00463a',
-					900: '#00231d',
-				},
-				cream: {
-					DEFAULT: '#f5f0d9', // Cream color from the image
-					dark: '#eee6c9',
-					light: '#faf7ea',
-				},
-				amber: {
-					DEFAULT: '#ffc632', // Ticket color from the image
-					light: '#ffe082',
-					dark: '#cc9c26',
+					DEFAULT: 'hsl(var(--card))',
+					foreground: 'hsl(var(--card-foreground))'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
@@ -96,6 +75,13 @@ export default {
 					700: '#c2410c',
 					800: '#9a3412',
 					900: '#7c2d12',
+				},
+				ticket: {
+					bg: '#00635a',        // Teal background from image
+					text: '#f2e8c9',      // Cream/beige text color from image
+					accent: '#f7b731',    // Yellow/gold from the ticket in the image
+					check: '#00635a',     // Teal check color
+					checkbg: '#f2e8c9',   // Cream background for check
 				},
 			},
 			borderRadius: {
@@ -125,6 +111,10 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-orange': 'linear-gradient(90deg, hsla(24, 100%, 83%, 1) 0%, hsla(341, 91%, 68%, 1) 100%)',
+			},
+			fontFamily: {
+				'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+				'display': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
 			}
 		}
 	},

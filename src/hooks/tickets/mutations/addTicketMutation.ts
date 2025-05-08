@@ -6,21 +6,21 @@ import { createTicketObject } from "./helpers";
 
 export async function addTicketMutation(
   data: AddTicketData, 
-  authenticatedUserId: string
+  userId: string
 ): Promise<{ success: boolean; ticket?: UserTicket; error?: string }> {
   try {
     const ticketId = uuidv4();
     
     console.log(`Adding ticket to consolidated tickets table`);
     console.log(`Full ticket data:`, JSON.stringify(data, null, 2));
-    console.log(`Authenticated user ID: ${authenticatedUserId}`);
+    console.log(`Current user ID: ${userId}`);
     
     // Create the insert object with all necessary fields
     const insertData = {
       id: ticketId,
-      user_id: authenticatedUserId,
-      owner_id: authenticatedUserId,
-      seller_id: authenticatedUserId,
+      user_id: userId,
+      owner_id: userId,
+      seller_id: userId,
       price: data.price,
       title: data.title || data.description,
       description: data.description,
@@ -37,7 +37,6 @@ export async function addTicketMutation(
     };
     
     console.log(`Inserting ticket with ID: ${ticketId}`);
-    console.log(`Insert data:`, JSON.stringify(insertData, null, 2));
     
     const { data: responseData, error } = await supabase
       .from('tickets')
@@ -50,12 +49,11 @@ export async function addTicketMutation(
       let errorMessage = `Failed to add ticket: ${error.message}`;
       
       if (error.code === '42501') {
-        errorMessage = `Row Level Security prevented adding ticket. User ID: ${authenticatedUserId}`;
+        errorMessage = `Row Level Security prevented adding ticket. User ID: ${userId}`;
         console.error('RLS error details:', { 
-          authenticatedUserId,
+          userId, 
           errorCode: error.code,
-          errorMessage: error.message,
-          insertData: insertData
+          errorMessage: error.message
         });
       }
       
@@ -70,7 +68,7 @@ export async function addTicketMutation(
     }
     
     // Create the ticket object with the response data
-    const ticket = createTicketObject(responseData, ticketId, authenticatedUserId);
+    const ticket = createTicketObject(responseData, ticketId, userId);
     
     return { success: true, ticket };
   } catch (err: any) {

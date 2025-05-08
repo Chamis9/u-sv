@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
@@ -95,12 +94,12 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
 
   if (availableTickets.length === 0) {
     return (
-      <div className="mt-8 text-center py-8 bg-teal-600/50 rounded-lg">
-        <Ticket className="h-12 w-12 text-cream mx-auto mb-4" />
-        <h3 className="text-xl font-medium text-cream">
+      <div className="mt-8 text-center py-8 bg-gray-100/50 dark:bg-gray-800/50 rounded-lg">
+        <Ticket className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+        <h3 className="text-xl font-medium">
           {t("Nav pieejamu biļešu no lietotājiem", "No user submitted tickets available")}
         </h3>
-        <p className="text-cream-light mt-2">
+        <p className="text-gray-500 dark:text-gray-400 mt-2">
           {t("Šim pasākumam pašlaik nav pārdošanā biļetes no lietotājiem", "There are no user tickets for sale for this event at the moment")}
         </p>
       </div>
@@ -109,20 +108,20 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
 
   return (
     <div className="mt-8">
-      <h2 className="text-2xl font-semibold mb-4 text-cream">
+      <h2 className="text-2xl font-semibold mb-4">
         {t("Pieejamās biļetes", "Available tickets")}
       </h2>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {availableTickets.map((ticket) => (
-          <div key={ticket.id} className="bg-cream/10 backdrop-blur-sm rounded-lg border border-cream/20 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+          <div key={ticket.id} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
             {/* Ticket color band */}
-            <div className="h-2 bg-amber"></div>
+            <div className="h-2 bg-green-500"></div>
             
             <div className="p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="font-semibold text-lg mb-1 truncate text-cream">{ticket.title}</h3>
-                  <div className="flex items-center text-sm text-cream/80 mb-1">
+                  <h3 className="font-semibold text-lg mb-1 truncate">{ticket.title}</h3>
+                  <div className="flex items-center text-sm text-muted-foreground mb-1">
                     <Calendar className="h-4 w-4 mr-1" />
                     {ticket.event_date 
                       ? formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')
@@ -136,29 +135,29 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
                   </div>
                   
                   {ticket.venue && (
-                    <div className="flex items-center text-sm text-cream/80 mb-3">
+                    <div className="flex items-center text-sm text-muted-foreground mb-3">
                       <MapPin className="h-4 w-4 mr-1" />
                       {ticket.venue}
                     </div>
                   )}
                   
                   <div className="flex items-center mb-4">
-                    <Tag className="h-4 w-4 mr-1 text-cream/80" />
-                    <span className="text-sm text-cream/80">{ticket.category}</span>
+                    <Tag className="h-4 w-4 mr-1 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">{ticket.category}</span>
                   </div>
                   
-                  <div className="text-xl font-bold text-amber">
+                  <div className="text-xl font-bold text-primary">
                     {formatPrice(ticket.price)}
                   </div>
                   
                   {/* Always show quantity and price per unit, even for single tickets */}
-                  <div className="text-sm text-cream/80 mt-1">
+                  <div className="text-sm text-muted-foreground mt-1">
                     {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
                   </div>
                 </div>
                 
                 <div className="ml-4 mt-1">
-                  <Ticket className="h-10 w-10 text-cream/20" />
+                  <Ticket className="h-10 w-10 text-muted-foreground opacity-20" />
                 </div>
               </div>
               
@@ -167,7 +166,7 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={() => handleViewTicket(ticket)}
-                  className="flex-1 border-cream/30 text-cream hover:bg-teal-600 hover:text-cream"
+                  className="flex-1"
                 >
                   <Eye className="h-4 w-4 mr-2" />
                   {t("Skatīt", "View")}
@@ -190,9 +189,10 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
                 {/* Don't show Buy button if user is the seller */}
                 {(!isAuthenticated || user?.id !== ticket.seller_id) && (
                   <Button
+                    variant="orange"
                     size="sm"
                     onClick={() => onPurchase(ticket)}
-                    className="flex-1 bg-amber hover:bg-amber-dark text-teal-500"
+                    className="flex-1"
                   >
                     <Ticket className="h-4 w-4 mr-2" />
                     {t("Pirkt biļeti", "Buy ticket")}
@@ -214,12 +214,12 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
       
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={ticketToDelete !== null} onOpenChange={(open) => !open && cancelDelete()}>
-        <AlertDialogContent className="bg-teal-600 border border-cream/20 text-cream">
+        <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-cream">
+            <AlertDialogTitle>
               {t("Vai tiešām vēlaties dzēst šo biļeti?", "Delete this ticket?")}
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-cream/80">
+            <AlertDialogDescription>
               {t(
                 "Šī darbība ir neatgriezeniska. Biļete tiks neatgriezeniski izdzēsta.", 
                 "This action cannot be undone. This ticket will be permanently deleted."
@@ -227,13 +227,13 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting} className="bg-teal-700 text-cream border border-cream/30 hover:bg-teal-800">
+            <AlertDialogCancel disabled={isDeleting}>
               {t("Atcelt", "Cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
               disabled={isDeleting}
-              className="bg-red-500 text-white hover:bg-red-600"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {isDeleting ? t("Dzēšana...", "Deleting...") : t("Dzēst", "Delete")}
             </AlertDialogAction>

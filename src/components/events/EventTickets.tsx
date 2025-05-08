@@ -7,6 +7,8 @@ import { useLanguage } from "@/features/language";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { GlobalThemeToggle } from "@/components/theme/GlobalThemeToggle";
 import { categoryEvents } from '@/utils/eventData';
 import { EventHeader } from './components/EventHeader';
 import { OrganizerTickets } from './components/OrganizerTickets';
@@ -73,55 +75,58 @@ export function EventTickets() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-teal-500 text-cream">
-      <SEO />
-      <Header />
-      <main className="flex-grow pt-24 pb-12">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="max-w-7xl mx-auto">
-            <Link to={`/events/${category}`}>
-              <Button variant="ghost" className="mb-4 text-cream hover:bg-teal-600/30">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {backText[currentLanguage.code as keyof typeof backText]}
-              </Button>
-            </Link>
-            
-            <EventHeader 
-              title={event.title}
-              date={event.date}
-              time={event.time}
-              location={event.location}
-              description={event.description}
-            />
+    <ThemeProvider>
+      <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-gray-50 to-gray-100 dark:from-black dark:via-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
+        <SEO />
+        <Header />
+        <main className="flex-grow pt-24 pb-12">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="max-w-7xl mx-auto">
+              <Link to={`/events/${category}`}>
+                <Button variant="ghost" className="mb-4">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  {backText[currentLanguage.code as keyof typeof backText]}
+                </Button>
+              </Link>
+              
+              <EventHeader 
+                title={event.title}
+                date={event.date}
+                time={event.time}
+                location={event.location}
+                description={event.description}
+              />
 
-            {/* Standard tickets */}
-            <OrganizerTickets />
+              {/* Standard tickets */}
+              <OrganizerTickets />
 
-            {/* User posted available tickets - now using AvailableTicketsSection */}
-            <AvailableTicketsSection
-              tickets={availableTickets}
-              onPurchase={openPurchaseDialog}
-            />
+              {/* User posted available tickets - now using AvailableTicketsSection */}
+              <AvailableTicketsSection
+                tickets={availableTickets}
+                onPurchase={openPurchaseDialog}
+              />
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
 
-      {/* Purchase Dialog */}
-      <PurchaseDialog
-        ticket={selectedTicket}
-        isOpen={isPurchaseDialogOpen}
-        onOpenChange={setIsPurchaseDialogOpen}
-        onPurchaseConfirm={(ticket) => {
-          purchaseTicket(ticket).then(success => {
-            if (success && ticket) {
-              handlePurchaseSuccess(ticket.id);
-            }
-          });
-        }}
-      />
-      
-      <Footer />
-      <Toaster />
-    </div>
+        {/* Purchase Dialog */}
+        <PurchaseDialog
+          ticket={selectedTicket}
+          isOpen={isPurchaseDialogOpen}
+          onOpenChange={setIsPurchaseDialogOpen}
+          onPurchaseConfirm={(ticket) => {
+            purchaseTicket(ticket).then(success => {
+              if (success && ticket) {
+                handlePurchaseSuccess(ticket.id);
+              }
+            });
+          }}
+        />
+        
+        <Footer />
+        <GlobalThemeToggle />
+        <Toaster />
+      </div>
+    </ThemeProvider>
   );
 }

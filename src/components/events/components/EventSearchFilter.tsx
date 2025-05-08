@@ -1,12 +1,12 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { format } from "date-fns";
 import { useLanguage } from "@/features/language";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Search, CalendarIcon, X, Check } from "lucide-react";
+import { Search, CalendarIcon, X } from "lucide-react";
 
 interface EventSearchFilterProps {
   searchQuery: string;
@@ -28,11 +28,6 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
   const { currentLanguage } = useLanguage();
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
   
-  // Temporary state for calendar selection before confirmation
-  const [tempStartDate, setTempStartDate] = useState<Date | undefined>(startDate);
-  const [tempEndDate, setTempEndDate] = useState<Date | undefined>(endDate);
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  
   // Format the date range for display
   const dateButtonText = startDate && endDate
     ? `${format(startDate, 'dd.MM.yyyy')} - ${format(endDate, 'dd.MM.yyyy')}`
@@ -44,15 +39,6 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
   const clearDateFilters = () => {
     setStartDate(undefined);
     setEndDate(undefined);
-    setTempStartDate(undefined);
-    setTempEndDate(undefined);
-  };
-
-  // Confirm date selection and close popover
-  const confirmDateSelection = () => {
-    setStartDate(tempStartDate);
-    setEndDate(tempEndDate);
-    setIsCalendarOpen(false);
   };
 
   return (
@@ -68,7 +54,7 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
         <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
       </div>
       
-      <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+      <Popover>
         <PopoverTrigger asChild>
           <Button variant="outline" className="w-full sm:w-[300px] flex justify-between items-center">
             <div className="flex items-center">
@@ -87,42 +73,21 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
-          <div className="p-3">
-            <Calendar
-              initialFocus
-              mode="range"
-              defaultMonth={startDate || new Date()}
-              selected={{
-                from: tempStartDate,
-                to: tempEndDate
-              }}
-              onSelect={(range) => {
-                setTempStartDate(range?.from);
-                setTempEndDate(range?.to);
-              }}
-              numberOfMonths={2}
-              className="pointer-events-auto"
-            />
-            <div className="flex justify-end mt-2 border-t pt-2">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setIsCalendarOpen(false)}
-                className="mr-2"
-              >
-                {t("Atcelt", "Cancel")}
-              </Button>
-              <Button 
-                variant="orange" 
-                size="sm"
-                onClick={confirmDateSelection}
-                className="flex items-center"
-              >
-                <Check className="mr-1 h-4 w-4" />
-                {t("Apstiprināt", "Confirm")}
-              </Button>
-            </div>
-          </div>
+          <Calendar
+            initialFocus
+            mode="range"
+            defaultMonth={startDate}
+            selected={{
+              from: startDate,
+              to: endDate
+            }}
+            onSelect={(range) => {
+              setStartDate(range?.from);
+              setEndDate(range?.to);
+            }}
+            numberOfMonths={2}
+            className="pointer-events-auto"
+          />
         </PopoverContent>
       </Popover>
     </div>

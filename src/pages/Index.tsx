@@ -7,7 +7,7 @@ import { SEO } from "@/components/SEO";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-teal-500">
+    <div className="min-h-screen flex flex-col bg-ticket-bg text-ticket-text">
       <SEO />
       <Header />
       <main className="flex-grow">

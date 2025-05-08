@@ -8,18 +8,22 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { LanguageProvider } from "./features/language";
 import { clearAllCookies } from "./utils/cookieManager";
+import { ThemeProvider } from "./components/theme/ThemeProvider";
 import { AuthProvider } from "./contexts/AuthContext";
 
-// Import pages directly to avoid lazy loading issues
+// Import pages
 import Index from "./pages/Index";
 import Contact from "./pages/Contact";
 import Events from "./pages/Events";
 import Tickets from "./pages/Tickets";
 import AboutUs from "./pages/AboutUs";
+// Import Profile page directly instead of using dynamic import
 import Profile from "./pages/Profile";
-import NotFound from "./pages/NotFound";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import Admin from "./pages/Admin";
+
+// Lazy load other pages for better performance
+const NotFound = lazy(() => import("./pages/NotFound"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const Admin = lazy(() => import("./pages/Admin"));
 
 // Import the CategoryEventList component
 import { CategoryEventList } from "./components/events/CategoryEventList";
@@ -29,8 +33,8 @@ import { EventTickets } from "./components/events/EventTickets";
 
 // Create a loading component
 const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-screen bg-teal-500">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cream"></div>
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
   </div>
 );
 
@@ -74,27 +78,31 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <TooltipProvider>
-          <AuthProvider>
-            <LanguageProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/events" element={<Events />} />
-                  <Route path="/events/:category" element={<CategoryEventList />} />
-                  <Route path="/events/:category/:eventId" element={<EventTickets />} />
-                  <Route path="/tickets" element={<Tickets />} />
-                  <Route path="/about-us" element={<AboutUs />} />
-                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/admin/*" element={<Admin />} />
-                  <Route path="/profile/*" element={<Profile />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
-            </LanguageProvider>
-          </AuthProvider>
+          <ThemeProvider defaultTheme="light" storageKey="ui-theme">
+            <AuthProvider>
+              <LanguageProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <Suspense fallback={<PageLoader />}>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/events" element={<Events />} />
+                      <Route path="/events/:category" element={<CategoryEventList />} />
+                      <Route path="/events/:category/:eventId" element={<EventTickets />} />
+                      <Route path="/tickets" element={<Tickets />} />
+                      <Route path="/about-us" element={<AboutUs />} />
+                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/admin/*" element={<Admin />} />
+                      <Route path="/profile/*" element={<Profile />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
+                </BrowserRouter>
+              </LanguageProvider>
+            </AuthProvider>
+          </ThemeProvider>
         </TooltipProvider>
       </HelmetProvider>
     </QueryClientProvider>

@@ -45,7 +45,7 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 animate-pulse">
         {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} className="h-48 bg-teal-600/50 rounded-lg"></div>
+          <div key={i} className="h-48 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
         ))}
       </div>
     );
@@ -91,7 +91,7 @@ export const EventsGrid: React.FC<EventsGridProps> = ({
       {/* Standalone tickets section */}
       {standAloneTickets.length > 0 && (
         <div>
-          <h2 className="text-2xl font-bold mb-4 text-amber">
+          <h2 className="text-2xl font-bold mb-4 text-orange-500">
             {t('Pieejamās biļetes', 'Available Tickets')}
           </h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

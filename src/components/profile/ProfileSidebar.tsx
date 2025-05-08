@@ -3,6 +3,7 @@ import React from "react";
 import { useLanguage } from "@/features/language";
 import { UserAvatar } from "./UserAvatar";
 import { User } from "@/types/users";
+import { useTheme } from "@/components/theme/ThemeProvider";
 import {
   User as UserIcon,
   Ticket,
@@ -22,6 +23,7 @@ interface ProfileSidebarProps {
 
 export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarProps) {
   const { currentLanguage } = useLanguage();
+  const { theme } = useTheme();
   const { logout, lastAvatarUpdate } = useAuth();
   const { toast } = useToast();
   
@@ -103,8 +105,8 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
   };
   
   return (
-    <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-200 shadow-sm">
-      <div className="p-4 border-b border-gray-200">
+    <aside className="hidden md:flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex flex-col items-center space-y-2">
           <UserAvatar 
             user={completeUserObject} 
@@ -133,7 +135,7 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
         ))}
       </nav>
       
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
         <Button 
           variant="destructive"
           className="w-full justify-start"
