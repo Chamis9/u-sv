@@ -74,15 +74,6 @@ export const Hero = memo(function Hero() {
               <SubscribeForm />
             </div>
           </div>
-          
-          <div className="pt-8 md:pt-12 flex justify-between items-center max-w-3xl mx-auto">
-            <div className="text-ticket-text/80 text-lg">
-              Droša apmaksa un verifikācija
-            </div>
-            <div className="text-ticket-accent font-bold text-xl tracking-wider">
-              DRĪZUMĀ
-            </div>
-          </div>
         </div>
       </div>
     </section>
