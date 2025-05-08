@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { UserTicket, AddTicketData } from "@/hooks/tickets";
@@ -27,8 +26,7 @@ export function useTicketOperations({ onTicketsChanged, t }: UseTicketOperations
   if (user) {
     console.log("Current user in useTicketOperations:", {
       id: user.id,
-      email: user.email,
-      auth_user_id: user.auth_user_id // Check if this exists
+      email: user.email
     });
   }
 
