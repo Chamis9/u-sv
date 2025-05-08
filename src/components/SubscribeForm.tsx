@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/features/language";
@@ -46,7 +47,7 @@ export function SubscribeForm() {
           autoComplete="email"
           required
           aria-invalid={formError ? "true" : "false"}
-          className="flex-grow h-12 text-base font-playfair placeholder-orange-500/70 bg-white dark:bg-gray-800 dark:text-white border-orange-300/50" 
+          className="flex-grow h-12 text-base font-playfair placeholder-ticket-accent/70 bg-white dark:bg-gray-800 dark:text-white border-ticket-accent/50 focus:ring-2 focus:ring-ticket-accent focus:border-ticket-accent" 
         />
         
         {formError && (
@@ -57,7 +58,7 @@ export function SubscribeForm() {
       <Button 
         type="submit" 
         disabled={isLoading} 
-        className="bg-orange-500 hover:bg-orange-600 text-white h-12 text-lg px-6 font-semibold font-playfair" 
+        className="bg-ticket-accent hover:bg-ticket-accent/90 text-white h-12 text-lg px-6 font-semibold font-playfair" 
         aria-busy={isLoading}
       >
         {isLoading ? texts.sending : texts.button}

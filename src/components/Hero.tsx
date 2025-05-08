@@ -56,7 +56,7 @@ export const Hero = memo(function Hero() {
           
           <div className="mt-8 md:mt-12">
             <p className="text-xl md:text-2xl text-ticket-text mb-8 max-w-3xl mx-auto">
-              Gribi uz koncertu, bet biļetes izpārdotas? Ieskaties
+              Gribi uz pasākumu, bet biļetes izpārdotas? Ieskaties
               <span className="text-ticket-accent font-bold"> NETIEKU.ES</span>!
             </p>
             
