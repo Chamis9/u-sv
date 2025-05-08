@@ -85,7 +85,7 @@ const Events = () => {
                   
                   return (
                     <Link to={`/events/${slug}`} key={category.id}>
-                      <Card className="h-full transition-transform hover:scale-105 bg-ticket-bg/50 border border-ticket-text/10 backdrop-blur-sm">
+                      <Card className="h-full transition-transform hover:scale-105 bg-ticket-bg/50 border-2 border-ticket-accent backdrop-blur-sm shadow-lg">
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">
                             <IconComponent className="h-6 w-6 text-ticket-accent" />
