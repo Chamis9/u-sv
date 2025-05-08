@@ -24,11 +24,20 @@ export function useTicketQueries(userId?: string) {
       console.log("Fetching tickets for user:", userId);
       
       try {
-        // Query the consolidated tickets table
+        // Get the current authenticated user to ensure we're using the correct ID
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError || !user) {
+          console.log("Not authenticated, returning empty array");
+          return [];
+        }
+        
+        console.log("Current authenticated user ID:", user.id);
+        
+        // Query the tickets table using the authenticated user ID
         const { data: ticketsData, error } = await supabase
           .from('tickets')
           .select('*, categories(name)')
-          .or(`seller_id.eq.${userId},buyer_id.eq.${userId},owner_id.eq.${userId}`)
+          .or(`seller_id.eq.${user.id},buyer_id.eq.${user.id},owner_id.eq.${user.id}`)
           .order('created_at', { ascending: false });
         
         if (error) {
@@ -63,7 +72,7 @@ export function useTicketQueries(userId?: string) {
           return formattedTickets;
         }
         
-        console.log(`No tickets found for user: ${userId}`);
+        console.log(`No tickets found for user: ${user.id}`);
         return [];
         
       } catch (error) {

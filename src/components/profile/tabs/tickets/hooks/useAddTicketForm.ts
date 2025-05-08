@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
@@ -20,7 +19,6 @@ interface UseAddTicketFormProps {
 
 export function useAddTicketForm({
   form,
-  userId,
   onClose,
   isEditing = false,
   ticketToEdit,
@@ -84,7 +82,7 @@ export function useAddTicketForm({
         title: values.title,
         description: values.description || undefined,
         price: totalPrice,
-        user_id: user.id, // Use current authenticated user ID
+        user_id: user.id,
         category_name: values.category,
         event_date: values.eventDate || undefined,
         venue: values.venue || undefined,

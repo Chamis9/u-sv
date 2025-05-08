@@ -6,29 +6,14 @@ import { createTicketObject } from "./helpers";
 
 export async function addTicketMutation(
   data: AddTicketData, 
-  providedUserId: string
+  authenticatedUserId: string
 ): Promise<{ success: boolean; ticket?: UserTicket; error?: string }> {
   try {
     const ticketId = uuidv4();
     
     console.log(`Adding ticket to consolidated tickets table`);
     console.log(`Full ticket data:`, JSON.stringify(data, null, 2));
-    console.log(`Provided user ID: ${providedUserId}`);
-    
-    // Verify user authentication before proceeding
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
-      console.error("Authentication error:", authError);
-      return { 
-        success: false, 
-        error: "Authentication is required to add tickets. Please sign in again." 
-      };
-    }
-
-    // Always use the authenticated user's ID from Supabase
-    const authenticatedUserId = user.id;
-    console.log(`Using authenticated user ID: ${authenticatedUserId}`);
+    console.log(`Authenticated user ID: ${authenticatedUserId}`);
     
     // Create the insert object with all necessary fields
     const insertData = {
@@ -67,7 +52,6 @@ export async function addTicketMutation(
       if (error.code === '42501') {
         errorMessage = `Row Level Security prevented adding ticket. User ID: ${authenticatedUserId}`;
         console.error('RLS error details:', { 
-          providedUserId,
           authenticatedUserId,
           errorCode: error.code,
           errorMessage: error.message,

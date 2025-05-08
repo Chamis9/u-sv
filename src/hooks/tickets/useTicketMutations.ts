@@ -13,16 +13,10 @@ export function useTicketMutations(userId?: string) {
   
   // Add a new ticket
   const addTicket = async (data: AddTicketData): Promise<{ success: boolean; ticket?: UserTicket; error?: string }> => {
-    if (!userId) {
-      return { success: false, error: 'User not authenticated' };
-    }
-
     setLoading(true);
     setError(null);
     
     try {
-      console.log(`Preparing to add ticket for user: ${userId}`);
-      
       // Get the current authenticated user from Supabase
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       if (authError || !user) {
@@ -53,10 +47,6 @@ export function useTicketMutations(userId?: string) {
   
   // Update existing ticket
   const updateTicket = async (ticketId: string, data: Partial<AddTicketData>): Promise<{ success: boolean; ticket?: UserTicket; error?: string }> => {
-    if (!userId) {
-      return { success: false, error: 'User not authenticated' };
-    }
-
     setLoading(true);
     setError(null);
     
@@ -86,10 +76,6 @@ export function useTicketMutations(userId?: string) {
   
   // Delete a ticket
   const deleteTicket = async (ticketId: string): Promise<boolean> => {
-    if (!userId) {
-      return false;
-    }
-    
     setLoading(true);
     setError(null);
     
