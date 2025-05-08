@@ -1,31 +1,18 @@
 
 import React, { useEffect } from "react";
 import { User } from "@/types/users";
-import { 
-  Card, 
-  CardContent
-} from "@/components/ui/card";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { AddTicketForm } from "./AddTicketForm";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs } from "@/components/ui/tabs";
 import { useTicketsTab } from "./hooks/useTicketsTab";
-import { 
-  TicketsHeader,
-  TicketsList
-} from "./components";
+import { TicketsHeader } from "./components/TicketsHeader";
+import { AuthRequiredAlert } from "./components/AuthRequiredAlert";
 import { DeleteTicketDialog } from "./components/DeleteTicketDialog";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
-import { TicketDetailDialog } from "./components/ticket-list/TicketDetailDialog";
 import { useTicketDialog } from "./hooks/useTicketDialog";
 import { useTicketRefresh } from "./hooks/useTicketRefresh";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { AddTicketDialog, EditTicketDialog } from "./components/dialogs";
+import { TabsList, TabContent } from "./components/tabs";
 
 interface TicketsTabProps {
   user: User;
@@ -37,7 +24,6 @@ export function TicketsTab({ user }: TicketsTabProps) {
     addedTickets,
     purchasedTickets,
     isLoading,
-    loading,
     addTicketOpen,
     setAddTicketOpen,
     openDeleteConfirmation,
@@ -100,16 +86,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
     return (
       <Card className="bg-card dark:bg-gray-900">
         <CardContent className="pt-6">
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>{t("Nav pieslēgts", "Not logged in")}</AlertTitle>
-            <AlertDescription>
-              {t(
-                "Lai redzētu savas biļetes, lūdzu pieslēdzieties savā kontā", 
-                "Please log in to view your tickets"
-              )}
-            </AlertDescription>
-          </Alert>
+          <AuthRequiredAlert t={t} />
         </CardContent>
       </Card>
     );
@@ -124,79 +101,62 @@ export function TicketsTab({ user }: TicketsTabProps) {
       
       <CardContent>
         <Tabs defaultValue="added">
-          <TabsList className="mb-4">
-            <TabsTrigger value="added">
-              {t("Pievienotās biļetes", "Added Tickets")} {addedTickets.length > 0 && `(${addedTickets.length})`}
-            </TabsTrigger>
-            <TabsTrigger value="purchased">
-              {t("Iegādātās biļetes", "Purchased Tickets")} {purchasedTickets.length > 0 && `(${purchasedTickets.length})`}
-            </TabsTrigger>
-          </TabsList>
+          <TabsList 
+            addedCount={addedTickets.length}
+            purchasedCount={purchasedTickets.length}
+          />
           
-          <TabsContent value="added">
-            <TicketsList
-              tickets={addedTickets}
-              onDelete={openDeleteConfirmation}
-              onView={(ticket) => {
-                setSelectedTicket(ticket);
-                console.log("Viewing ticket:", ticket.id);
-              }}
-              onEdit={(ticket) => {
-                setCurrentEditTicket(ticket);
-                setEditTicketOpen(true);
-              }}
-              isLoading={isLoading}
-              ticketType="added"
-            />
-          </TabsContent>
+          <TabContent
+            value="added"
+            tickets={addedTickets}
+            onDelete={openDeleteConfirmation}
+            onView={(ticket) => {
+              setSelectedTicket(ticket);
+              console.log("Viewing ticket:", ticket.id);
+            }}
+            onEdit={(ticket) => {
+              setCurrentEditTicket(ticket);
+              setEditTicketOpen(true);
+            }}
+            isLoading={isLoading}
+            ticketType="added"
+          />
           
-          <TabsContent value="purchased">
-            <TicketsList
-              tickets={purchasedTickets}
-              onDelete={openDeleteConfirmation}
-              onView={(ticket) => {
-                setSelectedTicket(ticket);
-                console.log("Viewing ticket:", ticket.id);
-              }}
-              isLoading={isLoading}
-              ticketType="purchased"
-            />
-          </TabsContent>
+          <TabContent
+            value="purchased"
+            tickets={purchasedTickets}
+            onDelete={openDeleteConfirmation}
+            onView={(ticket) => {
+              setSelectedTicket(ticket);
+              console.log("Viewing ticket:", ticket.id);
+            }}
+            isLoading={isLoading}
+            ticketType="purchased"
+          />
         </Tabs>
       </CardContent>
       
       {/* Add Ticket Dialog */}
-      <Dialog open={addTicketOpen} onOpenChange={setAddTicketOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{t("Pievienot biļeti", "Add Ticket")}</DialogTitle>
-          </DialogHeader>
-          <AddTicketForm onClose={() => {
-            setAddTicketOpen(false);
-            refreshTickets();
-          }} />
-        </DialogContent>
-      </Dialog>
+      <AddTicketDialog 
+        open={addTicketOpen} 
+        onOpenChange={setAddTicketOpen}
+        onClose={() => {
+          setAddTicketOpen(false);
+          refreshTickets();
+        }}
+      />
       
       {/* Edit Ticket Dialog */}
-      <Dialog open={editTicketOpen} onOpenChange={setEditTicketOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{t("Rediģēt biļeti", "Edit Ticket")}</DialogTitle>
-          </DialogHeader>
-          {currentEditTicket && (
-            <AddTicketForm 
-              onClose={() => {
-                setEditTicketOpen(false);
-                refreshTickets();
-              }}
-              isEditing={true}
-              ticketToEdit={currentEditTicket}
-              onUpdate={handleUpdateTicket}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      <EditTicketDialog
+        open={editTicketOpen}
+        onOpenChange={setEditTicketOpen}
+        onClose={() => {
+          setEditTicketOpen(false);
+          refreshTickets();
+        }}
+        currentTicket={currentEditTicket}
+        onUpdate={handleUpdateTicket}
+      />
       
       {/* Delete Confirmation Dialog */}
       <DeleteTicketDialog
@@ -204,17 +164,6 @@ export function TicketsTab({ user }: TicketsTabProps) {
         onCancel={cancelDelete}
         onConfirm={confirmDelete}
         isDeleting={isDeleting}
-      />
-      
-      {/* Ticket Detail View Dialog */}
-      <TicketDetailDialog
-        selectedTicket={selectedTicket}
-        setSelectedTicket={setSelectedTicket}
-        onEdit={(ticket) => {
-          setCurrentEditTicket(ticket);
-          setEditTicketOpen(true);
-        }}
-        ticketType={selectedTicket?.seller_id === authUserId ? "added" : "purchased"}
       />
     </Card>
   );
