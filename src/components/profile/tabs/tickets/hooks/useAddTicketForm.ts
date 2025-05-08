@@ -119,6 +119,7 @@ export function useAddTicketForm({
         });
       } else if (addTicket) {
         // Add new ticket
+        console.log("Attempting to add new ticket with data:", ticketData);
         const { success: addSuccess, error } = await addTicket(ticketData);
         success = addSuccess;
         

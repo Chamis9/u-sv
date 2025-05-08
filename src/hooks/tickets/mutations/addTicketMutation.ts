@@ -15,6 +15,25 @@ export async function addTicketMutation(
     console.log(`Full ticket data:`, JSON.stringify(data, null, 2));
     console.log(`Current user ID: ${userId}`);
     
+    // Verify user authentication before proceeding
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      console.error("Authentication error:", authError);
+      return { 
+        success: false, 
+        error: "Authentication is required to add tickets. Please sign in again." 
+      };
+    }
+    
+    if (user.id !== userId) {
+      console.error("User ID mismatch:", { provided: userId, actual: user.id });
+      return { 
+        success: false, 
+        error: "User identity verification failed." 
+      };
+    }
+    
     // Create the insert object with all necessary fields
     const insertData = {
       id: ticketId,
@@ -37,6 +56,7 @@ export async function addTicketMutation(
     };
     
     console.log(`Inserting ticket with ID: ${ticketId}`);
+    console.log(`Insert data:`, JSON.stringify(insertData, null, 2));
     
     const { data: responseData, error } = await supabase
       .from('tickets')
@@ -53,7 +73,8 @@ export async function addTicketMutation(
         console.error('RLS error details:', { 
           userId, 
           errorCode: error.code,
-          errorMessage: error.message
+          errorMessage: error.message,
+          insertData: insertData
         });
       }
       

@@ -4,6 +4,7 @@ import { AddTicketData, UserTicket } from "./types";
 import { addTicketMutation } from './mutations/addTicketMutation';
 import { updateTicketMutation } from './mutations/updateTicketMutation';
 import { deleteTicketMutation } from './mutations/deleteTicketMutation';
+import { deleteTicketSimple } from './mutations/deleteTicketSimple';
 
 export function useTicketMutations(userId?: string) {
   const [loading, setLoading] = useState(false);
@@ -19,9 +20,11 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
+      console.log(`Calling addTicketMutation with userId: ${userId}`);
       const result = await addTicketMutation(data, userId);
       
       if (!result.success) {
+        console.error('Failed to add ticket:', result.error);
         setError(result.error || 'Failed to add ticket');
       }
       
@@ -73,8 +76,14 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
-      // Use the direct deletion function
-      const success = await deleteTicketMutation(ticketId, userId);
+      // First try the normal deletion function
+      let success = await deleteTicketMutation(ticketId, userId);
+      
+      // If that fails, try the simple deletion function as a fallback
+      if (!success) {
+        console.log("Regular delete failed, trying simple delete as fallback");
+        success = await deleteTicketSimple(ticketId);
+      }
       
       if (!success) {
         setError('Failed to delete ticket');
