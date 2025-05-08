@@ -22,17 +22,6 @@ export function SubscribeForm() {
     if (formError) setFormError("");
   };
 
-  const getPlaceholder = () => {
-    switch (currentLanguage.code) {
-      case 'lv':
-        return "E-pasts";
-      case 'ru':
-        return "Электронная почта";
-      default:
-        return "Email";
-    }
-  };
-
   return (
     <form 
       onSubmit={handleSubmit} 
@@ -41,13 +30,13 @@ export function SubscribeForm() {
       <div className="relative flex-grow">
         <Input
           type="email"
-          placeholder={getPlaceholder()}
+          placeholder={texts.placeholder}
           value={email}
           onChange={handleEmailChange}
           autoComplete="email"
           required
           aria-invalid={formError ? "true" : "false"}
-          className="flex-grow h-12 text-base font-playfair placeholder-ticket-accent/70 bg-white dark:bg-gray-800 dark:text-white border-ticket-accent/50 focus:ring-2 focus:ring-ticket-accent focus:border-ticket-accent" 
+          className="flex-grow h-12 text-base bg-ticket-bg/30 border-ticket-text/20 text-ticket-text placeholder:text-ticket-text/50 focus-visible:ring-ticket-accent focus-visible:border-ticket-accent" 
         />
         
         {formError && (
@@ -58,7 +47,7 @@ export function SubscribeForm() {
       <Button 
         type="submit" 
         disabled={isLoading} 
-        className="bg-ticket-accent hover:bg-ticket-accent/90 text-white h-12 text-lg px-6 font-semibold font-playfair" 
+        className="bg-ticket-accent hover:bg-ticket-accent/80 text-ticket-bg h-12 text-lg px-6 font-semibold" 
         aria-busy={isLoading}
       >
         {isLoading ? texts.sending : texts.button}

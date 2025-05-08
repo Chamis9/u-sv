@@ -6,8 +6,10 @@ import { Helmet } from "react-helmet-async";
 import { TicketVerifyIcon } from "@/components/icons/TicketVerifyIcon";
 
 export const Hero = memo(function Hero() {
-  const { translations } = useLanguage();
+  const { translations, currentLanguage } = useLanguage();
   const { hero } = translations;
+
+  const texts = getHeroTexts(currentLanguage.code);
 
   return (
     <section
@@ -36,12 +38,11 @@ export const Hero = memo(function Hero() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 mb-10">
             <div className="md:text-left">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-ticket-text mb-4 md:mb-6">
-                <span className="block mb-2">Netiec uz</span>
-                <span className="block mb-2">pasākumu?</span>
-                <span className="block">
-                  Pārdod <span className="text-ticket-accent">biļeti</span>
-                  <span className=""> droši</span>
-                </span>
+                {texts.heading.map((line, index) => (
+                  <span key={index} className="block mb-2">
+                    {line}
+                  </span>
+                ))}
               </h1>
               
               <p className="text-xl sm:text-2xl md:text-3xl text-ticket-text/90 mb-8 md:mb-12">
@@ -56,13 +57,12 @@ export const Hero = memo(function Hero() {
           
           <div className="mt-8 md:mt-12">
             <p className="text-xl md:text-2xl text-ticket-text mb-8 max-w-3xl mx-auto">
-              Gribi uz pasākumu, bet biļetes izpārdotas? Ieskaties
+              {texts.mainCta}
               <span className="text-ticket-accent font-bold"> NETIEKU.ES</span>!
             </p>
             
             <p className="text-lg md:text-xl text-ticket-text/90 mb-6 max-w-3xl mx-auto">
-              Pērc vai pārdod biļetes uz koncertiem, teātri, sporta
-              pasākumiem u.c.
+              {texts.description}
             </p>
           </div>
           
@@ -79,3 +79,37 @@ export const Hero = memo(function Hero() {
     </section>
   );
 });
+
+const getHeroTexts = (langCode: string) => {
+  const translations = {
+    lv: {
+      heading: [
+        "Netiec uz",
+        "pasākumu?",
+        "Pārdod biļeti droši"
+      ],
+      mainCta: "Gribi uz pasākumu, bet biļetes izpārdotas? Ieskaties",
+      description: "Pērc vai pārdod biļetes uz koncertiem, teātri, sporta pasākumiem u.c."
+    },
+    en: {
+      heading: [
+        "Can't attend",
+        "an event?",
+        "Sell your ticket safely"
+      ],
+      mainCta: "Want to attend an event, but tickets are sold out? Check out",
+      description: "Buy or sell tickets to concerts, theater, sports events, and more."
+    },
+    ru: {
+      heading: [
+        "Не попадаешь на",
+        "мероприятие?",
+        "Продай билет безопасно"
+      ],
+      mainCta: "Хочешь на мероприятие, но билеты распроданы? Загляни в",
+      description: "Покупай или продавай билеты на концерты, театр, спортивные мероприятия и др."
+    }
+  };
+
+  return translations[langCode as keyof typeof translations] || translations.en;
+};
