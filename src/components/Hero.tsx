@@ -1,83 +1,112 @@
 
-import { memo } from "react";
-import { SubscribeForm } from "@/components/SubscribeForm";
+import React from 'react';
 import { useLanguage } from "@/features/language";
-import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Check, Ticket } from "lucide-react";
 
-export const Hero = memo(function Hero() {
-  const { translations } = useLanguage();
-  const { hero } = translations;
-
+export function Hero() {
+  const { currentLanguage } = useLanguage();
+  const isLatvian = currentLanguage.code === 'lv';
+  
   return (
-    <section
-      id="hero"
-      className="relative min-h-[90vh] md:min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-orange-300 via-orange-400 to-orange-500 dark:from-orange-950 dark:via-orange-900 dark:to-orange-800"
-    >
-      <Helmet>
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebPage",
-            "name": "netieku.es - biļešu apmaiņas platforma",
-            "description": "Pirmā biļešu apmaiņas platforma Latvijā",
-            "offers": {
-              "@type": "Offer",
-              "availability": "https://schema.org/ComingSoon"
-            }
-          })}
-        </script>
-      </Helmet>
-      
-      <div className="absolute inset-0 bg-gradient-to-b from-black/5 to-transparent dark:from-black/20 dark:to-transparent"></div>
-
-      <div className="container mx-auto px-4 z-10 text-center py-12 md:py-20">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4 md:mb-6 drop-shadow-md">
-            {hero.title}{" "}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-100 to-white dark:from-orange-200 dark:to-orange-100">
-              {hero.titleHighlight}
-            </span>
-          </h1>
-          
-          <p className="text-lg sm:text-xl md:text-2xl text-white mb-8 md:mb-12 drop-shadow">
-            {hero.subtitle}
-          </p>
-          
-          <div className="flex flex-col items-center space-y-6 bg-white/10 dark:bg-gray-950/20 rounded-xl p-4 sm:p-6 md:p-8">
-            <p className="text-white text-base md:text-lg">
-              {hero.subscribeText}
+    <section className="relative py-16 md:py-24 overflow-hidden">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+          {/* Hero content */}
+          <div className="lg:w-1/2">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-cream leading-tight">
+              {isLatvian ? (
+                <>
+                  Netiec uz<br />
+                  pasākumu?<br />
+                  Pārdod biļeti<br />
+                  droši
+                </>
+              ) : (
+                <>
+                  Can't attend<br />
+                  the event?<br />
+                  Sell your ticket<br />
+                  safely
+                </>
+              )}
+            </h1>
+            
+            <p className="text-xl md:text-2xl mb-8 text-cream-light">
+              {isLatvian ? (
+                <>
+                  Gribi uz koncertu, bet biļetes izpārdotas? Ieskaties NETIEKU.ES!<br />
+                  Pērc vai pārdod biļetes uz koncertiem, teātri, sporta pasākumiem u.c.
+                </>
+              ) : (
+                <>
+                  Want to go to a concert, but tickets are sold out? Check out NETIEKU.ES!<br />
+                  Buy or sell tickets to concerts, theater, sports events and more.
+                </>
+              )}
             </p>
-            <div className="w-full max-w-md mx-auto">
-              <SubscribeForm />
+            
+            <div className="mt-6 flex flex-wrap gap-4">
+              <Link to="/events">
+                <Button className="bg-cream hover:bg-cream-dark text-teal-500 text-lg px-8 py-6 rounded-full">
+                  {isLatvian ? 'Meklēt biļetes' : 'Find Tickets'}
+                </Button>
+              </Link>
+              
+              <Link to="/profile/tickets">
+                <Button variant="outline" className="border-cream text-cream hover:bg-teal-600 text-lg px-8 py-6 rounded-full">
+                  {isLatvian ? 'Pārdot biļeti' : 'Sell Ticket'}
+                </Button>
+              </Link>
+            </div>
+            
+            <div className="mt-10">
+              <p className="text-xl font-semibold text-amber mb-4">
+                {isLatvian ? 'Droša apmaksa un verifikācija – viss godīgi' : 'Secure payment and verification – all fair'}
+                <span className="ml-2 text-cream font-bold text-xl">
+                  {isLatvian ? 'DRĪZUMĀ' : 'COMING SOON'}
+                </span>
+              </p>
+              
+              <div className="flex gap-5 mt-4">
+                <div className="flex items-center gap-2 text-cream">
+                  <span className="bg-cream rounded-full p-1">
+                    <Check className="h-4 w-4 text-teal-500" />
+                  </span>
+                  <span>{isLatvian ? 'Droša apmaksa' : 'Secure payment'}</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-cream">
+                  <span className="bg-cream rounded-full p-1">
+                    <Check className="h-4 w-4 text-teal-500" />
+                  </span>
+                  <span>{isLatvian ? 'Verificētas biļetes' : 'Verified tickets'}</span>
+                </div>
+              </div>
             </div>
           </div>
           
-          <div className="pt-8 md:pt-12">
-            <a
-              href="#how-it-works"
-              className="inline-flex items-center text-white hover:text-orange-100 transition-colors"
-              aria-label="Learn more about how it works"
-            >
-              <span className="mr-2">{hero.learnMoreBtn}</span>
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                className="animate-bounce"
-                aria-hidden="true"
-              >
-                <path d="M12 5v14M5 12l7 7 7-7"/>
-              </svg>
-            </a>
+          {/* Hero image */}
+          <div className="lg:w-1/2 flex justify-center lg:justify-end">
+            <div className="relative rounded-2xl border-4 border-cream-light p-4 max-w-lg">
+              <div className="rounded-xl overflow-hidden bg-cream p-6 shadow-lg">
+                <div className="bg-amber rounded-xl p-6 flex flex-col items-center">
+                  <Ticket className="h-24 w-24 text-teal-500 mb-4" strokeWidth={1.5} />
+                  <div className="bg-cream-light rounded-full p-3">
+                    <Check className="h-10 w-10 text-teal-500" />
+                  </div>
+                  <div className="mt-4 w-full">
+                    <div className="bg-cream-light h-4 rounded-full w-3/4 mx-auto mb-3"></div>
+                    <div className="bg-cream-light h-4 rounded-full w-4/5 mx-auto mb-3"></div>
+                    <div className="bg-cream-light h-4 rounded-full w-2/3 mx-auto"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
   );
-});
+}

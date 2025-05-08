@@ -26,25 +26,25 @@ export function LoginDialog({ isOpen, onClose, defaultTab = "login" }: LoginDial
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[425px] border-border bg-background">
+      <DialogContent className="sm:max-w-[425px] bg-teal-600 border border-cream/30 text-cream">
         <DialogHeader>
-          <DialogTitle className="text-foreground">{translations.title}</DialogTitle>
-          <DialogDescription className="text-muted-foreground">
+          <DialogTitle className="text-cream">{translations.title}</DialogTitle>
+          <DialogDescription className="text-cream/80">
             {translations.loginDescription}
           </DialogDescription>
         </DialogHeader>
         
         <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-muted">
+          <TabsList className="grid w-full grid-cols-2 bg-teal-700">
             <TabsTrigger 
               value="login" 
-              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+              className="data-[state=active]:bg-teal-500 data-[state=active]:text-cream text-cream/70"
             >
               {translations.login}
             </TabsTrigger>
             <TabsTrigger 
               value="register" 
-              className="data-[state=active]:bg-background data-[state=active]:text-foreground"
+              className="data-[state=active]:bg-teal-500 data-[state=active]:text-cream text-cream/70"
             >
               {translations.register}
             </TabsTrigger>
@@ -57,16 +57,16 @@ export function LoginDialog({ isOpen, onClose, defaultTab = "login" }: LoginDial
             />
             <div className="relative mt-4">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border" />
+                <span className="w-full border-t border-cream/20" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
+                <span className="bg-teal-600 px-2 text-cream/70">
                   Or continue with
                 </span>
               </div>
             </div>
             <div className="flex justify-center mt-4">
-              <Button variant="secondary" disabled>
+              <Button variant="secondary" disabled className="bg-amber text-teal-500">
                 Google
               </Button>
             </div>
