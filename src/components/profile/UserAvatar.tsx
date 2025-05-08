@@ -7,9 +7,10 @@ import { useLanguage } from "@/features/language";
 interface UserAvatarProps {
   user: User;
   size?: "sm" | "md" | "lg";
+  forceRefresh?: boolean; // Add this prop
 }
 
-const UserAvatarComponent = ({ user, size = "md" }: UserAvatarProps) => {
+const UserAvatarComponent = ({ user, size = "md", forceRefresh }: UserAvatarProps) => {
   const { currentLanguage } = useLanguage();
   
   const t = (lvText: string, enText: string) => 
@@ -45,12 +46,13 @@ const UserAvatarComponent = ({ user, size = "md" }: UserAvatarProps) => {
 
 // Memoize the component to prevent unnecessary re-renders
 export const UserAvatar = memo(UserAvatarComponent, (prevProps, nextProps) => {
-  // Only re-render if user details that affect initials change
+  // Only re-render if user details that affect initials change or if forceRefresh changed
   return (
     prevProps.user.first_name === nextProps.user.first_name &&
     prevProps.user.last_name === nextProps.user.last_name &&
     prevProps.user.email === nextProps.user.email &&
-    prevProps.size === nextProps.size
+    prevProps.size === nextProps.size &&
+    prevProps.forceRefresh === nextProps.forceRefresh
   );
 });
 
