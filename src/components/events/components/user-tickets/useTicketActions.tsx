@@ -1,66 +1,42 @@
 
 import { useState } from 'react';
-import { UserTicket } from "@/hooks/tickets";
-import { useToast } from "@/hooks/use-toast";
-import { deleteTicketMutation } from "@/hooks/tickets/mutations/deleteTicketMutation";
+import { UserTicket } from '@/hooks/tickets';
 
-export interface UseTicketActionsProps {
-  onTicketsChanged?: () => void;
-  t?: (lvText: string, enText: string) => string;
-  userId?: string | null;
-  onDelete?: (ticketId: string) => void;
-}
+type DeleteTicketFn = ((ticketId: string) => void) | undefined;
 
-export const useTicketActions = (onDelete?: (ticketId: string) => void) => {
-  const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+export const useTicketActions = (onDelete?: DeleteTicketFn) => {
   const [ticketToDelete, setTicketToDelete] = useState<string | null>(null);
-  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
-  const { toast } = useToast();
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleViewTicket = (ticket: UserTicket) => {
-    setSelectedTicket(ticket);
-  };
-  
-  const handleDeleteTicket = (ticketId: string) => {
+  const handleDeleteClick = (ticketId: string) => {
+    console.log("Setting ticket to delete:", ticketId);
     setTicketToDelete(ticketId);
-    setIsConfirmDeleteOpen(true);
   };
-  
-  const handleConfirmDelete = async () => {
-    if (!ticketToDelete) return;
+
+  const cancelDelete = () => {
+    setTicketToDelete(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!ticketToDelete || !onDelete) return;
     
     try {
       setIsDeleting(true);
-      
-      // Call the provided onDelete function if available
-      if (onDelete) {
-        onDelete(ticketToDelete);
-      }
-      
-      setTicketToDelete(null);
-      setIsConfirmDeleteOpen(false);
+      console.log("Deleting ticket:", ticketToDelete);
+      onDelete(ticketToDelete);
     } catch (error) {
       console.error("Error deleting ticket:", error);
     } finally {
       setIsDeleting(false);
+      setTicketToDelete(null);
     }
-  };
-  
-  const cancelDelete = () => {
-    setTicketToDelete(null);
-    setIsConfirmDeleteOpen(false);
   };
 
   return {
-    selectedTicket,
     isDeleting,
     ticketToDelete,
-    isConfirmDeleteOpen,
-    setIsConfirmDeleteOpen,
-    handleViewTicket,
-    handleDeleteTicket,
-    handleConfirmDelete,
+    handleDeleteClick,
+    confirmDelete,
     cancelDelete
   };
 };

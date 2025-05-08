@@ -1,7 +1,7 @@
 
-export { UserTickets } from './UserTickets';
-export { TicketItem } from './TicketItem';
-export { TicketGrid } from './TicketGrid';
-export { TicketsEmptyState } from './TicketsEmptyState';
-export { DeleteConfirmDialog } from './DeleteConfirmDialog';
-export { useTicketActions } from './useTicketActions';
+export * from './UserTickets';
+export * from './TicketGrid';
+export * from './TicketsEmptyState';
+export * from './TicketItem';
+export * from './DeleteConfirmDialog';
+export * from './useTicketActions';

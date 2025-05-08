@@ -6,6 +6,7 @@ import { UserTicket } from "@/hooks/tickets";
 import { TicketsEmptyState } from "./TicketsEmptyState";
 import { TicketGrid } from "./TicketGrid";
 import { useTicketActions } from "./useTicketActions";
+import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 
 interface UserTicketsProps {
   availableTickets: UserTicket[];
@@ -22,19 +23,23 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
   const { user, isAuthenticated } = useAuth();
   const userId = user?.id;
   
+  // Use the restructured useTicketActions hook
   const {
-    selectedTicket,
     isDeleting,
-    isConfirmDeleteOpen,
-    setIsConfirmDeleteOpen,
-    handleViewTicket,
-    handleDeleteTicket,
-    handleConfirmDelete
+    ticketToDelete,
+    handleDeleteClick,
+    confirmDelete,
+    cancelDelete
   } = useTicketActions(onDelete);
 
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
   const hasTickets = availableTickets && availableTickets.length > 0;
+
+  const handleViewTicket = (ticket: UserTicket) => {
+    // This is now handled directly in the TicketGrid component
+    console.log("Viewing ticket:", ticket.id);
+  };
 
   return (
     <div className="mt-10">
@@ -47,7 +52,7 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
           availableTickets={availableTickets}
           onView={handleViewTicket}
           onPurchase={onPurchase}
-          onDelete={handleDeleteTicket}
+          onDelete={handleDeleteClick}
           isAuthenticated={isAuthenticated}
           userId={userId}
           currentLanguageCode={currentLanguage.code}
@@ -57,6 +62,14 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
       ) : (
         <TicketsEmptyState t={t} />
       )}
+
+      {/* Add the Delete Confirmation Dialog */}
+      <DeleteConfirmDialog
+        isOpen={ticketToDelete !== null}
+        onClose={cancelDelete}
+        onConfirm={confirmDelete}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 };

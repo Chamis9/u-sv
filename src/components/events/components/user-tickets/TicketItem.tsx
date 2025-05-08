@@ -50,6 +50,7 @@ export const TicketItem: React.FC<TicketItemProps> = ({
   };
 
   // Check if ticket belongs to current user
+  // Changed from user_id to seller_id for ownership check
   const isOwner = userId && ticket.seller_id === userId;
   
   return (
