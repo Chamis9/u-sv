@@ -17,6 +17,10 @@ export function useTicketsTab(user: User) {
   const [editTicketOpen, setEditTicketOpen] = useState(false);
   const [currentEditTicket, setCurrentEditTicket] = useState<UserTicket | null>(null);
 
+  // Define translation function
+  const t = (lvText: string, enText: string) => 
+    currentLanguage.code === 'lv' ? lvText : enText;
+
   // Setup ticket operations (delete, update, etc.)
   const {
     openDeleteConfirmation,
@@ -25,10 +29,10 @@ export function useTicketsTab(user: User) {
     ticketToDelete,
     isDeleting,
     handleUpdateTicket,
-    t
+    refreshTickets: refreshTicketsFromOperations
   } = useTicketOperations({
-    userId: user?.id || '',
-    updateTicket
+    onTicketsChanged: refreshTickets,
+    t
   });
   
   // Sort tickets into added and purchased categories
