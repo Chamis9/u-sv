@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Header } from "@/components/Header";
@@ -85,7 +84,7 @@ const Events = () => {
                   
                   return (
                     <Link to={`/events/${slug}`} key={category.id}>
-                      <Card className="h-full transition-transform hover:scale-105 bg-ticket-bg/50 border border-ticket-text/10 backdrop-blur-sm">
+                      <Card className="h-full transition-transform hover:scale-105 bg-ticket-bg/50 backdrop-blur-sm border-2 border-ticket-accent">
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">
                             <IconComponent className="h-6 w-6 text-ticket-accent" />
