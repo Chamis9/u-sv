@@ -70,7 +70,7 @@ export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProp
           <Button
             variant="ghost"
             size="icon"
-            className="text-white hover:text-orange-400 transition-colors relative z-10 hover:bg-transparent"
+            className="text-ticket-accent hover:text-ticket-accent transition-colors relative z-10 hover:bg-transparent"
             title={t("Mans konts", "My Account", "Мой аккаунт")}
           >
             <UserAvatar user={user} size="sm" />

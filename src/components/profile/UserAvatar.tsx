@@ -48,7 +48,7 @@ const UserAvatarComponent = ({ user, size = "md", forceRefresh = false }: UserAv
     : undefined;
 
   return (
-    <Avatar className={`${sizeClasses[size]} border-2 border-primary/10`}>
+    <Avatar className={`${sizeClasses[size]} border-2 border-ticket-accent`}>
       {avatarUrl && (
         <AvatarImage 
           src={avatarUrl}
@@ -56,7 +56,7 @@ const UserAvatarComponent = ({ user, size = "md", forceRefresh = false }: UserAv
           className="object-cover"
         />
       )}
-      <AvatarFallback className="bg-primary/10 text-primary">
+      <AvatarFallback className="bg-ticket-bg text-ticket-accent">
         {getInitials()}
       </AvatarFallback>
     </Avatar>
