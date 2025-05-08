@@ -1,12 +1,16 @@
 
 import React from "react";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { UseFormReturn } from "react-hook-form";
-import { RegistrationFormData } from "@/components/auth/schema";
 
 interface NameFieldsProps {
-  form: UseFormReturn<RegistrationFormData>;
+  form: any;
   translations: any;
 }
 
@@ -20,13 +24,16 @@ export function NameFields({ form, translations }: NameFieldsProps) {
           <FormItem>
             <FormLabel>{translations.firstName}</FormLabel>
             <FormControl>
-              <Input placeholder={translations.firstName} {...field} />
+              <Input
+                {...field}
+                autoComplete="given-name"
+                className="focus:ring-2 focus:ring-offset-1 focus:ring-orange-400/50"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
-      
       <FormField
         control={form.control}
         name="lastName"
@@ -34,7 +41,11 @@ export function NameFields({ form, translations }: NameFieldsProps) {
           <FormItem>
             <FormLabel>{translations.lastName}</FormLabel>
             <FormControl>
-              <Input placeholder={translations.lastName} {...field} />
+              <Input
+                {...field}
+                autoComplete="family-name"
+                className="focus:ring-2 focus:ring-offset-1 focus:ring-orange-400/50"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

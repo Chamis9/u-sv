@@ -10,6 +10,7 @@ import { EmailInput } from "../EmailInput";
 import { PasswordInput } from "../PasswordInput";
 import { loginFormSchema, type LoginFormData } from "../schema";
 import { usePreviousEmails } from "@/hooks/usePreviousEmails";
+import { useUserAuth } from "@/hooks/useUserAuth";
 
 interface LoginFormProps {
   translations: any;
@@ -20,6 +21,7 @@ interface LoginFormProps {
 export function LoginForm({ translations, languageCode, onClose }: LoginFormProps) {
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
+  const { login } = useUserAuth();
   const { previousEmails, showDropdown, setShowDropdown } = usePreviousEmails();
 
   const form = useForm<LoginFormData>({
@@ -52,6 +54,7 @@ export function LoginForm({ translations, languageCode, onClose }: LoginFormProp
     setIsLoading(true);
     
     try {
+      // Save email to local storage for future use
       const savedEmails = localStorage.getItem('globalPreviousEmails');
       const emails = savedEmails ? JSON.parse(savedEmails) : [];
       if (!emails.includes(values.email)) {
@@ -60,18 +63,16 @@ export function LoginForm({ translations, languageCode, onClose }: LoginFormProp
         localStorage.setItem('globalPreviousEmails', JSON.stringify(updatedEmails));
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
-      });
-
-      if (error) {
+      // Login using the custom hook
+      const success = await login(values.email, values.password);
+      
+      if (success) {
+        if (onClose) onClose();
+      } else {
         toast({
           variant: "destructive",
           description: translations.invalidCredentials,
         });
-      } else {
-        if (onClose) onClose();
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -84,6 +85,7 @@ export function LoginForm({ translations, languageCode, onClose }: LoginFormProp
     }
   };
 
+  // Handle autofill detection
   React.useEffect(() => {
     let observer: MutationObserver | null = null;
     

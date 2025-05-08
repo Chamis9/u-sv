@@ -206,40 +206,40 @@ export type Database = {
           auth_user_id: string | null
           avatar_url: string | null
           created_at: string
-          email: string | null
+          email: string
           first_name: string | null
           id: string
           last_name: string | null
           last_sign_in_at: string | null
           phone: string | null
           status: string | null
-          updated_at: string | null
+          updated_at: string
         }
         Insert: {
           auth_user_id?: string | null
           avatar_url?: string | null
           created_at?: string
-          email?: string | null
+          email: string
           first_name?: string | null
           id?: string
           last_name?: string | null
           last_sign_in_at?: string | null
           phone?: string | null
           status?: string | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
           auth_user_id?: string | null
           avatar_url?: string | null
           created_at?: string
-          email?: string | null
+          email?: string
           first_name?: string | null
           id?: string
           last_name?: string | null
           last_sign_in_at?: string | null
           phone?: string | null
           status?: string | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -352,6 +352,54 @@ export type Database = {
         Args: { limit_num: number }
         Returns: Json[]
       }
+      get_user_by_auth_id: {
+        Args: { auth_id: string }
+        Returns: {
+          auth_user_id: string | null
+          avatar_url: string | null
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          last_sign_in_at: string | null
+          phone: string | null
+          status: string | null
+          updated_at: string
+        }[]
+      }
+      get_user_by_email: {
+        Args: { user_email: string }
+        Returns: {
+          auth_user_id: string | null
+          avatar_url: string | null
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          last_sign_in_at: string | null
+          phone: string | null
+          status: string | null
+          updated_at: string
+        }[]
+      }
+      get_user_by_id: {
+        Args: { user_id: string }
+        Returns: {
+          auth_user_id: string | null
+          avatar_url: string | null
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          last_sign_in_at: string | null
+          phone: string | null
+          status: string | null
+          updated_at: string
+        }[]
+      }
       log_activity: {
         Args: {
           p_activity_type: string
@@ -361,6 +409,20 @@ export type Database = {
           p_metadata: Json
         }
         Returns: undefined
+      }
+      update_user_avatar: {
+        Args: { user_id: string; new_avatar_url: string }
+        Returns: boolean
+      }
+      update_user_profile: {
+        Args: {
+          user_id: string
+          first_name: string
+          last_name: string
+          email: string
+          phone: string
+        }
+        Returns: boolean
       }
     }
     Enums: {

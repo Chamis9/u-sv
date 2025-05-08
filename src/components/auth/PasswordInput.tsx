@@ -1,41 +1,52 @@
 
-import { Eye, EyeOff, Lock } from "lucide-react";
-import { useState } from "react";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import React, { useState } from "react";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { UseFormReturn } from "react-hook-form";
+import { Eye, EyeOff } from "lucide-react";
+import { useLanguage } from "@/features/language";
 
 interface PasswordInputProps {
-  form: UseFormReturn<any>;
+  form: any;
   label: string;
-  name?: string;
-  placeholder?: string;
 }
 
-export function PasswordInput({ 
-  form, 
-  label, 
-  name = "password",
-  placeholder
-}: PasswordInputProps) {
+export function PasswordInput({ form, label }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const { currentLanguage } = useLanguage();
+  
+  const getPlaceholder = () => {
+    switch (currentLanguage.code) {
+      case 'lv':
+        return "••••••••";
+      case 'ru':
+        return "••••••••";
+      default:
+        return "••••••••";
+    }
+  };
 
   return (
     <FormField
       control={form.control}
-      name={name}
+      name="password"
       render={({ field }) => (
-        <FormItem>
+        <FormItem className="relative">
           <FormLabel>{label}</FormLabel>
           <FormControl>
             <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 type={showPassword ? "text" : "password"}
-                className="pl-10 pr-10"
-                placeholder={placeholder || label}
+                autoComplete="current-password"
+                placeholder={getPlaceholder()}
                 {...field}
+                className="pr-10 focus:ring-2 focus:ring-offset-1 focus:ring-orange-400/50"
               />
               <Button
                 type="button"
@@ -49,9 +60,6 @@ export function PasswordInput({
                 ) : (
                   <Eye className="h-4 w-4 text-muted-foreground" />
                 )}
-                <span className="sr-only">
-                  {showPassword ? "Hide password" : "Show password"}
-                </span>
               </Button>
             </div>
           </FormControl>
@@ -61,4 +69,3 @@ export function PasswordInput({
     />
   );
 }
-

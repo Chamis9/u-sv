@@ -1,30 +1,70 @@
 
 import React from "react";
-import PhoneInputWithCountry from "@/components/admin/users/PhoneInputWithCountry";
-import { UseFormReturn } from "react-hook-form";
-import { RegistrationFormData } from "@/components/auth/schema";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface PhoneFieldProps {
-  form: UseFormReturn<RegistrationFormData>;
+  form: any;
   translations: any;
-  countryCodeName?: keyof RegistrationFormData;
-  phoneNumberName?: keyof RegistrationFormData;
 }
 
-export function PhoneField({ 
-  form, 
-  translations,
-  countryCodeName = 'countryCode',
-  phoneNumberName = 'phoneNumber'
-}: PhoneFieldProps) {
+export function PhoneField({ form, translations }: PhoneFieldProps) {
   return (
-    <PhoneInputWithCountry
-      label={translations.phoneNumber}
-      countryCode={form.watch(countryCodeName)}
-      phoneNumber={form.watch(phoneNumberName) || ""}
-      onCountryCodeChange={(code) => form.setValue(countryCodeName, code)}
-      onPhoneNumberChange={(number) => form.setValue(phoneNumberName, number)}
-      placeholder={translations.phoneNumberPlaceholder}
-    />
+    <div className="space-y-2">
+      <FormLabel>{translations.phoneNumber} <span className="text-muted-foreground text-sm">{translations.optional}</span></FormLabel>
+      <div className="flex space-x-2">
+        <FormField
+          control={form.control}
+          name="countryCode"
+          render={({ field }) => (
+            <FormItem className="w-24">
+              <FormControl>
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="+371" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="+371">+371</SelectItem>
+                    <SelectItem value="+370">+370</SelectItem>
+                    <SelectItem value="+372">+372</SelectItem>
+                    <SelectItem value="+7">+7</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="phoneNumber"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormControl>
+                <Input
+                  {...field}
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="XXXXXXXX"
+                  className="focus:ring-2 focus:ring-offset-1 focus:ring-orange-400/50"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+    </div>
   );
 }

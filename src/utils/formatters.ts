@@ -20,3 +20,13 @@ export const formatDate = (dateString: string, locale: string = 'lv-LV'): string
     day: 'numeric',
   }).format(date);
 };
+
+/**
+ * Format currency with symbol
+ */
+export const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('lv-LV', {
+    style: 'currency',
+    currency: 'EUR',
+  }).format(amount);
+};
