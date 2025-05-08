@@ -17,12 +17,10 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
   
   const refreshTickets = useCallback(async () => {
-    if (!userId || !isAuthenticated) {
-      console.log("Cannot refresh tickets: user not authenticated or missing user ID");
+    if (!isAuthenticated) {
+      console.log("Cannot refresh tickets: user not authenticated");
       return false;
     }
-    
-    console.log(`Refreshing tickets for user: ${userId}`);
     
     try {
       // Verify the auth session is valid before refreshing
@@ -38,14 +36,18 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
         return false;
       }
       
-      // Invalidate and immediately refetch
+      // Use the authenticated user ID from the session
+      const authUserId = session.session.user.id;
+      console.log(`Refreshing tickets for authenticated user ID: ${authUserId}`);
+      
+      // Invalidate and immediately refetch using authUserId
       await queryClient.invalidateQueries({ 
-        queryKey: ['user-tickets', userId]
+        queryKey: ['user-tickets', authUserId]
       });
       
-      // Force refetch
+      // Force refetch using authUserId
       await queryClient.refetchQueries({ 
-        queryKey: ['user-tickets', userId],
+        queryKey: ['user-tickets', authUserId],
         exact: true
       });
       
@@ -70,7 +72,7 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
       
       return false;
     }
-  }, [userId, isAuthenticated, queryClient, t]);
+  }, [isAuthenticated, queryClient, t]);
   
   return { refreshTickets };
 }

@@ -10,13 +10,37 @@ import { supabase } from "@/integrations/supabase/client";
 export function useTicketsTab(user: User) {
   const { isAuthenticated } = useAuth();
   const { currentLanguage } = useLanguage();
-  const { tickets, isLoading, refreshTickets, updateTicket } = useUserTickets(user?.id);
+  
+  // State for managing tickets and UI
   const [addedTickets, setAddedTickets] = useState<UserTicket[]>([]);
   const [purchasedTickets, setPurchasedTickets] = useState<UserTicket[]>([]);
   const [loading, setLoading] = useState(false);
   const [addTicketOpen, setAddTicketOpen] = useState(false);
   const [editTicketOpen, setEditTicketOpen] = useState(false);
   const [currentEditTicket, setCurrentEditTicket] = useState<UserTicket | null>(null);
+  const [authUserId, setAuthUserId] = useState<string | null>(null);
+
+  // Get authenticated user ID from session
+  useEffect(() => {
+    const fetchAuthUserId = async () => {
+      if (isAuthenticated) {
+        try {
+          const { data: session } = await supabase.auth.getSession();
+          if (session && session.session) {
+            setAuthUserId(session.session.user.id);
+            console.log("Set authenticated user ID:", session.session.user.id);
+          }
+        } catch (err) {
+          console.error("Failed to get auth user ID:", err);
+        }
+      }
+    };
+    
+    fetchAuthUserId();
+  }, [isAuthenticated]);
+
+  // Use the authenticated user ID for ticket operations
+  const { tickets, isLoading, refreshTickets, updateTicket } = useUserTickets(authUserId || undefined);
 
   // Define translation function
   const t = (lvText: string, enText: string) => 
@@ -38,8 +62,8 @@ export function useTicketsTab(user: User) {
   
   // Sort tickets into added and purchased categories
   useEffect(() => {
-    // Skip if not authenticated (prevents premature data fetching)
-    if (!isAuthenticated) {
+    // Skip if not authenticated or tickets not loaded
+    if (!isAuthenticated || !tickets) {
       return;
     }
     
@@ -47,14 +71,14 @@ export function useTicketsTab(user: User) {
       const added: UserTicket[] = [];
       const purchased: UserTicket[] = [];
       
-      if (!tickets || !user?.id) {
+      if (!tickets || !authUserId) {
         return { added, purchased };
       }
       
       tickets.forEach(ticket => {
-        if (ticket.seller_id === user.id) {
+        if (ticket.seller_id === authUserId) {
           added.push(ticket);
-        } else if (ticket.buyer_id === user.id) {
+        } else if (ticket.buyer_id === authUserId) {
           purchased.push(ticket);
         }
       });
@@ -69,12 +93,13 @@ export function useTicketsTab(user: User) {
     const { added, purchased } = filterTickets();
     setAddedTickets(added);
     setPurchasedTickets(purchased);
-  }, [tickets, user?.id, isAuthenticated]);
+  }, [tickets, authUserId, isAuthenticated]);
 
   // Force refresh tickets on initial load
   useEffect(() => {
-    if (isAuthenticated && user?.id) {
-      console.log("Initial tickets load for user:", user.id);
+    if (isAuthenticated && authUserId) {
+      console.log("Initial tickets load for authenticated user:", authUserId);
+      
       // Verify auth session before initial load
       const checkSessionAndRefresh = async () => {
         try {
@@ -89,7 +114,7 @@ export function useTicketsTab(user: User) {
       
       checkSessionAndRefresh();
     }
-  }, [isAuthenticated, user?.id]);
+  }, [isAuthenticated, authUserId, refreshTickets]);
 
   return {
     addedTickets,
@@ -110,6 +135,7 @@ export function useTicketsTab(user: User) {
     currentEditTicket,
     setCurrentEditTicket,
     t,
-    isAuthenticated
+    isAuthenticated,
+    authUserId
   };
 }

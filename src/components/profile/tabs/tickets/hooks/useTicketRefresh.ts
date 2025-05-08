@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage } from "@/features/language";
+import { supabase } from "@/integrations/supabase/client";
 
 interface UseTicketRefreshProps {
   userId?: string;
@@ -16,22 +17,39 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
   
   const refreshTickets = useCallback(async () => {
-    if (!userId || !isAuthenticated) {
-      console.log("Cannot refresh tickets: user not authenticated or missing user ID");
+    if (!isAuthenticated) {
+      console.log("Cannot refresh tickets: user not authenticated");
       return false;
     }
     
-    console.log(`Refreshing tickets for user: ${userId}`);
+    console.log(`Starting ticket refresh process...`);
     
     try {
-      // Invalidate and immediately refetch
+      // Always verify auth session first
+      const { data: session, error: sessionError } = await supabase.auth.getSession();
+        
+      if (sessionError || !session.session) {
+        console.error("Authentication session error:", sessionError);
+        toast({
+          title: t("Autentifikācijas kļūda", "Authentication error"),
+          description: t("Lūdzu, pieslēdzieties vēlreiz", "Please log in again"),
+          variant: "destructive"
+        });
+        return false;
+      }
+      
+      // Use the authenticated user ID from the session
+      const authUserId = session.session.user.id;
+      console.log(`Using authenticated user ID for refresh: ${authUserId}`);
+      
+      // Invalidate and immediately refetch using authUserId
       await queryClient.invalidateQueries({ 
-        queryKey: ['user-tickets', userId]
+        queryKey: ['user-tickets', authUserId]
       });
       
-      // Force refetch
+      // Force refetch using authUserId
       await queryClient.refetchQueries({ 
-        queryKey: ['user-tickets', userId],
+        queryKey: ['user-tickets', authUserId],
         exact: true
       });
       
@@ -56,7 +74,7 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
       
       return false;
     }
-  }, [userId, isAuthenticated, queryClient, t]);
+  }, [isAuthenticated, queryClient, t]);
   
   return { refreshTickets };
 }

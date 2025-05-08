@@ -11,17 +11,10 @@ export function useTicketQueries(userId?: string) {
   const { data: tickets = [], isLoading, error, refetch } = useQuery({
     queryKey: ['user-tickets', userId],
     queryFn: async (): Promise<UserTicket[]> => {
-      if (!userId) {
-        console.log("No user ID provided, returning empty array");
-        return [];
-      }
-      
       if (!isAuthenticated) {
         console.log("User not authenticated, returning empty array");
         return [];
       }
-      
-      console.log("Fetching tickets for user:", userId);
       
       try {
         // First verify the auth session is valid
@@ -35,9 +28,7 @@ export function useTicketQueries(userId?: string) {
         // Use the authenticated user ID for the query to ensure RLS policies work correctly
         const authUserId = session.session.user.id;
         
-        if (authUserId !== userId) {
-          console.warn(`Warning: Auth user ID (${authUserId}) doesn't match provided user ID (${userId}). Using auth user ID for query.`);
-        }
+        console.log(`Fetching tickets for authenticated user ID: ${authUserId}`);
         
         // Query the tickets table with enhanced filters to get the user's tickets
         const { data: ticketsData, error } = await supabase
@@ -78,7 +69,7 @@ export function useTicketQueries(userId?: string) {
           return formattedTickets;
         }
         
-        console.log(`No tickets found for user: ${authUserId}`);
+        console.log(`No tickets found for authenticated user: ${authUserId}`);
         return [];
         
       } catch (error) {
@@ -86,7 +77,7 @@ export function useTicketQueries(userId?: string) {
         throw error;
       }
     },
-    enabled: !!userId && isAuthenticated,
+    enabled: isAuthenticated,
     staleTime: 1000 * 30, // 30 seconds
     refetchOnMount: true,
     refetchOnWindowFocus: true

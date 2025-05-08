@@ -25,6 +25,7 @@ import { TicketDetailDialog } from "./components/ticket-list/TicketDetailDialog"
 import { useTicketDialog } from "./hooks/useTicketDialog";
 import { useTicketRefresh } from "./hooks/useTicketRefresh";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface TicketsTabProps {
   user: User;
@@ -51,11 +52,12 @@ export function TicketsTab({ user }: TicketsTabProps) {
     currentEditTicket,
     setCurrentEditTicket,
     t,
+    authUserId
   } = useTicketsTab(user);
   
-  // Use the enhanced refresh functionality
+  // Use the enhanced refresh functionality with the authenticated user ID
   const { refreshTickets } = useTicketRefresh({
-    userId: user?.id,
+    userId: authUserId || undefined,
     isAuthenticated
   });
   
@@ -71,12 +73,24 @@ export function TicketsTab({ user }: TicketsTabProps) {
   
   // Force refresh on component mount and when user changes
   useEffect(() => {
-    console.log("TicketsTab mounted or user changed, refreshing tickets");
-    if (isAuthenticated && user?.id) {
-      refreshTicketsFromTab();
-    }
-  }, [user.id, isAuthenticated, refreshTicketsFromTab]);
+    const verifyAndRefresh = async () => {
+      if (isAuthenticated) {
+        console.log("TicketsTab mounted, checking authentication and refreshing tickets");
+        // Get the current auth session
+        const { data: session, error } = await supabase.auth.getSession();
+        if (session?.session && !error) {
+          console.log(`Authenticated user ID from session: ${session.session.user.id}`);
+          refreshTicketsFromTab();
+        } else {
+          console.error("Authentication session error:", error);
+        }
+      }
+    };
+    
+    verifyAndRefresh();
+  }, [isAuthenticated, refreshTicketsFromTab]);
 
+  // Debug logging
   console.log("TicketsTab render - Current user:", user);
   console.log("TicketsTab render - Authentication state:", isAuthenticated);
   console.log("TicketsTab render - Added tickets:", addedTickets.length);
@@ -200,7 +214,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
           setCurrentEditTicket(ticket);
           setEditTicketOpen(true);
         }}
-        ticketType={selectedTicket?.seller_id === user.id ? "added" : "purchased"}
+        ticketType={selectedTicket?.seller_id === authUserId ? "added" : "purchased"}
       />
     </Card>
   );
