@@ -44,8 +44,8 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
   return (
     <>
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-        {/* Ticket header with color band */}
-        <div className={`h-2 ${ticket.status === 'sold' ? "bg-blue-500" : ticket.status === 'available' ? "bg-green-500" : "bg-orange-500"}`}></div>
+        {/* Ticket header with color band - CHANGED FROM GREEN TO YELLOW */}
+        <div className={`h-2 ${ticket.status === 'sold' ? "bg-blue-500" : ticket.status === 'available' ? "bg-ticket-accent" : "bg-orange-500"}`}></div>
         
         <div className="p-4">
           <div className="flex items-start justify-between">

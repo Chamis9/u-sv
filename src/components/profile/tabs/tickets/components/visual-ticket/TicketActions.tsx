@@ -27,7 +27,7 @@ export function TicketActions({
         variant="outline"
         size="sm"
         onClick={onView}
-        className="flex-1"
+        className="flex-1 text-gray-800 border-gray-400"
       >
         <Eye className="h-4 w-4 mr-2" />
         {t("Skatīt", "View")}

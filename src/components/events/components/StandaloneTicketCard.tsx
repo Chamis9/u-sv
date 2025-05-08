@@ -26,7 +26,7 @@ export const StandaloneTicketCard: React.FC<StandaloneTicketCardProps> = ({
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
       <div className="p-4 flex-grow">
-        <h3 className="text-xl font-bold mb-2">{ticket.title}</h3>
+        <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">{ticket.title}</h3>
         {ticket.description && (
           <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
             {ticket.description}
@@ -58,8 +58,8 @@ export const StandaloneTicketCard: React.FC<StandaloneTicketCardProps> = ({
         <div className="flex gap-2">
           <Button 
             onClick={() => onViewTicket(ticket)} 
-            className="whitespace-nowrap" 
-            variant="ghost"
+            className="whitespace-nowrap text-gray-800 border-gray-400" 
+            variant="outline"
           >
             {t('Skatīt', 'View')}
           </Button>

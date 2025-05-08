@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
@@ -114,13 +115,13 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {availableTickets.map((ticket) => (
           <div key={ticket.id} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-            {/* Ticket color band */}
-            <div className="h-2 bg-green-500"></div>
+            {/* Ticket color band - CHANGED FROM GREEN TO YELLOW */}
+            <div className="h-2 bg-ticket-accent"></div>
             
             <div className="p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="font-semibold text-lg mb-1 truncate">{ticket.title}</h3>
+                  <h3 className="font-bold text-lg mb-1 truncate text-gray-900 dark:text-gray-100">{ticket.title}</h3>
                   <div className="flex items-center text-sm text-muted-foreground mb-1">
                     <Calendar className="h-4 w-4 mr-1" />
                     {ticket.event_date 
@@ -166,7 +167,7 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={() => handleViewTicket(ticket)}
-                  className="flex-1"
+                  className="flex-1 text-gray-800 border-gray-400"
                 >
                   <Eye className="h-4 w-4 mr-2" />
                   {t("Skatīt", "View")}

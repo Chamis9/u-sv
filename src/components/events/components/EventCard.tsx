@@ -49,7 +49,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, eventTickets }) => 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
       <div className="p-4 flex-grow">
-        <h3 className="text-xl font-bold mb-2">{event.title}</h3>
+        <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">{event.title}</h3>
         <div className="flex items-center text-sm mb-2 text-gray-600 dark:text-gray-300">
           <Calendar className="h-4 w-4 mr-1" />
           {formattedDate}
@@ -73,7 +73,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, eventTickets }) => 
         )}
         
         <Link to={`/events/${event.category}/${event.id}`}>
-          <Button className="whitespace-nowrap" variant="ghost">
+          <Button className="whitespace-nowrap text-gray-800 border-gray-400" variant="outline">
             <Ticket className="h-4 w-4 mr-1" />
             {t('Biļetes', 'Tickets')}
           </Button>
