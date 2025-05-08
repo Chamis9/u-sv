@@ -49,24 +49,21 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
           placeholder={t("Meklēt pasākumus un biļetes...", "Search events and tickets...")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 text-ticket-text font-semibold border-ticket-accent/30 focus-visible:border-ticket-accent focus-visible:ring-ticket-accent"
+          className="pl-10"
         />
-        <Search className="absolute left-3 top-3 h-4 w-4 text-ticket-accent" />
+        <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
       </div>
       
       <Popover>
         <PopoverTrigger asChild>
-          <Button 
-            variant="outline" 
-            className="w-full sm:w-[300px] flex justify-between items-center bg-ticket-bg/70 border-ticket-accent/30 hover:border-ticket-accent text-ticket-text font-semibold"
-          >
+          <Button variant="outline" className="w-full sm:w-[300px] flex justify-between items-center">
             <div className="flex items-center">
-              <CalendarIcon className="mr-2 h-4 w-4 text-ticket-accent" />
+              <CalendarIcon className="mr-2 h-4 w-4" />
               <span className="truncate">{dateButtonText}</span>
             </div>
             {(startDate || endDate) && (
               <X 
-                className="h-4 w-4 text-ticket-text/70 hover:text-ticket-accent" 
+                className="h-4 w-4 text-gray-400 hover:text-gray-600" 
                 onClick={(e) => {
                   e.stopPropagation(); 
                   clearDateFilters();
