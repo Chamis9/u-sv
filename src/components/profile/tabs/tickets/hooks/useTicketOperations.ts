@@ -5,6 +5,7 @@ import { UserTicket, AddTicketData } from "@/hooks/tickets";
 import { useTicketRefresh } from './useTicketRefresh';
 import { useAuth } from "@/contexts/AuthContext";
 import { deleteTicketMutation } from "@/hooks/tickets/mutations/deleteTicketMutation";
+import { updateTicketMutation } from "@/hooks/tickets/mutations/updateTicketMutation";
 
 interface UseTicketOperationsProps {
   onTicketsChanged?: () => void;
@@ -118,18 +119,15 @@ export function useTicketOperations({ onTicketsChanged, t }: UseTicketOperations
       // First refresh the session
       await refreshSession();
       
-      // Then attempt the update
-      const { updateTicket } = await import("@/hooks/tickets/useTicketMutations");
-      const ticketMutations = updateTicket;
+      // Directly use the updateTicketMutation that we imported
+      const result = await updateTicketMutation(ticketId, data, user.id);
       
-      // Handle the case where updateTicket is not available
-      if (!ticketMutations) {
-        console.error("updateTicket function not available");
-        return { success: false, error: "Update functionality not available" };
+      if (result.success && onTicketsChanged) {
+        // If update was successful, refresh the tickets list
+        onTicketsChanged();
       }
       
-      // Return the result of the update operation
-      return { success: true };
+      return result;
     } catch (error: any) {
       console.error("Error updating ticket:", error);
       return { success: false, error: error.message || "Failed to update ticket" };
