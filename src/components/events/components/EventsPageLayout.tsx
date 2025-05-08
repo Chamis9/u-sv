@@ -10,14 +10,12 @@ interface EventsPageLayoutProps {
   children: React.ReactNode;
   title?: string;
   description?: string;
-  noBorder?: boolean; // Added this prop
 }
 
 export const EventsPageLayout: React.FC<EventsPageLayoutProps> = ({ 
   children, 
   title,
-  description,
-  noBorder = false // Default to false (with border)
+  description
 }) => {
   return (
     <ThemeProvider>
@@ -26,10 +24,8 @@ export const EventsPageLayout: React.FC<EventsPageLayoutProps> = ({
         <Header />
         <main className="flex-grow pt-24 pb-12">
           <div className="container mx-auto px-4 sm:px-6">
-            <div className="max-w-7xl mx-auto space-y-6">
-              <div className={`${noBorder ? '' : 'border-2 border-ticket-accent'} rounded-lg p-6 shadow-md bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm`}>
-                {children}
-              </div>
+            <div className="max-w-7xl mx-auto">
+              {children}
             </div>
           </div>
         </main>

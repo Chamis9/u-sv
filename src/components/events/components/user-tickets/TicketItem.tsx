@@ -29,7 +29,7 @@ export const TicketItem: React.FC<TicketItemProps> = ({
   isDeleting
 }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-ticket-accent shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
       {/* Ticket color band */}
       <div className="h-2 bg-ticket-accent"></div>
       

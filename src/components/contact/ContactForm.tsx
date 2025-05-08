@@ -99,7 +99,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
   };
 
   return (
-    <div className="bg-ticket-bg/70 backdrop-blur-sm p-6 rounded-lg border-2 border-ticket-accent shadow-lg">
+    <div className="bg-ticket-bg/70 backdrop-blur-sm p-6 rounded-lg border border-ticket-text/10 shadow-lg">
       <h2 className="text-2xl font-semibold mb-6 text-ticket-text">{t.formTitle}</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

@@ -43,7 +43,7 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
   
   return (
     <>
-      <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-ticket-accent shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
         {/* Ticket header with color band - CHANGED FROM GREEN TO YELLOW */}
         <div className={`h-2 ${ticket.status === 'sold' ? "bg-blue-500" : ticket.status === 'available' ? "bg-ticket-accent" : "bg-orange-500"}`}></div>
         

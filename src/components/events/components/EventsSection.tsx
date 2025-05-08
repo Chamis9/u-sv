@@ -56,7 +56,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ events, availableT
       <h2 className="text-2xl font-bold mb-4">{t("Pasākumi", "Events")}</h2>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {events.map((event) => (
-          <Card key={event.id} yellowBorder className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm hover:shadow-lg transition-shadow">
+          <Card key={event.id} className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 hover:shadow-lg transition-shadow">
             <CardHeader>
               <CardTitle>{event.title}</CardTitle>
               <CardDescription>
@@ -83,7 +83,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ events, availableT
                   
                   <div className="space-y-2">
                     {availableTickets[event.id].map((ticket) => (
-                      <div key={ticket.id} className="flex justify-between items-center p-2 border border-ticket-accent rounded-md">
+                      <div key={ticket.id} className="flex justify-between items-center p-2 border border-gray-200 dark:border-gray-700 rounded-md">
                         <div>
                           <div className="font-medium">{ticket.title}</div>
                           <div className="text-sm text-gray-500">{ticket.description}</div>
@@ -118,4 +118,4 @@ export const EventsSection: React.FC<EventsSectionProps> = ({ events, availableT
       </div>
     </>
   );
-}
+};

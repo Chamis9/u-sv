@@ -29,7 +29,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
   };
 
   return (
-    <Card yellowBorder className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+    <Card className="flex flex-col bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Ticket className="h-5 w-5 text-orange-500" />

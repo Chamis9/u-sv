@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useLanguage } from "@/features/language";
@@ -63,7 +62,6 @@ export function CategoryEventList() {
     <EventsPageLayout 
       title={`${categoryDisplayName} | netieku.es`}
       description={`${categoryDisplayName} biļetes un pasākumi | netieku.es`}
-      noBorder={true} // Add this prop to disable border
     >
       <CategoryHeader categoryDisplayName={categoryDisplayName} />
       
