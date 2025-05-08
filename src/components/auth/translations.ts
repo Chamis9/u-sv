@@ -80,7 +80,7 @@ export const getLoginTranslations = (languageCode: string) => {
         registrationSuccess: 'Registration successful! Please check your email to confirm your account.',
         registrationError: 'Failed to register. Please try again.',
         alreadyHaveAccount: 'Already have an account?',
-        dontHaveAccount: 'Don't have an account?',
+        dontHaveAccount: "Don't have an account?",
         optional: '(optional)',
         termsAndConditions: 'I agree to the Terms of Service and Privacy Policy.',
         acceptTerms: 'You must agree to the terms and conditions to continue.'
