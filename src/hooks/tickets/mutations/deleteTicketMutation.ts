@@ -61,27 +61,24 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       
     if (insertError) {
       console.error('Error copying ticket to deleted_tickets table:', insertError);
-      // Continue with deletion even if copying to deleted_tickets fails
-      // This ensures the user can still delete their ticket
-    } else {
-      console.log('Successfully copied ticket to deleted_tickets table');
+      return false; // Changed from continuing with deletion to returning false if copying fails
     }
+    
+    console.log('Successfully copied ticket to deleted_tickets table');
     
     // Now delete the original ticket - CRITICAL PART
     console.log(`Executing DELETE from tickets where id=${ticketId} AND seller_id=${userId}`);
-    const { data: deleteData, error: deleteError } = await supabase
+    const { error: deleteError } = await supabase
       .from('tickets')
       .delete()
       .eq('id', ticketId)
-      .eq('seller_id', userId)
-      .select();
+      .eq('seller_id', userId);
       
     if (deleteError) {
       console.error('Error deleting original ticket:', deleteError);
       return false;
     }
     
-    console.log(`Delete operation result:`, deleteData);
     console.log(`Successfully deleted ticket with ID: ${ticketId}`);
     return true;
   } catch (err) {
