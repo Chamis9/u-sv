@@ -38,10 +38,8 @@ export const Hero = memo(function Hero() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 mb-10">
             <div className="md:text-left">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-ticket-text mb-4 md:mb-6">
-                {texts.heading.map((line, index) => (
-                  <span key={index} className="block mb-2">
-                    {line}
-                  </span>
+                {texts.heading.map((part, index) => (
+                  <span key={index} className="block mb-2" dangerouslySetInnerHTML={{ __html: part }} />
                 ))}
               </h1>
               
@@ -86,7 +84,7 @@ const getHeroTexts = (langCode: string) => {
       heading: [
         "Netiec uz",
         "pasākumu?",
-        "Pārdod biļeti droši"
+        "Pārdod <span class='text-ticket-accent'>biļeti</span> droši"
       ],
       mainCta: "Gribi uz pasākumu, bet biļetes izpārdotas? Ieskaties",
       description: "Pērc vai pārdod biļetes uz koncertiem, teātri, sporta pasākumiem u.c."
@@ -95,7 +93,7 @@ const getHeroTexts = (langCode: string) => {
       heading: [
         "Can't attend",
         "an event?",
-        "Sell your ticket safely"
+        "Sell your <span class='text-ticket-accent'>ticket</span> safely"
       ],
       mainCta: "Want to attend an event, but tickets are sold out? Check out",
       description: "Buy or sell tickets to concerts, theater, sports events, and more."
@@ -104,7 +102,7 @@ const getHeroTexts = (langCode: string) => {
       heading: [
         "Не попадаешь на",
         "мероприятие?",
-        "Продай билет безопасно"
+        "Продай <span class='text-ticket-accent'>билет</span> безопасно"
       ],
       mainCta: "Хочешь на мероприятие, но билеты распроданы? Загляни в",
       description: "Покупай или продавай билеты на концерты, театр, спортивные мероприятия и др."
