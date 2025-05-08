@@ -7,7 +7,7 @@ import {
   HoverCardTrigger 
 } from "@/components/ui/hover-card";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { LogOut, User as UserIcon, Settings, Ticket } from "lucide-react";
 import { useLanguage } from "@/features/language";
@@ -20,11 +20,17 @@ interface UserHoverCardProps {
 
 export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProps) {
   const { currentLanguage } = useLanguage();
+  const navigate = useNavigate();
+  
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
   const userInitials = user.first_name && user.last_name 
     ? `${user.first_name[0]}${user.last_name[0]}` 
     : user.email?.substring(0, 2).toUpperCase() || '';
+    
+  const handleAvatarClick = () => {
+    navigate(`/profile/${user.id}/account`);
+  };
 
   return (
     <HoverCard>
@@ -33,6 +39,7 @@ export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProp
           variant="ghost" 
           className="p-0 hover:bg-transparent"
           aria-label={t('Lietotāja izvēlne', 'User menu')}
+          onClick={handleAvatarClick}
         >
           <Avatar className="h-8 w-8 text-ticket-accent">
             <AvatarImage src={user.avatar_url || ''} alt={user.first_name || 'User'} />
