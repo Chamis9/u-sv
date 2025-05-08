@@ -24,8 +24,10 @@ export const EventsPageLayout: React.FC<EventsPageLayoutProps> = ({
         <Header />
         <main className="flex-grow pt-24 pb-12">
           <div className="container mx-auto px-4 sm:px-6">
-            <div className="max-w-7xl mx-auto">
-              {children}
+            <div className="max-w-7xl mx-auto space-y-6">
+              <div className="border-2 border-ticket-accent rounded-lg p-6 shadow-md bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+                {children}
+              </div>
             </div>
           </div>
         </main>

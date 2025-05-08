@@ -18,7 +18,7 @@ interface ContactInfoProps {
 
 export const ContactInfo: React.FC<ContactInfoProps> = ({ translations: t }) => {
   return (
-    <div className="space-y-8 bg-ticket-bg/70 backdrop-blur-sm p-6 rounded-lg border border-ticket-text/10 shadow-lg">
+    <div className="space-y-8 bg-ticket-bg/70 backdrop-blur-sm p-6 rounded-lg border-2 border-ticket-accent shadow-lg">
       <div className="space-y-1">
         <h3 className="text-xl font-semibold text-ticket-accent">{t.companyName}</h3>
       </div>
@@ -59,22 +59,22 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({ translations: t }) => 
         <h3 className="text-xl font-semibold text-ticket-text">{t.socialTitle}</h3>
         <div className="flex space-x-4 pl-2">
           <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" 
-             className="p-2 bg-ticket-bg/80 border border-ticket-text/20 rounded-full hover:bg-ticket-text/10 transition-colors" 
+             className="p-2 bg-ticket-bg/80 border border-ticket-accent rounded-full hover:bg-ticket-text/10 transition-colors" 
              aria-label="Instagram">
             <Instagram size={20} className="text-ticket-accent" />
           </a>
           <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
-             className="p-2 bg-ticket-bg/80 border border-ticket-text/20 rounded-full hover:bg-ticket-text/10 transition-colors"
+             className="p-2 bg-ticket-bg/80 border border-ticket-accent rounded-full hover:bg-ticket-text/10 transition-colors"
              aria-label="Facebook">
             <Facebook size={20} className="text-ticket-accent" />
           </a>
           <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
-             className="p-2 bg-ticket-bg/80 border border-ticket-text/20 rounded-full hover:bg-ticket-text/10 transition-colors"
+             className="p-2 bg-ticket-bg/80 border border-ticket-accent rounded-full hover:bg-ticket-text/10 transition-colors"
              aria-label="X (Twitter)">
             <Twitter size={20} className="text-ticket-accent" />
           </a>
           <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer"
-             className="p-2 bg-ticket-bg/80 border border-ticket-text/20 rounded-full hover:bg-ticket-text/10 transition-colors"
+             className="p-2 bg-ticket-bg/80 border border-ticket-accent rounded-full hover:bg-ticket-text/10 transition-colors"
              aria-label="TikTok">
             <svg 
               xmlns="http://www.w3.org/2000/svg" 

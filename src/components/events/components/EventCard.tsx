@@ -47,7 +47,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, eventTickets }) => 
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border-2 border-ticket-accent overflow-hidden flex flex-col">
       <div className="p-4 flex-grow">
         <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">{event.title}</h3>
         <div className="flex items-center text-sm mb-2 text-gray-600 dark:text-gray-300">
