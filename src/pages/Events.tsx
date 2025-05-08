@@ -85,13 +85,13 @@ const Events = () => {
                   
                   return (
                     <Link to={`/events/${slug}`} key={category.id}>
-                      <Card className="h-full transition-transform hover:scale-105 bg-ticket-bg/50 border border-ticket-text/10 backdrop-blur-sm">
+                      <Card className="h-full transition-all hover:scale-105 bg-ticket-bg/70 border border-ticket-text/20 shadow-lg backdrop-blur-md hover:shadow-xl hover:border-ticket-text/40">
                         <CardHeader>
-                          <CardTitle className="flex items-center gap-2">
-                            <IconComponent className="h-6 w-6 text-ticket-accent" />
+                          <CardTitle className="flex items-center gap-2 text-ticket-accent">
+                            <IconComponent className="h-6 w-6" />
                             {category.name}
                           </CardTitle>
-                          <CardDescription className="text-ticket-text/80">
+                          <CardDescription className="text-ticket-text/90 font-medium">
                             {category.description}
                           </CardDescription>
                         </CardHeader>

@@ -49,21 +49,21 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
           placeholder={t("Meklēt pasākumus un biļetes...", "Search events and tickets...")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
+          className="pl-10 text-ticket-text border-ticket-text/30 placeholder:text-ticket-text/60 bg-ticket-bg/40"
         />
-        <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+        <Search className="absolute left-3 top-3 h-4 w-4 text-ticket-text/70" />
       </div>
       
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="w-full sm:w-[300px] flex justify-between items-center">
+          <Button variant="outline" className="w-full sm:w-[300px] flex justify-between items-center text-ticket-text border-ticket-text/30 bg-ticket-bg/40 font-medium">
             <div className="flex items-center">
               <CalendarIcon className="mr-2 h-4 w-4" />
               <span className="truncate">{dateButtonText}</span>
             </div>
             {(startDate || endDate) && (
               <X 
-                className="h-4 w-4 text-gray-400 hover:text-gray-600" 
+                className="h-4 w-4 text-ticket-text/70 hover:text-ticket-text transition-colors" 
                 onClick={(e) => {
                   e.stopPropagation(); 
                   clearDateFilters();
@@ -72,7 +72,7 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent className="w-auto p-0 border-ticket-text/20" align="start">
           <Calendar
             initialFocus
             mode="range"
