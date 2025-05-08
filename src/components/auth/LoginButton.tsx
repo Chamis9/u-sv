@@ -31,6 +31,7 @@ import { useSearchParams } from "react-router-dom";
 import { getLoginTranslations } from "./translations";
 import { useAuth } from "@/contexts/AuthContext";
 import { ButtonProps } from "@/components/ui/button";
+import { UserCircle } from "lucide-react";
 
 interface LoginButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   defaultTab?: "login" | "register";
@@ -96,7 +97,7 @@ export function LoginButton({ className, defaultTab = "login", onClose, variant 
         className={cn(className)}
         {...props}
       >
-        {props.children || translations.login}
+        {props.children || (showIcon ? <UserCircle size={20} className="text-ticket-accent" /> : translations.login)}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px] border-border bg-background">

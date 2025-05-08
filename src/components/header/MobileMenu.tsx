@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { LanguageSelector } from "@/features/language";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Logo } from "./Logo";
 import { Link } from "react-router-dom";
 
@@ -24,7 +23,7 @@ export function MobileMenu({ links }: MobileMenuProps) {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="md:hidden">
-          <Menu className="h-6 w-6 text-ticket-text dark:text-foreground" />
+          <Menu className="h-6 w-6 text-ticket-text" />
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>

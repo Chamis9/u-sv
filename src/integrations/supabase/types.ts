@@ -63,6 +63,21 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_users: {
+        Row: {
+          created_at: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
@@ -103,17 +118,17 @@ export type Database = {
           event_time: string | null
           file_path: string | null
           id: string
-          original_id: string
-          owner_id: string
+          original_id: string | null
+          owner_id: string | null
           price: number
-          price_per_unit: number
+          price_per_unit: number | null
           quantity: number
-          seat_info: string | null
-          seller_id: string
-          status: string
-          title: string | null
-          updated_at: string | null
-          user_id: string
+          seat_info: Json | null
+          seller_id: string | null
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string | null
           venue: string | null
         }
         Insert: {
@@ -128,17 +143,17 @@ export type Database = {
           event_time?: string | null
           file_path?: string | null
           id?: string
-          original_id: string
-          owner_id: string
+          original_id?: string | null
+          owner_id?: string | null
           price: number
-          price_per_unit?: number
+          price_per_unit?: number | null
           quantity?: number
-          seat_info?: string | null
-          seller_id: string
-          status?: string
-          title?: string | null
-          updated_at?: string | null
-          user_id: string
+          seat_info?: Json | null
+          seller_id?: string | null
+          status?: string | null
+          title: string
+          updated_at: string
+          user_id?: string | null
           venue?: string | null
         }
         Update: {
@@ -153,17 +168,17 @@ export type Database = {
           event_time?: string | null
           file_path?: string | null
           id?: string
-          original_id?: string
-          owner_id?: string
+          original_id?: string | null
+          owner_id?: string | null
           price?: number
-          price_per_unit?: number
+          price_per_unit?: number | null
           quantity?: number
-          seat_info?: string | null
-          seller_id?: string
-          status?: string
-          title?: string | null
-          updated_at?: string | null
-          user_id?: string
+          seat_info?: Json | null
+          seller_id?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string | null
           venue?: string | null
         }
         Relationships: []
@@ -242,12 +257,12 @@ export type Database = {
           id: string
           owner_id: string
           price: number
-          price_per_unit: number
+          price_per_unit: number | null
           quantity: number
-          seat_info: string | null
+          seat_info: Json | null
           seller_id: string
           status: string
-          title: string | null
+          title: string
           updated_at: string
           user_id: string
           venue: string | null
@@ -263,14 +278,14 @@ export type Database = {
           event_time?: string | null
           file_path?: string | null
           id?: string
-          owner_id?: string
+          owner_id: string
           price: number
-          price_per_unit?: number
+          price_per_unit?: number | null
           quantity?: number
-          seat_info?: string | null
-          seller_id?: string
+          seat_info?: Json | null
+          seller_id: string
           status?: string
-          title?: string | null
+          title: string
           updated_at?: string
           user_id: string
           venue?: string | null
@@ -288,12 +303,12 @@ export type Database = {
           id?: string
           owner_id?: string
           price?: number
-          price_per_unit?: number
+          price_per_unit?: number | null
           quantity?: number
-          seat_info?: string | null
+          seat_info?: Json | null
           seller_id?: string
           status?: string
-          title?: string | null
+          title?: string
           updated_at?: string
           user_id?: string
           venue?: string | null

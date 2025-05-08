@@ -2,7 +2,6 @@
 import { LanguageSelector } from "@/features/language";
 import { Logo } from "./header/Logo";
 import { Navigation, getNavigationLinks } from "./header/Navigation";
-import { ThemeToggle } from "./theme/ThemeToggle";
 import { MobileMenu } from "./header/MobileMenu";
 import { UserCircle } from "lucide-react";
 import { useLanguage } from "@/features/language";
@@ -39,7 +38,6 @@ export function Header() {
         <Navigation />
         
         <div className="flex items-center gap-2 md:gap-4 text-ticket-text">
-          <ThemeToggle />
           {isAuthenticated && user ? (
             <UserHoverCard 
               user={user}
@@ -52,7 +50,7 @@ export function Header() {
               className="text-ticket-text hover:text-ticket-accent transition-colors hover:bg-transparent"
               showIcon={false}
             >
-              <UserCircle size={20} className="hover:text-ticket-accent" />
+              <UserCircle size={20} className="text-ticket-accent hover:text-ticket-accent" />
             </LoginButton>
           )}
           <LanguageSelector />
