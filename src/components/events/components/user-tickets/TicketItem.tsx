@@ -50,7 +50,7 @@ export const TicketItem: React.FC<TicketItemProps> = ({
   };
 
   // Check if ticket belongs to current user
-  const isOwner = userId && ticket.user_id === userId;
+  const isOwner = userId && ticket.seller_id === userId;
   
   return (
     <Card className="overflow-hidden flex flex-col h-full shadow-md hover:shadow-xl transition-all bg-ticket-bg/80 border border-ticket-text/20 backdrop-blur-sm">

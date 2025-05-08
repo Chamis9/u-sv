@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/features/language";
 import { UserTicket } from "@/hooks/tickets";
 import { TicketsEmptyState } from "./TicketsEmptyState";
@@ -19,8 +19,8 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
   onDelete
 }) => {
   const { currentLanguage } = useLanguage();
-  const { currentUser, isAuthenticated } = useAuth();
-  const userId = currentUser?.id;
+  const { user, isAuthenticated } = useAuth();
+  const userId = user?.id;
   
   const {
     selectedTicket,
