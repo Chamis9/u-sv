@@ -8,7 +8,7 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
   }
 
   try {
-    console.log(`Deleting ticket with ID: ${ticketId}, User ID: ${userId}`);
+    console.log(`Deleting ticket with ID: ${ticketId}, Registered User ID: ${userId}`);
     
     // First verify the ticket exists and belongs to the user before deletion
     const { data: ticketData, error: checkError } = await supabase
@@ -27,7 +27,7 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
       return false;
     }
     
-    // Extra check to ensure ticket belongs to user and hasn't been sold
+    // Extra check to ensure ticket belongs to registered user and hasn't been sold
     if (ticketData.seller_id !== userId || ticketData.owner_id !== userId || ticketData.buyer_id !== null) {
       console.error('Cannot delete: Ticket does not belong to the current user or has already been sold');
       return false;

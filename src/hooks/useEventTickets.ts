@@ -9,9 +9,14 @@ export const useEventTickets = async (eventId?: string) => {
 
   try {
     // Query the consolidated tickets table with a filter for event_id
+    // Now correctly joining with registered_users on seller_id to get the seller info
     const { data: ticketsData, error } = await supabase
       .from('tickets')
-      .select('*, categories(name), registered_users!tickets_seller_id_fkey(first_name, last_name)')
+      .select(`
+        *,
+        categories(name), 
+        seller:registered_users!tickets_seller_id_fkey(id, first_name, last_name)
+      `)
       .eq('status', 'available')
       .eq('event_id', eventId);
     
@@ -40,8 +45,8 @@ export const useEventTickets = async (eventId?: string) => {
       quantity: ticket.quantity || 1,
       price_per_unit: ticket.price_per_unit || ticket.price || 0,
       event_time: ticket.event_time || null,
-      seller_name: ticket.registered_users ? 
-        `${ticket.registered_users.first_name} ${ticket.registered_users.last_name}` : undefined
+      seller_name: ticket.seller ? 
+        `${ticket.seller.first_name || ''} ${ticket.seller.last_name || ''}`.trim() : undefined
     }));
     
     return { data: tickets, error: null };

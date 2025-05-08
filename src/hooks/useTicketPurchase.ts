@@ -17,22 +17,34 @@ export const useTicketPurchase = () => {
 
   const purchaseTicket = async (ticket: UserTicket) => {
     try {
-      // Get the current user's ID
+      // Get the current user's auth ID
       const { data: userData } = await supabase.auth.getUser();
-      const userId = userData.user?.id;
       
-      if (!userId) {
+      if (!userData.user?.id) {
         throw new Error("No authenticated user found");
       }
       
-      console.log(`Purchasing ticket: ${ticket.id}`);
+      // Get the registered_user record for the authenticated user
+      const { data: registeredUser, error: registeredUserError } = await supabase
+        .from('registered_users')
+        .select('id')
+        .eq('auth_user_id', userData.user.id)
+        .single();
+        
+      if (registeredUserError || !registeredUser) {
+        console.error("Error getting registered user:", registeredUserError);
+        throw new Error("User profile not found");
+      }
+      
+      console.log(`Purchasing ticket: ${ticket.id} for user: ${registeredUser.id}`);
       
       // Update the ticket status in the tickets table
       const { error } = await supabase
         .from('tickets')
         .update({ 
           status: 'sold',
-          buyer_id: userId
+          buyer_id: registeredUser.id, // Use the registered_user.id
+          owner_id: registeredUser.id  // Update ownership
         })
         .eq('id', ticket.id);
 
