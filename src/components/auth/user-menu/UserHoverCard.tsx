@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/hover-card";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { LogOut, User as UserIcon, Settings, Ticket } from "lucide-react";
 import { useLanguage } from "@/features/language";
 
@@ -42,7 +42,6 @@ export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProp
           onClick={handleAvatarClick}
         >
           <Avatar className="h-8 w-8 text-ticket-accent">
-            <AvatarImage src={user.avatar_url || ''} alt={user.first_name || 'User'} />
             <AvatarFallback className="bg-transparent border border-ticket-accent text-ticket-accent">
               {userInitials}
             </AvatarFallback>
@@ -52,7 +51,6 @@ export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProp
       <HoverCardContent className="w-60 p-4">
         <div className="flex justify-start items-center space-x-3">
           <Avatar>
-            <AvatarImage src={user.avatar_url || ''} alt={user.first_name || ''} />
             <AvatarFallback>{userInitials}</AvatarFallback>
           </Avatar>
           <div className="max-w-[160px]">

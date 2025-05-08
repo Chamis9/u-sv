@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useLanguage } from "@/features/language";
 import { UserAvatar } from "./UserAvatar";
@@ -24,7 +23,7 @@ interface ProfileSidebarProps {
 export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarProps) {
   const { currentLanguage } = useLanguage();
   const { theme } = useTheme();
-  const { logout, lastAvatarUpdate } = useAuth();
+  const { logout } = useAuth();
   const { toast } = useToast();
   
   const t = (lvText: string, enText: string, ruText?: string) => {
@@ -94,7 +93,7 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
     updated_at: user.updated_at || null,
     role: user.role || 'user',
     status: user.status || 'active',
-    avatar_url: user.avatar_url || null
+    avatar_url: null
   } : {
     id: "",
     email: "",
@@ -110,8 +109,7 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
         <div className="flex flex-col items-center space-y-2">
           <UserAvatar 
             user={completeUserObject} 
-            size="lg" 
-            forceRefresh={lastAvatarUpdate ? true : false} 
+            size="lg"
           />
           <h2 className="text-xl font-semibold mt-2">
             {fullName}

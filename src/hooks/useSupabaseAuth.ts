@@ -8,7 +8,6 @@ export function useSupabaseAuth() {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [lastAvatarUpdate, setLastAvatarUpdate] = useState<number>(Date.now());
 
   // Function to fetch user data from the database
   const fetchUserData = async (email: string) => {
@@ -31,37 +30,13 @@ export function useSupabaseAuth() {
           last_sign_in_at: userData.last_sign_in_at,
           role: 'user',
           status: userData.status as 'active' | 'inactive',
-          avatar_url: userData.avatar_url
+          avatar_url: null // Always set to null
         });
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
   };
-
-  // Set up subscription to user avatar changes
-  useEffect(() => {
-    const subscription = supabase
-      .channel('avatar_changes')
-      .on('postgres_changes', {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'registered_users',
-        filter: user ? `id=eq.${user.id}` : undefined
-      }, (payload) => {
-        console.log("User data changed:", payload);
-        if (payload.new && payload.new.avatar_url !== user?.avatar_url) {
-          console.log("Avatar URL changed, updating user object");
-          setUser(prev => prev ? {...prev, avatar_url: payload.new.avatar_url} : null);
-          setLastAvatarUpdate(Date.now());
-        }
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(subscription);
-    };
-  }, [user?.id]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -121,11 +96,10 @@ export function useSupabaseAuth() {
     };
   }, []);
 
-  // Function to refresh user data (e.g., after avatar update)
+  // Function to refresh user data
   const refreshUserData = async () => {
     if (userEmail) {
       await fetchUserData(userEmail);
-      setLastAvatarUpdate(Date.now());
     }
   };
 
@@ -147,7 +121,6 @@ export function useSupabaseAuth() {
     userEmail, 
     user, 
     logout,
-    refreshUserData,
-    lastAvatarUpdate
+    refreshUserData
   };
 }
