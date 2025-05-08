@@ -62,7 +62,7 @@ const Tickets = () => {
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {ticketCategories.map((category, index) => (
                   <Link to={`/events/${category.route}`} key={index}>
-                    <Card className="flex flex-col bg-ticket-bg/50 backdrop-blur-sm border border-ticket-text/10 hover:shadow-md transition-shadow">
+                    <Card className="flex flex-col bg-ticket-bg/50 backdrop-blur-sm border-2 border-ticket-accent hover:shadow-md transition-shadow">
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                           <category.icon className={`h-6 w-6 ${category.iconColor}`} />
