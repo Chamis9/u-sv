@@ -2,6 +2,37 @@
 import { supabase } from "@/integrations/supabase/client";
 
 /**
+ * Country code type definition
+ */
+export interface CountryCode {
+  name: string;
+  country: string;
+  code: string;
+  digits: number[];
+  format: string;
+}
+
+/**
+ * List of country codes
+ */
+export const countryCodes: CountryCode[] = [
+  { name: "Latvia", country: "lv", code: "+371", digits: [8], format: "XX XXX XXX" },
+  { name: "Estonia", country: "ee", code: "+372", digits: [7, 8], format: "XXXX XXXX" },
+  { name: "Lithuania", country: "lt", code: "+370", digits: [8], format: "XXX XX XXX" },
+  { name: "United Kingdom", country: "gb", code: "+44", digits: [10], format: "XXXX XXXXXX" },
+  { name: "United States", country: "us", code: "+1", digits: [10], format: "(XXX) XXX-XXXX" },
+  { name: "Russia", country: "ru", code: "+7", digits: [10], format: "XXX XXX-XX-XX" },
+  { name: "Germany", country: "de", code: "+49", digits: [10, 11], format: "XXXX XXXXXX" },
+  { name: "Sweden", country: "se", code: "+46", digits: [9], format: "XXX-XXX XXX" },
+  { name: "Finland", country: "fi", code: "+358", digits: [9], format: "XXX XXX XXXX" },
+  { name: "Norway", country: "no", code: "+47", digits: [8], format: "XXX XX XXX" },
+  { name: "Poland", country: "pl", code: "+48", digits: [9], format: "XXX XXX XXX" },
+  { name: "Belarus", country: "by", code: "+375", digits: [9], format: "XX XXX-XX-XX" },
+  { name: "Ukraine", country: "ua", code: "+380", digits: [9], format: "XX XXX XXXX" },
+  { name: "France", country: "fr", code: "+33", digits: [9], format: "X XX XX XX XX" },
+];
+
+/**
  * Validate email format
  */
 export const validateEmail = (email: string): boolean => {
