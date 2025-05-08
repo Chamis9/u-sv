@@ -35,7 +35,7 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
     
     // Copy ticket to deleted_tickets table with all fields
     const { error: insertError } = await supabase
-      .from('tickets')
+      .from('deleted_tickets')
       .insert({
         original_id: ticketData.id,
         title: ticketData.title,
