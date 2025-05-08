@@ -18,11 +18,14 @@ export const useTicketPurchase = () => {
   const purchaseTicket = async (ticket: UserTicket) => {
     try {
       // Get the current user's auth ID
-      const { data: userData } = await supabase.auth.getUser();
+      const { data: userData, error: authError } = await supabase.auth.getUser();
       
-      if (!userData.user?.id) {
+      if (authError || !userData.user?.id) {
+        console.error("Auth error:", authError);
         throw new Error("No authenticated user found");
       }
+      
+      console.log("Auth user ID:", userData.user.id);
       
       // Get the registered_user record for the authenticated user
       const { data: registeredUser, error: registeredUserError } = await supabase
@@ -36,20 +39,21 @@ export const useTicketPurchase = () => {
         throw new Error("User profile not found");
       }
       
-      console.log(`Purchasing ticket: ${ticket.id} for user: ${registeredUser.id}`);
+      console.log(`Purchasing ticket: ${ticket.id} for registered user: ${registeredUser.id}`);
       
-      // Update the ticket status in the tickets table
-      const { error } = await supabase
+      // Update the ticket status in the tickets table using registered_user.id
+      const { error: updateError } = await supabase
         .from('tickets')
         .update({ 
           status: 'sold',
-          buyer_id: registeredUser.id, // Use the registered_user.id
-          owner_id: registeredUser.id  // Update ownership
+          buyer_id: registeredUser.id,
+          owner_id: registeredUser.id
         })
         .eq('id', ticket.id);
 
-      if (error) {
-        throw error;
+      if (updateError) {
+        console.error("Error updating ticket:", updateError);
+        throw updateError;
       }
       
       setIsPurchaseDialogOpen(false);
