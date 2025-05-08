@@ -8,13 +8,29 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
   }
 
   try {
-    console.log(`Deleting ticket with ID: ${ticketId}, User ID: ${userId}`);
+    console.log(`Deleting ticket with ID: ${ticketId}, Auth User ID: ${userId}`);
+    
+    // Always verify we have an active session before proceeding
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !sessionData.session) {
+      console.error("No valid auth session:", sessionError);
+      return false;
+    }
+    
+    // Critical: Use the authenticated user ID from the session
+    const authUserId = sessionData.session.user.id;
+    
+    if (authUserId !== userId) {
+      console.warn("Warning: Auth user ID doesn't match provided user ID. Using auth user ID.");
+    }
     
     // First verify the ticket exists and belongs to the user before deletion
     const { data: ticketData, error: checkError } = await supabase
       .from('tickets')
       .select('*')  // Select all columns to copy to deleted_tickets table
       .eq('id', ticketId)
+      .eq('seller_id', authUserId) // Only get tickets owned by this user
       .maybeSingle();
       
     if (checkError) {
@@ -23,12 +39,12 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
     }
     
     if (!ticketData) {
-      console.error('Ticket not found or already deleted');
+      console.error('Ticket not found or already deleted or not owned by current user');
       return false;
     }
     
     // Extra check to ensure ticket belongs to user and hasn't been sold
-    if (ticketData.seller_id !== userId || ticketData.owner_id !== userId || ticketData.buyer_id !== null) {
+    if (ticketData.seller_id !== authUserId || ticketData.owner_id !== authUserId || ticketData.buyer_id !== null) {
       console.error('Cannot delete: Ticket does not belong to the current user or has already been sold');
       return false;
     }
@@ -68,20 +84,18 @@ export async function deleteTicketMutation(ticketId: string, userId: string): Pr
     }
     
     // Now delete the original ticket - CRITICAL PART
-    console.log(`Executing DELETE from tickets where id=${ticketId} AND seller_id=${userId}`);
-    const { data: deleteData, error: deleteError } = await supabase
+    console.log(`Executing DELETE from tickets where id=${ticketId} AND seller_id=${authUserId}`);
+    const { error: deleteError } = await supabase
       .from('tickets')
       .delete()
       .eq('id', ticketId)
-      .eq('seller_id', userId)
-      .select();
+      .eq('seller_id', authUserId); // Critical: use the auth user ID
       
     if (deleteError) {
       console.error('Error deleting original ticket:', deleteError);
       return false;
     }
     
-    console.log(`Delete operation result:`, deleteData);
     console.log(`Successfully deleted ticket with ID: ${ticketId}`);
     return true;
   } catch (err) {

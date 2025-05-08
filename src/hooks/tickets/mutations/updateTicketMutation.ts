@@ -9,8 +9,23 @@ export async function updateTicketMutation(
   userId: string
 ): Promise<{ success: boolean; ticket?: UserTicket; error?: string }> {
   try {
-    console.log(`Updating ticket with ID: ${ticketId}`);
+    console.log(`Updating ticket with ID: ${ticketId} using auth user ID: ${userId}`);
     console.log(`Update data:`, JSON.stringify(data, null, 2));
+    
+    // Always verify we have an active session before proceeding
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !sessionData.session) {
+      console.error("No valid auth session:", sessionError);
+      return { success: false, error: "Authentication session is invalid or expired" };
+    }
+    
+    // Critical: Use the authenticated user ID from the session
+    const authUserId = sessionData.session.user.id;
+    
+    if (authUserId !== userId) {
+      console.warn("Warning: Auth user ID doesn't match provided user ID. Using auth user ID.");
+    }
     
     // Create the update object with provided fields
     const updateData: Record<string, any> = {};
@@ -37,12 +52,13 @@ export async function updateTicketMutation(
       .from('tickets')
       .update(updateData)
       .eq('id', ticketId)
+      .eq('seller_id', authUserId) // Ensure we're only updating the current user's tickets
       .select('*')
       .maybeSingle();
       
     if (error) {
       console.error(`Error updating ticket:`, error);
-      return { success: false, error: error.message };
+      return { success: false, error: `Error: ${error.message}` };
     }
     
     console.log(`Successfully updated ticket:`, responseData);
@@ -56,7 +72,7 @@ export async function updateTicketMutation(
     }
     
     // Create the ticket object with the response data
-    const ticket = createTicketObject(responseData, ticketId, userId);
+    const ticket = createTicketObject(responseData, ticketId, authUserId);
     
     return { success: true, ticket };
   } catch (err: any) {

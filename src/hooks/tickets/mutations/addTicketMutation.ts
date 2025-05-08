@@ -9,7 +9,10 @@ export async function addTicketMutation(
   userId: string
 ): Promise<{ success: boolean; ticket?: UserTicket; error?: string }> {
   try {
-    // First, get the current auth session to verify authentication
+    console.log("Add ticket mutation started with auth user ID:", userId);
+    console.log("Ticket data:", JSON.stringify(data, null, 2));
+    
+    // Always verify we have an active session before proceeding
     const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
     
     if (sessionError || !sessionData.session) {
@@ -17,31 +20,26 @@ export async function addTicketMutation(
       return { success: false, error: "Authentication session is invalid or expired" };
     }
     
-    // Important: Use the authenticated user ID from the session instead of the passed userId
+    // Critical: Use the authenticated user ID from the session
     const authUserId = sessionData.session.user.id;
     
-    console.log("Current auth session user ID:", authUserId);
-    console.log("Using passed user ID for reference:", userId);
+    console.log("Auth verification complete:");
+    console.log("- Session exists:", !!sessionData.session);
+    console.log("- Auth User ID:", authUserId);
+    console.log("- Provided User ID:", userId);
     
-    // Next, refresh the auth session to ensure token is valid
-    const { error: refreshError } = await supabase.auth.refreshSession();
-    if (refreshError) {
-      console.error("Error refreshing session before adding ticket:", refreshError);
-      return { success: false, error: `Auth refresh failed: ${refreshError.message}` };
+    if (authUserId !== userId) {
+      console.warn("Warning: Auth user ID doesn't match provided user ID. Using auth user ID.");
     }
     
     const ticketId = uuidv4();
     
-    console.log(`Adding ticket to consolidated tickets table`);
-    console.log(`Full ticket data:`, JSON.stringify(data, null, 2));
-    console.log(`Auth user ID: ${authUserId}`);
-    
     // Create the insert object with all necessary fields
     const insertData = {
       id: ticketId,
-      user_id: authUserId, // Use the auth user ID, not the passed userId
-      seller_id: authUserId, // Use the auth user ID, not the passed userId
-      owner_id: authUserId, // Use the auth user ID, not the passed userId
+      user_id: authUserId, // Use the authenticated user ID
+      seller_id: authUserId, // Use the authenticated user ID
+      owner_id: authUserId, // Use the authenticated user ID
       price: data.price,
       title: data.title || data.description,
       description: data.description,
@@ -57,18 +55,9 @@ export async function addTicketMutation(
       event_time: data.event_time || null
     };
     
-    console.log(`Inserting ticket with ID: ${ticketId} using auth user ID: ${authUserId}`);
+    console.log("Inserting ticket with data:", JSON.stringify(insertData, null, 2));
     
-    // Get the current auth user to double-check authentication state
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError || !userData.user) {
-      console.error("Error retrieving authenticated user:", userError);
-      return { success: false, error: "Authentication session is invalid or expired" };
-    }
-    
-    console.log(`Authenticated user from getUser:`, userData.user.id);
-    
-    // Proceed with the insert using the authenticated user's ID
+    // Insert the ticket using the Supabase client
     const { data: responseData, error } = await supabase
       .from('tickets')
       .insert(insertData)
@@ -77,15 +66,17 @@ export async function addTicketMutation(
       
     if (error) {
       console.error(`Error inserting ticket:`, error);
+      
+      // Enhanced error reporting
       let errorMessage = `Failed to add ticket: ${error.message}`;
       
       if (error.code === '42501') {
-        errorMessage = `Row Level Security prevented adding ticket. Auth User ID: ${authUserId}, Provided User ID: ${userId}`;
+        errorMessage = `Row Level Security prevented adding ticket. Auth User ID: ${authUserId}, Error: ${error.message}`;
         console.error('RLS error details:', { 
-          userId, 
-          authUserId,
+          userId: authUserId,
           errorCode: error.code,
-          errorMessage: error.message
+          errorMessage: error.message,
+          details: error.details
         });
       }
       

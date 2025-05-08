@@ -20,8 +20,9 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
-      // First refresh the auth session
+      // First refresh the auth session to ensure we have valid token
       try {
+        // This is critical - must refresh session before any DB operations
         const { error: refreshError } = await supabase.auth.refreshSession();
         if (refreshError) {
           console.error("Error refreshing session before adding ticket:", refreshError);
@@ -32,12 +33,23 @@ export function useTicketMutations(userId?: string) {
       
       // Get the current session to use the correct auth user ID
       const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        return { success: false, error: 'No valid authentication session found' };
+      }
+      
       const authUserId = sessionData.session?.user.id;
       
-      console.log("Before adding ticket - Auth User ID:", authUserId);
-      console.log("Before adding ticket - Passed User ID:", userId);
+      console.log("Session data:", {
+        sessionExists: !!sessionData.session,
+        authUserId,
+        passedUserId: userId
+      });
       
-      const result = await addTicketMutation(data, userId);
+      // Make sure to use the auth user ID in the ticket creation
+      const result = await addTicketMutation({
+        ...data,
+        user_id: authUserId // Ensure we use the authenticated user ID
+      }, authUserId); // Pass the auth user ID, not the passed userId
       
       if (!result.success) {
         setError(result.error || 'Failed to add ticket');
@@ -64,7 +76,7 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
-      // First refresh the auth session
+      // First refresh the auth session to ensure we have valid token
       try {
         const { error: refreshError } = await supabase.auth.refreshSession();
         if (refreshError) {
@@ -74,7 +86,16 @@ export function useTicketMutations(userId?: string) {
         console.error("Exception during session refresh:", refreshErr);
       }
       
-      const result = await updateTicketMutation(ticketId, data, userId);
+      // Get the current session to use the correct auth user ID
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        return { success: false, error: 'No valid authentication session found' };
+      }
+      
+      const authUserId = sessionData.session?.user.id;
+      
+      // Use the authenticated user ID, not the passed userId
+      const result = await updateTicketMutation(ticketId, data, authUserId);
       
       if (!result.success) {
         setError(result.error || 'Failed to update ticket');
@@ -101,7 +122,7 @@ export function useTicketMutations(userId?: string) {
     setError(null);
     
     try {
-      // First refresh the auth session
+      // First refresh the auth session to ensure we have valid token
       try {
         const { error: refreshError } = await supabase.auth.refreshSession();
         if (refreshError) {
@@ -111,8 +132,17 @@ export function useTicketMutations(userId?: string) {
         console.error("Exception during session refresh:", refreshErr);
       }
       
-      // Use the direct deletion function
-      const success = await deleteTicketMutation(ticketId, userId);
+      // Get the current session to use the correct auth user ID
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        setError('No valid authentication session found');
+        return false;
+      }
+      
+      const authUserId = sessionData.session?.user.id;
+      
+      // Use the authenticated user ID, not the passed userId
+      const success = await deleteTicketMutation(ticketId, authUserId);
       
       if (!success) {
         setError('Failed to delete ticket');

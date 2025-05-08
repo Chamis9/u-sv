@@ -6,6 +6,7 @@ import { useTicketRefresh } from './useTicketRefresh';
 import { useAuth } from "@/contexts/AuthContext";
 import { deleteTicketMutation } from "@/hooks/tickets/mutations/deleteTicketMutation";
 import { updateTicketMutation } from "@/hooks/tickets/mutations/updateTicketMutation";
+import { supabase } from "@/integrations/supabase/client";
 
 interface UseTicketOperationsProps {
   onTicketsChanged?: () => void;
@@ -55,8 +56,16 @@ export function useTicketOperations({ onTicketsChanged, t }: UseTicketOperations
       console.log("Refreshing auth session before operation");
       await refreshSession();
       
+      // Get the current session to use the correct auth user ID
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        throw new Error('No valid authentication session found');
+      }
+      
+      const authUserId = sessionData.session?.user.id;
+      console.log("Performing ticket operation with auth user ID:", authUserId);
+      
       // Then perform the operation
-      console.log("Performing ticket operation with user ID:", user.id);
       const success = await operation();
       
       if (success) {
@@ -79,11 +88,11 @@ export function useTicketOperations({ onTicketsChanged, t }: UseTicketOperations
         });
         return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error during ticket operation:", error);
       toast({
         title: t("Kļūda", "Error"),
-        description: errorMessage,
+        description: errorMessage + (error.message ? `: ${error.message}` : ''),
         variant: "destructive"
       });
       return false;
@@ -111,9 +120,18 @@ export function useTicketOperations({ onTicketsChanged, t }: UseTicketOperations
       console.log("Refreshing auth session before delete operation");
       await refreshSession();
       
+      // Get the current session to use the correct auth user ID
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        throw new Error('No valid authentication session found');
+      }
+      
+      const authUserId = sessionData.session?.user.id;
+      console.log("Deleting ticket with auth user ID:", authUserId);
+      
       // Use performTicketOperation to handle token refresh and error handling
       return await performTicketOperation(
-        async () => await deleteTicketMutation(ticketToDelete, user.id),
+        async () => await deleteTicketMutation(ticketToDelete, authUserId),
         t("Biļete ir veiksmīgi dzēsta", "Ticket has been successfully deleted"),
         t("Neizdevās dzēst biļeti", "Failed to delete ticket")
       );
@@ -133,10 +151,17 @@ export function useTicketOperations({ onTicketsChanged, t }: UseTicketOperations
       console.log("Refreshing auth session before update operation");
       await refreshSession();
       
-      console.log("Updating ticket with user ID:", user.id);
+      // Get the current session to use the correct auth user ID
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        return { success: false, error: 'No valid authentication session found' };
+      }
+      
+      const authUserId = sessionData.session?.user.id;
+      console.log("Updating ticket with auth user ID:", authUserId);
       
       // Directly use the updateTicketMutation that we imported
-      const result = await updateTicketMutation(ticketId, data, user.id);
+      const result = await updateTicketMutation(ticketId, data, authUserId);
       
       if (result.success && onTicketsChanged) {
         // If update was successful, refresh the tickets list
