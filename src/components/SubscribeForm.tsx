@@ -40,7 +40,7 @@ export function SubscribeForm() {
         />
         
         {formError && (
-          <div className="text-red-500 text-sm mt-1">{formError}</div>
+          <div className="text-ticket-accent text-sm mt-1 font-medium">{formError}</div>
         )}
       </div>
       
