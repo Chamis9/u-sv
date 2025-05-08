@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types/users";
@@ -10,14 +9,12 @@ export function useSupabaseAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [lastAvatarUpdate, setLastAvatarUpdate] = useState<number>(Date.now());
 
-  // Function to fetch user data from the database
+  // Replace the fetchUserData function with:
   const fetchUserData = async (email: string) => {
     try {
+      // Use RPC function instead of direct query
       const { data: userData, error } = await supabase
-        .from('registered_users')
-        .select('*')
-        .eq('email', email)
-        .single();
+        .rpc('get_user_by_email', { user_email: email });
       
       if (!error && userData) {
         setUser({

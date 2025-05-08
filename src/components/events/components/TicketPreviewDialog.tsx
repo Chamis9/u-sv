@@ -7,14 +7,17 @@ import { formatCurrency } from "@/utils/formatters";
 import { useLanguage } from "@/features/language";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types/users";
+import { GetUserByIdResult } from "@/utils/rpcFunctions";
+import { Button } from "@/components/ui/button";
 
 interface TicketPreviewDialogProps {
   ticket: Ticket;
   isOpen: boolean;
   onClose: () => void;
+  onPurchase?: (ticket: Ticket) => void;
 }
 
-export function TicketPreviewDialog({ ticket, isOpen, onClose }: TicketPreviewDialogProps) {
+export function TicketPreviewDialog({ ticket, isOpen, onClose, onPurchase }: TicketPreviewDialogProps) {
   const { currentLanguage } = useLanguage();
   const [sellerName, setSellerName] = useState<string>("");
   
@@ -24,8 +27,7 @@ export function TicketPreviewDialog({ ticket, isOpen, onClose }: TicketPreviewDi
     const fetchSellerDetails = async () => {
       if (ticket?.seller_id) {
         try {
-          // Use RPC function instead of direct query to work around type issues
-          // Or you can handle fetching user data another way
+          // Use RPC function to get user data
           const { data, error } = await supabase
             .rpc('get_user_by_id', { user_id: ticket.seller_id });
             
@@ -35,7 +37,8 @@ export function TicketPreviewDialog({ ticket, isOpen, onClose }: TicketPreviewDi
           }
           
           if (data) {
-            setSellerName(`${data.first_name || ''} ${data.last_name || ''}`);
+            const userData = data as GetUserByIdResult;
+            setSellerName(`${userData.first_name || ''} ${userData.last_name || ''}`);
           }
         } catch (error) {
           console.error("Error in seller details fetch:", error);
@@ -139,6 +142,18 @@ export function TicketPreviewDialog({ ticket, isOpen, onClose }: TicketPreviewDi
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+          
+          {/* Purchase button */}
+          {onPurchase && ticket.status === 'available' && (
+            <div className="flex justify-end mt-4">
+              <Button 
+                onClick={() => onPurchase(ticket)} 
+                variant="orange"
+              >
+                {t('Pirkt biļeti', 'Purchase Ticket')}
+              </Button>
             </div>
           )}
         </div>

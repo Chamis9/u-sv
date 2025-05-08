@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { AddTicketData, UserTicket } from "./types";
 import { addTicketMutation } from './mutations/addTicketMutation';
@@ -10,14 +9,12 @@ export function useTicketMutations(userId?: string) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // Get the registered user ID from auth user ID
+  // Replace the getRegisteredUserId function with:
   const getRegisteredUserId = async (authUserId: string): Promise<string | null> => {
     try {
+      // Use RPC function instead of direct query
       const { data, error } = await supabase
-        .from('registered_users')
-        .select('id')
-        .eq('auth_user_id', authUserId)
-        .single();
+        .rpc('get_user_by_auth_id', { auth_user_id: authUserId });
         
       if (error || !data) {
         console.error("Error getting registered user ID:", error);

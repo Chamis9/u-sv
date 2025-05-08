@@ -36,8 +36,8 @@ export function UserHoverCard({
       </HoverCardTrigger>
       
       <HoverCardContent 
-        // Use cn utility here
-        className={cn("w-80", "z-50")}
+        // Use className without cn utility
+        className="w-80 z-50"
         align="end"
         side="bottom"
         forceMount

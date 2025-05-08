@@ -1,126 +1,107 @@
-
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/features/language";
 import { supabase } from "@/integrations/supabase/client";
-import { User } from "@/types/users";
-import { UserAvatar } from "./UserAvatar";
-import { UploadButton } from "./UploadButton";
 
-interface AvatarUploadProps {
-  user: User;
-  onAvatarUpdate: () => void;
-}
-
-export function AvatarUpload({ user, onAvatarUpdate }: AvatarUploadProps) {
-  const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+export function AvatarUpload() {
+  const { user, setUser, refreshUserData } = useAuth();
+  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
   const { currentLanguage } = useLanguage();
   
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
-  
-  const uploadAvatar = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      setIsUploading(true);
-      
-      if (!event.target.files || event.target.files.length === 0) {
-        throw new Error(t('Nav izvēlēts fails', 'No file selected'));
-      }
+  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-      const file = event.target.files[0];
-      const fileExt = file.name.split('.').pop();
-      const folderPath = `${user.id}`;
-      const fileName = `${folderPath}/${user.id}.${fileExt}`;
-      
-      // First, list existing files to delete them
-      const { data: existingFiles } = await supabase.storage
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const fileName = file.name;
+
+    try {
+      setUploading(true);
+  
+      // Upload image to storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('avatars')
-        .list(folderPath);
-      
-      // Delete all existing files in the user's folder
-      if (existingFiles && existingFiles.length > 0) {
-        const filesToRemove = existingFiles.map(file => `${folderPath}/${file.name}`);
-        await supabase.storage
-          .from('avatars')
-          .remove(filesToRemove);
-      }
-      
-      // Upload the new avatar
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(fileName, file, { upsert: true });
+        .upload(`${user.id}/${fileName}`, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
 
       if (uploadError) {
         throw uploadError;
       }
 
-      const { data: { publicUrl } } = supabase.storage
+      // Get public URL
+      const { data: publicUrlData } = supabase.storage
         .from('avatars')
-        .getPublicUrl(fileName);
+        .getPublicUrl(uploadData.path);
 
-      // Use direct RPC call instead of querying registered_users
-      const { error: updateError } = await supabase.rpc(
-        'update_user_avatar', 
-        { 
-          user_id: user.id, 
-          new_avatar_url: publicUrl
-        }
-      );
+      const publicUrl = publicUrlData?.publicUrl;
+
+      if (!publicUrl) {
+        throw new Error('Failed to get public URL for avatar');
+      }
+
+      // Update user profile with new avatar URL using RPC function
+      const { error: updateError } = await supabase.rpc('update_user_avatar', { 
+        user_id: user.id,
+        new_avatar_url: publicUrl
+      });
 
       if (updateError) {
         throw updateError;
       }
 
-      onAvatarUpdate();
+      // Update local state
+      setUser({ ...user, avatar_url: publicUrl });
       
       toast({
-        description: t(
-          'Profila attēls veiksmīgi atjaunināts',
-          'Profile picture successfully updated'
-        ),
+        description: t("Avatārs veiksmīgi atjaunots", "Avatar successfully updated")
       });
+      
+      // Refresh user data in auth context if needed
+      if (refreshUserData) {
+        refreshUserData();
+      }
     } catch (error) {
       console.error('Error uploading avatar:', error);
       toast({
         variant: "destructive",
-        title: t('Kļūda', 'Error'),
-        description: t(
-          'Neizdevās augšupielādēt profila attēlu',
-          'Failed to upload profile picture'
-        ),
+        title: t("Kļūda", "Error"),
+        description: t("Neizdevās augšupielādēt avatāru", "Failed to upload avatar")
       });
     } finally {
-      setIsUploading(false);
-    }
-  }, [user.id, onAvatarUpdate, toast, t]);
-
-  const handleButtonClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
+      setUploading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <UserAvatar user={user} size="lg" forceRefresh />
-      
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={uploadAvatar}
-        className="hidden"
-        disabled={isUploading}
-      />
-      
-      <UploadButton
-        isUploading={isUploading}
-        onClick={handleButtonClick}
-        label={t('Mainīt profila attēlu', 'Change profile picture')}
-        loadingLabel={t('Augšupielādē...', 'Uploading...')}
-      />
+    <div className="flex items-center space-x-4">
+      <Avatar className="h-12 w-12">
+        <AvatarImage src={user?.avatar_url} alt={user?.first_name || "Avatar"} />
+        <AvatarFallback>{user?.first_name?.charAt(0)}{user?.last_name?.charAt(0)}</AvatarFallback>
+      </Avatar>
+      <div className="space-y-1">
+        <Label htmlFor="avatar">
+          {t("Augšupielādēt jaunu avatāru", "Upload new avatar")}
+        </Label>
+        <Input
+          id="avatar"
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          disabled={uploading}
+          className="w-full"
+        />
+      </div>
     </div>
   );
 }

@@ -20,18 +20,14 @@ export function useUserUpdates() {
     }
     
     try {
-      // Update user in database
-      const { data, error } = await supabase
-        .from('registered_users')
-        .update({
-          first_name: updatedUser.first_name,
-          last_name: updatedUser.last_name,
-          email: updatedUser.email,
-          phone: updatedUser.phone,
-          avatar_url: updatedUser.avatar_url,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', updatedUser.id);
+      // Update user in database via RPC function instead of direct query
+      const { error } = await supabase.rpc('update_user_profile', {
+        user_id: updatedUser.id,
+        first_name: updatedUser.first_name,
+        last_name: updatedUser.last_name,
+        email: updatedUser.email,
+        phone: updatedUser.phone
+      });
         
       if (error) {
         throw error;

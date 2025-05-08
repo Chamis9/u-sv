@@ -28,3 +28,11 @@ export interface UpdateUserAvatarParams {
   user_id: string;
   new_avatar_url: string;
 }
+
+// Add missing formatCurrency function
+export const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('lv-LV', {
+    style: 'currency',
+    currency: 'EUR',
+  }).format(amount);
+};
