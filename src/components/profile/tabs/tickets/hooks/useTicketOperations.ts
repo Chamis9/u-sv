@@ -23,6 +23,15 @@ export function useTicketOperations({ onTicketsChanged, t }: UseTicketOperations
     isAuthenticated: !!user
   });
 
+  // Debug user information to help diagnose the issue
+  if (user) {
+    console.log("Current user in useTicketOperations:", {
+      id: user.id,
+      email: user.email,
+      auth_user_id: user.auth_user_id // Check if this exists
+    });
+  }
+
   const performTicketOperation = async (
     operation: () => Promise<boolean>,
     successMessage: string,
@@ -44,9 +53,11 @@ export function useTicketOperations({ onTicketsChanged, t }: UseTicketOperations
       setIsOperating(true);
       
       // First refresh the session to ensure we have valid tokens
+      console.log("Refreshing auth session before operation");
       await refreshSession();
       
       // Then perform the operation
+      console.log("Performing ticket operation with user ID:", user.id);
       const success = await operation();
       
       if (success) {
@@ -116,6 +127,8 @@ export function useTicketOperations({ onTicketsChanged, t }: UseTicketOperations
     }
     
     try {
+      console.log("Updating ticket with user ID:", user.id);
+      
       // First refresh the session
       await refreshSession();
       
@@ -139,7 +152,7 @@ export function useTicketOperations({ onTicketsChanged, t }: UseTicketOperations
     isOperating,
     refreshAuth: refreshSession,
     refreshTickets,
-    // Add the missing properties
+    // Return the delete and update functionality
     openDeleteConfirmation,
     confirmDelete,
     cancelDelete,

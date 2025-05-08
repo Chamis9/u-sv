@@ -9,7 +9,18 @@ export async function addTicketMutation(
   userId: string
 ): Promise<{ success: boolean; ticket?: UserTicket; error?: string }> {
   try {
-    // First refresh auth session to ensure token is valid
+    // First, get the current auth session to verify authentication
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !sessionData.session) {
+      console.error("No valid auth session:", sessionError);
+      return { success: false, error: "Authentication session is invalid or expired" };
+    }
+    
+    console.log("Current auth session user ID:", sessionData.session.user.id);
+    console.log("Using user ID for ticket creation:", userId);
+    
+    // Next, refresh the auth session to ensure token is valid
     const { error: refreshError } = await supabase.auth.refreshSession();
     if (refreshError) {
       console.error("Error refreshing session before adding ticket:", refreshError);
