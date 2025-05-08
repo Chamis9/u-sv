@@ -9,6 +9,13 @@ export async function addTicketMutation(
   userId: string
 ): Promise<{ success: boolean; ticket?: UserTicket; error?: string }> {
   try {
+    // First refresh auth session to ensure token is valid
+    const { error: refreshError } = await supabase.auth.refreshSession();
+    if (refreshError) {
+      console.error("Error refreshing session before adding ticket:", refreshError);
+      return { success: false, error: `Auth refresh failed: ${refreshError.message}` };
+    }
+    
     const ticketId = uuidv4();
     
     console.log(`Adding ticket to consolidated tickets table`);
@@ -38,6 +45,16 @@ export async function addTicketMutation(
     
     console.log(`Inserting ticket with ID: ${ticketId}`);
     
+    // Get the current auth user to double-check authentication state
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData.user) {
+      console.error("Error retrieving authenticated user:", userError);
+      return { success: false, error: "Authentication session is invalid or expired" };
+    }
+    
+    console.log(`Authenticated user from getUser:`, userData.user.id);
+    
+    // Proceed with the insert using the authenticated user's ID
     const { data: responseData, error } = await supabase
       .from('tickets')
       .insert(insertData)
@@ -52,6 +69,7 @@ export async function addTicketMutation(
         errorMessage = `Row Level Security prevented adding ticket. User ID: ${userId}`;
         console.error('RLS error details:', { 
           userId, 
+          authUserId: userData.user.id,
           errorCode: error.code,
           errorMessage: error.message
         });

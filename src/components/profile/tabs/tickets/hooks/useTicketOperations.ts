@@ -1,54 +1,35 @@
 
-import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { UserTicket, AddTicketData } from "@/hooks/tickets";
-import { useLanguage } from "@/features/language";
+import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { deleteTicketMutation } from "@/hooks/tickets/mutations/deleteTicketMutation";
-import { deleteTicketSimple } from "@/hooks/tickets/mutations/deleteTicketSimple";
+import { UserTicket } from "@/hooks/tickets";
+import { useTicketRefresh } from './useTicketRefresh';
+import { useAuth } from "@/contexts/AuthContext";
 
 interface UseTicketOperationsProps {
-  userId: string;
-  deleteTicket?: (ticketId: string) => Promise<boolean>;
-  updateTicket: (ticketId: string, data: Partial<AddTicketData>) => Promise<{
-    success: boolean;
-    ticket?: UserTicket;
-    error?: string;
-  }>;
+  onTicketsChanged?: () => void;
+  t: (lvText: string, enText: string) => string;
 }
 
-export function useTicketOperations({
-  userId,
-  deleteTicket,
-  updateTicket
-}: UseTicketOperationsProps) {
-  const { currentLanguage } = useLanguage();
-  const queryClient = useQueryClient();
+export function useTicketOperations({ onTicketsChanged, t }: UseTicketOperationsProps) {
+  const [isOperating, setIsOperating] = useState(false);
   const { toast } = useToast();
-  const [ticketToDelete, setTicketToDelete] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
-  
-  const openDeleteConfirmation = (ticketId: string) => {
-    console.log(`Opening delete confirmation dialog for ticket: ${ticketId}`);
-    setTicketToDelete(ticketId);
-  };
-  
-  const cancelDelete = () => {
-    console.log('Delete operation canceled');
-    setTicketToDelete(null);
-  };
-  
-  const confirmDelete = async () => {
-    if (!ticketToDelete || !userId) {
-      console.error('Missing ticketId or userId for ticket deletion');
+  const { user, refreshSession } = useAuth();
+  const { refreshTickets } = useTicketRefresh({
+    userId: user?.id,
+    isAuthenticated: !!user
+  });
+
+  const performTicketOperation = async (
+    operation: () => Promise<boolean>,
+    successMessage: string,
+    errorMessage: string
+  ) => {
+    if (!user) {
       toast({
         title: t("Kļūda", "Error"),
         description: t(
-          "Neizdevās dzēst biļeti. Nepietiekama informācija.", 
-          "Failed to delete the ticket. Insufficient information."
+          "Lietotājs nav autorizēts", 
+          "User is not authenticated"
         ),
         variant: "destructive"
       });
@@ -56,137 +37,51 @@ export function useTicketOperations({
     }
     
     try {
-      setIsDeleting(true);
-      console.log(`Attempting to delete ticket: ${ticketToDelete} for user: ${userId}`);
+      setIsOperating(true);
       
-      // First try with the provided deletion function
-      let success = false;
-      if (deleteTicket) {
-        console.log('Using provided deleteTicket function');
-        success = await deleteTicket(ticketToDelete);
-      }
+      // First refresh the session to ensure we have valid tokens
+      await refreshSession();
       
-      // If that doesn't work or isn't provided, try the standard deletion
-      if (!success && !deleteTicket) {
-        console.log('Using standard deleteTicketMutation function');
-        success = await deleteTicketMutation(ticketToDelete, userId);
-      }
-      
-      // If standard deletion doesn't work, try simplified deletion as last resort
-      if (!success) {
-        console.log('Standard deletion failed, trying simple deletion');
-        success = await deleteTicketSimple(ticketToDelete);
-      }
+      // Then perform the operation
+      const success = await operation();
       
       if (success) {
         toast({
-          title: t("Biļete dzēsta", "Ticket deleted"),
-          description: t(
-            "Biļete ir veiksmīgi dzēsta", 
-            "The ticket has been successfully deleted"
-          )
+          title: t("Veiksmīgi!", "Success!"),
+          description: successMessage
         });
         
-        // Force invalidate the tickets query to refresh UI
-        console.log('Invalidating tickets query after deletion');
-        await queryClient.invalidateQueries({ 
-          queryKey: ['user-tickets', userId]
-        });
+        // Notify parent component to refresh tickets
+        if (onTicketsChanged) {
+          onTicketsChanged();
+        }
         
-        // Force refetch to update UI immediately
-        await queryClient.refetchQueries({
-          queryKey: ['user-tickets', userId],
-          exact: true
-        });
-        
-        setTicketToDelete(null);
         return true;
       } else {
         toast({
           title: t("Kļūda", "Error"),
-          description: t(
-            "Neizdevās dzēst biļeti. Mēģiniet vēlreiz.", 
-            "Failed to delete the ticket. Please try again."
-          ),
+          description: errorMessage,
           variant: "destructive"
         });
         return false;
       }
-    } catch (err) {
-      console.error('Error in confirmDelete:', err);
+    } catch (error) {
+      console.error("Error during ticket operation:", error);
       toast({
         title: t("Kļūda", "Error"),
-        description: t(
-          "Neizdevās dzēst biļeti. Lūdzu mēģiniet vēlreiz.", 
-          "Failed to delete the ticket. Please try again."
-        ),
+        description: errorMessage,
         variant: "destructive"
       });
       return false;
     } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  const handleUpdateTicket = async (ticketId: string, data: Partial<AddTicketData>) => {
-    try {
-      console.log("Starting ticket update with data:", data);
-      
-      // Make sure we have a valid user ID
-      if (!userId) {
-        throw new Error("User ID is required for updating tickets");
-      }
-      
-      // Call the update function with logging
-      console.log(`Calling updateTicket for ticket ${ticketId} with user ${userId}`);
-      const { success, ticket, error } = await updateTicket(ticketId, data);
-      
-      console.log("Update result:", { success, ticket, error });
-      
-      if (success && ticket) {
-        toast({
-          title: t("Biļete atjaunināta", "Ticket updated"),
-          description: t(
-            "Biļetes informācija ir veiksmīgi atjaunināta", 
-            "Ticket information has been successfully updated"
-          )
-        });
-        
-        // Refresh tickets list to update UI
-        await queryClient.invalidateQueries({ queryKey: ['user-tickets', userId] });
-        return { success: true };
-      } else {
-        toast({
-          title: t("Kļūda", "Error"),
-          description: error || t(
-            "Neizdevās atjaunināt biļeti. Lūdzu mēģiniet vēlreiz.", 
-            "Failed to update the ticket. Please try again."
-          ),
-          variant: "destructive"
-        });
-        return { success: false, error };
-      }
-    } catch (err: any) {
-      console.error("Error in handleUpdateTicket:", err);
-      toast({
-        title: t("Kļūda", "Error"),
-        description: err.message || t(
-          "Neizdevās atjaunināt biļeti. Lūdzu mēģiniet vēlreiz.", 
-          "Failed to update the ticket. Please try again."
-        ),
-        variant: "destructive"
-      });
-      return { success: false, error: err.message };
+      setIsOperating(false);
     }
   };
   
   return {
-    openDeleteConfirmation,
-    confirmDelete,
-    cancelDelete,
-    ticketToDelete,
-    isDeleting,
-    handleUpdateTicket,
-    t
+    performTicketOperation,
+    isOperating,
+    refreshAuth: refreshSession,
+    refreshTickets
   };
 }
