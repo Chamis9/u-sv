@@ -89,7 +89,7 @@ const Events = () => {
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">
                             <IconComponent className="h-6 w-6 text-ticket-accent" />
-                            {category.name}
+                            <span className="text-ticket-accent">{category.name}</span>
                           </CardTitle>
                           <CardDescription className="text-ticket-text/80">
                             {category.description}

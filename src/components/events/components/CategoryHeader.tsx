@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/features/language";
-import { eventsTranslations } from '@/features/language/translations/features/events';
 
 interface CategoryHeaderProps {
   categoryDisplayName: string;
