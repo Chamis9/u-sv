@@ -28,7 +28,7 @@ export const HowItWorks = memo(function HowItWorks() {
           {howItWorks.steps.map((step, index) => (
             <div 
               key={index} 
-              className="flex flex-col items-center text-center p-4 md:p-6 border border-ticket-text/10 rounded-xl bg-ticket-bg/50 shadow-sm hover:shadow-md transition-shadow"
+              className="flex flex-col items-center text-center p-4 md:p-6 border-2 border-ticket-accent rounded-xl bg-ticket-bg/50 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="mb-3 md:mb-4 p-2 md:p-3 bg-ticket-checkbg rounded-full">
                 {icons[index]}

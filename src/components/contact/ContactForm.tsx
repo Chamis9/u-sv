@@ -115,7 +115,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
                   <Input 
                     placeholder={t.namePlaceholder} 
                     {...field} 
-                    className="bg-ticket-bg/30 border-ticket-text/20 text-ticket-text placeholder:text-ticket-text/50 focus-visible:ring-ticket-accent focus-visible:border-ticket-accent"
+                    className="bg-ticket-bg/30 border-2 border-ticket-accent text-ticket-text placeholder:text-ticket-text/50 focus-visible:ring-ticket-accent focus-visible:border-ticket-accent"
                   />
                 </FormControl>
                 <FormMessage className="text-red-500" />
@@ -136,7 +136,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
                     type="email" 
                     placeholder={t.emailPlaceholder} 
                     {...field} 
-                    className="bg-ticket-bg/30 border-ticket-text/20 text-ticket-text placeholder:text-ticket-text/50 focus-visible:ring-ticket-accent focus-visible:border-ticket-accent"
+                    className="bg-ticket-bg/30 border-2 border-ticket-accent text-ticket-text placeholder:text-ticket-text/50 focus-visible:ring-ticket-accent focus-visible:border-ticket-accent"
                   />
                 </FormControl>
                 <FormMessage className="text-red-500" />
@@ -157,7 +157,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ translations: t }) => 
                     placeholder={t.messagePlaceholder} 
                     rows={5} 
                     {...field} 
-                    className="bg-ticket-bg/30 border-ticket-text/20 text-ticket-text placeholder:text-ticket-text/50 focus-visible:ring-ticket-accent focus-visible:border-ticket-accent"
+                    className="bg-ticket-bg/30 border-2 border-ticket-accent text-ticket-text placeholder:text-ticket-text/50 focus-visible:ring-ticket-accent focus-visible:border-ticket-accent"
                   />
                 </FormControl>
                 <FormMessage className="text-red-500" />
