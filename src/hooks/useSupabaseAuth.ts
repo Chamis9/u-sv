@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types/users";
@@ -9,12 +10,14 @@ export function useSupabaseAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [lastAvatarUpdate, setLastAvatarUpdate] = useState<number>(Date.now());
 
-  // Replace the fetchUserData function with:
+  // Function to fetch user data from the database
   const fetchUserData = async (email: string) => {
     try {
-      // Use RPC function instead of direct query
       const { data: userData, error } = await supabase
-        .rpc('get_user_by_email', { user_email: email });
+        .from('registered_users')
+        .select('*')
+        .eq('email', email)
+        .single();
       
       if (!error && userData) {
         setUser({
@@ -38,15 +41,13 @@ export function useSupabaseAuth() {
 
   // Set up subscription to user avatar changes
   useEffect(() => {
-    if (!user?.id) return;
-
     const subscription = supabase
       .channel('avatar_changes')
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',
         table: 'registered_users',
-        filter: `id=eq.${user.id}`
+        filter: user ? `id=eq.${user.id}` : undefined
       }, (payload) => {
         console.log("User data changed:", payload);
         if (payload.new && payload.new.avatar_url !== user?.avatar_url) {
@@ -67,29 +68,6 @@ export function useSupabaseAuth() {
       try {
         setIsAuthLoading(true);
         
-        // Set up auth state change listener FIRST
-        const { data: authListener } = supabase.auth.onAuthStateChange(
-          async (event, session) => {
-            console.log("Auth state changed:", event);
-            
-            if (event === 'SIGNED_IN' && session) {
-              setIsAuthenticated(true);
-              setUserEmail(session.user.email);
-              
-              // Defer fetching user data to prevent deadlocks
-              if (session.user.email) {
-                setTimeout(async () => {
-                  await fetchUserData(session.user.email!);
-                }, 0);
-              }
-            } else if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
-              setIsAuthenticated(false);
-              setUserEmail(null);
-              setUser(null);
-            }
-          }
-        );
-        
         // Get current session
         const { data: sessionData } = await supabase.auth.getSession();
         const session = sessionData.session;
@@ -107,22 +85,40 @@ export function useSupabaseAuth() {
           setUserEmail(null);
           setUser(null);
         }
-        
-        setIsAuthLoading(false);
-        
-        return () => {
-          authListener.subscription.unsubscribe();
-        };
       } catch (error) {
         console.error("Error checking auth:", error);
         setIsAuthenticated(false);
         setUserEmail(null);
         setUser(null);
+      } finally {
         setIsAuthLoading(false);
       }
     };
     
     checkAuth();
+    
+    // Set up auth state change listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          setIsAuthenticated(true);
+          setUserEmail(session.user.email);
+          
+          // Fetch user data if authenticated
+          if (session.user.email) {
+            await fetchUserData(session.user.email);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setIsAuthenticated(false);
+          setUserEmail(null);
+          setUser(null);
+        }
+      }
+    );
+    
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   // Function to refresh user data (e.g., after avatar update)
@@ -135,31 +131,7 @@ export function useSupabaseAuth() {
 
   const logout = async () => {
     try {
-      // Clean up auth state
-      const cleanupAuthState = () => {
-        // Remove standard auth tokens
-        localStorage.removeItem('supabase.auth.token');
-        // Remove all Supabase auth keys from localStorage
-        Object.keys(localStorage).forEach((key) => {
-          if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
-            localStorage.removeItem(key);
-          }
-        });
-        // Remove from sessionStorage if in use
-        Object.keys(sessionStorage || {}).forEach((key) => {
-          if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
-            sessionStorage.removeItem(key);
-          }
-        });
-      };
-      
-      // Clean up first
-      cleanupAuthState();
-      
-      // Attempt global sign out
-      await supabase.auth.signOut({ scope: 'global' });
-      
-      // Update state
+      await supabase.auth.signOut();
       setIsAuthenticated(false);
       setUserEmail(null);
       setUser(null);

@@ -1,17 +1,14 @@
 
 import * as z from "zod";
+import { getLoginTranslations } from "./translations";
 
 export const loginFormSchema = z.object({
-  email: z.string().email("Lūdzu, ievadiet derīgu e-pasta adresi"),
-  password: z.string().min(6, "Parole jāsatur vismaz 6 rakstzīmes"),
+  email: z.string().email(),
+  password: z.string().min(6),
 });
 
 export const getRegistrationFormSchema = (languageCode: string) => {
-  const translations = {
-    passwordMinLength: languageCode === 'lv' 
-      ? "Parolei jābūt vismaz 8 rakstzīmes garai"
-      : "Password must be at least 8 characters long"
-  };
+  const translations = getLoginTranslations(languageCode);
   
   return z.object({
     firstName: z.string().min(2, "First name must be at least 2 characters"),

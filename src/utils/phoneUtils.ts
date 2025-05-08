@@ -1,56 +1,71 @@
 
-import { supabase } from "@/integrations/supabase/client";
-
-// Type definitions
 export interface CountryCode {
   code: string;
   country: string;
   name: string;
-  digits: number[];
   format: string;
+  digits: number[];
 }
 
-// Country codes data
 export const countryCodes: CountryCode[] = [
-  { code: "+371", country: "LV", name: "Latvia", digits: [8], format: "XXXXXXXX" },
-  { code: "+370", country: "LT", name: "Lithuania", digits: [8], format: "XXXXXXXX" },
-  { code: "+372", country: "EE", name: "Estonia", digits: [7, 8], format: "XXXXXXX" },
-  { code: "+1", country: "US", name: "United States", digits: [10], format: "XXX XXX XXXX" },
-  { code: "+44", country: "GB", name: "United Kingdom", digits: [10], format: "XXXX XXXXXX" },
-  { code: "+49", country: "DE", name: "Germany", digits: [10, 11], format: "XXXX XXXXXX" },
-  { code: "+7", country: "RU", name: "Russia", digits: [10], format: "XXX XXX XXXX" },
-  { code: "+358", country: "FI", name: "Finland", digits: [9], format: "XX XXX XXXX" },
-  { code: "+46", country: "SE", name: "Sweden", digits: [9], format: "XX XXX XXXX" }
+  { code: "+371", country: "lv", name: "Latvija", format: "+371 XXXXXXXX", digits: [8] }
 ];
 
-// Validation functions
+// Import the Supabase client
+import { supabase } from '@/integrations/supabase/client';
+
+// Validate email format
 export const validateEmail = (email: string): boolean => {
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return re.test(email);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
 };
 
-export const validatePhoneNumber = (phone: string): boolean => {
-  // Basic validation: remove spaces and ensure we have at least one digit
-  const digitsOnly = phone.replace(/\s/g, '');
-  if (!digitsOnly) return false;
-  
-  // Check if the phone number matches any of the expected formats
-  const currentCountry = countryCodes.find(c => digitsOnly.startsWith(c.code));
-  if (!currentCountry) return false;
-  
-  // Get just the number part without the country code
-  const numberPart = digitsOnly.substring(currentCountry.code.length);
-  
-  // Check if the length matches the expected digits for the country
-  return currentCountry.digits.includes(numberPart.length);
+// Find country by code
+export const findCountryByCode = (code: string): CountryCode | undefined => {
+  return countryCodes.find(country => country.code === code);
 };
 
-// Formatting functions
-export const formatPhoneNumber = (phone: string): string => {
-  // Remove spaces and non-digit characters for consistent formatting
-  return phone.replace(/\s/g, '').replace(/[^\d+]/g, '');
+// Find country by name (case insensitive search)
+export const findCountriesByName = (name: string): CountryCode[] => {
+  const lowerName = name.toLowerCase();
+  return countryCodes.filter(country => 
+    country.country.toLowerCase().includes(lowerName)
+  );
 };
 
+// Validate phone number based on country code
+export const validatePhoneNumber = (phoneNumber: string): boolean => {
+  if (!phoneNumber) return false;
+  const digits = phoneNumber.replace(/\D/g, '');
+  return digits.length === 8;
+};
+
+// Format a raw phone number for display
+export const formatPhoneNumber = (phoneNumber: string): string => {
+  if (!phoneNumber) return "";
+  
+  // Clean the input of any non-digit characters
+  const cleanedNumber = phoneNumber.replace(/\D/g, '');
+  
+  // If the phone number already has the country code, return it as is
+  if (phoneNumber.startsWith("+371")) return phoneNumber;
+  
+  // Add the country code if it's not already there
+  return `+371 ${cleanedNumber}`;
+};
+
+// Extract phone components (country code and number)
+export const extractPhoneComponents = (fullPhone: string | null): { 
+  phoneNumber: string 
+} => {
+  if (!fullPhone) return { phoneNumber: "" };
+  
+  return {
+    phoneNumber: fullPhone.startsWith("+371") ? fullPhone.substring(5).trim() : fullPhone.trim()
+  };
+};
+
+// Check if email already exists in database
 export const checkEmailExists = async (email: string): Promise<boolean> => {
   try {
     const { data, error } = await supabase
@@ -64,6 +79,7 @@ export const checkEmailExists = async (email: string): Promise<boolean> => {
   }
 };
 
+// Check if phone already exists in database
 export const checkPhoneExists = async (phone: string): Promise<boolean> => {
   try {
     const { data, error } = await supabase

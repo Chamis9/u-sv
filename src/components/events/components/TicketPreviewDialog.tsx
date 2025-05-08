@@ -1,163 +1,156 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Ticket } from "@/types/tickets";
-import { Badge } from "@/components/ui/badge";
-import { formatCurrency } from "@/utils/formatters";
+import { UserTicket } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
+import { Calendar, MapPin, Clock, Tag, Ticket, User } from "lucide-react";
+import { formatDate, formatPrice } from "@/utils/formatters";
 import { supabase } from "@/integrations/supabase/client";
-import { User } from "@/types/users";
-import { GetUserByIdResult } from "@/utils/rpcFunctions";
 import { Button } from "@/components/ui/button";
 
 interface TicketPreviewDialogProps {
-  ticket: Ticket;
+  ticket: UserTicket | null;
   isOpen: boolean;
   onClose: () => void;
-  onPurchase?: (ticket: Ticket) => void;
+  onPurchase?: (ticket: UserTicket) => void;
 }
 
-export function TicketPreviewDialog({ ticket, isOpen, onClose, onPurchase }: TicketPreviewDialogProps) {
+export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
+  ticket,
+  isOpen,
+  onClose,
+  onPurchase
+}) => {
   const { currentLanguage } = useLanguage();
-  const [sellerName, setSellerName] = useState<string>("");
+  const [sellerName, setSellerName] = useState<string | null>(null);
   
-  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
   useEffect(() => {
-    const fetchSellerDetails = async () => {
+    const fetchSellerInfo = async () => {
       if (ticket?.seller_id) {
         try {
-          // Use RPC function to get user data
           const { data, error } = await supabase
-            .rpc('get_user_by_id', { user_id: ticket.seller_id });
-            
+            .from('registered_users')
+            .select('first_name, last_name')
+            .eq('id', ticket.seller_id)
+            .single();
+          
           if (error) {
-            console.error("Error fetching seller details:", error);
+            console.error("Error fetching seller info:", error);
             return;
           }
           
           if (data) {
-            const userData = data as GetUserByIdResult;
-            setSellerName(`${userData.first_name || ''} ${userData.last_name || ''}`);
+            setSellerName(`${data.first_name} ${data.last_name}`);
           }
         } catch (error) {
-          console.error("Error in seller details fetch:", error);
+          console.error("Error in fetchSellerInfo:", error);
         }
       }
     };
-    
+
     if (isOpen && ticket) {
-      fetchSellerDetails();
+      fetchSellerInfo();
+    } else {
+      setSellerName(null);
     }
-  }, [isOpen, ticket]);
+  }, [ticket, isOpen]);
 
   if (!ticket) return null;
 
+  const handlePurchase = () => {
+    if (onPurchase && ticket) {
+      onPurchase(ticket);
+      onClose();
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">
-            {ticket.title}
-          </DialogTitle>
+          <DialogTitle>{t('Biļetes informācija', 'Ticket Information')}</DialogTitle>
         </DialogHeader>
         
-        <div className="grid gap-4 py-4">
-          {/* Event details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h3 className="text-lg font-medium">{t('Notikuma detaļas', 'Event Details')}</h3>
-              <div className="mt-2 space-y-2">
-                {ticket.category_name && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t('Kategorija', 'Category')}:</span>
-                    <span>{ticket.category_name}</span>
-                  </div>
-                )}
-                {ticket.event_date && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t('Datums', 'Date')}:</span>
-                    <span>{new Date(ticket.event_date).toLocaleDateString()}</span>
-                  </div>
-                )}
-                {ticket.event_time && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t('Laiks', 'Time')}:</span>
-                    <span>{ticket.event_time}</span>
-                  </div>
-                )}
-                {ticket.venue && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t('Vieta', 'Venue')}:</span>
-                    <span>{ticket.venue}</span>
-                  </div>
-                )}
+        <div className="py-4">
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold">{ticket.title}</h3>
+            
+            {ticket.description && (
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                {ticket.description}
+              </p>
+            )}
+            
+            <div className="grid gap-2">
+              {ticket.event_date && (
+                <div className="flex items-center text-sm">
+                  <Calendar className="h-4 w-4 mr-2 text-gray-500" />
+                  <span>
+                    {formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
+                  </span>
+                </div>
+              )}
+              
+              {ticket.event_time && (
+                <div className="flex items-center text-sm">
+                  <Clock className="h-4 w-4 mr-2 text-gray-500" />
+                  <span>{ticket.event_time}</span>
+                </div>
+              )}
+              
+              {ticket.venue && (
+                <div className="flex items-center text-sm">
+                  <MapPin className="h-4 w-4 mr-2 text-gray-500" />
+                  <span>{ticket.venue}</span>
+                </div>
+              )}
+              
+              <div className="flex items-center text-sm">
+                <Tag className="h-4 w-4 mr-2 text-gray-500" />
+                <span>{ticket.category}</span>
+              </div>
+              
+              {sellerName && (
+                <div className="flex items-center text-sm">
+                  <User className="h-4 w-4 mr-2 text-gray-500" />
+                  <span>{t('Pārdevējs', 'Seller')}: {sellerName}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-sm text-gray-500">{t('Cena', 'Price')}:</span>
+                  <div className="text-xl font-bold">{formatPrice(ticket.price)}</div>
+                </div>
+                <Ticket className="h-8 w-8 text-orange-500 opacity-50" />
+              </div>
+              
+              <div className="text-sm text-gray-500 mt-1">
+                {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
               </div>
             </div>
             
-            <div>
-              <h3 className="text-lg font-medium">{t('Biļetes informācija', 'Ticket Information')}</h3>
-              <div className="mt-2 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('Statuss', 'Status')}:</span>
-                  <Badge variant={ticket.status === 'available' ? 'default' : 'secondary'}>
-                    {ticket.status === 'available' ? t('Pieejama', 'Available') : t('Pārdota', 'Sold')}
-                  </Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('Cena', 'Price')}:</span>
-                  <span>{formatCurrency(ticket.price)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t('Daudzums', 'Quantity')}:</span>
-                  <span>{ticket.quantity}</span>
-                </div>
-                {sellerName && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">{t('Pārdevējs', 'Seller')}:</span>
-                    <span>{sellerName}</span>
-                  </div>
-                )}
+            {/* Add purchase button */}
+            {onPurchase && (
+              <div className="flex justify-end mt-4">
+                <Button 
+                  variant="orange" 
+                  onClick={handlePurchase}
+                  className="flex items-center"
+                >
+                  <Ticket className="h-4 w-4 mr-2" />
+                  {t('Pirkt biļeti', 'Buy ticket')}
+                </Button>
               </div>
-            </div>
+            )}
           </div>
-          
-          {/* Description */}
-          {ticket.description && (
-            <div>
-              <h3 className="text-lg font-medium">{t('Apraksts', 'Description')}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{ticket.description}</p>
-            </div>
-          )}
-          
-          {/* Seat information */}
-          {ticket.seat_info && Object.keys(ticket.seat_info).length > 0 && (
-            <div>
-              <h3 className="text-lg font-medium">{t('Sēdvietas informācija', 'Seat Information')}</h3>
-              <div className="mt-2 space-y-1">
-                {Object.entries(ticket.seat_info).map(([key, value]) => (
-                  <div key={key} className="flex justify-between">
-                    <span className="text-muted-foreground capitalize">{key}:</span>
-                    <span>{String(value)}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {/* Purchase button */}
-          {onPurchase && ticket.status === 'available' && (
-            <div className="flex justify-end mt-4">
-              <Button 
-                onClick={() => onPurchase(ticket)} 
-                variant="orange"
-              >
-                {t('Pirkt biļeti', 'Purchase Ticket')}
-              </Button>
-            </div>
-          )}
         </div>
       </DialogContent>
     </Dialog>
   );
-}
+};
+

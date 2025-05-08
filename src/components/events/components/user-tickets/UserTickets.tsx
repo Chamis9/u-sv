@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLanguage } from "@/features/language";
 import { UserTicket } from "@/hooks/tickets";
@@ -86,4 +87,3 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
     </div>
   );
 };
-

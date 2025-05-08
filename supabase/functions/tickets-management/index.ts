@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1"
 
@@ -34,7 +33,7 @@ serve(async (req) => {
       { global: { headers: { Authorization: `Bearer ${token}` } } }
     )
     
-    // Get user info from auth
+    // Get user info
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
     if (userError || !user) {
       console.error("Authentication error:", userError);
@@ -44,24 +43,6 @@ serve(async (req) => {
       })
     }
 
-    // Get registered_user record for the authenticated user
-    const { data: registeredUser, error: registeredUserError } = await supabaseClient
-      .from('registered_users')
-      .select('*')
-      .eq('auth_user_id', user.id)
-      .single();
-
-    if (registeredUserError || !registeredUser) {
-      console.error("Registered user not found:", registeredUserError);
-      return new Response(JSON.stringify({ error: 'User not found in registered_users' }), {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
-    }
-
-    // Use the registered_users.id for database operations
-    const registeredUserId = registeredUser.id;
-      
     // Parse request body
     const { action, ticketId, userId, ...otherData } = await req.json()
     
@@ -75,7 +56,7 @@ serve(async (req) => {
       const { data, error } = await supabaseClient
         .from('tickets')
         .select('*')
-        .or(`seller_id.eq.${registeredUserId},buyer_id.eq.${registeredUserId},owner_id.eq.${registeredUserId}`)
+        .or(`seller_id.eq.${user.id},buyer_id.eq.${user.id}`)
       
       if (error) {
         console.error(`Error fetching tickets:`, error)
@@ -94,18 +75,17 @@ serve(async (req) => {
       const { title, price, categoryName, description, filePath, eventDate, venue, categoryId } = otherData
       
       console.log(`Creating ticket with data:`, JSON.stringify(otherData, null, 2));
-      console.log(`Current user ID: ${registeredUserId}`);
       
-      // Always use the registered user's ID
+      // Always use the authenticated user's ID
       const { data, error } = await supabaseClient
         .from('tickets')
         .insert({
           title: title,
           description: description,
           price: price,
-          user_id: registeredUserId, // Use registered_users.id
-          seller_id: registeredUserId, // Use registered_users.id
-          owner_id: registeredUserId, // Use registered_users.id
+          user_id: user.id,
+          seller_id: user.id,
+          owner_id: user.id,
           category_id: categoryId,
           category_name: categoryName,
           file_path: filePath,
@@ -137,13 +117,14 @@ serve(async (req) => {
         });
       }
       
-      console.log(`Attempting to update ticket: ${ticketId} for user: ${registeredUserId}`);
+      console.log(`Attempting to update ticket: ${ticketId} for user: ${user.id}`);
       
       // First check if the ticket exists and belongs to the user
       const { data: ticketData, error: fetchError } = await supabaseClient
         .from('tickets')
         .select('*')
         .eq('id', ticketId)
+        // Remove owner_id check to allow updating tickets if user has permission via RLS
         .maybeSingle();
       
       if (fetchError) {
@@ -200,7 +181,7 @@ serve(async (req) => {
         })
       }
       
-      console.log(`Attempting to soft delete ticket: ${ticketId} for user: ${registeredUserId}`);
+      console.log(`Attempting to soft delete ticket: ${ticketId} for user: ${user.id}`);
       
       // First check if the ticket belongs to the user
       const { data: ticketData, error: fetchError } = await supabaseClient
@@ -225,11 +206,11 @@ serve(async (req) => {
         })
       }
       
-      // Verify ownership based on registered_users ID
-      if (ticketData.seller_id !== registeredUserId || ticketData.owner_id !== registeredUserId || ticketData.buyer_id !== null) {
+      // Verify ownership
+      if (ticketData.seller_id !== user.id || ticketData.owner_id !== user.id || ticketData.buyer_id !== null) {
         console.error('Unauthorized delete attempt:', {
           ticketId,
-          userId: registeredUserId,
+          userId: user.id,
           sellerId: ticketData.seller_id,
           ownerId: ticketData.owner_id,
           buyerId: ticketData.buyer_id
@@ -316,7 +297,7 @@ serve(async (req) => {
         body: JSON.stringify({
           action: 'soft-delete-ticket',
           ticketId,
-          userId: registeredUserId // Use registered_users.id
+          userId: user.id
         })
       });
       

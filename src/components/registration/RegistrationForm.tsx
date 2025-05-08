@@ -2,15 +2,16 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useRegistrationForm } from "./hooks/useRegistrationForm";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import PhoneInputWithCountry from "@/components/admin/users/PhoneInputWithCountry";
 import { PersonalInfoFields } from "./components/PersonalInfoFields";
 import { PasswordFields } from "./components/PasswordFields";
-import { PhoneInputWithCountry } from "@/components/admin/users/PhoneInputWithCountry";
-import { Link } from "react-router-dom";
+import { useRegistrationForm } from "./hooks/useRegistrationForm";
 
 const RegistrationForm = () => {
   const { form, passwordValidation, validatePassword, onSubmit, t } = useRegistrationForm();
-  const { handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = form;
+  const { handleSubmit, watch, setValue, formState: { errors } } = form;
 
   return (
     <Card className="max-w-xl mx-auto">
@@ -22,14 +23,10 @@ const RegistrationForm = () => {
           <PersonalInfoFields form={form} t={t} />
 
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium">
-              {t('E-pasts', 'Email')}
-            </label>
-            <input
+            <Label htmlFor="email">{t('E-pasts', 'Email')}</Label>
+            <Input
               id="email"
               type="email"
-              className="w-full rounded border border-gray-300 px-3 py-2"
-              placeholder={t('Ievadiet e-pastu', 'Enter your email')}
               {...form.register("email", {
                 required: t('Lauks ir obligāts', 'This field is required'),
                 pattern: {
@@ -61,29 +58,9 @@ const RegistrationForm = () => {
             required={false}
           />
 
-          <div className="flex flex-col space-y-4">
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 
-                t('Notiek reģistrācija...', 'Registering...') : 
-                t('Reģistrēties', 'Register')}
-            </Button>
-            
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground">
-                {t('Jau ir konts?', 'Already have an account?')}{' '}
-                <Link 
-                  to="/login" 
-                  className="text-primary hover:underline"
-                >
-                  {t('Pieslēgties', 'Login')}
-                </Link>
-              </p>
-            </div>
-          </div>
+          <Button type="submit" className="w-full">
+            {t('Reģistrēties', 'Register')}
+          </Button>
         </form>
       </CardContent>
     </Card>

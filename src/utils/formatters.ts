@@ -1,30 +1,22 @@
 
-// Utility functions for formatting values
-
-// Format currency
-export const formatCurrency = (amount: number): string => {
+/**
+ * Format price with currency symbol
+ */
+export const formatPrice = (price: number): string => {
   return new Intl.NumberFormat('lv-LV', {
     style: 'currency',
     currency: 'EUR',
-  }).format(amount);
+  }).format(price);
 };
 
-// Format date with localization
+/**
+ * Format date to localized string
+ */
 export const formatDate = (dateString: string, locale: string = 'lv-LV'): string => {
-  try {
-    const date = new Date(dateString);
-    return date.toLocaleDateString(locale, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  } catch (error) {
-    console.error("Error formatting date:", error);
-    return dateString;
-  }
-};
-
-// Format price to display with proper currency symbol
-export const formatPrice = (price: number): string => {
-  return formatCurrency(price);
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }).format(date);
 };

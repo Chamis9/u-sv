@@ -2,11 +2,9 @@
 import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/features/language";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { useAuth } from "@/contexts/AuthContext";
+import { LoginButton } from "@/components/auth/LoginButton";
 import { useNavigate } from "react-router-dom";
-import RegistrationForm from "@/components/registration/RegistrationForm";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Registration = () => {
   const { currentLanguage } = useLanguage();
@@ -23,15 +21,13 @@ const Registration = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Helmet>
         <title>{t('Reģistrācija - netieku.es', 'Registration - netieku.es')}</title>
       </Helmet>
       
-      <Header />
-      
-      <main className="flex-1 container mx-auto px-4 py-8 pt-24">
-        <div className="max-w-md mx-auto text-center mb-8">
+      <div className="container mx-auto px-4 py-8 pt-24">
+        <div className="max-w-md mx-auto text-center">
           <h1 className="text-3xl font-bold mb-6">
             {t('Reģistrācija', 'Registration')}
           </h1>
@@ -42,12 +38,15 @@ const Registration = () => {
               'Create an account to access all platform features'
             )}
           </p>
+          
+          <LoginButton 
+            defaultTab="register"
+            className="w-full"
+          >
+            {t('Reģistrēties', 'Register')}
+          </LoginButton>
         </div>
-        
-        <RegistrationForm />
-      </main>
-      
-      <Footer />
+      </div>
     </div>
   );
 };

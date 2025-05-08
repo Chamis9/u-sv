@@ -3,12 +3,12 @@ import { LanguageSelector } from "@/features/language";
 import { Logo } from "./header/Logo";
 import { Navigation, getNavigationLinks } from "./header/Navigation";
 import { MobileMenu } from "./header/MobileMenu";
-import { UserCircle, LogIn } from "lucide-react";
+import { UserCircle } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserHoverCard } from "./auth/user-menu/UserHoverCard";
-import { useNavigate, Link } from "react-router-dom";
-import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
+import { LoginButton } from "./auth/LoginButton";
 
 export function Header() {
   const navigationLinks = getNavigationLinks();
@@ -45,29 +45,13 @@ export function Header() {
               onLinkClick={() => {}}
             />
           ) : (
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="ghost"
-                size="sm"
-                className="text-ticket-text hover:text-ticket-accent transition-colors"
-                asChild
-              >
-                <Link to="/login">
-                  <LogIn size={18} className="mr-1" />
-                  {t('Ienākt', 'Login')}
-                </Link>
-              </Button>
-              <Button 
-                variant="outline"
-                size="sm"
-                className="hidden md:flex"
-                asChild
-              >
-                <Link to="/registration">
-                  {t('Reģistrēties', 'Register')}
-                </Link>
-              </Button>
-            </div>
+            <LoginButton 
+              variant="ghost" 
+              className="text-ticket-text hover:text-ticket-accent transition-colors hover:bg-transparent"
+              showIcon={false}
+            >
+              <UserCircle size={20} className="text-ticket-accent hover:text-ticket-accent" />
+            </LoginButton>
           )}
           <LanguageSelector />
         </div>
