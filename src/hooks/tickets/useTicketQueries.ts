@@ -24,11 +24,26 @@ export function useTicketQueries(userId?: string) {
       console.log("Fetching tickets for user:", userId);
       
       try {
-        // Query the consolidated tickets table
+        // First verify the auth session is valid
+        const { data: session, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError || !session.session) {
+          console.error("Authentication session error:", sessionError);
+          throw new Error("Authentication session is invalid");
+        }
+        
+        // Use the authenticated user ID for the query to ensure RLS policies work correctly
+        const authUserId = session.session.user.id;
+        
+        if (authUserId !== userId) {
+          console.warn(`Warning: Auth user ID (${authUserId}) doesn't match provided user ID (${userId}). Using auth user ID for query.`);
+        }
+        
+        // Query the tickets table with enhanced filters to get the user's tickets
         const { data: ticketsData, error } = await supabase
           .from('tickets')
           .select('*, categories(name)')
-          .or(`seller_id.eq.${userId},buyer_id.eq.${userId},owner_id.eq.${userId}`)
+          .or(`seller_id.eq.${authUserId},buyer_id.eq.${authUserId},owner_id.eq.${authUserId}`)
           .order('created_at', { ascending: false });
         
         if (error) {
@@ -37,7 +52,7 @@ export function useTicketQueries(userId?: string) {
         }
         
         if (ticketsData && ticketsData.length > 0) {
-          console.log(`Found ${ticketsData.length} tickets`);
+          console.log(`Found ${ticketsData.length} tickets for user ${authUserId}`);
           
           // Map to common UserTicket structure
           const formattedTickets = ticketsData.map((ticket: any): UserTicket => ({
@@ -63,7 +78,7 @@ export function useTicketQueries(userId?: string) {
           return formattedTickets;
         }
         
-        console.log(`No tickets found for user: ${userId}`);
+        console.log(`No tickets found for user: ${authUserId}`);
         return [];
         
       } catch (error) {

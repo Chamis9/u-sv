@@ -5,6 +5,7 @@ import { useUserTickets, UserTicket, AddTicketData } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTicketOperations } from "./useTicketOperations";
+import { supabase } from "@/integrations/supabase/client";
 
 export function useTicketsTab(user: User) {
   const { isAuthenticated } = useAuth();
@@ -69,6 +70,26 @@ export function useTicketsTab(user: User) {
     setAddedTickets(added);
     setPurchasedTickets(purchased);
   }, [tickets, user?.id, isAuthenticated]);
+
+  // Force refresh tickets on initial load
+  useEffect(() => {
+    if (isAuthenticated && user?.id) {
+      console.log("Initial tickets load for user:", user.id);
+      // Verify auth session before initial load
+      const checkSessionAndRefresh = async () => {
+        try {
+          const { data: session, error: sessionError } = await supabase.auth.getSession();
+          if (!sessionError && session.session) {
+            refreshTickets();
+          }
+        } catch (err) {
+          console.error("Session check error:", err);
+        }
+      };
+      
+      checkSessionAndRefresh();
+    }
+  }, [isAuthenticated, user?.id]);
 
   return {
     addedTickets,
