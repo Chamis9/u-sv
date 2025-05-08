@@ -55,11 +55,13 @@ export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProp
             <AvatarImage src={user.avatar_url || ''} alt={user.first_name || ''} />
             <AvatarFallback>{userInitials}</AvatarFallback>
           </Avatar>
-          <div>
-            <h4 className="font-medium">
+          <div className="max-w-[160px]">
+            <h4 className="font-medium truncate">
               {user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : t('Lietotājs', 'User')}
             </h4>
-            <p className="text-sm text-muted-foreground truncate">{user.email}</p>
+            <p className="text-sm text-muted-foreground truncate" title={user.email || ''}>
+              {user.email}
+            </p>
           </div>
         </div>
         
