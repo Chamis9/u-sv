@@ -1,35 +1,66 @@
 
 import { useState } from 'react';
-import { UserTicket } from '@/hooks/tickets';
+import { UserTicket } from "@/hooks/tickets";
+import { useToast } from "@/hooks/use-toast";
+import { deleteTicketMutation } from "@/hooks/tickets/mutations/deleteTicketMutation";
 
-type DeleteTicketFn = ((ticketId: string) => void) | undefined;
+interface UseTicketActionsProps {
+  onTicketsChanged?: () => void;
+  t: (lvText: string, enText: string) => string;
+  userId?: string | null;
+}
 
-export const useTicketActions = (onDelete?: DeleteTicketFn) => {
-  const [ticketToDelete, setTicketToDelete] = useState<string | null>(null);
+export const useTicketActions = ({ onTicketsChanged, t, userId }: UseTicketActionsProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [ticketToDelete, setTicketToDelete] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const handleDeleteClick = (ticketId: string) => {
-    console.log("Setting ticket to delete:", ticketId);
     setTicketToDelete(ticketId);
   };
-
-  const cancelDelete = () => {
-    setTicketToDelete(null);
-  };
-
+  
   const confirmDelete = async () => {
-    if (!ticketToDelete || !onDelete) return;
+    if (!ticketToDelete || !userId) return;
     
     try {
       setIsDeleting(true);
-      console.log("Deleting ticket:", ticketToDelete);
-      onDelete(ticketToDelete);
+      
+      // Use the direct mutation function
+      const success = await deleteTicketMutation(ticketToDelete, userId);
+      
+      if (success) {
+        toast({
+          title: t("Biļete dzēsta", "Ticket deleted"),
+          description: t("Biļete ir veiksmīgi dzēsta", "Ticket has been successfully deleted")
+        });
+        
+        // Notify parent component to refresh tickets
+        if (onTicketsChanged) {
+          onTicketsChanged();
+        }
+      } else {
+        toast({
+          title: t("Kļūda", "Error"),
+          description: t("Neizdevās dzēst biļeti", "Failed to delete ticket"),
+          variant: "destructive"
+        });
+      }
+      
+      setTicketToDelete(null);
     } catch (error) {
       console.error("Error deleting ticket:", error);
+      toast({
+        title: t("Kļūda", "Error"),
+        description: t("Neizdevās dzēst biļeti", "Failed to delete ticket"),
+        variant: "destructive"
+      });
     } finally {
       setIsDeleting(false);
-      setTicketToDelete(null);
     }
+  };
+  
+  const cancelDelete = () => {
+    setTicketToDelete(null);
   };
 
   return {

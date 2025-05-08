@@ -3,11 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { UserTicket } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
-import { Calendar, MapPin, Clock, Tag, Ticket, User, Download } from "lucide-react";
+import { Calendar, MapPin, Clock, Tag, Ticket, User } from "lucide-react";
 import { formatDate, formatPrice } from "@/utils/formatters";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Badge } from '@/components/ui/badge';
 
 interface TicketPreviewDialogProps {
   ticket: UserTicket | null;
@@ -67,57 +66,27 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
     }
   };
 
-  const handleDownload = () => {
-    if (ticket.file_path) {
-      window.open(`https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/tickets/${ticket.file_path}`, '_blank');
-    }
-  };
-
-  const getStatusBadge = () => {
-    switch (ticket.status) {
-      case 'sold': 
-        return <Badge className="bg-blue-500 text-white">
-          {t('Pārdota', 'Sold')}
-        </Badge>;
-      case 'available': 
-        return <Badge className="bg-ticket-accent text-white">
-          {t('Pieejama', 'Available')}
-        </Badge>;
-      case 'expired': 
-        return <Badge className="bg-orange-500 text-white">
-          {t('Beigusies', 'Expired')}
-        </Badge>;
-      default: 
-        return null;
-    }
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md bg-ticket-bg border-ticket-text/20">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span className="text-ticket-accent">{t('Biļetes informācija', 'Ticket Information')}</span>
-            {getStatusBadge()}
-          </DialogTitle>
+          <DialogTitle>{t('Biļetes informācija', 'Ticket Information')}</DialogTitle>
         </DialogHeader>
         
         <div className="py-4">
           <div className="space-y-4">
-            <div className="border-b border-ticket-text/20 pb-4">
-              <h3 className="text-xl font-bold text-ticket-text">{ticket.title}</h3>
-              
-              {ticket.description && (
-                <p className="text-sm text-ticket-text/80 mt-2">
-                  {ticket.description}
-                </p>
-              )}
-            </div>
+            <h3 className="text-xl font-bold">{ticket.title}</h3>
             
-            <div className="grid gap-3 border-b border-ticket-text/20 py-4">
+            {ticket.description && (
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                {ticket.description}
+              </p>
+            )}
+            
+            <div className="grid gap-2">
               {ticket.event_date && (
-                <div className="flex items-center text-sm text-ticket-text">
-                  <Calendar className="h-4 w-4 mr-2 text-ticket-accent" />
+                <div className="flex items-center text-sm">
+                  <Calendar className="h-4 w-4 mr-2 text-gray-500" />
                   <span>
                     {formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
                   </span>
@@ -125,71 +94,63 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
               )}
               
               {ticket.event_time && (
-                <div className="flex items-center text-sm text-ticket-text">
-                  <Clock className="h-4 w-4 mr-2 text-ticket-accent" />
+                <div className="flex items-center text-sm">
+                  <Clock className="h-4 w-4 mr-2 text-gray-500" />
                   <span>{ticket.event_time}</span>
                 </div>
               )}
               
               {ticket.venue && (
-                <div className="flex items-center text-sm text-ticket-text">
-                  <MapPin className="h-4 w-4 mr-2 text-ticket-accent" />
+                <div className="flex items-center text-sm">
+                  <MapPin className="h-4 w-4 mr-2 text-gray-500" />
                   <span>{ticket.venue}</span>
                 </div>
               )}
               
-              <div className="flex items-center text-sm text-ticket-text">
-                <Tag className="h-4 w-4 mr-2 text-ticket-accent" />
+              <div className="flex items-center text-sm">
+                <Tag className="h-4 w-4 mr-2 text-gray-500" />
                 <span>{ticket.category}</span>
               </div>
               
               {sellerName && (
-                <div className="flex items-center text-sm text-ticket-text">
-                  <User className="h-4 w-4 mr-2 text-ticket-accent" />
+                <div className="flex items-center text-sm">
+                  <User className="h-4 w-4 mr-2 text-gray-500" />
                   <span>{t('Pārdevējs', 'Seller')}: {sellerName}</span>
                 </div>
               )}
             </div>
 
-            <div className="bg-ticket-bg/50 border border-ticket-text/10 rounded-md p-4">
+            <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-sm text-ticket-text/70">{t('Cena', 'Price')}:</span>
-                  <div className="text-2xl font-bold text-ticket-accent">{formatPrice(ticket.price)}</div>
+                  <span className="text-sm text-gray-500">{t('Cena', 'Price')}:</span>
+                  <div className="text-xl font-bold">{formatPrice(ticket.price)}</div>
                 </div>
-                <Ticket className="h-10 w-10 text-ticket-accent/30" />
+                <Ticket className="h-8 w-8 text-orange-500 opacity-50" />
               </div>
               
-              <div className="text-sm text-ticket-text/70 mt-2">
+              <div className="text-sm text-gray-500 mt-1">
                 {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
               </div>
             </div>
             
-            <div className="flex flex-wrap gap-2 pt-2 justify-end">
-              {ticket.file_path && (
+            {/* Add purchase button */}
+            {onPurchase && (
+              <div className="flex justify-end mt-4">
                 <Button 
-                  variant="outline" 
-                  onClick={handleDownload}
-                  className="bg-ticket-bg border-ticket-text/30 text-ticket-text hover:bg-ticket-text/10"
-                >
-                  <Download className="h-4 w-4 mr-2 text-ticket-accent" />
-                  {t('Lejupielādēt', 'Download')}
-                </Button>
-              )}
-              
-              {onPurchase && ticket.status === 'available' && (
-                <Button 
+                  variant="orange" 
                   onClick={handlePurchase}
-                  className="bg-ticket-accent hover:bg-ticket-accent/90 text-white"
+                  className="flex items-center"
                 >
                   <Ticket className="h-4 w-4 mr-2" />
                   {t('Pirkt biļeti', 'Buy ticket')}
                 </Button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>
     </Dialog>
   );
 };
+

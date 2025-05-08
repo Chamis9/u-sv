@@ -1,74 +1,88 @@
 
-import React from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import React, { useState } from 'react';
 import { useLanguage } from "@/features/language";
 import { UserTicket } from "@/hooks/tickets";
+import { useAuth } from "@/contexts/AuthContext";
+import { TicketPreviewDialog } from "../TicketPreviewDialog";
 import { TicketsEmptyState } from "./TicketsEmptyState";
 import { TicketGrid } from "./TicketGrid";
-import { useTicketActions } from "./useTicketActions";
 import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+import { useTicketActions } from "./useTicketActions";
 
 interface UserTicketsProps {
   availableTickets: UserTicket[];
   onPurchase: (ticket: UserTicket) => void;
   onDelete?: (ticketId: string) => void;
+  onTicketsChanged?: () => void;
 }
 
 export const UserTickets: React.FC<UserTicketsProps> = ({ 
   availableTickets, 
-  onPurchase,
-  onDelete
+  onPurchase, 
+  onDelete,
+  onTicketsChanged 
 }) => {
   const { currentLanguage } = useLanguage();
+  const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const { user, isAuthenticated } = useAuth();
-  const userId = user?.id;
   
-  // Use the restructured useTicketActions hook
-  const {
-    isDeleting,
-    ticketToDelete,
-    handleDeleteClick,
-    confirmDelete,
-    cancelDelete
-  } = useTicketActions(onDelete);
-
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
-  const hasTickets = availableTickets && availableTickets.length > 0;
+  const { 
+    isDeleting, 
+    ticketToDelete, 
+    handleDeleteClick, 
+    confirmDelete, 
+    cancelDelete 
+  } = useTicketActions({ 
+    onTicketsChanged, 
+    t, 
+    userId: user?.id 
+  });
 
   const handleViewTicket = (ticket: UserTicket) => {
-    // This is now handled directly in the TicketGrid component
-    console.log("Viewing ticket:", ticket.id);
+    setSelectedTicket(ticket);
+    setIsPreviewOpen(true);
   };
 
+  if (availableTickets.length === 0) {
+    return <TicketsEmptyState t={t} />;
+  }
+
   return (
-    <div className="mt-10">
-      <h2 className="text-2xl font-semibold mb-6 text-ticket-accent">
-        {t("Lietotāju biļetes", "User tickets")}
+    <div className="mt-8">
+      <h2 className="text-2xl font-semibold mb-4">
+        {t("Pieejamās biļetes", "Available tickets")}
       </h2>
       
-      {hasTickets ? (
-        <TicketGrid
-          availableTickets={availableTickets}
-          onView={handleViewTicket}
-          onPurchase={onPurchase}
-          onDelete={handleDeleteClick}
-          isAuthenticated={isAuthenticated}
-          userId={userId}
-          currentLanguageCode={currentLanguage.code}
-          t={t}
-          isDeleting={isDeleting}
-        />
-      ) : (
-        <TicketsEmptyState t={t} />
-      )}
-
-      {/* Add the Delete Confirmation Dialog */}
+      <TicketGrid
+        availableTickets={availableTickets}
+        onView={handleViewTicket}
+        onPurchase={onPurchase}
+        onDelete={onDelete ? handleDeleteClick : undefined}
+        isAuthenticated={isAuthenticated}
+        userId={user?.id}
+        currentLanguageCode={currentLanguage.code}
+        t={t}
+        isDeleting={isDeleting}
+      />
+      
+      {/* Ticket Preview Dialog */}
+      <TicketPreviewDialog
+        ticket={selectedTicket}
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        onPurchase={onPurchase}
+      />
+      
+      {/* Delete Confirmation Dialog */}
       <DeleteConfirmDialog
         isOpen={ticketToDelete !== null}
         onClose={cancelDelete}
         onConfirm={confirmDelete}
         isDeleting={isDeleting}
+        t={t}
       />
     </div>
   );
