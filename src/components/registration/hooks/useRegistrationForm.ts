@@ -2,9 +2,9 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/features/language";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/components/ui/use-toast";
-import { checkEmailExists, checkPhoneExists } from "@/utils/phoneUtils";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface RegistrationFormData {
   firstName: string;
@@ -14,16 +14,22 @@ export interface RegistrationFormData {
   confirmPassword: string;
   countryCode: string;
   phoneNumber: string;
-  newsletter: boolean;
+  newsletter?: boolean;
 }
 
 export const useRegistrationForm = () => {
   const navigate = useNavigate();
   const { currentLanguage } = useLanguage();
+  const { register } = useAuth();
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
   const form = useForm<RegistrationFormData>({
     defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
       countryCode: "+371",
       phoneNumber: "",
       newsletter: false
@@ -54,6 +60,32 @@ export const useRegistrationForm = () => {
     return true;
   };
 
+  const checkEmailExists = async (email: string) => {
+    try {
+      const { data, error } = await supabase
+        .rpc('check_email_exists', { check_email: email });
+        
+      if (error) throw error;
+      return !!data;
+    } catch (error) {
+      console.error("Error checking if email exists:", error);
+      return false;
+    }
+  };
+  
+  const checkPhoneExists = async (phone: string) => {
+    try {
+      const { data, error } = await supabase
+        .rpc('check_phone_exists', { check_phone: phone });
+        
+      if (error) throw error;
+      return !!data;
+    } catch (error) {
+      console.error("Error checking if phone exists:", error);
+      return false;
+    }
+  };
+
   const onSubmit = async (data: RegistrationFormData) => {
     try {
       const phoneNumber = data.phoneNumber ? `${data.countryCode}${data.phoneNumber}` : "";
@@ -82,30 +114,18 @@ export const useRegistrationForm = () => {
         }
       }
 
-      // Register user with Supabase
-      const { error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          data: {
-            first_name: data.firstName,
-            last_name: data.lastName,
-            phone: phoneNumber || null
-          }
-        }
+      // Proceed with registration
+      const success = await register(data.email, data.password, {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        phoneNumber: phoneNumber || null,
+        countryCode: data.countryCode
       });
 
-      if (error) throw error;
-
-      toast({
-        title: t('Veiksmīga reģistrācija', 'Registration successful'),
-        description: t(
-          'Jūsu konts ir izveidots. Lūdzu pārbaudiet savu e-pastu, lai apstiprinātu reģistrāciju.',
-          'Your account has been created. Please check your email to confirm registration.'
-        )
-      });
-
-      navigate('/');
+      if (success) {
+        // Redirect to login page after successful registration
+        navigate('/login');
+      }
     } catch (error) {
       console.error('Registration error:', error);
       toast({

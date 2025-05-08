@@ -17,8 +17,9 @@ import Contact from "./pages/Contact";
 import Events from "./pages/Events";
 import Tickets from "./pages/Tickets";
 import AboutUs from "./pages/AboutUs";
-// Import Profile page directly instead of using dynamic import
 import Profile from "./pages/Profile";
+import Login from "./pages/Login";
+import Registration from "./pages/Registration";
 
 // Lazy load other pages for better performance
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -77,13 +78,13 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
-        <TooltipProvider>
-          <ThemeProvider defaultTheme="light" storageKey="ui-theme">
-            <AuthProvider>
-              <LanguageProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
+        <BrowserRouter>
+          <AuthProvider>
+            <TooltipProvider>
+              <ThemeProvider defaultTheme="light" storageKey="ui-theme">
+                <LanguageProvider>
+                  <Toaster />
+                  <Sonner />
                   <Suspense fallback={<PageLoader />}>
                     <Routes>
                       <Route path="/" element={<Index />} />
@@ -96,14 +97,16 @@ const App = () => {
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/admin/*" element={<Admin />} />
                       <Route path="/profile/*" element={<Profile />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/registration" element={<Registration />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Suspense>
-                </BrowserRouter>
-              </LanguageProvider>
-            </AuthProvider>
-          </ThemeProvider>
-        </TooltipProvider>
+                </LanguageProvider>
+              </ThemeProvider>
+            </TooltipProvider>
+          </AuthProvider>
+        </BrowserRouter>
       </HelmetProvider>
     </QueryClientProvider>
   );

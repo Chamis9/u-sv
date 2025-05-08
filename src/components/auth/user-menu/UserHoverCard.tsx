@@ -1,130 +1,166 @@
 
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Link } from "react-router-dom";
-import { UserCircle, Mail, CreditCard, Settings, LogOut } from "lucide-react";
+import React from "react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { UserAvatar } from "@/components/profile/UserAvatar";
-import { User } from "@/types/users";
-import { useTheme } from "@/components/theme/ThemeProvider";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LogOut, User, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useLanguage } from "@/features/language";
+import { User as UserType } from "@/types/users";
 
 interface UserHoverCardProps {
-  user: User;
+  user: UserType;
   onLogout: () => void;
   onLinkClick: () => void;
 }
 
 export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProps) {
-  const { theme } = useTheme();
   const { currentLanguage } = useLanguage();
   
-  const t = (lvText: string, enText: string, ruText?: string) => {
-    if (currentLanguage.code === 'lv') return lvText;
-    if (currentLanguage.code === 'ru') return ruText || enText;
-    return enText;
+  const t = (lvText: string, enText: string) => {
+    return currentLanguage.code === 'lv' ? lvText : enText;
   };
 
-  // Format email for display to prevent overflow
-  const formatEmail = (email: string) => {
-    if (!email) return "";
-    
-    if (email.length > 20) {
-      const parts = email.split('@');
-      if (parts.length === 2) {
-        const username = parts[0];
-        const domain = parts[1];
-        
-        if (username.length > 10) {
-          return `${username.substring(0, 10)}...@${domain}`;
-        }
-      }
-    }
-    return email;
-  };
-
-  const menuItems = [
-    {
-      icon: <Settings className="h-4 w-4" />,
-      label: t("Mans konts", "My Account", "Мой аккаунт"),
-      path: `/profile/${user.id}/account`
-    },
-    {
-      icon: <Mail className="h-4 w-4" />,
-      label: t("Manas biļetes", "My Tickets", "Мои билеты"),
-      path: `/profile/${user.id}/tickets`
-    },
-    {
-      icon: <CreditCard className="h-4 w-4" />,
-      label: t("Mani maksājumi", "My Payments", "Мои платежи"),
-      path: `/profile/${user.id}/payments`
-    }
-  ];
-
+  // Desktop: HoverCard, Mobile: DropdownMenu
   return (
-    <HoverCard>
-      <HoverCardTrigger asChild>
-        <Link 
-          to={`/profile/${user.id}/account`}
-          className="inline-flex items-center justify-center"
-        >
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-ticket-accent hover:text-ticket-accent transition-colors relative z-10 hover:bg-transparent"
-            title={t("Mans konts", "My Account", "Мой аккаунт")}
+    <>
+      {/* Desktop */}
+      <HoverCard closeDelay={200} openDelay={0} className="hidden md:block">
+        <HoverCardTrigger asChild>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full h-8 w-8 p-0 relative"
           >
-            <UserAvatar user={user} size="sm" />
+            <Avatar className="h-8 w-8 border border-muted">
+              {user.avatar_url ? (
+                <AvatarImage src={user.avatar_url} alt={`${user.first_name} ${user.last_name}`} />
+              ) : (
+                <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                  {`${user.first_name?.charAt(0) || ''}${user.last_name?.charAt(0) || ''}`}
+                </AvatarFallback>
+              )}
+            </Avatar>
           </Button>
-        </Link>
-      </HoverCardTrigger>
-      <HoverCardContent 
-        className={`w-64 p-0 overflow-hidden 
-          ${theme === 'dark' ? 'dark:bg-gray-800 dark:border-gray-700' : ''}`}
-        onFocus={(e) => e.stopPropagation()}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex flex-col">
-          <div className="flex items-center gap-3 p-4 border-b">
-            <UserAvatar user={user} size="md" />
-            <div className="flex flex-col min-w-0 flex-1">
-              <p className="font-medium text-sm whitespace-nowrap">
-                {user.first_name} {user.last_name}
-              </p>
-              <div className="flex items-center">
-                <p 
-                  className="text-sm text-muted-foreground truncate max-w-full" 
-                  title={user.email}
-                >
-                  {formatEmail(user.email)}
-                </p>
+        </HoverCardTrigger>
+        <HoverCardContent className="w-64" align="end">
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <Avatar className="h-10 w-10">
+                {user.avatar_url ? (
+                  <AvatarImage src={user.avatar_url} alt={`${user.first_name} ${user.last_name}`} />
+                ) : (
+                  <AvatarFallback className="bg-primary/10 text-primary">
+                    {`${user.first_name?.charAt(0) || ''}${user.last_name?.charAt(0) || ''}`}
+                  </AvatarFallback>
+                )}
+              </Avatar>
+              <div className="space-y-1">
+                <h4 className="text-sm font-semibold">
+                  {user.first_name} {user.last_name}
+                </h4>
+                <p className="text-xs text-muted-foreground">{user.email}</p>
               </div>
             </div>
+            
+            <div className="flex flex-col gap-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="justify-start gap-2" 
+                asChild
+              >
+                <Link to={`/profile/${user.id}/account`} onClick={onLinkClick}>
+                  <User size={14} />
+                  {t('Mans profils', 'My profile')}
+                </Link>
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="justify-start gap-2" 
+                asChild
+              >
+                <Link to={`/profile/${user.id}/settings`} onClick={onLinkClick}>
+                  <Settings size={14} />
+                  {t('Iestatījumi', 'Settings')}
+                </Link>
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="justify-start text-destructive hover:text-destructive gap-2"
+                onClick={onLogout}
+              >
+                <LogOut size={14} />
+                {t('Iziet', 'Log out')}
+              </Button>
+            </div>
           </div>
-          
-          {menuItems.map((item, index) => (
-            <Link
-              key={index}
-              to={item.path}
-              className="flex items-center gap-2 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700"
-              onClick={onLinkClick}
-            >
-              {item.icon}
-              <span className="text-sm">{item.label}</span>
+        </HoverCardContent>
+      </HoverCard>
+      
+      {/* Mobile */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild className="md:hidden">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full h-8 w-8 p-0"
+          >
+            <Avatar className="h-8 w-8">
+              {user.avatar_url ? (
+                <AvatarImage src={user.avatar_url} alt={`${user.first_name} ${user.last_name}`} />
+              ) : (
+                <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                  {`${user.first_name?.charAt(0) || ''}${user.last_name?.charAt(0) || ''}`}
+                </AvatarFallback>
+              )}
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuLabel className="flex items-center gap-2">
+            <div>
+              <p className="text-sm font-medium">{user.first_name} {user.last_name}</p>
+              <p className="text-xs text-muted-foreground">{user.email}</p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link to={`/profile/${user.id}/account`} onClick={onLinkClick} className="cursor-pointer">
+              <User className="mr-2 h-4 w-4" />
+              {t('Mans profils', 'My profile')}
             </Link>
-          ))}
-          
-          <div className="border-t">
-            <Button
-              variant="ghost"
-              onClick={onLogout}
-              className="flex items-center gap-2 w-full px-4 py-3 justify-start hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <LogOut className="h-4 w-4" />
-              <span className="text-sm">{t("Iziet", "Logout", "Выйти")}</span>
-            </Button>
-          </div>
-        </div>
-      </HoverCardContent>
-    </HoverCard>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to={`/profile/${user.id}/settings`} onClick={onLinkClick} className="cursor-pointer">
+              <Settings className="mr-2 h-4 w-4" />
+              {t('Iestatījumi', 'Settings')}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem 
+            onClick={onLogout}
+            className="text-destructive focus:text-destructive cursor-pointer"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            {t('Iziet', 'Log out')}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   );
 }

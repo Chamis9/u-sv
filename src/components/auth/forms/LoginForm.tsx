@@ -2,25 +2,26 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { EmailInput } from "../EmailInput";
 import { PasswordInput } from "../PasswordInput";
 import { loginFormSchema, type LoginFormData } from "../schema";
-import { usePreviousEmails } from "@/hooks/usePreviousEmails";
+import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/features/language";
 
 interface LoginFormProps {
-  translations: any;
-  languageCode?: string;
   onClose: () => void;
 }
 
-export function LoginForm({ translations, languageCode, onClose }: LoginFormProps) {
+export function LoginForm({ onClose }: LoginFormProps) {
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
-  const { previousEmails, showDropdown, setShowDropdown } = usePreviousEmails();
+  const { login } = useAuth();
+  const { currentLanguage } = useLanguage();
+  
+  const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginFormSchema),
@@ -30,139 +31,45 @@ export function LoginForm({ translations, languageCode, onClose }: LoginFormProp
     },
   });
 
-  const handleResetPassword = async () => {
-    const email = form.getValues("email");
-    if (!email) {
-      form.setFocus("email");
-      return;
-    }
-
-    setIsLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
-    setIsLoading(false);
-
-    if (!error) {
-      toast({
-        description: translations.resetPasswordSent,
-      });
-    }
-  };
-
   const onSubmit = async (values: LoginFormData) => {
     setIsLoading(true);
     
     try {
-      const savedEmails = localStorage.getItem('globalPreviousEmails');
-      const emails = savedEmails ? JSON.parse(savedEmails) : [];
-      if (!emails.includes(values.email)) {
-        emails.unshift(values.email);
-        const updatedEmails = emails.slice(0, 5);
-        localStorage.setItem('globalPreviousEmails', JSON.stringify(updatedEmails));
-      }
+      const success = await login(values.email, values.password);
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
-      });
-
-      if (error) {
-        toast({
-          variant: "destructive",
-          description: translations.invalidCredentials,
-        });
-      } else {
+      if (success) {
         if (onClose) onClose();
       }
-    } catch (err) {
-      console.error("Login error:", err);
-      toast({
-        variant: "destructive",
-        description: translations.invalidCredentials,
-      });
     } finally {
       setIsLoading(false);
     }
   };
-
-  React.useEffect(() => {
-    let observer: MutationObserver | null = null;
-    
-    const handleAutoFill = () => {
-      const formElement = document.querySelector('form');
-      
-      if (formElement && !observer) {
-        observer = new MutationObserver((mutations) => {
-          const autofilled = document.querySelectorAll('input:-webkit-autofill');
-          if (autofilled.length > 0) {
-            setTimeout(() => {
-              const emailValue = form.getValues("email");
-              const passwordValue = form.getValues("password");
-              
-              if (emailValue) form.setValue("email", emailValue);
-              if (passwordValue) form.setValue("password", passwordValue);
-              
-              const stopEvents = (e: Event) => {
-                e.stopPropagation();
-              };
-              
-              formElement.addEventListener('click', stopEvents as EventListener, true);
-              formElement.addEventListener('focus', stopEvents as EventListener, true);
-              
-              setTimeout(() => {
-                formElement.removeEventListener('click', stopEvents as EventListener, true);
-                formElement.removeEventListener('focus', stopEvents as EventListener, true);
-              }, 1000);
-            }, 100);
-          }
-        });
-        
-        observer.observe(formElement, {
-          subtree: true,
-          childList: true,
-          attributeFilter: ['style', 'class'],
-          attributes: true
-        });
-      }
-    };
-    
-    handleAutoFill();
-    
-    return () => {
-      if (observer) {
-        observer.disconnect();
-      }
-    };
-  }, [form]);
 
   return (
     <Form {...form}>
       <form 
         onSubmit={form.handleSubmit(onSubmit)} 
         className="space-y-4"
-        onFocus={(e) => {
-          e.stopPropagation();
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
       >
-        <EmailInput form={form} label={translations.email} />
-        <PasswordInput form={form} label={translations.password} />
+        <EmailInput form={form} label={t('E-pasts', 'Email')} />
+        <PasswordInput form={form} label={t('Parole', 'Password')} />
         <div className="flex items-center justify-between">
           <Button
             type="button"
             variant="link"
             className="px-0"
-            onClick={handleResetPassword}
+            onClick={() => {}} // Simplified for now
             disabled={isLoading}
           >
-            {translations.forgotPassword}
+            {t('Aizmirsu paroli', 'Forgot Password')}
           </Button>
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? translations.loginLoading : translations.login}
+            {isLoading ? t('Pieslēdzas...', 'Logging in...') : t('Pieslēgties', 'Login')}
           </Button>
         </div>
       </form>
     </Form>
   );
 }
+
+export default LoginForm;

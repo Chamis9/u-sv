@@ -19,6 +19,7 @@ export const PersonalInfoFields = ({ form, t }: PersonalInfoFieldsProps) => {
         <Label htmlFor="firstName">{t('Vārds', 'First Name')}</Label>
         <Input
           id="firstName"
+          placeholder={t('Ievadiet vārdu', 'Enter your first name')}
           {...register("firstName", { required: t('Lauks ir obligāts', 'This field is required') })}
         />
         {errors.firstName && (
@@ -30,6 +31,7 @@ export const PersonalInfoFields = ({ form, t }: PersonalInfoFieldsProps) => {
         <Label htmlFor="lastName">{t('Uzvārds', 'Last Name')}</Label>
         <Input
           id="lastName"
+          placeholder={t('Ievadiet uzvārdu', 'Enter your last name')}
           {...register("lastName", { required: t('Lauks ir obligāts', 'This field is required') })}
         />
         {errors.lastName && (

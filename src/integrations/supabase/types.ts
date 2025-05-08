@@ -201,48 +201,6 @@ export type Database = {
         }
         Relationships: []
       }
-      registered_users: {
-        Row: {
-          auth_user_id: string | null
-          avatar_url: string | null
-          created_at: string
-          email: string | null
-          first_name: string | null
-          id: string
-          last_name: string | null
-          last_sign_in_at: string | null
-          phone: string | null
-          status: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          auth_user_id?: string | null
-          avatar_url?: string | null
-          created_at?: string
-          email?: string | null
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          last_sign_in_at?: string | null
-          phone?: string | null
-          status?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          auth_user_id?: string | null
-          avatar_url?: string | null
-          created_at?: string
-          email?: string | null
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          last_sign_in_at?: string | null
-          phone?: string | null
-          status?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       tickets: {
         Row: {
           buyer_id: string | null
