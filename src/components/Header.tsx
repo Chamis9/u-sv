@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { UserHoverCard } from "./auth/user-menu/UserHoverCard";
 import { useNavigate } from "react-router-dom";
 import { LoginButton } from "./auth/LoginButton";
+import { UserAvatar } from "./auth/UserAvatar";
 
 export function Header() {
   const navigationLinks = getNavigationLinks();

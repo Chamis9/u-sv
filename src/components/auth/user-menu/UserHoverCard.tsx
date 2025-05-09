@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { LogOut, User as UserIcon, Settings, Ticket } from "lucide-react";
 import { useLanguage } from "@/features/language";
+import { UserAvatar } from "../UserAvatar";
 
 interface UserHoverCardProps {
   user: User;
@@ -41,18 +42,12 @@ export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProp
           aria-label={t('Lietotāja izvēlne', 'User menu')}
           onClick={handleAvatarClick}
         >
-          <Avatar className="h-8 w-8 text-ticket-accent">
-            <AvatarFallback className="bg-transparent border border-ticket-accent text-ticket-accent">
-              {userInitials}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar user={user} className="h-8 w-8" />
         </Button>
       </HoverCardTrigger>
       <HoverCardContent className="w-60 p-4">
         <div className="flex justify-start items-center space-x-3">
-          <Avatar>
-            <AvatarFallback>{userInitials}</AvatarFallback>
-          </Avatar>
+          <UserAvatar user={user} />
           <div className="max-w-[160px]">
             <h4 className="font-medium truncate">
               {user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : t('Lietotājs', 'User')}
