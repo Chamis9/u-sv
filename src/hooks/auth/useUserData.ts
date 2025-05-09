@@ -11,15 +11,40 @@ export function useUserData() {
     try {
       console.log("Fetching user data for:", email);
       
-      const { data: userData, error } = await supabase
-        .from('registered_users')
-        .select('*')
-        .eq('email', email)
-        .maybeSingle();
+      // First try getting user via RPC function that bypasses RLS
+      let userData = null;
+      let fetchError = null;
       
-      if (error) {
-        console.error("Error fetching user data:", error);
-        return;
+      try {
+        const { data: rpcUser, error: rpcError } = await supabase.rpc(
+          'get_user_by_email',
+          { user_email: email }
+        );
+        
+        if (!rpcError && rpcUser) {
+          userData = rpcUser;
+          console.log("User data fetched via RPC:", userData);
+        } else {
+          fetchError = rpcError;
+        }
+      } catch (rpcErr) {
+        console.log("RPC method not available, using standard query");
+      }
+      
+      // Fallback to standard query if RPC fails
+      if (!userData) {
+        const { data: standardUser, error: standardError } = await supabase
+          .from('registered_users')
+          .select('*')
+          .eq('email', email)
+          .maybeSingle();
+          
+        if (standardError) {
+          console.error("Error fetching user data:", standardError);
+          fetchError = standardError;
+        } else {
+          userData = standardUser;
+        }
       }
       
       if (userData) {
@@ -42,11 +67,44 @@ export function useUserData() {
         console.warn("No user data found for:", email);
         
         // If no user data is found in the registered_users table but we have an authenticated session,
-        // create the user record in the database
+        // attempt to create the user record in the database
         const { data: authUser } = await supabase.auth.getUser();
         if (authUser?.user) {
           console.log("Creating user record in database for authenticated user:", authUser.user.email);
           
+          try {
+            // Try using the RPC function first (most reliable)
+            const { data: rpcResult, error: rpcError } = await supabase.rpc('create_user_profile', {
+              user_id: authUser.user.id,
+              user_email: authUser.user.email,
+              first_name: authUser.user.user_metadata?.first_name || null,
+              last_name: authUser.user.user_metadata?.last_name || null,
+              phone_number: authUser.user.user_metadata?.phone || null
+            });
+            
+            if (!rpcError && rpcResult) {
+              console.log("User record created successfully via RPC:", rpcResult);
+              
+              setUser({
+                id: rpcResult.id,
+                email: rpcResult.email,
+                first_name: rpcResult.first_name,
+                last_name: rpcResult.last_name,
+                phone: rpcResult.phone,
+                created_at: rpcResult.created_at,
+                updated_at: rpcResult.updated_at,
+                last_sign_in_at: rpcResult.last_sign_in_at,
+                role: 'user',
+                status: rpcResult.status as 'active' | 'inactive',
+                avatar_url: rpcResult.avatar_url
+              });
+              return;
+            }
+          } catch (rpcErr) {
+            console.warn("RPC method not available:", rpcErr);
+          }
+          
+          // Fallback to direct insert (might fail due to RLS)
           const newUserData = {
             auth_user_id: authUser.user.id,
             email: authUser.user.email,

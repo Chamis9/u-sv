@@ -9,6 +9,28 @@ export async function syncAuthUser(authUser: any) {
   if (!authUser || !authUser.email) return null;
   
   try {
+    console.log("Attempting to sync user in registered_users:", authUser.email);
+    
+    // First try the RPC function for direct database access (requires SQL function setup)
+    try {
+      const { data: rpcData, error: rpcError } = await supabase.rpc('create_user_profile', {
+        user_id: authUser.id,
+        user_email: authUser.email,
+        first_name: authUser.user_metadata?.first_name || null,
+        last_name: authUser.user_metadata?.last_name || null,
+        phone_number: authUser.user_metadata?.phone || null
+      });
+      
+      if (!rpcError) {
+        console.log("User synced with RPC function:", rpcData);
+        return rpcData;
+      } else {
+        console.log("RPC function failed, will try edge function:", rpcError);
+      }
+    } catch (rpcErr) {
+      console.error("RPC method not available:", rpcErr);
+    }
+    
     // Check if user already exists in registered_users
     const { data: existingUser, error: checkError } = await supabase
       .from('registered_users')
@@ -18,10 +40,9 @@ export async function syncAuthUser(authUser: any) {
       
     if (checkError) {
       console.error('Error checking if user exists:', checkError);
-      return null;
-    }
-    
-    if (existingUser) {
+    } else if (existingUser) {
+      console.log("User already exists in registered_users:", existingUser);
+      
       // User exists, update last sign in time
       const { data: updatedUser, error: updateError } = await supabase
         .from('registered_users')
@@ -39,33 +60,68 @@ export async function syncAuthUser(authUser: any) {
       
       return updatedUser || existingUser;
     } else {
-      // User doesn't exist, create new record
-      const newUserData = {
-        auth_user_id: authUser.id,
-        email: authUser.email,
-        first_name: authUser.user_metadata?.first_name || null,
-        last_name: authUser.user_metadata?.last_name || null,
-        phone: authUser.user_metadata?.phone || null,
-        last_sign_in_at: new Date().toISOString()
-      };
+      // User doesn't exist, call edge function to create user (bypassing RLS)
+      console.log("User does not exist in registered_users, creating...");
       
-      const { data: newUser, error: insertError } = await supabase
-        .from('registered_users')
-        .insert([newUserData])
-        .select()
-        .single();
+      try {
+        const response = await fetch(`${window.location.origin}/api/createUserProfile`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: authUser.id,
+            user_email: authUser.email,
+            first_name: authUser.user_metadata?.first_name || null,
+            last_name: authUser.user_metadata?.last_name || null,
+            phone_number: authUser.user_metadata?.phone || null
+          })
+        });
         
-      if (insertError) {
-        console.error('Error creating new user:', insertError);
-        return null;
+        const result = await response.json();
+        
+        if (result.error) {
+          console.error("Error from edge function:", result.error);
+          return null;
+        }
+        
+        console.log("User created via edge function:", result.data);
+        return result.data;
+      } catch (edgeFnError) {
+        console.error("Error calling edge function:", edgeFnError);
+        
+        // Fallback: Try direct insert (might fail due to RLS)
+        console.log("Attempting direct insert as fallback...");
+        
+        const newUserData = {
+          auth_user_id: authUser.id,
+          email: authUser.email,
+          first_name: authUser.user_metadata?.first_name || null,
+          last_name: authUser.user_metadata?.last_name || null,
+          phone: authUser.user_metadata?.phone || null,
+          last_sign_in_at: new Date().toISOString()
+        };
+        
+        const { data: newUser, error: insertError } = await supabase
+          .from('registered_users')
+          .insert([newUserData])
+          .select()
+          .single();
+          
+        if (insertError) {
+          console.error('Error in direct fallback insert:', insertError);
+          return null;
+        }
+        
+        return newUser;
       }
-      
-      return newUser;
     }
   } catch (error) {
     console.error('Error syncing user:', error);
     return null;
   }
+  
+  return null;
 }
 
 /**

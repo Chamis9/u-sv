@@ -45,9 +45,9 @@ export function useAuthActions() {
       
       // Check if user exists in registered_users table
       if (data.user) {
-        setTimeout(() => {
-          syncAuthUser(data.user);
-        }, 0);
+        setTimeout(async () => {
+          await syncAuthUser(data.user);
+        }, 100);
       }
       
       return true;
@@ -72,7 +72,7 @@ export function useAuthActions() {
         phone: userData.phoneNumber ? `${userData.countryCode}${userData.phoneNumber}` : null,
       };
       
-      // Simplified options without email redirect
+      // Register using Supabase
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -88,9 +88,16 @@ export function useAuthActions() {
       
       console.log('Registration successful, user data:', data);
       
-      // Manually insert the user into registered_users table to ensure they're added
+      // Manually ensure the user is added to registered_users table
       if (data.user) {
-        await syncAuthUser(data.user);
+        try {
+          console.log("Now syncing user with registered_users table");
+          const syncResult = await syncAuthUser(data.user);
+          console.log("Sync result:", syncResult);
+        } catch (syncError) {
+          console.error("Error syncing user to registered_users:", syncError);
+          // Continue despite sync error; we'll try again on next login
+        }
       }
       
       return true;

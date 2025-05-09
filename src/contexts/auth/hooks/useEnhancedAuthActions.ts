@@ -2,6 +2,7 @@
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { cleanupAuthState } from "@/utils/auth/authUtils";
+import { syncAuthUser } from "@/utils/syncAuthUser";
 
 type LoginFn = (email: string, password: string) => Promise<boolean>;
 type RegisterFn = (email: string, password: string, userData: any) => Promise<boolean>;
@@ -91,40 +92,39 @@ export function useEnhancedAuthActions(
       // Use original register function
       const success = await userAuthRegister(email, password, userData);
       
-      // If registration was successful, manually check if user exists in registered_users
+      // If registration was successful, ensure the user is in registered_users table
       if (success) {
-        setTimeout(async () => {
+        try {
           // Get the current user
           const { data: authData } = await supabase.auth.getUser();
-          if (authData?.user?.email) {
-            // Check if user exists in registered_users
-            const { data: existingUser } = await supabase
-              .from('registered_users')
-              .select('*')
-              .eq('email', authData.user.email)
-              .maybeSingle();
-              
-            // If user doesn't exist in registered_users, create them
-            if (!existingUser) {
-              const registeredUserData = {
-                auth_user_id: authData.user.id,
-                email: authData.user.email,
-                first_name: userData.firstName,
-                last_name: userData.lastName,
-                phone: userData.phoneNumber ? `${userData.countryCode}${userData.phoneNumber}` : null,
-                last_sign_in_at: new Date().toISOString()
-              };
-              
-              await supabase
-                .from('registered_users')
-                .insert([registeredUserData]);
+          
+          if (authData?.user) {
+            console.log("Registration successful, syncing user to registered_users table:", authData.user);
+            
+            // Use RPC function to bypass RLS and ensure user is created in registered_users
+            const { data: syncedUser, error: syncError } = await supabase.rpc('create_user_profile', {
+              user_id: authData.user.id,
+              user_email: authData.user.email,
+              first_name: userData.firstName,
+              last_name: userData.lastName,
+              phone_number: userData.phoneNumber ? `${userData.countryCode}${userData.phoneNumber}` : null
+            });
+            
+            if (syncError) {
+              console.error("Error syncing user to registered_users:", syncError);
+            } else {
+              console.log("User successfully synced to registered_users:", syncedUser);
             }
           }
           
           // Refresh session and user data
-          await refreshSession();
-          await refreshUserData();
-        }, 500);
+          setTimeout(async () => {
+            await refreshSession();
+            await refreshUserData();
+          }, 500);
+        } catch (err) {
+          console.error("Error in post-registration process:", err);
+        }
       }
       
       return success;
