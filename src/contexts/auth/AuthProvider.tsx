@@ -36,7 +36,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     supabaseAuth.logout,
     supabaseAuth.refreshUserData,
     refreshSession,
-    (value: boolean) => checkAdminStatus()
+    (value: boolean) => {
+      checkAdminStatus();
+      return value; // Pass through the value to match the expected type
+    }
   );
 
   // Debug log to track auth state changes

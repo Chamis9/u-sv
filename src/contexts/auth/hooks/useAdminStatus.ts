@@ -21,7 +21,7 @@ export function useAdminStatus(isAuthenticated: boolean, userEmail: string | nul
   }, [isAuthenticated, userEmail]);
   
   // Function to check admin status
-  const checkAdminStatus = async () => {
+  const checkAdminStatus = async (): Promise<boolean> => {
     const result = await checkUserAdminStatus(userEmail);
     setIsAdmin(result);
     return result;

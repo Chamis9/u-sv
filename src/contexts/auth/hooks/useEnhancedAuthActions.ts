@@ -7,7 +7,7 @@ export function useEnhancedAuthActions(
   logout: () => Promise<any>,
   refreshUserData: () => Promise<any>,
   refreshSession: () => Promise<boolean>,
-  setIsAdmin: (value: boolean) => void
+  setIsAdmin: (value: boolean) => boolean
 ) {
   const [lastAvatarUpdate, setLastAvatarUpdate] = useState<number>(Date.now());
   
