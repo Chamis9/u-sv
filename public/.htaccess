@@ -15,3 +15,10 @@
   Header set Referrer-Policy "strict-origin-when-cross-origin"
   Header set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=()"
 </IfModule>
+
+# Handle admin subdomain
+<IfModule mod_rewrite.c>
+  RewriteCond %{HTTP_HOST} ^admin\.netieku\.es$ [NC]
+  RewriteCond %{REQUEST_URI} !^/index.html
+  RewriteRule ^(.*)$ /index.html [L]
+</IfModule>

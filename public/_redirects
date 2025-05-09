@@ -1,2 +1,7 @@
 
+# Handle subdomain routing for admin
+https://admin.netieku.es/* /index.html 200
+https://admin-netieku.netlify.app/* /index.html 200
+
+# Normal SPA routing
 /* /index.html 200

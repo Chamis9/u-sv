@@ -58,6 +58,13 @@ const handleLogout = () => {
 // Make the logout function globally available
 window.logout = handleLogout;
 
+// Function to check if we're on the admin subdomain
+const isAdminSubdomain = () => {
+  return window.location.hostname === 'admin.netieku.es' || 
+         window.location.hostname === 'admin-netieku.netlify.app' ||
+         window.location.hostname === 'admin.localhost';
+};
+
 const App = () => {
   const [isInitializing, setIsInitializing] = useState(true);
   
@@ -74,6 +81,34 @@ const App = () => {
     return <PageLoader />;
   }
 
+  // Render different routes based on subdomain
+  if (isAdminSubdomain()) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <HelmetProvider>
+          <TooltipProvider>
+            <ThemeProvider defaultTheme="light" storageKey="ui-theme">
+              <AuthProvider>
+                <LanguageProvider>
+                  <Toaster />
+                  <Sonner />
+                  <BrowserRouter>
+                    <Suspense fallback={<PageLoader />}>
+                      <Routes>
+                        <Route path="/*" element={<Admin />} />
+                      </Routes>
+                    </Suspense>
+                  </BrowserRouter>
+                </LanguageProvider>
+              </AuthProvider>
+            </ThemeProvider>
+          </TooltipProvider>
+        </HelmetProvider>
+      </QueryClientProvider>
+    );
+  }
+
+  // Main app routes for regular domain
   return (
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
@@ -94,7 +129,6 @@ const App = () => {
                       <Route path="/about-us" element={<AboutUs />} />
                       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                       <Route path="/contact" element={<Contact />} />
-                      <Route path="/admin/*" element={<Admin />} />
                       <Route path="/profile/*" element={<Profile />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>

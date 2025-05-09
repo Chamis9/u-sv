@@ -2,7 +2,11 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    },
+    {
+      "source": "/:path*",
       "destination": "/index.html"
     }
   ],
@@ -31,6 +35,12 @@
           "value": "default-src 'self'; script-src 'self' https://cdn.gpteng.co https://static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https://images.unsplash.com https://www.facebook.com https://bljjkzgswgeqswuuryvm.supabase.co data: blob:; connect-src 'self' https://bljjkzgswgeqswuuryvm.supabase.co wss://bljjkzgswgeqswuuryvm.supabase.co; font-src 'self'; frame-src 'self'; object-src 'none';"
         }
       ]
+    }
+  ],
+  "routes": [
+    {
+      "src": "https://admin.netieku.es/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
