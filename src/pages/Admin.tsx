@@ -6,7 +6,6 @@ import { Footer } from "@/components/Footer";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { AdminContent } from "@/components/admin/AdminContent";
 import { AdminLoginSection } from "@/components/admin/AdminLoginSection";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
@@ -16,6 +15,8 @@ import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AdminEventsList } from "@/components/admin/AdminEventsList";
 import { AdminCategoriesList } from "@/components/admin/categories/AdminCategoriesList";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { ProfileAuthGuard } from "@/components/profile/ProfileAuthGuard";
 
 function AdminPage() {
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
@@ -25,11 +26,15 @@ function AdminPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Check admin status when component mounts
+  // Check admin status when component mounts and when auth state changes
   useEffect(() => {
     const verifyAdminAccess = async () => {
+      console.log("Verifying admin access, auth status:", isAuthenticated);
+      
       if (isAuthenticated) {
         const hasAdminAccess = await checkAdminStatus();
+        console.log("Admin access check result:", hasAdminAccess);
+        
         if (!hasAdminAccess) {
           toast({
             variant: "destructive",
@@ -41,8 +46,26 @@ function AdminPage() {
       }
     };
     
-    verifyAdminAccess();
-  }, [isAuthenticated, checkAdminStatus, navigate]);
+    if (!isAuthLoading) {
+      verifyAdminAccess();
+    }
+  }, [isAuthenticated, isAuthLoading, checkAdminStatus, navigate, toast]);
+
+  // Listen for updates to admin count
+  useEffect(() => {
+    const handleAdminCountUpdate = (event: CustomEvent<{count: number}>) => {
+      if (event.detail && typeof event.detail.count === 'number') {
+        setAdminCount(event.detail.count);
+      }
+    };
+
+    // Type assertion for the event listener
+    window.addEventListener('adminCountUpdated', handleAdminCountUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('adminCountUpdated', handleAdminCountUpdate as EventListener);
+    };
+  }, []);
 
   const getActiveTabFromRoute = () => {
     const path = location.pathname.split('/')[2] || 'dashboard';
@@ -53,19 +76,6 @@ function AdminPage() {
     navigate(`/admin/${tab}`);
   };
 
-  useEffect(() => {
-    const handleAdminCountUpdate = (event: any) => {
-      if (event.detail && typeof event.detail.count === 'number') {
-        setAdminCount(event.detail.count);
-      }
-    };
-
-    window.addEventListener('adminCountUpdated', handleAdminCountUpdate);
-    return () => {
-      window.removeEventListener('adminCountUpdated', handleAdminCountUpdate);
-    };
-  }, []);
-
   if (isAuthLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -74,58 +84,60 @@ function AdminPage() {
     );
   }
 
-  // Check both regular authentication AND admin status
-  if (!isAuthenticated || !isAdmin) {
-    return (
-      <>
-        <AdminLoginSection onLoginClick={() => setShowLoginModal(true)} />
-        <AdminLogin 
-          isOpen={showLoginModal} 
-          onClose={() => setShowLoginModal(false)} 
-          onLoginSuccess={() => setShowLoginModal(false)} 
-        />
-      </>
-    );
-  }
-
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Helmet>
-        <title>Administrator Panel - netieku.es</title>
-        <meta name="description" content="Administrator panel for platform management" />
-      </Helmet>
+    <ProfileAuthGuard 
+      isAuthenticated={isAuthenticated}
+      isLoading={isAuthLoading}
+      requireAdmin={true}
+      isAdmin={isAdmin}
+    >
+      <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
+        <Helmet>
+          <title>Administrator Panel - netieku.es</title>
+          <meta name="description" content="Administrator panel for platform management" />
+        </Helmet>
 
-      <AdminHeader />
-      
-      <div className="flex flex-1 overflow-hidden pt-16">
-        <AdminSidebar 
-          activeTab={getActiveTabFromRoute()} 
-          onTabChange={handleTabChange}
-        />
+        <AdminHeader />
         
-        <div className="flex-1 overflow-auto p-8">
-          <Routes>
-            <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
-            <Route path="/dashboard" element={<AdminDashboard />} />
-            <Route path="/users" element={<AdminUsers />} />
-            <Route path="/events" element={<AdminEventsList />} />
-            <Route path="/categories" element={<AdminCategoriesList />} />
-            <Route path="/subscribers" element={<AdminSubscribers />} />
-            <Route path="/settings" element={<AdminSettings />} />
-            <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
-          </Routes>
+        <div className="flex flex-1 overflow-hidden pt-16">
+          <AdminSidebar 
+            activeTab={getActiveTabFromRoute()} 
+            onTabChange={handleTabChange}
+          />
+          
+          <div className="flex-1 overflow-auto p-8">
+            <Routes>
+              <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+              <Route path="/dashboard" element={<AdminDashboard />} />
+              <Route path="/users" element={<AdminUsers />} />
+              <Route path="/events" element={<AdminEventsList />} />
+              <Route path="/categories" element={<AdminCategoriesList />} />
+              <Route path="/subscribers" element={<AdminSubscribers />} />
+              <Route path="/settings" element={<AdminSettings />} />
+              <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+            </Routes>
+          </div>
         </div>
+        
+        <Footer />
       </div>
-      
-      <Footer />
-    </div>
+    </ProfileAuthGuard>
   );
 }
 
 export default function Admin() {
+  const [showLogin, setShowLogin] = useState(false);
+  
   return (
     <AuthProvider>
-      <AdminPage />
+      <React.Fragment>
+        <AdminPage />
+        <AdminLogin 
+          isOpen={showLogin} 
+          onClose={() => setShowLogin(false)} 
+          onLoginSuccess={() => setShowLogin(false)} 
+        />
+      </React.Fragment>
     </AuthProvider>
   );
 }

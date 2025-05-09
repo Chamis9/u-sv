@@ -15,7 +15,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
-import { checkAdminCredentials } from "@/utils/authHelpers";
 import { useLanguage } from "@/features/language";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -51,6 +50,8 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
+      console.log("Attempting to login with:", data.email);
+      
       // First, sign in with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: data.email,
@@ -58,14 +59,18 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
       });
 
       if (authError) {
+        console.error("Auth error:", authError);
         throw new Error(authError.message);
       }
 
       if (!authData.user) {
+        console.error("No user found");
         throw new Error("No user found");
       }
       
-      // Then check if the user is an admin
+      console.log("Auth successful, checking admin status");
+      
+      // Then check if the user is in the admin_user table
       const { data: adminData, error: adminError } = await supabase
         .from('admin_user')
         .select('*')
@@ -73,13 +78,20 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
         .maybeSingle();
       
       if (adminError) {
+        console.error("Admin check error:", adminError);
+        // Sign out if there's an error checking admin status
+        await supabase.auth.signOut();
         throw new Error("Error checking admin status");
       }
       
       if (!adminData) {
+        console.error("Not an admin user");
+        // Sign out if not an admin
         await supabase.auth.signOut();
         throw new Error("Not authorized as admin");
       }
+      
+      console.log("Admin login successful:", adminData);
       
       // Save admin status to localStorage
       localStorage.setItem('admin_authenticated', 'true');
@@ -90,6 +102,14 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
           ? "Veiksmīgi pieslēdzies administratora panelim." 
           : "Successfully logged into the admin panel.",
       });
+
+      // Dispatch an event to update admin count in UI if needed
+      if (adminData) {
+        const event = new CustomEvent('adminCountUpdated', { 
+          detail: { count: 1 } 
+        });
+        window.dispatchEvent(event);
+      }
       
       // Reload the page to update authentication status
       window.location.reload();

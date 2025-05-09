@@ -16,8 +16,8 @@ interface AuthContextType {
   refreshUserData: () => Promise<void>;
   lastAvatarUpdate: number;
   refreshSession: () => Promise<void>;
-  isAdmin: boolean; // Add isAdmin property
-  checkAdminStatus: () => Promise<boolean>; // Add a function to check admin status
+  isAdmin: boolean;
+  checkAdminStatus: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -31,8 +31,8 @@ const AuthContext = createContext<AuthContextType>({
   refreshUserData: async () => {},
   lastAvatarUpdate: Date.now(),
   refreshSession: async () => {},
-  isAdmin: false, // Initialize isAdmin
-  checkAdminStatus: async () => false, // Initialize checkAdminStatus
+  isAdmin: false,
+  checkAdminStatus: async () => false,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -42,6 +42,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const userAuth = useUserAuth();
   const [lastAvatarUpdate, setLastAvatarUpdate] = useState<number>(Date.now());
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  
+  // Check if admin status is stored in localStorage on initial load
+  useEffect(() => {
+    const storedAdminStatus = localStorage.getItem('admin_authenticated') === 'true';
+    setIsAdmin(storedAdminStatus);
+  }, []);
   
   // Check admin status on mount and when authentication changes
   useEffect(() => {
@@ -71,6 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       const isUserAdmin = !!adminData;
+      console.log('Admin status check:', isUserAdmin, adminData);
       setIsAdmin(isUserAdmin);
       
       // Store admin status in localStorage for persistence
@@ -118,6 +125,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => clearInterval(interval);
   }, []);
 
+  // Enhanced logout function that clears admin status
+  const enhancedLogout = async () => {
+    try {
+      // Clear admin-specific localStorage items
+      localStorage.removeItem('admin_authenticated');
+      localStorage.removeItem('admin_email');
+      
+      // Use the original logout function
+      await supabaseAuth.logout();
+      
+      // Force set admin status to false
+      setIsAdmin(false);
+    } catch (error) {
+      console.error('Error during logout:', error);
+      throw error;
+    }
+  };
+
   // Combine both auth implementations
   const auth = {
     ...supabaseAuth,
@@ -127,8 +152,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isAuthenticated: supabaseAuth.isAuthenticated || userAuth.isAuth,
     lastAvatarUpdate,
     refreshSession,
-    isAdmin, // Add isAdmin to the context
-    checkAdminStatus, // Add checkAdminStatus to the context
+    isAdmin,
+    checkAdminStatus,
+    // Override logout to also clear admin status
+    logout: enhancedLogout,
     // Override refreshUserData to update lastAvatarUpdate
     refreshUserData: async () => {
       await supabaseAuth.refreshUserData();

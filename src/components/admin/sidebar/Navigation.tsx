@@ -21,7 +21,12 @@ export const Navigation = ({
   adminCount = 0,
   translations 
 }: NavigationProps) => {
-  const navItems = getNavItems(translations, userCount, subscriberCount);
+  // Log props for debugging
+  React.useEffect(() => {
+    console.log("Navigation props:", { activeTab, userCount, subscriberCount, adminCount });
+  }, [activeTab, userCount, subscriberCount, adminCount]);
+  
+  const navItems = getNavItems(translations, userCount, subscriberCount, adminCount);
   
   return (
     <nav className="flex-1 p-4 space-y-1">
