@@ -112,7 +112,7 @@ export function useEnhancedAuthActions(
             };
             
             // Use functions with explicit typing for the RPC call
-            const { data: syncedUser, error: syncError } = await supabase.rpc<CreateUserProfileParams>(
+            const { data: syncedUser, error: syncError } = await supabase.rpc(
               'create_user_profile', 
               params
             );

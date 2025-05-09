@@ -83,16 +83,16 @@ export function useUserData() {
               phone_number: authUser.user.user_metadata?.phone || null
             };
             
-            const { data: rpcResult, error: rpcError } = await supabase.rpc<CreateUserProfileParams, CreateUserProfileResult>(
+            const { data, error: rpcError } = await supabase.rpc<CreateUserProfileResult>(
               'create_user_profile',
               params
             );
             
-            if (!rpcError && rpcResult) {
-              console.log("User record created successfully via RPC:", rpcResult);
+            if (!rpcError && data) {
+              console.log("User record created successfully via RPC:", data);
               
-              // The return type is a JSONB object, we need to parse it
-              const userRecord = typeof rpcResult === 'object' ? rpcResult : null;
+              // Create new user object from the RPC result
+              const userRecord = data as CreateUserProfileResult;
               
               if (userRecord) {
                 setUser({

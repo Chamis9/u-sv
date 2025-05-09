@@ -22,14 +22,14 @@ export async function syncAuthUser(authUser: any) {
         phone_number: authUser.user_metadata?.phone || null
       };
       
-      const { data: rpcData, error: rpcError } = await supabase.rpc<CreateUserProfileParams, CreateUserProfileResult>(
+      const { data, error: rpcError } = await supabase.rpc<CreateUserProfileResult>(
         'create_user_profile', 
         params
       );
       
       if (!rpcError) {
-        console.log("User synced with RPC function:", rpcData);
-        return rpcData;
+        console.log("User synced with RPC function:", data);
+        return data;
       } else {
         console.log("RPC function failed, will try edge function:", rpcError);
       }

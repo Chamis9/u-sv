@@ -78,4 +78,3 @@ export interface CreateUserProfileResult {
   status: string;
   avatar_url: string | null;
 }
-
