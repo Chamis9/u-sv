@@ -41,9 +41,17 @@ export const checkAdminCredentials = async (email: string, password: string) => 
       return false;
     }
 
+    console.log('User authenticated as admin successfully');
+    
     // If we get here, the user is authenticated and is an admin
     localStorage.setItem('admin_authenticated', 'true');
     localStorage.setItem('admin_email', email);
+    
+    // Dispatch an event to update the admin count (for UI purposes)
+    document.dispatchEvent(new CustomEvent('adminLoggedIn', { 
+      detail: { email }
+    }));
+    
     return true;
   } catch (error) {
     console.error('Error in checkAdminCredentials:', error);
@@ -77,4 +85,15 @@ export const setupAdminAccount = async () => {
     console.error('Error in setupAdminAccount:', error);
     return false;
   }
+};
+
+// Helper to check if the current user is authenticated as admin
+export const isAdminAuthenticated = () => {
+  return localStorage.getItem('admin_authenticated') === 'true';
+};
+
+// Helper to clear admin authentication
+export const clearAdminAuthentication = () => {
+  localStorage.removeItem('admin_authenticated');
+  localStorage.removeItem('admin_email');
 };

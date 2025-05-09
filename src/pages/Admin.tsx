@@ -15,6 +15,7 @@ import { AdminSubscribers } from "@/components/admin/AdminSubscribers";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AdminEventsList } from "@/components/admin/AdminEventsList";
 import { AdminCategoriesList } from "@/components/admin/categories/AdminCategoriesList";
+import { isAdminAuthenticated } from "@/utils/authHelpers";
 
 function AdminPage() {
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
@@ -22,6 +23,7 @@ function AdminPage() {
   const { isAuthenticated, isAuthLoading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [isAdminAuth, setIsAdminAuth] = useState(isAdminAuthenticated());
 
   const getActiveTabFromRoute = () => {
     const path = location.pathname.split('/')[2] || 'dashboard';
@@ -31,6 +33,26 @@ function AdminPage() {
   const handleTabChange = (tab: string) => {
     navigate(`/admin/${tab}`);
   };
+
+  // Check admin authentication status on mount and when auth changes
+  useEffect(() => {
+    const checkAdminAuth = () => {
+      setIsAdminAuth(isAdminAuthenticated());
+    };
+
+    checkAdminAuth();
+    
+    // Listen for admin login events
+    const handleAdminLogin = () => {
+      checkAdminAuth();
+    };
+    
+    document.addEventListener('adminLoggedIn', handleAdminLogin);
+    
+    return () => {
+      document.removeEventListener('adminLoggedIn', handleAdminLogin);
+    };
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const handleAdminCountUpdate = (event: any) => {
@@ -53,14 +75,18 @@ function AdminPage() {
     );
   }
 
-  if (!isAuthenticated) {
+  // Check both Supabase authentication and admin-specific authentication
+  if (!isAuthenticated || !isAdminAuth) {
     return (
       <>
         <AdminLoginSection onLoginClick={() => setShowLoginModal(true)} />
         <AdminLogin 
           isOpen={showLoginModal} 
           onClose={() => setShowLoginModal(false)} 
-          onLoginSuccess={() => setShowLoginModal(false)} 
+          onLoginSuccess={() => {
+            setShowLoginModal(false);
+            setIsAdminAuth(true);
+          }} 
         />
       </>
     );

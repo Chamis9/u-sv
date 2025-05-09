@@ -7,6 +7,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/components/ui/use-toast";
+import { clearAdminAuthentication } from "@/utils/authHelpers";
 
 export const AdminHeader = memo(function AdminHeader() {
   const isMobile = useIsMobile();
@@ -14,10 +15,9 @@ export const AdminHeader = memo(function AdminHeader() {
   const { translations } = useLanguage();
   const { toast } = useToast();
   
-  // Get current user email from localStorage or session
+  // Get current user email from localStorage
   const getUserEmail = useCallback(() => {
     try {
-      // Check for email in localStorage (simpler approach)
       const emailFromStorage = localStorage.getItem('admin_email');
       if (emailFromStorage) {
         return emailFromStorage;
@@ -32,10 +32,18 @@ export const AdminHeader = memo(function AdminHeader() {
   
   const handleLogout = useCallback(async () => {
     try {
+      // Clear admin authentication first
+      clearAdminAuthentication();
+      
+      // Then log out from Supabase Auth
       await logout();
+      
       toast({
         description: translations.admin?.logoutSuccess || "You have been successfully logged out",
       });
+      
+      // Force a page reload after logout
+      window.location.href = '/admin';
     } catch (error) {
       console.error("Logout error:", error);
       toast({
