@@ -38,7 +38,7 @@ export function Footer() {
               <Mail size={14} className="hidden sm:inline" />
               <span>{footer.contactLink || "Kontakti"}</span>
             </Link>
-            <div className="hidden sm:flex items-center text-xs sm:text-sm text-ticket-text/70">
+            <div className="flex items-center text-xs sm:text-sm text-ticket-text/70">
               <span className="flex items-center">
                 {footer.madeWith} 
                 <Heart 
