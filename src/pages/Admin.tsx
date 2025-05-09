@@ -12,7 +12,6 @@ import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminSubscribers } from "@/components/admin/AdminSubscribers";
 import { AdminSettings } from "@/components/admin/AdminSettings";
-import { AdminEventsList } from "@/components/admin/AdminEventsList";
 import { AdminCategoriesList } from "@/components/admin/categories/AdminCategoriesList";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -110,7 +109,6 @@ function AdminPage() {
               <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="/dashboard" element={<AdminDashboard />} />
               <Route path="/users" element={<AdminUsers />} />
-              <Route path="/events" element={<AdminEventsList />} />
               <Route path="/categories" element={<AdminCategoriesList />} />
               <Route path="/subscribers" element={<AdminSubscribers />} />
               <Route path="/settings" element={<AdminSettings />} />

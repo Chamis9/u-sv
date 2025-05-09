@@ -1,5 +1,5 @@
 
-import { LayoutDashboard, Users, Mail, Settings, Calendar, FolderPlus, Shield } from "lucide-react";
+import { LayoutDashboard, Users, Mail, Settings, FolderPlus, Shield } from "lucide-react";
 
 export const getNavItems = (translations: any, userCount?: number, subscriberCount?: number, adminCount?: number) => [
   {
@@ -14,12 +14,6 @@ export const getNavItems = (translations: any, userCount?: number, subscriberCou
     icon: <Users className="mr-2 h-4 w-4" />,
     href: "/admin/users",
     badge: userCount
-  },
-  {
-    id: "events",
-    label: "Events",
-    icon: <Calendar className="mr-2 h-4 w-4" />,
-    href: "/admin/events"
   },
   {
     id: "categories",
@@ -41,4 +35,3 @@ export const getNavItems = (translations: any, userCount?: number, subscriberCou
     href: "/admin/settings"
   }
 ];
-
