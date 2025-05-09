@@ -72,8 +72,8 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
       toast({
         variant: "destructive",
         description: currentLanguage.code === 'lv' 
-          ? "Neizdevās pieslēgties. Pārbaudiet savus pieslēgšanās datus." 
-          : "Failed to log in. Please check your credentials.",
+          ? "Neizdevās pieslēgties. Pārbaudiet savus pieslēgšanās datus vai piekļuves tiesības." 
+          : "Failed to log in. Please check your credentials or access permissions.",
       });
     } finally {
       setIsLoading(false);

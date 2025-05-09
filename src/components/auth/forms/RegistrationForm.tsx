@@ -53,15 +53,22 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
 
       console.log('Registering user with email:', values.email);
 
-      // Register the user through our custom hook
-      const success = await registerUser(values.email, values.password, {
+      // Set default role to 'user'
+      const userData = {
         firstName: values.firstName,
         lastName: values.lastName,
         countryCode: values.countryCode,
         phoneNumber: values.phoneNumber,
-      });
+        role: 'user', // Default role for all new registrations
+      };
+
+      // Register the user through our custom hook
+      const success = await registerUser(values.email, values.password, userData);
 
       if (success) {
+        // Set user role in localStorage
+        localStorage.setItem('user_role', 'user');
+        
         toast({
           description: translations.registrationSuccess,
         });

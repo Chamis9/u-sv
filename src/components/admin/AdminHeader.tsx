@@ -11,7 +11,7 @@ import { clearAdminAuthentication } from "@/utils/authHelpers";
 
 export const AdminHeader = memo(function AdminHeader() {
   const isMobile = useIsMobile();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, userRole } = useAuth();
   const { translations } = useLanguage();
   const { toast } = useToast();
   
@@ -54,6 +54,7 @@ export const AdminHeader = memo(function AdminHeader() {
   }, [logout, toast, translations]);
   
   const userEmail = getUserEmail();
+  const isAdmin = userRole === 'admin';
   
   if (isMobile) {
     return (
@@ -68,8 +69,8 @@ export const AdminHeader = memo(function AdminHeader() {
               Admin
             </span>
           </Link>
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5 text-white" />
+          <Button variant="ghost" size="icon" onClick={handleLogout}>
+            <LogOut className="h-5 w-5 text-white" />
           </Button>
         </div>
       </header>
@@ -90,6 +91,9 @@ export const AdminHeader = memo(function AdminHeader() {
             <div className="flex items-center gap-2">
               <span className="text-white text-sm hidden md:inline-block truncate max-w-[150px]">
                 {userEmail}
+              </span>
+              <span className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 text-xs font-medium px-2 py-0.5 rounded">
+                {isAdmin ? 'Admin' : 'User'}
               </span>
               <Button 
                 variant="ghost" 

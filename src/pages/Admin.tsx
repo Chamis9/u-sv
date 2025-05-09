@@ -16,14 +16,16 @@ import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AdminEventsList } from "@/components/admin/AdminEventsList";
 import { AdminCategoriesList } from "@/components/admin/categories/AdminCategoriesList";
 import { isAdminAuthenticated } from "@/utils/authHelpers";
+import { useToast } from "@/components/ui/use-toast";
 
 function AdminPage() {
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
   const [adminCount, setAdminCount] = useState(0);
-  const { isAuthenticated, isAuthLoading } = useAuth();
+  const { isAuthenticated, isAuthLoading, userRole } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [isAdminAuth, setIsAdminAuth] = useState(isAdminAuthenticated());
+  const { toast } = useToast();
 
   const getActiveTabFromRoute = () => {
     const path = location.pathname.split('/')[2] || 'dashboard';
@@ -53,6 +55,20 @@ function AdminPage() {
       document.removeEventListener('adminLoggedIn', handleAdminLogin);
     };
   }, [isAuthenticated]);
+
+  // Check user role on mount and redirect if needed
+  useEffect(() => {
+    if (isAuthenticated && !isAuthLoading) {
+      if (userRole !== 'admin' && !isAdminAuth) {
+        toast({
+          variant: "destructive",
+          title: "Access Denied",
+          description: "You don't have permission to access the admin panel.",
+        });
+        navigate('/');
+      }
+    }
+  }, [isAuthenticated, isAuthLoading, userRole, navigate, toast]);
 
   useEffect(() => {
     const handleAdminCountUpdate = (event: any) => {
