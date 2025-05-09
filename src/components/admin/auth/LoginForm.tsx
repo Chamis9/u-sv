@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -50,7 +49,6 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      console.log('Attempting admin login with email:', data.email);
       const isAdmin = await checkAdminCredentials(data.email, data.password);
 
       if (!isAdmin) {
@@ -63,17 +61,16 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
           : "Successfully logged into the admin panel.",
       });
       
-      // Force a page reload after successful login to ensure all components refresh
-      window.location.href = '/admin/dashboard';
-      
+      // Reload the page to update authentication status
+      window.location.reload();
       onLoginSuccess();
     } catch (error: any) {
       console.error("Login error:", error);
       toast({
         variant: "destructive",
         description: currentLanguage.code === 'lv' 
-          ? "Neizdevās pieslēgties. Pārbaudiet savus pieslēgšanās datus vai piekļuves tiesības." 
-          : "Failed to log in. Please check your credentials or access permissions.",
+          ? "Neizdevās pieslēgties. Pārbaudiet savus pieslēgšanās datus." 
+          : "Failed to log in. Please check your credentials.",
       });
     } finally {
       setIsLoading(false);

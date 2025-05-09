@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
@@ -6,26 +5,22 @@ import { Footer } from "@/components/Footer";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { AdminContent } from "@/components/admin/AdminContent";
 import { AdminLoginSection } from "@/components/admin/AdminLoginSection";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { RegisteredUsers } from "@/components/admin/RegisteredUsers";
-import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminSubscribers } from "@/components/admin/AdminSubscribers";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AdminEventsList } from "@/components/admin/AdminEventsList";
 import { AdminCategoriesList } from "@/components/admin/categories/AdminCategoriesList";
-import { isAdminAuthenticated } from "@/utils/authHelpers";
-import { useToast } from "@/components/ui/use-toast";
 
 function AdminPage() {
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
   const [adminCount, setAdminCount] = useState(0);
-  const { isAuthenticated, isAuthLoading, userRole } = useAuth();
+  const { isAuthenticated, isAuthLoading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [isAdminAuth, setIsAdminAuth] = useState(isAdminAuthenticated());
-  const { toast } = useToast();
 
   const getActiveTabFromRoute = () => {
     const path = location.pathname.split('/')[2] || 'dashboard';
@@ -35,40 +30,6 @@ function AdminPage() {
   const handleTabChange = (tab: string) => {
     navigate(`/admin/${tab}`);
   };
-
-  // Check admin authentication status on mount and when auth changes
-  useEffect(() => {
-    const checkAdminAuth = () => {
-      setIsAdminAuth(isAdminAuthenticated());
-    };
-
-    checkAdminAuth();
-    
-    // Listen for admin login events
-    const handleAdminLogin = () => {
-      checkAdminAuth();
-    };
-    
-    document.addEventListener('adminLoggedIn', handleAdminLogin);
-    
-    return () => {
-      document.removeEventListener('adminLoggedIn', handleAdminLogin);
-    };
-  }, [isAuthenticated]);
-
-  // Check user role on mount and redirect if needed
-  useEffect(() => {
-    if (isAuthenticated && !isAuthLoading) {
-      if (userRole !== 'admin' && !isAdminAuth) {
-        toast({
-          variant: "destructive",
-          title: "Access Denied",
-          description: "You don't have permission to access the admin panel.",
-        });
-        navigate('/');
-      }
-    }
-  }, [isAuthenticated, isAuthLoading, userRole, navigate, toast]);
 
   useEffect(() => {
     const handleAdminCountUpdate = (event: any) => {
@@ -91,18 +52,14 @@ function AdminPage() {
     );
   }
 
-  // Check both Supabase authentication and admin-specific authentication
-  if (!isAuthenticated || !isAdminAuth) {
+  if (!isAuthenticated) {
     return (
       <>
         <AdminLoginSection onLoginClick={() => setShowLoginModal(true)} />
         <AdminLogin 
           isOpen={showLoginModal} 
           onClose={() => setShowLoginModal(false)} 
-          onLoginSuccess={() => {
-            setShowLoginModal(false);
-            setIsAdminAuth(true);
-          }} 
+          onLoginSuccess={() => setShowLoginModal(false)} 
         />
       </>
     );
@@ -128,7 +85,6 @@ function AdminPage() {
             <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/dashboard" element={<AdminDashboard />} />
             <Route path="/users" element={<RegisteredUsers />} />
-            <Route path="/admins" element={<AdminUsers />} />
             <Route path="/events" element={<AdminEventsList />} />
             <Route path="/categories" element={<AdminCategoriesList />} />
             <Route path="/subscribers" element={<AdminSubscribers />} />

@@ -9,17 +9,9 @@ interface ProfileAuthGuardProps {
   children: React.ReactNode;
   isAuthenticated: boolean;
   isLoading?: boolean;
-  requiredRole?: string;
-  userRole?: string;
 }
 
-export function ProfileAuthGuard({ 
-  children, 
-  isAuthenticated, 
-  isLoading = false,
-  requiredRole,
-  userRole = 'user'
-}: ProfileAuthGuardProps) {
+export function ProfileAuthGuard({ children, isAuthenticated, isLoading = false }: ProfileAuthGuardProps) {
   const { currentLanguage } = useLanguage();
   
   const t = (lvText: string, enText: string, ruText?: string) => {
@@ -50,24 +42,6 @@ export function ProfileAuthGuard({
           )}
         </p>
         <LoginButton variant="default" className="gap-2" />
-      </div>
-    );
-  }
-
-  // Check role-based access if a required role is specified
-  if (requiredRole && userRole !== requiredRole) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center">
-        <h2 className="text-2xl font-semibold mb-4">
-          {t("Pieeja liegta", "Access denied", "Доступ запрещен")}
-        </h2>
-        <p className="text-muted-foreground mb-6">
-          {t(
-            "Jums nav nepieciešamo tiesību, lai piekļūtu šai lapai", 
-            "You don't have the required permissions to access this page", 
-            "У вас нет необходимых разрешений для доступа к этой странице"
-          )}
-        </p>
       </div>
     );
   }

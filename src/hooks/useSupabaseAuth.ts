@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types/users";
-import { setUserRoleAfterLogin } from "@/utils/authHelpers";
 
 export function useSupabaseAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -29,9 +28,9 @@ export function useSupabaseAuth() {
           created_at: userData.created_at,
           updated_at: userData.updated_at,
           last_sign_in_at: userData.last_sign_in_at,
-          role: localStorage.getItem('user_role') || 'user', // Get role from localStorage
+          role: 'user',
           status: userData.status as 'active' | 'inactive',
-          avatar_url: userData.avatar_url
+          avatar_url: null // Always set to null
         });
       }
     } catch (error) {
@@ -52,9 +51,6 @@ export function useSupabaseAuth() {
           setIsAuthenticated(true);
           setUserEmail(session.user.email);
           
-          // Check and set user role
-          await setUserRoleAfterLogin();
-          
           // Fetch user data if authenticated
           if (session.user.email) {
             await fetchUserData(session.user.email);
@@ -63,14 +59,12 @@ export function useSupabaseAuth() {
           setIsAuthenticated(false);
           setUserEmail(null);
           setUser(null);
-          localStorage.removeItem('user_role');
         }
       } catch (error) {
         console.error("Error checking auth:", error);
         setIsAuthenticated(false);
         setUserEmail(null);
         setUser(null);
-        localStorage.removeItem('user_role');
       } finally {
         setIsAuthLoading(false);
       }
@@ -85,9 +79,6 @@ export function useSupabaseAuth() {
           setIsAuthenticated(true);
           setUserEmail(session.user.email);
           
-          // Check and set user role
-          await setUserRoleAfterLogin();
-          
           // Fetch user data if authenticated
           if (session.user.email) {
             await fetchUserData(session.user.email);
@@ -96,7 +87,6 @@ export function useSupabaseAuth() {
           setIsAuthenticated(false);
           setUserEmail(null);
           setUser(null);
-          localStorage.removeItem('user_role');
         }
       }
     );
@@ -110,14 +100,11 @@ export function useSupabaseAuth() {
   const refreshUserData = async () => {
     if (userEmail) {
       await fetchUserData(userEmail);
-      // Check and update role
-      await setUserRoleAfterLogin();
     }
   };
 
   const logout = async () => {
     try {
-      localStorage.removeItem('user_role');
       await supabase.auth.signOut();
       setIsAuthenticated(false);
       setUserEmail(null);

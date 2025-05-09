@@ -41,44 +41,13 @@ export const checkAdminCredentials = async (email: string, password: string) => 
       return false;
     }
 
-    console.log('User authenticated as admin successfully');
-    
     // If we get here, the user is authenticated and is an admin
     localStorage.setItem('admin_authenticated', 'true');
     localStorage.setItem('admin_email', email);
-    localStorage.setItem('admin_role', 'admin');
-    
-    // Dispatch an event to update the admin count (for UI purposes)
-    document.dispatchEvent(new CustomEvent('adminLoggedIn', { 
-      detail: { email }
-    }));
-    
     return true;
   } catch (error) {
     console.error('Error in checkAdminCredentials:', error);
     return false;
-  }
-};
-
-// Check if a user has a specific role
-export const checkUserRole = async (userId: string): Promise<string> => {
-  try {
-    // First check if user is in admin_user table
-    const { data: adminData, error: adminError } = await supabase
-      .from('admin_user')
-      .select('*')
-      .eq('user_id', userId)
-      .maybeSingle();
-      
-    if (!adminError && adminData) {
-      return 'admin';
-    }
-    
-    // If not an admin, they're a regular user
-    return 'user';
-  } catch (error) {
-    console.error('Error checking user role:', error);
-    return 'user'; // Default to regular user on error
   }
 };
 
@@ -108,54 +77,4 @@ export const setupAdminAccount = async () => {
     console.error('Error in setupAdminAccount:', error);
     return false;
   }
-};
-
-// Helper to check if the current user is authenticated as admin
-export const isAdminAuthenticated = () => {
-  return localStorage.getItem('admin_authenticated') === 'true';
-};
-
-// Helper to clear admin authentication
-export const clearAdminAuthentication = () => {
-  localStorage.removeItem('admin_authenticated');
-  localStorage.removeItem('admin_email');
-  localStorage.removeItem('admin_role');
-};
-
-// Helper to check user's role after login
-export const setUserRoleAfterLogin = async () => {
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session || !session.user) {
-      return null;
-    }
-
-    const userId = session.user.id;
-    const userEmail = session.user.email;
-
-    // Check if the user is in admin_user table
-    const { data: adminData, error: adminError } = await supabase
-      .from('admin_user')
-      .select('*')
-      .eq('email', userEmail)
-      .maybeSingle();
-
-    if (!adminError && adminData) {
-      localStorage.setItem('user_role', 'admin');
-      return 'admin';
-    }
-
-    // Default to regular user
-    localStorage.setItem('user_role', 'user');
-    return 'user';
-  } catch (error) {
-    console.error('Error in setUserRoleAfterLogin:', error);
-    localStorage.setItem('user_role', 'user');
-    return 'user';
-  }
-};
-
-// Get the current user's role from localStorage
-export const getCurrentUserRole = (): string => {
-  return localStorage.getItem('user_role') || 'user';
 };
