@@ -105,14 +105,14 @@ export function TicketsTab({ user }: TicketsTabProps) {
   }
   
   return (
-    <Card className="bg-card dark:bg-gray-900">
+    <Card className="bg-card dark:bg-gray-900 shadow-sm">
       <TicketsHeader 
         onAddTicket={() => setAddTicketOpen(true)} 
         onRefresh={handleRefreshClick}
       />
       
-      <CardContent>
-        <Tabs defaultValue="added">
+      <CardContent className="px-2 sm:px-6">
+        <Tabs defaultValue="added" className="w-full">
           <TabsList 
             addedCount={addedTickets.length}
             purchasedCount={purchasedTickets.length}

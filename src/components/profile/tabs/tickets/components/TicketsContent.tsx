@@ -5,7 +5,7 @@ import { useLanguage } from "@/features/language";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, Ticket } from "lucide-react";
-import { VisualTicket } from "./VisualTicket";
+import { VisualTicket } from "./visual-ticket";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TicketDetailDialog } from "./ticket-list/TicketDetailDialog";
 
@@ -61,20 +61,18 @@ export function TicketsContent({
 
   return (
     <>
-      <ScrollArea className="h-[600px] pr-4">
-        <div className="space-y-4">
-          {tickets.map((ticket) => (
-            <VisualTicket
-              key={ticket.id}
-              ticket={ticket}
-              onView={setSelectedTicket}
-              onEdit={onEdit}
-              onDelete={!loadingDelete ? onDelete : undefined}
-              ticketType={ticketType}
-            />
-          ))}
-        </div>
-      </ScrollArea>
+      <div className="space-y-4 max-w-full">
+        {tickets.map((ticket) => (
+          <VisualTicket
+            key={ticket.id}
+            ticket={ticket}
+            onView={setSelectedTicket}
+            onEdit={onEdit}
+            onDelete={!loadingDelete ? onDelete : undefined}
+            ticketType={ticketType}
+          />
+        ))}
+      </div>
 
       {/* Ticket Details Dialog */}
       <TicketDetailDialog 

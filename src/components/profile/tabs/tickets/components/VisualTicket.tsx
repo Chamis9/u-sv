@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { UserTicket } from "@/hooks/tickets/types";
 import { formatPrice, formatDate } from "@/utils/formatters";
 import { Badge } from "@/components/ui/badge";
-import { Ticket as TicketIcon, Calendar, Tag, Download, Eye, MapPin, Clock, Pencil } from "lucide-react";
+import { Ticket as TicketIcon, Calendar, Tag, Download, Eye, MapPin, Clock, Pencil, Trash2 } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { Button } from "@/components/ui/button";
 import { TicketPreviewDialog } from "@/components/events/components/TicketPreviewDialog";
@@ -72,63 +72,65 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
         {/* Ticket header with color band */}
         <div className={`h-2 ${getStatusColor(ticket.status)}`}></div>
         
-        <div className="p-4">
+        <div className="p-3 sm:p-4">
           <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <h3 className="font-semibold text-lg mb-1 truncate">{ticket.title}</h3>
-              <div className="flex items-center text-sm text-muted-foreground mb-1">
-                <Calendar className="h-4 w-4 mr-1" />
-                {ticket.event_date 
-                  ? formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')
-                  : formatDate(ticket.created_at, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-base sm:text-lg mb-1 truncate">{ticket.title}</h3>
+              <div className="flex flex-wrap items-center text-xs sm:text-sm text-muted-foreground mb-1">
+                <div className="flex items-center mr-3 mb-1">
+                  <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  {ticket.event_date 
+                    ? formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')
+                    : formatDate(ticket.created_at, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
+                </div>
                 {ticket.event_time && (
-                  <span className="ml-2 flex items-center">
+                  <div className="flex items-center mb-1">
                     <Clock className="h-3 w-3 mr-1" />
                     {formatTime(ticket.event_time)}
-                  </span>
+                  </div>
                 )}
               </div>
               
               {ticket.venue && (
-                <div className="flex items-center text-sm text-muted-foreground mb-3">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  {ticket.venue}
+                <div className="flex items-center text-xs sm:text-sm text-muted-foreground mb-2">
+                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  <span className="truncate">{ticket.venue}</span>
                 </div>
               )}
               
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <div className="flex items-center">
-                  <Tag className="h-4 w-4 mr-1 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">{ticket.category}</span>
+                  <Tag className="h-3 w-3 sm:h-4 sm:w-4 mr-1 text-muted-foreground" />
+                  <span className="text-xs sm:text-sm text-muted-foreground truncate max-w-[150px]">{ticket.category}</span>
                 </div>
-                <Badge className={getStatusColor(ticket.status)}>
+                <Badge className={`${getStatusColor(ticket.status)} text-xs whitespace-nowrap`}>
                   {getStatusText(ticket.status)}
                 </Badge>
               </div>
               
-              <div className="text-xl font-bold text-primary">
+              <div className="text-lg sm:text-xl font-bold text-primary">
                 {formatPrice(ticket.price)}
               </div>
               
               {/* Always show quantity and price per unit, even for single tickets */}
-              <div className="text-sm text-muted-foreground mt-1">
+              <div className="text-xs sm:text-sm text-muted-foreground mt-1">
                 {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
               </div>
             </div>
             
-            <div className="ml-4 mt-1">
+            <div className="ml-3 mt-1 hidden sm:block">
               <TicketIcon className="h-10 w-10 text-muted-foreground opacity-20" />
             </div>
           </div>
           
-          <div className="mt-4 flex gap-2">
+          <div className="mt-3 flex flex-wrap gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={handleViewClick}
-              className="flex-1"
+              className="flex-1 text-xs px-2 h-8"
             >
-              <Eye className="h-4 w-4 mr-2" />
+              <Eye className="h-3 w-3 mr-1" />
               {t("Skatīt", "View")}
             </Button>
             
@@ -139,9 +141,9 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
                 onClick={() => {
                   window.open(`https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/tickets/${ticket.file_path}`, '_blank');
                 }}
-                className="flex-1"
+                className="flex-1 text-xs px-2 h-8"
               >
-                <Download className="h-4 w-4 mr-2" />
+                <Download className="h-3 w-3 mr-1" />
                 {t("Lejupielādēt", "Download")}
               </Button>
             )}
@@ -151,9 +153,9 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
                 variant="outline"
                 size="sm"
                 onClick={() => onEdit(ticket)}
-                className="flex-1"
+                className="flex-1 text-xs px-2 h-8"
               >
-                <Pencil className="h-4 w-4 mr-2" />
+                <Pencil className="h-3 w-3 mr-1" />
                 {t("Rediģēt", "Edit")}
               </Button>
             )}
@@ -163,8 +165,9 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
                 variant="destructive"
                 size="sm"
                 onClick={handleDeleteClick}
-                className="flex-1"
+                className="flex-1 text-xs px-2 h-8"
               >
+                <Trash2 className="h-3 w-3 mr-1" />
                 {t("Dzēst", "Delete")}
               </Button>
             )}
