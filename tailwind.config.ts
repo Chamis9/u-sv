@@ -77,10 +77,10 @@ export default {
 					900: '#7c2d12',
 				},
 				ticket: {
-					bg: '#00635a',        // Teal background from image
+					bg: '#16878d',        // Updated teal background to requested color
 					text: '#f2e8c9',      // Cream/beige text color from image
 					accent: '#f7b731',    // Yellow/gold from the ticket in the image
-					check: '#00635a',     // Teal check color
+					check: '#16878d',     // Updated teal check color to requested color
 					checkbg: '#f2e8c9',   // Cream background for check
 				},
 			},
