@@ -22,10 +22,10 @@ export async function syncAuthUser(authUser: any) {
         phone_number: authUser.user_metadata?.phone || null
       };
       
-      const { data, error: rpcError } = await supabase.rpc<CreateUserProfileResult, CreateUserProfileParams>(
+      const { data, error: rpcError } = await supabase.rpc(
         'create_user_profile', 
         params
-      );
+      ) as { data: CreateUserProfileResult; error: any };
       
       if (!rpcError) {
         console.log("User synced with RPC function:", data);

@@ -83,10 +83,10 @@ export function useUserData() {
               phone_number: authUser.user.user_metadata?.phone || null
             };
             
-            const { data, error: rpcError } = await supabase.rpc<CreateUserProfileResult, CreateUserProfileParams>(
+            const { data, error: rpcError } = await supabase.rpc(
               'create_user_profile',
               params
-            );
+            ) as { data: CreateUserProfileResult; error: any };
             
             if (!rpcError && data) {
               console.log("User record created successfully via RPC:", data);
