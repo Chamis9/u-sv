@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +9,7 @@ import { EmailInput } from "../EmailInput";
 import { PasswordInput } from "../PasswordInput";
 import { loginFormSchema, type LoginFormData } from "../schema";
 import { usePreviousEmails } from "@/hooks/usePreviousEmails";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth"; // Updated import path
 
 interface LoginFormProps {
   translations: any;

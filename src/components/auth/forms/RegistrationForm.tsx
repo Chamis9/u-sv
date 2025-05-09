@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,7 +10,7 @@ import { NameFields } from "./components/NameFields";
 import { PhoneField } from "./components/PhoneField";
 import { PasswordFields } from "./components/PasswordFields";
 import { getRegistrationFormSchema, type RegistrationFormData } from "../schema";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth"; // Updated import path
 
 interface RegistrationFormProps {
   translations: any;
