@@ -1,10 +1,11 @@
+
 import React from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { SEO } from "@/components/SEO";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ProfileContainer } from "@/components/profile/ProfileContainer";
-import { useAuth } from "@/contexts/auth"; // Updated import path
+import { useAuth } from "@/contexts/AuthContext"; // Fix import path
 
 const Profile = () => {
   const { isAuthenticated, isAuthLoading, user } = useAuth();

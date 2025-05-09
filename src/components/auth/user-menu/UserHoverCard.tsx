@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/hover-card";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { LogOut, User as UserIcon, Settings, Ticket } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { UserAvatar } from "../UserAvatar";
@@ -25,10 +24,6 @@ export function UserHoverCard({ user, onLogout, onLinkClick }: UserHoverCardProp
   
   const t = (lvText: string, enText: string) => currentLanguage.code === 'lv' ? lvText : enText;
 
-  const userInitials = user.first_name && user.last_name 
-    ? `${user.first_name[0]}${user.last_name[0]}` 
-    : user.email?.substring(0, 2).toUpperCase() || '';
-    
   const handleAvatarClick = () => {
     navigate(`/profile/${user.id}/account`);
   };

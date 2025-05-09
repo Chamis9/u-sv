@@ -49,7 +49,7 @@ export function Header() {
             <LoginButton 
               variant="ghost" 
               className="text-ticket-text hover:text-ticket-accent transition-colors hover:bg-transparent"
-              showIcon={false}
+              showIcon={true}
             >
               <UserCircle size={20} className="text-ticket-accent hover:text-ticket-accent" />
             </LoginButton>
