@@ -8,7 +8,17 @@ export function useAuthActions() {
   // Function for logging out
   const logout = useCallback(async () => {
     try {
-      await supabase.auth.signOut();
+      // Clean up auth state thoroughly
+      cleanupAuthState();
+      
+      // Try global sign out first
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (error) {
+        console.error("Error during global sign out:", error);
+        // Continue even if this fails
+      }
+      
       return true;
     } catch (error) {
       console.error("Error logging out:", error);

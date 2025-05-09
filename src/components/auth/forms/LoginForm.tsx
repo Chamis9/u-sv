@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,7 +10,7 @@ import { EmailInput } from "../EmailInput";
 import { PasswordInput } from "../PasswordInput";
 import { loginFormSchema, type LoginFormData } from "../schema";
 import { usePreviousEmails } from "@/hooks/usePreviousEmails";
-import { useAuth } from "@/contexts/auth"; // Updated import path
+import { useAuth } from "@/contexts/AuthContext";
 
 interface LoginFormProps {
   translations: any;
@@ -20,7 +21,7 @@ interface LoginFormProps {
 export function LoginForm({ translations, languageCode, onClose }: LoginFormProps) {
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
-  const { login } = useAuth(); // Use the enhanced login from AuthContext
+  const { login } = useAuth(); // Use the consolidated auth context
   const { previousEmails, showDropdown, setShowDropdown } = usePreviousEmails();
 
   const form = useForm<LoginFormData>({
@@ -64,7 +65,7 @@ export function LoginForm({ translations, languageCode, onClose }: LoginFormProp
 
       console.log('Attempting login with:', values.email);
       
-      // Login using the enhanced auth context hook
+      // Login using the auth context hook
       const success = await login(values.email, values.password);
       
       if (success) {
@@ -72,13 +73,9 @@ export function LoginForm({ translations, languageCode, onClose }: LoginFormProp
           description: translations.loginSuccessful || "Successfully logged in",
         });
         
-        // Reload the page to ensure a clean state
-        setTimeout(() => {
-          if (onClose) {
-            onClose();
-          }
-          window.location.reload();
-        }, 500);
+        // Close the dialog and reload the page to ensure a clean state
+        onClose();
+        window.location.reload();
       } else {
         toast({
           variant: "destructive",
