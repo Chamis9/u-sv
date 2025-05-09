@@ -92,7 +92,7 @@ const AboutUs = () => {
             
               <div className="grid gap-8 md:grid-cols-3">
                 {content.map((section, index) => (
-                  <Card key={index} className="transition-all hover:shadow-lg border-t-4 border-t-ticket-accent bg-ticket-bg/50 border border-ticket-text/10">
+                  <Card key={index} className="transition-all hover:shadow-lg border border-ticket-accent bg-ticket-bg/50">
                     <CardContent className="pt-6">
                       <div className="flex items-center mb-4">
                         {section.icon}
@@ -108,7 +108,7 @@ const AboutUs = () => {
                 ))}
               </div>
 
-              <div className="mt-12 bg-ticket-bg/50 p-6 rounded-lg border border-ticket-text/10">
+              <div className="mt-12 bg-ticket-bg/50 p-6 rounded-lg border border-ticket-accent">
                 <h2 className="text-2xl font-semibold mb-4 text-ticket-accent">
                   {currentLanguage.code === 'lv' ? "Verificēti lietotāji" : 
                   currentLanguage.code === 'ru' ? "Проверенные пользователи" : 
