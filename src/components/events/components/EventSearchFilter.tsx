@@ -59,7 +59,10 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
           <Button variant="outline" className="w-full sm:w-[300px] flex justify-between items-center">
             <div className="flex items-center">
               <CalendarIcon className="mr-2 h-4 w-4" />
-              <span className="truncate">{dateButtonText}</span>
+              {/* Apply green color to the default text only */}
+              <span className={`truncate ${!startDate && !endDate ? "text-green-600 dark:text-green-400" : ""}`}>
+                {dateButtonText}
+              </span>
             </div>
             {(startDate || endDate) && (
               <X 
