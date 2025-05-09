@@ -49,7 +49,7 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
           placeholder={t("Meklēt pasākumus un biļetes...", "Search events and tickets...")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
+          className="pl-10 text-green-600 dark:text-green-400 focus-visible:ring-ticket-accent focus-visible:ring-2 focus-visible:border-ticket-accent"
         />
         <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
       </div>
@@ -58,7 +58,7 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
         <PopoverTrigger asChild>
           <Button variant="outline" className="w-full sm:w-[300px] flex justify-between items-center">
             <div className="flex items-center">
-              <CalendarIcon className="mr-2 h-4 w-4" />
+              <CalendarIcon className="mr-2 h-4 w-4 text-green-600 dark:text-green-400" />
               {/* Apply green color to the default text only */}
               <span className={`truncate ${!startDate && !endDate ? "text-green-600 dark:text-green-400" : ""}`}>
                 {dateButtonText}
