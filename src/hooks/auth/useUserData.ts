@@ -92,9 +92,10 @@ export function useUserData() {
               console.log("User record created successfully via RPC:", data);
               
               // Create new user object from the RPC result
-              const userRecord = data as CreateUserProfileResult;
-              
-              if (userRecord) {
+              if (data) {
+                // Cast to the correct type - the server response will match our CreateUserProfileResult type
+                const userRecord = data as unknown as CreateUserProfileResult;
+                
                 setUser({
                   id: userRecord.id,
                   email: userRecord.email,
