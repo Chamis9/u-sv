@@ -2,6 +2,7 @@
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/types/users";
+import { CreateUserProfileParams, CreateUserProfileResult } from "@/utils/rpcFunctions";
 
 export function useUserData() {
   const [user, setUser] = useState<User | null>(null);
@@ -73,32 +74,42 @@ export function useUserData() {
           console.log("Creating user record in database for authenticated user:", authUser.user.email);
           
           try {
-            // Try using the RPC function first (most reliable)
-            const { data: rpcResult, error: rpcError } = await supabase.rpc('create_user_profile', {
+            // Try using the RPC function first (most reliable) with proper typing
+            const params: CreateUserProfileParams = {
               user_id: authUser.user.id,
-              user_email: authUser.user.email,
+              user_email: authUser.user.email || '',
               first_name: authUser.user.user_metadata?.first_name || null,
               last_name: authUser.user.user_metadata?.last_name || null,
               phone_number: authUser.user.user_metadata?.phone || null
-            });
+            };
+            
+            const { data: rpcResult, error: rpcError } = await supabase.rpc<CreateUserProfileParams, CreateUserProfileResult>(
+              'create_user_profile',
+              params
+            );
             
             if (!rpcError && rpcResult) {
               console.log("User record created successfully via RPC:", rpcResult);
               
-              setUser({
-                id: rpcResult.id,
-                email: rpcResult.email,
-                first_name: rpcResult.first_name,
-                last_name: rpcResult.last_name,
-                phone: rpcResult.phone,
-                created_at: rpcResult.created_at,
-                updated_at: rpcResult.updated_at,
-                last_sign_in_at: rpcResult.last_sign_in_at,
-                role: 'user',
-                status: rpcResult.status as 'active' | 'inactive',
-                avatar_url: rpcResult.avatar_url
-              });
-              return;
+              // The return type is a JSONB object, we need to parse it
+              const userRecord = typeof rpcResult === 'object' ? rpcResult : null;
+              
+              if (userRecord) {
+                setUser({
+                  id: userRecord.id,
+                  email: userRecord.email,
+                  first_name: userRecord.first_name,
+                  last_name: userRecord.last_name,
+                  phone: userRecord.phone,
+                  created_at: userRecord.created_at,
+                  updated_at: userRecord.updated_at,
+                  last_sign_in_at: userRecord.last_sign_in_at,
+                  role: 'user',
+                  status: userRecord.status as 'active' | 'inactive',
+                  avatar_url: userRecord.avatar_url
+                });
+                return;
+              }
             }
           } catch (rpcErr) {
             console.warn("RPC method not available:", rpcErr);

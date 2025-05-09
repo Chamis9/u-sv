@@ -1,5 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
+import { CreateUserProfileParams, CreateUserProfileResult } from '@/utils/rpcFunctions';
 
 /**
  * Synchronizes the authenticated user with the registered_users table
@@ -13,13 +14,18 @@ export async function syncAuthUser(authUser: any) {
     
     // First try the RPC function for direct database access (requires SQL function setup)
     try {
-      const { data: rpcData, error: rpcError } = await supabase.rpc('create_user_profile', {
+      const params: CreateUserProfileParams = {
         user_id: authUser.id,
         user_email: authUser.email,
         first_name: authUser.user_metadata?.first_name || null,
         last_name: authUser.user_metadata?.last_name || null,
         phone_number: authUser.user_metadata?.phone || null
-      });
+      };
+      
+      const { data: rpcData, error: rpcError } = await supabase.rpc<CreateUserProfileParams, CreateUserProfileResult>(
+        'create_user_profile', 
+        params
+      );
       
       if (!rpcError) {
         console.log("User synced with RPC function:", rpcData);

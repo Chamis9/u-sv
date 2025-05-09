@@ -3,6 +3,7 @@ import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { cleanupAuthState } from "@/utils/auth/authUtils";
 import { syncAuthUser } from "@/utils/syncAuthUser";
+import { CreateUserProfileParams } from "@/utils/rpcFunctions";
 
 type LoginFn = (email: string, password: string) => Promise<boolean>;
 type RegisterFn = (email: string, password: string, userData: any) => Promise<boolean>;
@@ -101,14 +102,20 @@ export function useEnhancedAuthActions(
           if (authData?.user) {
             console.log("Registration successful, syncing user to registered_users table:", authData.user);
             
-            // Use RPC function to bypass RLS and ensure user is created in registered_users
-            const { data: syncedUser, error: syncError } = await supabase.rpc('create_user_profile', {
+            // Use the type-safe parameters for our RPC function
+            const params: CreateUserProfileParams = {
               user_id: authData.user.id,
-              user_email: authData.user.email,
+              user_email: authData.user.email || '',
               first_name: userData.firstName,
               last_name: userData.lastName,
               phone_number: userData.phoneNumber ? `${userData.countryCode}${userData.phoneNumber}` : null
-            });
+            };
+            
+            // Use functions with explicit typing for the RPC call
+            const { data: syncedUser, error: syncError } = await supabase.rpc<CreateUserProfileParams>(
+              'create_user_profile', 
+              params
+            );
             
             if (syncError) {
               console.error("Error syncing user to registered_users:", syncError);
