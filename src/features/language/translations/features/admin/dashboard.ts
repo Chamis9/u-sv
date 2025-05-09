@@ -78,31 +78,5 @@ export const adminDashboardTranslations = {
     emailService: "Email Service",
     checkAllServices: "Check all services",
     sinceThen: "since"
-  },
-  ru: {
-    title: "Панель управления",
-    overview: "Статистика и обзор платформы",
-    totalUsers: "Всего пользователей",
-    newSubscribers: "Новые подписчики email",
-    activeTickets: "Активные тикеты",
-    userActivity: "Активность пользователей",
-    recentActivities: "Последние действия",
-    recentActivitiesDescription: "Недавние действия пользователей на платформе",
-    systemStatus: "Состояние системы",
-    systemStatusDescription: "Статус сервисов платформы",
-    quickActions: "Быстрые действия",
-    quickActionsDescription: "Часто используемые функции администратора",
-    manageUsers: "Управление пользователями",
-    messageSubscribers: "Отправить сообщение подписчикам",
-    manageTickets: "Управление тикетами",
-    operational: "Работает",
-    partiallyOperational: "Частично работает",
-    noActiveTickets: "Нет активных тикетов",
-    homepage: "Домашняя страница",
-    authentication: "Аутентификация",
-    database: "База данных",
-    emailService: "Сервис электронной почты",
-    checkAllServices: "Проверить все сервисы",
-    sinceThen: "с"
   }
 };

@@ -23,12 +23,5 @@ export const heroTranslations: Record<string, HeroTranslations> = {
     subtitle: "The first platform for ticket exchange in Latvia",
     subscribeText: "Subscribe to learn about platform launch",
     learnMoreBtn: "Learn more",
-  },
-  ru: {
-    title: "Продавайте и покупайте билеты",
-    titleHighlight: "просто и безопасно",
-    subtitle: "Первая платформа для обмена билетами в Латвии",
-    subscribeText: "Подпишитесь, чтобы узнать о запуске платформы",
-    learnMoreBtn: "Узнать больше",
   }
 };

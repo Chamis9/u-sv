@@ -7,24 +7,21 @@ export function AppearanceSettings() {
   const { currentLanguage } = useLanguage();
   
   // Translation helper
-  const t = (lvText: string, enText: string, ruText?: string) => {
+  const t = (lvText: string, enText: string) => {
     if (currentLanguage.code === 'lv') return lvText;
-    if (currentLanguage.code === 'ru') return ruText || enText;
     return enText;
   };
 
   return (
     <AppearanceAndLanguage 
-      cardTitle={t("Izskats un valoda", "Appearance and Language", "Внешний вид и язык")}
+      cardTitle={t("Izskats un valoda", "Appearance and Language")}
       cardDescription={t(
         "Pārvaldiet lietotāja saskarnes izskatu un valodu", 
-        "Manage the user interface appearance and language",
-        "Управляйте внешним видом и языком пользовательского интерфейса"
+        "Manage the user interface appearance and language"
       )}
       formDescriptionText={t(
         "Izvēlieties administrācijas paneļa valodu", 
-        "Choose the admin panel language",
-        "Выберите язык панели администратора"
+        "Choose the admin panel language"
       )}
     />
   );

@@ -26,13 +26,5 @@ export const footerTranslations: Record<Language['code'], FooterTranslations> = 
     cookieSettings: "Cookie Settings",
     privacyPolicy: "Privacy Policy",
     contactLink: "Contact"
-  },
-  ru: {
-    allRightsReserved: "© 2025 netieku.es",
-    madeWith: "Создано с",
-    location: "в Латвии",
-    cookieSettings: "Настройки файлов cookie",
-    privacyPolicy: "Политика конфиденциальности",
-    contactLink: "Контакты"
   }
 };

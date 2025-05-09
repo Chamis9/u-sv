@@ -63,26 +63,5 @@ export const eventsTranslations = {
     giftCardsDesc: "Various gift cards",
     other: "Other Events",
     otherDesc: "Other events"
-  },
-  ru: {
-    title: "Билеты",
-    theatre: "Театр",
-    theatreDesc: "Театр, опера, балет",
-    concerts: "Концерты",
-    concertsDesc: "Музыка различных исполнителей",
-    festivals: "Фестивали",
-    festivalsDesc: "Музыкальные, художественные и культурные фестивали",
-    sports: "Спорт",
-    sportsDesc: "Различные виды спорта",
-    cinema: "Кино",
-    cinemaDesc: "Кинотеатры, кинопоказы",
-    children: "Для детей",
-    childrenDesc: "Мероприятия для детей",
-    travel: "Путешествия",
-    travelDesc: "Путешествия, транспортные билеты",
-    giftCards: "Подарочные карты",
-    giftCardsDesc: "Различные подарочные карты",
-    other: "Другие мероприятия",
-    otherDesc: "Другие мероприятия"
   }
 };

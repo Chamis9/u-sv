@@ -13,9 +13,8 @@ interface SettingsTabProps {
 export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
   const { currentLanguage } = useLanguage();
   
-  const t = (lvText: string, enText: string, ruText?: string) => {
+  const t = (lvText: string, enText: string) => {
     if (currentLanguage.code === 'lv') return lvText;
-    if (currentLanguage.code === 'ru') return ruText || enText;
     return enText;
   };
   
@@ -23,16 +22,14 @@ export function SettingsTab({ user, onUserUpdate }: SettingsTabProps) {
     <div className="space-y-6">
       <Card className="bg-card dark:bg-gray-900">
         <AppearanceAndLanguage 
-          cardTitle={t("Valodas iestatījumi", "Language Settings", "Настройки языка")}
+          cardTitle={t("Valodas iestatījumi", "Language Settings")}
           cardDescription={t(
             "Izvēlieties aplikācijas valodu", 
-            "Choose your application language", 
-            "Выберите язык приложения"
+            "Choose your application language"
           )}
           formDescriptionText={t(
             "Izvēlieties profila valodu", 
-            "Choose your profile language",
-            "Выберите язык профиля"
+            "Choose your profile language"
           )}
         />
       </Card>
