@@ -1,152 +1,81 @@
 
-import { useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { cleanupAuthState } from "@/utils/auth/authUtils";
-import { syncAuthUser } from "@/utils/syncAuthUser";
-import { CreateUserProfileParams } from "@/utils/rpcFunctions";
-
-type LoginFn = (email: string, password: string) => Promise<boolean>;
-type RegisterFn = (email: string, password: string, userData: any) => Promise<boolean>;
-type LogoutFn = () => Promise<void>;
-type RefreshUserDataFn = () => Promise<void>;
-type RefreshSessionFn = () => Promise<void>;
+import { useState, useCallback } from 'react';
 
 export function useEnhancedAuthActions(
-  userAuthLogin: LoginFn,
-  userAuthRegister: RegisterFn,
-  supabaseAuthLogout: LogoutFn,
-  refreshUserData: RefreshUserDataFn,
-  refreshSession: RefreshSessionFn,
+  login: (email: string, password: string) => Promise<boolean>,
+  register: (email: string, password: string, userData: any) => Promise<boolean>,
+  logout: () => Promise<any>,
+  refreshUserData: () => Promise<any>,
+  refreshSession: () => Promise<boolean>,
   setIsAdmin: (value: boolean) => void
 ) {
   const [lastAvatarUpdate, setLastAvatarUpdate] = useState<number>(Date.now());
-
-  // Enhanced logout function that clears auth state
+  
+  // Enhanced login with additional operations
+  const enhancedLogin = useCallback(async (email: string, password: string): Promise<boolean> => {
+    try {
+      console.log("Enhanced login starting for:", email);
+      const loginSuccess = await login(email, password);
+      
+      if (loginSuccess) {
+        console.log("Login successful, refreshing session");
+        await refreshSession();
+        await refreshUserData();
+        setIsAdmin(true); // Check admin status after login
+        console.log("Session and user data refreshed");
+      } else {
+        console.log("Login failed");
+      }
+      
+      return loginSuccess;
+    } catch (error) {
+      console.error("Error in enhancedLogin:", error);
+      return false;
+    }
+  }, [login, refreshSession, refreshUserData, setIsAdmin]);
+  
+  // Enhanced register with additional operations
+  const enhancedRegister = useCallback(async (email: string, password: string, userData: any): Promise<boolean> => {
+    try {
+      console.log("Enhanced register starting for:", email);
+      const registerSuccess = await register(email, password, userData);
+      
+      if (registerSuccess) {
+        console.log("Registration successful, refreshing session");
+        await refreshSession();
+        await refreshUserData();
+      }
+      
+      return registerSuccess;
+    } catch (error) {
+      console.error("Error in enhancedRegister:", error);
+      return false;
+    }
+  }, [register, refreshSession, refreshUserData]);
+  
+  // Enhanced logout with additional operations
   const enhancedLogout = useCallback(async () => {
     try {
-      // Clean up auth state thoroughly
-      cleanupAuthState();
-      
-      // Clear admin-specific localStorage items
-      localStorage.removeItem('admin_authenticated');
-      localStorage.removeItem('admin_email');
-      
-      // Try global sign out first
-      try {
-        await supabase.auth.signOut({ scope: 'global' });
-      } catch (error) {
-        console.error("Error during global sign out:", error);
-        // Continue even if this fails
-      }
-      
-      // Use the original logout function as fallback
-      await supabaseAuthLogout();
-      
-      // Force set admin status to false
+      console.log("Enhanced logout starting");
+      await logout();
       setIsAdmin(false);
-      
-      // Force page refresh to ensure clean state
-      window.location.reload();
+      console.log("Logout complete");
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error("Error in enhancedLogout:", error);
       throw error;
     }
-  }, [supabaseAuthLogout, setIsAdmin]);
-
-  // Enhanced login function to clean up state first
-  const enhancedLogin = useCallback(async (email: string, password: string) => {
-    try {
-      // Clean up existing auth state
-      cleanupAuthState();
-      
-      // Try global sign out first to clear any existing sessions
-      try {
-        await supabase.auth.signOut({ scope: 'global' });
-      } catch (err) {
-        // Continue even if this fails
-      }
-      
-      // Use original login function
-      const success = await userAuthLogin(email, password);
-      
-      // If login was successful, manually refresh session and user data
-      if (success) {
-        setTimeout(async () => {
-          await refreshSession();
-          await refreshUserData();
-        }, 500);
-      }
-      
-      return success;
-    } catch (error) {
-      console.error('Login error:', error);
-      return false;
-    }
-  }, [userAuthLogin, refreshSession, refreshUserData]);
-
-  // Enhanced register function to ensure user is created in database
-  const enhancedRegister = useCallback(async (email: string, password: string, userData: any) => {
-    try {
-      // Clean up existing auth state
-      cleanupAuthState();
-      
-      // Use original register function
-      const success = await userAuthRegister(email, password, userData);
-      
-      // If registration was successful, ensure the user is in registered_users table
-      if (success) {
-        try {
-          // Get the current user
-          const { data: authData } = await supabase.auth.getUser();
-          
-          if (authData?.user) {
-            console.log("Registration successful, syncing user to registered_users table:", authData.user);
-            
-            // Use the type-safe parameters for our RPC function
-            const params: CreateUserProfileParams = {
-              user_id: authData.user.id,
-              user_email: authData.user.email || '',
-              first_name: userData.firstName,
-              last_name: userData.lastName,
-              phone_number: userData.phoneNumber ? `${userData.countryCode}${userData.phoneNumber}` : null
-            };
-            
-            // Use functions with explicit typing for the RPC call
-            const { data: syncedUser, error: syncError } = await supabase.rpc(
-              'create_user_profile', 
-              params
-            );
-            
-            if (syncError) {
-              console.error("Error syncing user to registered_users:", syncError);
-            } else {
-              console.log("User successfully synced to registered_users:", syncedUser);
-            }
-          }
-          
-          // Refresh session and user data
-          setTimeout(async () => {
-            await refreshSession();
-            await refreshUserData();
-          }, 500);
-        } catch (err) {
-          console.error("Error in post-registration process:", err);
-        }
-      }
-      
-      return success;
-    } catch (error) {
-      console.error('Registration error:', error);
-      return false;
-    }
-  }, [userAuthRegister, refreshSession, refreshUserData]);
-
-  // Override refreshUserData to update lastAvatarUpdate
+  }, [logout, setIsAdmin]);
+  
+  // Enhanced refreshUserData with avatar update tracking
   const enhancedRefreshUserData = useCallback(async () => {
-    await refreshUserData();
-    setLastAvatarUpdate(Date.now()); // Update timestamp when user data is refreshed
+    try {
+      await refreshUserData();
+      setLastAvatarUpdate(Date.now());
+    } catch (error) {
+      console.error("Error in enhancedRefreshUserData:", error);
+    }
   }, [refreshUserData]);
-
+  
   return {
     enhancedLogin,
     enhancedRegister,

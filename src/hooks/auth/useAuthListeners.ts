@@ -1,6 +1,14 @@
 
-import { useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+
+interface AuthListenersProps {
+  setIsAuthenticated: (value: boolean) => void;
+  setIsAuthLoading: (value: boolean) => void;
+  setUserEmail: (value: string | null) => void;
+  setUser: (value: any) => void;
+  fetchUserData: (email: string | null) => Promise<void>;
+}
 
 export function useAuthListeners({
   setIsAuthenticated,
@@ -8,72 +16,81 @@ export function useAuthListeners({
   setUserEmail,
   setUser,
   fetchUserData
-}: {
-  setIsAuthenticated: (value: boolean) => void;
-  setIsAuthLoading: (value: boolean) => void;
-  setUserEmail: (value: string | null) => void;
-  setUser: (value: any) => void;
-  fetchUserData: (email: string) => Promise<void>;
-}) {
+}: AuthListenersProps) {
   useEffect(() => {
-    const checkAuth = async () => {
+    console.log("Setting up auth listeners");
+    setIsAuthLoading(true);
+    
+    // Check current session first
+    const getCurrentSession = async () => {
       try {
-        setIsAuthLoading(true);
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         
-        // Set up auth state change listener first (before getting session)
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          async (event, session) => {
-            console.log("Auth state changed:", event, session?.user?.email);
-            
-            if (session && session.user) {
-              setIsAuthenticated(true);
-              setUserEmail(session.user.email);
-              
-              // Defer data fetching to prevent potential deadlocks
-              if (session.user.email) {
-                setTimeout(() => {
-                  fetchUserData(session.user.email!);
-                }, 0);
-              }
-            } else {
-              setIsAuthenticated(false);
-              setUserEmail(null);
-              setUser(null);
-            }
-          }
-        );
+        if (sessionError) {
+          console.error('Error getting session:', sessionError);
+          setIsAuthLoading(false);
+          return;
+        }
         
-        // Get current session
-        const { data: sessionData } = await supabase.auth.getSession();
-        const session = sessionData.session;
-        
-        if (session) {
+        if (sessionData?.session) {
+          console.log("Found existing session:", sessionData.session.user.email);
           setIsAuthenticated(true);
-          setUserEmail(session.user.email);
+          setUserEmail(sessionData.session.user.email);
           
-          // Fetch user data if authenticated
-          if (session.user.email) {
-            await fetchUserData(session.user.email);
-          }
+          // Use setTimeout to avoid potential Supabase auth deadlocks
+          setTimeout(async () => {
+            try {
+              await fetchUserData(sessionData.session?.user.email || null);
+            } catch (error) {
+              console.error('Error fetching user data:', error);
+            } finally {
+              setIsAuthLoading(false);
+            }
+          }, 0);
         } else {
+          console.log("No session found");
           setIsAuthenticated(false);
           setUserEmail(null);
           setUser(null);
+          setIsAuthLoading(false);
         }
-        
-        return () => {
-          subscription.unsubscribe();
-        };
       } catch (error) {
-        console.error("Error checking auth:", error);
-        setIsAuthenticated(false);
-        setUserEmail(null);
-        setUser(null);
-      } finally {
+        console.error('Error in getCurrentSession:', error);
         setIsAuthLoading(false);
       }
     };
     
-    checkAuth();
+    getCurrentSession();
+    
+    // Set up auth state change listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state change event:', event);
+      
+      if (event === 'SIGNED_IN' && session) {
+        console.log('User signed in:', session.user.email);
+        setIsAuthenticated(true);
+        setUserEmail(session.user.email);
+        
+        // Use setTimeout to avoid potential Supabase auth deadlocks
+        setTimeout(async () => {
+          try {
+            await fetchUserData(session.user.email);
+          } catch (error) {
+            console.error('Error fetching user data on sign in:', error);
+          }
+        }, 0);
+      } 
+      else if (event === 'SIGNED_OUT') {
+        console.log('User signed out');
+        setIsAuthenticated(false);
+        setUserEmail(null);
+        setUser(null);
+      }
+    });
+    
+    return () => {
+      console.log("Cleaning up auth listeners");
+      authListener.subscription.unsubscribe();
+    };
   }, [setIsAuthenticated, setIsAuthLoading, setUserEmail, setUser, fetchUserData]);
 }

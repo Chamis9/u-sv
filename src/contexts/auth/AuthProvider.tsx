@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useSupabaseAuth } from "@/hooks/useSupabaseAuth";
 import { useUserAuth } from "@/hooks/useUserAuth";
 import { AuthContext } from "./AuthContext";
@@ -38,6 +38,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     refreshSession,
     (value: boolean) => checkAdminStatus()
   );
+
+  // Debug log to track auth state changes
+  useEffect(() => {
+    console.log("AuthProvider state update: ", {
+      isAuthenticated: supabaseAuth.isAuthenticated || userAuth.isAuth,
+      user: supabaseAuth.user,
+      userEmail: supabaseAuth.userEmail
+    });
+  }, [supabaseAuth.isAuthenticated, userAuth.isAuth, supabaseAuth.user, supabaseAuth.userEmail]);
 
   // Combine both auth implementations with enhanced functions
   const auth = {
