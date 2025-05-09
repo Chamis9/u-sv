@@ -11,8 +11,7 @@ import { NameFields } from "./components/NameFields";
 import { PhoneField } from "./components/PhoneField";
 import { PasswordFields } from "./components/PasswordFields";
 import { getRegistrationFormSchema, type RegistrationFormData } from "../schema";
-import { useState } from "react";
-import { useUserAuth } from "@/hooks/useUserAuth";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface RegistrationFormProps {
   translations: any;
@@ -23,7 +22,7 @@ interface RegistrationFormProps {
 export function RegistrationForm({ translations, languageCode, onClose }: RegistrationFormProps) {
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
-  const { register: registerUser } = useUserAuth();
+  const { register: registerUser } = useAuth();
 
   const form = useForm<RegistrationFormData>({
     resolver: zodResolver(getRegistrationFormSchema(languageCode)),
@@ -65,6 +64,12 @@ export function RegistrationForm({ translations, languageCode, onClose }: Regist
         toast({
           description: translations.registrationSuccess,
         });
+        
+        // Reload the page after successful registration to ensure all states are updated properly
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+        
         if (onClose) onClose();
       }
     } catch (err) {

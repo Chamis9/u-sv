@@ -10,7 +10,6 @@ import { EmailInput } from "../EmailInput";
 import { PasswordInput } from "../PasswordInput";
 import { loginFormSchema, type LoginFormData } from "../schema";
 import { usePreviousEmails } from "@/hooks/usePreviousEmails";
-import { useUserAuth } from "@/hooks/useUserAuth";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface LoginFormProps {
@@ -74,12 +73,13 @@ export function LoginForm({ translations, languageCode, onClose }: LoginFormProp
           description: translations.loginSuccessful || "Successfully logged in",
         });
         
-        if (onClose) {
-          // Add a small delay before closing to ensure state updates
-          setTimeout(() => {
+        // Reload the page to ensure a clean state
+        setTimeout(() => {
+          if (onClose) {
             onClose();
-          }, 500);
-        }
+          }
+          window.location.reload();
+        }, 500);
       } else {
         toast({
           variant: "destructive",

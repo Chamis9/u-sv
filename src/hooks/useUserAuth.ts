@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
+import { cleanupAuthState } from '@/utils/authHelpers';
 
 export function useUserAuth() {
   const [isAuth, setIsAuth] = useState(false);
@@ -33,7 +34,7 @@ export function useUserAuth() {
           if (event === 'SIGNED_IN' && session) {
             setTimeout(() => {
               console.log('Updating user data after sign in');
-              // Any additional operations can happen here
+              checkIfUserInRegisteredUsers(session.user);
             }, 0);
           }
         }
@@ -47,10 +48,75 @@ export function useUserAuth() {
     checkAuth();
   }, []);
 
+  // Function to check if user exists in registered_users and create if not
+  const checkIfUserInRegisteredUsers = async (authUser) => {
+    if (!authUser || !authUser.email) return;
+    
+    try {
+      // Check if user exists in registered_users
+      const { data: existingUser, error: checkError } = await supabase
+        .from('registered_users')
+        .select('*')
+        .eq('email', authUser.email)
+        .maybeSingle();
+        
+      if (checkError) {
+        console.error('Error checking user in registered_users:', checkError);
+        return;
+      }
+      
+      // If user doesn't exist in registered_users table, create them
+      if (!existingUser) {
+        console.log('User not found in registered_users, creating now');
+        
+        const userData = {
+          auth_user_id: authUser.id,
+          email: authUser.email,
+          first_name: authUser.user_metadata?.first_name || null,
+          last_name: authUser.user_metadata?.last_name || null,
+          phone: authUser.user_metadata?.phone || null,
+          last_sign_in_at: new Date().toISOString()
+        };
+        
+        const { error: insertError } = await supabase
+          .from('registered_users')
+          .insert([userData]);
+          
+        if (insertError) {
+          console.error('Error creating user in registered_users:', insertError);
+        } else {
+          console.log('Successfully created user in registered_users table');
+        }
+      } else {
+        // Update last_sign_in_at for existing users
+        const { error: updateError } = await supabase
+          .from('registered_users')
+          .update({ last_sign_in_at: new Date().toISOString() })
+          .eq('email', authUser.email);
+          
+        if (updateError) {
+          console.error('Error updating last_sign_in_at:', updateError);
+        }
+      }
+    } catch (error) {
+      console.error('Error in checkIfUserInRegisteredUsers:', error);
+    }
+  };
+
   const login = async (email: string, password: string) => {
     try {
       console.log('Starting login process for:', email);
       setIsLoading(true);
+      
+      // Clean up any existing auth state first
+      cleanupAuthState();
+      
+      // Try global sign out first to clear any existing sessions
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        // Continue even if this fails
+      }
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -68,6 +134,14 @@ export function useUserAuth() {
       }
       
       console.log('Login successful, user data:', data);
+      
+      // Check if user exists in registered_users table
+      if (data.user) {
+        setTimeout(() => {
+          checkIfUserInRegisteredUsers(data.user);
+        }, 0);
+      }
+      
       return true;
     } catch (error) {
       console.error('Login error:', error);
@@ -81,6 +155,9 @@ export function useUserAuth() {
     try {
       console.log('Starting registration process for:', email);
       setIsLoading(true);
+      
+      // Clean up auth state before registering
+      cleanupAuthState();
       
       // Clean format for user metadata
       const userMetadata = {
@@ -110,6 +187,28 @@ export function useUserAuth() {
       
       console.log('Registration successful, user data:', data);
       
+      // Manually insert the user into registered_users table to ensure they're added
+      if (data.user) {
+        const registeredUserData = {
+          auth_user_id: data.user.id,
+          email: data.user.email,
+          first_name: userMetadata.first_name,
+          last_name: userMetadata.last_name,
+          phone: userMetadata.phone,
+          last_sign_in_at: new Date().toISOString()
+        };
+        
+        const { error: insertError } = await supabase
+          .from('registered_users')
+          .insert([registeredUserData]);
+          
+        if (insertError) {
+          console.error('Error creating user in registered_users:', insertError);
+        } else {
+          console.log('Successfully created user in registered_users table');
+        }
+      }
+      
       // Auto login after registration if no email confirmation is required
       if (data.user && !data.user.confirmed_at && !data.user.email_confirmed_at) {
         console.log('User registered but email not confirmed yet.');
@@ -127,6 +226,10 @@ export function useUserAuth() {
   const logout = async () => {
     try {
       console.log('Starting logout process');
+      
+      // Clean up auth state
+      cleanupAuthState();
+      
       await supabase.auth.signOut();
       console.log('Logout successful');
     } catch (error) {

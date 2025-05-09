@@ -166,6 +166,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Force set admin status to false
       setIsAdmin(false);
+      
+      // Force page refresh to ensure clean state
+      window.location.reload();
     } catch (error) {
       console.error('Error during logout:', error);
       throw error;
@@ -186,9 +189,71 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       // Use original login function
-      return await userAuth.login(email, password);
+      const success = await userAuth.login(email, password);
+      
+      // If login was successful, manually refresh session and user data
+      if (success) {
+        setTimeout(async () => {
+          await refreshSession();
+          await supabaseAuth.refreshUserData();
+        }, 500);
+      }
+      
+      return success;
     } catch (error) {
       console.error('Login error:', error);
+      return false;
+    }
+  };
+
+  // Enhanced register function to ensure user is created in database
+  const enhancedRegister = async (email: string, password: string, userData: any) => {
+    try {
+      // Clean up existing auth state
+      cleanupAuthState();
+      
+      // Use original register function
+      const success = await userAuth.register(email, password, userData);
+      
+      // If registration was successful, manually check if user exists in registered_users
+      if (success) {
+        setTimeout(async () => {
+          // Get the current user
+          const { data: authData } = await supabase.auth.getUser();
+          if (authData?.user?.email) {
+            // Check if user exists in registered_users
+            const { data: existingUser } = await supabase
+              .from('registered_users')
+              .select('*')
+              .eq('email', authData.user.email)
+              .maybeSingle();
+              
+            // If user doesn't exist in registered_users, create them
+            if (!existingUser) {
+              const registeredUserData = {
+                auth_user_id: authData.user.id,
+                email: authData.user.email,
+                first_name: userData.firstName,
+                last_name: userData.lastName,
+                phone: userData.phoneNumber ? `${userData.countryCode}${userData.phoneNumber}` : null,
+                last_sign_in_at: new Date().toISOString()
+              };
+              
+              await supabase
+                .from('registered_users')
+                .insert([registeredUserData]);
+            }
+          }
+          
+          // Refresh session and user data
+          await refreshSession();
+          await supabaseAuth.refreshUserData();
+        }, 500);
+      }
+      
+      return success;
+    } catch (error) {
+      console.error('Registration error:', error);
       return false;
     }
   };
@@ -197,7 +262,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const auth = {
     ...supabaseAuth,
     login: enhancedLogin,
-    register: userAuth.register,
+    register: enhancedRegister,
     isAuthLoading: supabaseAuth.isAuthLoading || userAuth.isLoading,
     isAuthenticated: supabaseAuth.isAuthenticated || userAuth.isAuth,
     lastAvatarUpdate,
