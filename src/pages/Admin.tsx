@@ -41,7 +41,7 @@ function AdminPage() {
             title: "Access Denied",
             description: "You do not have administrator privileges",
           });
-          window.location.href = 'https://netieku.es/';
+          navigate('/');
         }
       }
     };
@@ -68,12 +68,12 @@ function AdminPage() {
   }, []);
 
   const getActiveTabFromRoute = () => {
-    const path = location.pathname.split('/')[1] || 'dashboard';
+    const path = location.pathname.split('/')[2] || 'dashboard';
     return path;
   };
 
   const handleTabChange = (tab: string) => {
-    navigate(`/${tab}`);
+    navigate(`/admin/${tab}`);
   };
 
   if (isAuthLoading) {
@@ -107,14 +107,14 @@ function AdminPage() {
           
           <div className="flex-1 overflow-auto p-8">
             <Routes>
-              <Route path="/" element={<AdminDashboard />} />
+              <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="/dashboard" element={<AdminDashboard />} />
               <Route path="/users" element={<AdminUsers />} />
               <Route path="/events" element={<AdminEventsList />} />
               <Route path="/categories" element={<AdminCategoriesList />} />
               <Route path="/subscribers" element={<AdminSubscribers />} />
               <Route path="/settings" element={<AdminSettings />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
             </Routes>
           </div>
         </div>
