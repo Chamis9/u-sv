@@ -11,6 +11,7 @@ const AdminDashboard = lazy(() => import("@/components/admin/AdminDashboard"));
 const RegisteredUsers = lazy(() => import("@/components/admin/RegisteredUsers"));
 const AdminSubscribers = lazy(() => import("@/components/admin/AdminSubscribers"));
 const AdminSettings = lazy(() => import("@/components/admin/AdminSettings"));
+const AdminTicketsList = lazy(() => import("@/components/admin/tickets").then(module => ({ default: module.AdminTicketsList })));
 
 interface AdminContentProps {
   activeTab: string;
@@ -26,6 +27,7 @@ export const AdminContent = memo(function AdminContent({ activeTab, onTabChange 
         {activeTab === "dashboard" && <AdminDashboard />}
         {activeTab === "users" && <RegisteredUsers />}
         {activeTab === "subscribers" && <AdminSubscribers />}
+        {activeTab === "tickets" && <AdminTicketsList />}
         {activeTab === "settings" && <AdminSettings />}
       </Suspense>
     );

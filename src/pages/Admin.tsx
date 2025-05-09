@@ -13,6 +13,7 @@ import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminSubscribers } from "@/components/admin/AdminSubscribers";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AdminCategoriesList } from "@/components/admin/categories/AdminCategoriesList";
+import { AdminTicketsList } from "@/components/admin/tickets";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ProfileAuthGuard } from "@/components/profile/ProfileAuthGuard";
@@ -110,6 +111,7 @@ function AdminPage() {
               <Route path="/dashboard" element={<AdminDashboard />} />
               <Route path="/users" element={<AdminUsers />} />
               <Route path="/categories" element={<AdminCategoriesList />} />
+              <Route path="/tickets" element={<AdminTicketsList />} />
               <Route path="/subscribers" element={<AdminSubscribers />} />
               <Route path="/settings" element={<AdminSettings />} />
               <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />

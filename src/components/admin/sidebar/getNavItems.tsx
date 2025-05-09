@@ -1,5 +1,5 @@
 
-import { LayoutDashboard, Users, Mail, Settings, FolderPlus, Shield } from "lucide-react";
+import { LayoutDashboard, Users, Mail, Settings, FolderPlus, Shield, Ticket } from "lucide-react";
 
 export const getNavItems = (translations: any, userCount?: number, subscriberCount?: number, adminCount?: number) => [
   {
@@ -20,6 +20,12 @@ export const getNavItems = (translations: any, userCount?: number, subscriberCou
     label: "Kategorijas",
     icon: <FolderPlus className="mr-2 h-4 w-4" />,
     href: "/admin/categories"
+  },
+  {
+    id: "tickets",
+    label: "Biļetes",
+    icon: <Ticket className="mr-2 h-4 w-4" />,
+    href: "/admin/tickets"
   },
   {
     id: "subscribers",
