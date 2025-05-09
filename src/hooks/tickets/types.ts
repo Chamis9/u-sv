@@ -34,4 +34,5 @@ export interface UserTicket {
   quantity?: number;
   price_per_unit?: number;
   event_time?: string | null;
+  seller_name?: string; // Added missing property
 }

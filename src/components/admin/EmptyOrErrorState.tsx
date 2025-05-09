@@ -5,13 +5,24 @@ import { AlertCircle, Loader, Search } from "lucide-react";
 import { useLanguage } from "@/features/language";
 
 interface EmptyOrErrorStateProps {
-  isLoading: boolean;
-  error: string;
+  isLoading?: boolean;
+  error?: string;
   searchTerm?: string;
   onRetry?: () => void;
+  title?: string;       // Added missing property
+  description?: string; // Added missing property
+  icon?: string;        // Added missing property
 }
 
-export function EmptyOrErrorState({ isLoading, error, searchTerm, onRetry }: EmptyOrErrorStateProps) {
+export function EmptyOrErrorState({ 
+  isLoading, 
+  error, 
+  searchTerm, 
+  onRetry,
+  title,
+  description,
+  icon
+}: EmptyOrErrorStateProps) {
   const { currentLanguage } = useLanguage();
   
   // Translation helper
@@ -28,19 +39,26 @@ export function EmptyOrErrorState({ isLoading, error, searchTerm, onRetry }: Emp
     );
   }
   
-  if (error) {
+  if (error || title) {
     return (
       <div className="flex justify-center items-center h-64 text-center">
         <div>
-          <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-2" />
-          <p className="text-muted-foreground">{error}</p>
-          <Button 
-            className="mt-4" 
-            variant="outline" 
-            onClick={onRetry || (() => window.location.reload())}
-          >
-            {t('Mēģināt vēlreiz', 'Try Again')}
-          </Button>
+          {icon === 'alert-triangle' ? (
+            <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-2" />
+          ) : (
+            <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-2" />
+          )}
+          <p className="font-medium text-lg">{title || ''}</p>
+          <p className="text-muted-foreground">{error || description || ''}</p>
+          {onRetry && (
+            <Button 
+              className="mt-4" 
+              variant="outline" 
+              onClick={onRetry}
+            >
+              {t('Mēģināt vēlreiz', 'Try Again')}
+            </Button>
+          )}
         </div>
       </div>
     );
