@@ -12,9 +12,5 @@ export const adminHeaderTranslations = {
   en: {
     title: "Administrator Panel",
     userDropdown: "User menu"
-  },
-  ru: {
-    title: "Панель администратора",
-    userDropdown: "Меню пользователя"
   }
 };

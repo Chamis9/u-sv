@@ -29,34 +29,6 @@ export const getLoginTranslations = (languageCode: string) => {
         termsAndConditions: 'Es piekrītu lietošanas noteikumiem un privātuma politikai.',
         acceptTerms: 'Lai turpinātu, jums jāpiekrīt noteikumiem un nosacījumiem.'
       };
-    case 'ru':
-      return {
-        title: 'Аккаунт пользователя',
-        loginDescription: 'Войдите в свою учетную запись или зарегистрируйтесь, чтобы продолжить.',
-        login: 'Войти',
-        loginLoading: 'Вход...',
-        register: 'Зарегистрироваться',
-        registrationLoading: 'Регистрация...',
-        email: 'Электронная почта',
-        password: 'Пароль',
-        forgotPassword: 'Забыли пароль?',
-        resetPasswordSent: 'Ссылка для сброса пароля отправлена на вашу электронную почту.',
-        invalidCredentials: 'Неверный адрес электронной почты или пароль.',
-        passwordMinLength: 'Пароль должен содержать не менее 8 символов',
-        firstName: 'Имя',
-        lastName: 'Фамилия',
-        phoneNumber: 'Номер телефона',
-        countryCode: 'Код страны',
-        confirmPassword: 'Подтвердите пароль',
-        passwordsDoNotMatch: 'Пароли не совпадают',
-        registrationSuccess: 'Регистрация успешна! Пожалуйста, проверьте свою электронную почту, чтобы подтвердить аккаунт.',
-        registrationError: 'Не удалось зарегистрироваться. Пожалуйста, попробуйте еще раз.',
-        alreadyHaveAccount: 'Уже есть аккаунт?',
-        dontHaveAccount: 'Нет аккаунта?',
-        optional: '(необязательно)',
-        termsAndConditions: 'Я согласен с условиями использования и политикой конфиденциальности.',
-        acceptTerms: 'Чтобы продолжить, вы должны согласиться с условиями.'
-      };
     default: // English
       return {
         title: 'User Account',

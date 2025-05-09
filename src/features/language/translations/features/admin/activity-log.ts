@@ -39,18 +39,5 @@ export const adminActivityLogTranslations = {
     systemUpdate: "System update completed",
     noActivities: "No activities",
     viewAll: "View all activities"
-  },
-  ru: {
-    title: "Журнал активности",
-    description: "Действия пользователей на платформе",
-    activity: "Действие",
-    details: "Детали",
-    time: "Время",
-    newSubscriber: "Новый подписчик на рассылку",
-    newUser: "Новый пользователь зарегистрирован",
-    newTicket: "Создан новый тикет поддержки",
-    systemUpdate: "Обновление системы завершено",
-    noActivities: "Нет активностей",
-    viewAll: "Просмотреть все активности"
   }
 };

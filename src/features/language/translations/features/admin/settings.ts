@@ -36,17 +36,5 @@ export const adminSettingsTranslations = {
       description: "Manage third-party integrations",
       comingSoon: "Integration settings will be added soon..."
     }
-  },
-  ru: {
-    security: {
-      title: "Настройки безопасности",
-      description: "Управление настройками безопасности платформы",
-      comingSoon: "Настройки безопасности будут добавлены в ближайшее время..."
-    },
-    integrations: {
-      title: "Интеграции",
-      description: "Управление интеграциями с третьими сторонами",
-      comingSoon: "Настройки интеграции будут добавлены в ближайшее время..."
-    }
   }
 };

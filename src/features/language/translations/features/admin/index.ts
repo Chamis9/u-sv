@@ -10,7 +10,7 @@ export const adminTranslations: Record<string, AdminTranslations> = {
   lv: {
     title: "Administratora panelis",
     defaultUser: "Administrators",
-    logout: "Iziet", // Changed from "Izrakstīties"
+    logout: "Iziet",
     returnToHome: "Atgriezties uz sākumlapu",
     logoutSuccess: "Jūs esat veiksmīgi izrakstījies",
     logoutError: "Kļūda izrakstīšanās laikā",
@@ -52,29 +52,6 @@ export const adminTranslations: Record<string, AdminTranslations> = {
     activityLog: adminActivityLogTranslations.en,
     dashboard: adminDashboardTranslations.en,
     header: adminHeaderTranslations.en
-  },
-  ru: {
-    title: "Панель администратора",
-    defaultUser: "Администратор",
-    logout: "Выйти",
-    returnToHome: "Вернуться на главную страницу",
-    logoutSuccess: "Вы успешно вышли из системы",
-    logoutError: "Ошибка при выходе из системы",
-    tabs: {
-      dashboard: "Панель управления",
-      users: "Пользователи",
-      admins: "Администраторы",
-      subscribers: "Подписчики",
-      settings: "Настройки"
-    },
-    auth: {
-      supabaseAuthAvailable: "Аутентификация Supabase доступна. Пожалуйста, используйте учетную запись администратора для входа."
-    },
-    settings: adminSettingsTranslations.ru,
-    subscribers: adminSubscribersTranslations.ru,
-    activityLog: adminActivityLogTranslations.ru,
-    dashboard: adminDashboardTranslations.ru,
-    header: adminHeaderTranslations.ru
   }
 };
 
