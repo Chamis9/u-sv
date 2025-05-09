@@ -1,7 +1,7 @@
 
-import { LayoutDashboard, Users, Mail, Settings, Calendar, FolderPlus } from "lucide-react";
+import { LayoutDashboard, Users, Mail, Settings, Calendar, FolderPlus, Shield } from "lucide-react";
 
-export const getNavItems = (translations: any, userCount?: number, subscriberCount?: number) => [
+export const getNavItems = (translations: any, userCount?: number, subscriberCount?: number, adminCount?: number) => [
   {
     id: "dashboard",
     label: translations.admin?.tabs?.dashboard || "Dashboard",
@@ -41,3 +41,4 @@ export const getNavItems = (translations: any, userCount?: number, subscriberCou
     href: "/admin/settings"
   }
 ];
+
