@@ -22,7 +22,7 @@ export const EventsPageLayout: React.FC<EventsPageLayoutProps> = ({
       <div className="min-h-screen flex flex-col bg-ticket-bg text-ticket-text">
         <SEO title={title} description={description} />
         <Header />
-        <main className="flex-grow pt-24 pb-12">
+        <main className="flex-grow pt-28 md:pt-24 pb-12">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="max-w-7xl mx-auto">
               {children}

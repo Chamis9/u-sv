@@ -10,7 +10,7 @@ const Index = () => {
     <div className="min-h-screen flex flex-col bg-ticket-bg text-ticket-text">
       <SEO />
       <Header />
-      <main className="flex-grow">
+      <main className="flex-grow pt-4">
         <Hero />
         <HowItWorks />
       </main>

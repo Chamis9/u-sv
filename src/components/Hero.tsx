@@ -33,7 +33,7 @@ export const Hero = memo(function Hero() {
       
       <div className="absolute inset-0 bg-ticket-bg/90"></div>
 
-      <div className="container mx-auto px-4 z-10 text-center py-12 md:py-20">
+      <div className="container mx-auto px-4 z-10 text-center py-20 md:py-20">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 mb-10">
             <div className="md:text-left">

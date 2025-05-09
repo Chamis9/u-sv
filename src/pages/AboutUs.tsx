@@ -77,7 +77,7 @@ const AboutUs = () => {
         />
         <Header />
         
-        <main className="flex-grow pt-24 pb-12">
+        <main className="flex-grow pt-28 md:pt-24 pb-12">
           <div className="container mx-auto px-4 sm:px-6">
             <div className="max-w-4xl mx-auto">
               <h1 className="text-4xl md:text-5xl font-bold mb-6 text-left text-ticket-accent">
