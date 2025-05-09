@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
@@ -5,11 +6,11 @@ import { Footer } from "@/components/Footer";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import { AdminContent } from "@/components/admin/AdminContent";
 import { AdminLoginSection } from "@/components/admin/AdminLoginSection";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { RegisteredUsers } from "@/components/admin/RegisteredUsers";
+import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminSubscribers } from "@/components/admin/AdminSubscribers";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AdminEventsList } from "@/components/admin/AdminEventsList";
@@ -85,6 +86,7 @@ function AdminPage() {
             <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/dashboard" element={<AdminDashboard />} />
             <Route path="/users" element={<RegisteredUsers />} />
+            <Route path="/admins" element={<AdminUsers />} />
             <Route path="/events" element={<AdminEventsList />} />
             <Route path="/categories" element={<AdminCategoriesList />} />
             <Route path="/subscribers" element={<AdminSubscribers />} />
