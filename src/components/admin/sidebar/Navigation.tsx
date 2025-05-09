@@ -33,7 +33,7 @@ export const Navigation = ({
           label={item.label}
           badge={item.badge}
           isActive={activeTab === item.id}
-          onClick={onTabChange}
+          onClick={() => onTabChange(item.id)}
         />
       ))}
     </nav>

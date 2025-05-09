@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -16,6 +17,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
 import { checkAdminCredentials } from "@/utils/authHelpers";
 import { useLanguage } from "@/features/language";
+import { supabase } from "@/integrations/supabase/client";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -49,11 +51,39 @@ export function LoginForm({ onLoginSuccess }: LoginFormProps) {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      const isAdmin = await checkAdminCredentials(data.email, data.password);
+      // First, sign in with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password
+      });
 
-      if (!isAdmin) {
+      if (authError) {
+        throw new Error(authError.message);
+      }
+
+      if (!authData.user) {
+        throw new Error("No user found");
+      }
+      
+      // Then check if the user is an admin
+      const { data: adminData, error: adminError } = await supabase
+        .from('admin_user')
+        .select('*')
+        .eq('email', data.email)
+        .maybeSingle();
+      
+      if (adminError) {
+        throw new Error("Error checking admin status");
+      }
+      
+      if (!adminData) {
+        await supabase.auth.signOut();
         throw new Error("Not authorized as admin");
       }
+      
+      // Save admin status to localStorage
+      localStorage.setItem('admin_authenticated', 'true');
+      localStorage.setItem('admin_email', data.email);
 
       toast({
         description: currentLanguage.code === 'lv' 

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
@@ -9,18 +10,39 @@ import { AdminContent } from "@/components/admin/AdminContent";
 import { AdminLoginSection } from "@/components/admin/AdminLoginSection";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
-import { RegisteredUsers } from "@/components/admin/RegisteredUsers";
+import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminSubscribers } from "@/components/admin/AdminSubscribers";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AdminEventsList } from "@/components/admin/AdminEventsList";
 import { AdminCategoriesList } from "@/components/admin/categories/AdminCategoriesList";
+import { useToast } from "@/components/ui/use-toast";
 
 function AdminPage() {
   const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
   const [adminCount, setAdminCount] = useState(0);
-  const { isAuthenticated, isAuthLoading } = useAuth();
+  const { isAuthenticated, isAuthLoading, isAdmin, checkAdminStatus } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  // Check admin status when component mounts
+  useEffect(() => {
+    const verifyAdminAccess = async () => {
+      if (isAuthenticated) {
+        const hasAdminAccess = await checkAdminStatus();
+        if (!hasAdminAccess) {
+          toast({
+            variant: "destructive",
+            title: "Access Denied",
+            description: "You do not have administrator privileges",
+          });
+          navigate('/');
+        }
+      }
+    };
+    
+    verifyAdminAccess();
+  }, [isAuthenticated, checkAdminStatus, navigate]);
 
   const getActiveTabFromRoute = () => {
     const path = location.pathname.split('/')[2] || 'dashboard';
@@ -52,7 +74,8 @@ function AdminPage() {
     );
   }
 
-  if (!isAuthenticated) {
+  // Check both regular authentication AND admin status
+  if (!isAuthenticated || !isAdmin) {
     return (
       <>
         <AdminLoginSection onLoginClick={() => setShowLoginModal(true)} />
@@ -84,7 +107,7 @@ function AdminPage() {
           <Routes>
             <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/dashboard" element={<AdminDashboard />} />
-            <Route path="/users" element={<RegisteredUsers />} />
+            <Route path="/users" element={<AdminUsers />} />
             <Route path="/events" element={<AdminEventsList />} />
             <Route path="/categories" element={<AdminCategoriesList />} />
             <Route path="/subscribers" element={<AdminSubscribers />} />

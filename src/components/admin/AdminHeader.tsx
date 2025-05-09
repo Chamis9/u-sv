@@ -10,14 +10,18 @@ import { useToast } from "@/components/ui/use-toast";
 
 export const AdminHeader = memo(function AdminHeader() {
   const isMobile = useIsMobile();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, userEmail } = useAuth();
   const { translations } = useLanguage();
   const { toast } = useToast();
   
-  // Get current user email from localStorage or session
+  // Get current user email from context or localStorage
   const getUserEmail = useCallback(() => {
+    if (userEmail) {
+      return userEmail;
+    }
+    
     try {
-      // Check for email in localStorage (simpler approach)
+      // Check for email in localStorage (fallback approach)
       const emailFromStorage = localStorage.getItem('admin_email');
       if (emailFromStorage) {
         return emailFromStorage;
@@ -28,14 +32,23 @@ export const AdminHeader = memo(function AdminHeader() {
       console.error("Error getting user email:", error);
       return translations.admin?.defaultUser || "Administrator";
     }
-  }, [translations]);
+  }, [userEmail, translations]);
   
   const handleLogout = useCallback(async () => {
     try {
+      // Clear admin-specific localStorage items
+      localStorage.removeItem('admin_authenticated');
+      localStorage.removeItem('admin_email');
+      
+      // Use Auth context logout function
       await logout();
+      
       toast({
         description: translations.admin?.logoutSuccess || "You have been successfully logged out",
       });
+      
+      // Force reload to clear any remaining state
+      window.location.reload();
     } catch (error) {
       console.error("Logout error:", error);
       toast({
@@ -45,7 +58,7 @@ export const AdminHeader = memo(function AdminHeader() {
     }
   }, [logout, toast, translations]);
   
-  const userEmail = getUserEmail();
+  const displayEmail = getUserEmail();
   
   if (isMobile) {
     return (
@@ -81,7 +94,7 @@ export const AdminHeader = memo(function AdminHeader() {
           {isAuthenticated && (
             <div className="flex items-center gap-2">
               <span className="text-white text-sm hidden md:inline-block truncate max-w-[150px]">
-                {userEmail}
+                {displayEmail}
               </span>
               <Button 
                 variant="ghost" 
