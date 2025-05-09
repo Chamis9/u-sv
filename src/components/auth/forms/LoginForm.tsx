@@ -11,6 +11,7 @@ import { PasswordInput } from "../PasswordInput";
 import { loginFormSchema, type LoginFormData } from "../schema";
 import { usePreviousEmails } from "@/hooks/usePreviousEmails";
 import { useUserAuth } from "@/hooks/useUserAuth";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface LoginFormProps {
   translations: any;
@@ -21,7 +22,7 @@ interface LoginFormProps {
 export function LoginForm({ translations, languageCode, onClose }: LoginFormProps) {
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
-  const { login } = useUserAuth();
+  const { login } = useAuth(); // Use the enhanced login from AuthContext
   const { previousEmails, showDropdown, setShowDropdown } = usePreviousEmails();
 
   const form = useForm<LoginFormData>({
@@ -63,11 +64,22 @@ export function LoginForm({ translations, languageCode, onClose }: LoginFormProp
         localStorage.setItem('globalPreviousEmails', JSON.stringify(updatedEmails));
       }
 
-      // Login using the custom hook
+      console.log('Attempting login with:', values.email);
+      
+      // Login using the enhanced auth context hook
       const success = await login(values.email, values.password);
       
       if (success) {
-        if (onClose) onClose();
+        toast({
+          description: translations.loginSuccessful || "Successfully logged in",
+        });
+        
+        if (onClose) {
+          // Add a small delay before closing to ensure state updates
+          setTimeout(() => {
+            onClose();
+          }, 500);
+        }
       } else {
         toast({
           variant: "destructive",

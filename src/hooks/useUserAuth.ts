@@ -25,9 +25,17 @@ export function useUserAuth() {
       // Set up auth state listener
       const { data: authListener } = supabase.auth.onAuthStateChange(
         (event, session) => {
-          console.log('Auth state changed:', event);
+          console.log('Auth state changed:', event, session?.user?.email || 'No session');
           setIsAuth(!!session);
           setUser(session?.user || null);
+          
+          // If signed in, make sure to update user data after a short delay
+          if (event === 'SIGNED_IN' && session) {
+            setTimeout(() => {
+              console.log('Updating user data after sign in');
+              // Any additional operations can happen here
+            }, 0);
+          }
         }
       );
       
@@ -41,12 +49,16 @@ export function useUserAuth() {
 
   const login = async (email: string, password: string) => {
     try {
+      console.log('Starting login process for:', email);
+      setIsLoading(true);
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
       
       if (error) {
+        console.error('Login error:', error);
         toast({
           title: "Error",
           description: error.message,
@@ -55,27 +67,34 @@ export function useUserAuth() {
         return false;
       }
       
+      console.log('Login successful, user data:', data);
       return true;
     } catch (error) {
       console.error('Login error:', error);
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const register = async (email: string, password: string, userData: any) => {
     try {
       console.log('Starting registration process for:', email);
+      setIsLoading(true);
+      
+      // Clean format for user metadata
+      const userMetadata = {
+        first_name: userData.firstName,
+        last_name: userData.lastName,
+        phone: userData.phoneNumber ? `${userData.countryCode}${userData.phoneNumber}` : null,
+      };
       
       // Simplified options without email redirect
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            first_name: userData.firstName,
-            last_name: userData.lastName,
-            phone: userData.phoneNumber ? `${userData.countryCode}${userData.phoneNumber}` : null,
-          }
+          data: userMetadata
         }
       });
       
@@ -90,16 +109,26 @@ export function useUserAuth() {
       }
       
       console.log('Registration successful, user data:', data);
+      
+      // Auto login after registration if no email confirmation is required
+      if (data.user && !data.user.confirmed_at && !data.user.email_confirmed_at) {
+        console.log('User registered but email not confirmed yet.');
+      }
+      
       return true;
     } catch (error) {
       console.error('Registration error:', error);
       return false;
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const logout = async () => {
     try {
+      console.log('Starting logout process');
       await supabase.auth.signOut();
+      console.log('Logout successful');
     } catch (error) {
       console.error('Logout error:', error);
     }

@@ -12,13 +12,22 @@ export function useSupabaseAuth() {
   // Function to fetch user data from the database
   const fetchUserData = async (email: string) => {
     try {
+      console.log("Fetching user data for:", email);
+      
       const { data: userData, error } = await supabase
         .from('registered_users')
         .select('*')
         .eq('email', email)
-        .single();
+        .maybeSingle();
       
-      if (!error && userData) {
+      if (error) {
+        console.error("Error fetching user data:", error);
+        return;
+      }
+      
+      if (userData) {
+        console.log("User data fetched successfully:", userData);
+        
         setUser({
           id: userData.id,
           email: userData.email,
@@ -30,8 +39,11 @@ export function useSupabaseAuth() {
           last_sign_in_at: userData.last_sign_in_at,
           role: 'user',
           status: userData.status as 'active' | 'inactive',
-          avatar_url: null // Always set to null
+          avatar_url: userData.avatar_url
         });
+      } else {
+        console.warn("No user data found for:", email);
+        setUser(null);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -42,6 +54,29 @@ export function useSupabaseAuth() {
     const checkAuth = async () => {
       try {
         setIsAuthLoading(true);
+        
+        // Set up auth state change listener first (before getting session)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          async (event, session) => {
+            console.log("Auth state changed:", event, session?.user?.email);
+            
+            if (session && session.user) {
+              setIsAuthenticated(true);
+              setUserEmail(session.user.email);
+              
+              // Defer data fetching to prevent potential deadlocks
+              if (session.user.email) {
+                setTimeout(() => {
+                  fetchUserData(session.user.email!);
+                }, 0);
+              }
+            } else {
+              setIsAuthenticated(false);
+              setUserEmail(null);
+              setUser(null);
+            }
+          }
+        );
         
         // Get current session
         const { data: sessionData } = await supabase.auth.getSession();
@@ -60,6 +95,10 @@ export function useSupabaseAuth() {
           setUserEmail(null);
           setUser(null);
         }
+        
+        return () => {
+          subscription.unsubscribe();
+        };
       } catch (error) {
         console.error("Error checking auth:", error);
         setIsAuthenticated(false);
@@ -71,29 +110,6 @@ export function useSupabaseAuth() {
     };
     
     checkAuth();
-    
-    // Set up auth state change listener
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-          setIsAuthenticated(true);
-          setUserEmail(session.user.email);
-          
-          // Fetch user data if authenticated
-          if (session.user.email) {
-            await fetchUserData(session.user.email);
-          }
-        } else if (event === 'SIGNED_OUT') {
-          setIsAuthenticated(false);
-          setUserEmail(null);
-          setUser(null);
-        }
-      }
-    );
-    
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
   }, []);
 
   // Function to refresh user data

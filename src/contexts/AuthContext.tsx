@@ -5,6 +5,24 @@ import { useUserAuth } from "@/hooks/useUserAuth";
 import { User } from "@/types/users";
 import { supabase } from "@/integrations/supabase/client";
 
+// Helper function to clean up auth state
+const cleanupAuthState = () => {
+  // Remove standard auth tokens
+  localStorage.removeItem('supabase.auth.token');
+  // Remove all Supabase auth keys
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      localStorage.removeItem(key);
+    }
+  });
+  // Remove from sessionStorage if in use
+  Object.keys(sessionStorage || {}).forEach((key) => {
+    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      sessionStorage.removeItem(key);
+    }
+  });
+};
+
 interface AuthContextType {
   isAuthenticated: boolean;
   isAuthLoading: boolean;
@@ -125,14 +143,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => clearInterval(interval);
   }, []);
 
-  // Enhanced logout function that clears admin status
+  // Enhanced logout function that clears auth state
   const enhancedLogout = async () => {
     try {
+      // Clean up auth state thoroughly
+      cleanupAuthState();
+      
       // Clear admin-specific localStorage items
       localStorage.removeItem('admin_authenticated');
       localStorage.removeItem('admin_email');
       
-      // Use the original logout function
+      // Try global sign out first
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (error) {
+        console.error("Error during global sign out:", error);
+        // Continue even if this fails
+      }
+      
+      // Use the original logout function as fallback
       await supabaseAuth.logout();
       
       // Force set admin status to false
@@ -143,10 +172,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Combine both auth implementations
+  // Enhanced login function to clean up state first
+  const enhancedLogin = async (email: string, password: string) => {
+    try {
+      // Clean up existing auth state
+      cleanupAuthState();
+      
+      // Try global sign out first to clear any existing sessions
+      try {
+        await supabase.auth.signOut({ scope: 'global' });
+      } catch (err) {
+        // Continue even if this fails
+      }
+      
+      // Use original login function
+      return await userAuth.login(email, password);
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
+    }
+  };
+
+  // Combine both auth implementations with enhanced functions
   const auth = {
     ...supabaseAuth,
-    login: userAuth.login,
+    login: enhancedLogin,
     register: userAuth.register,
     isAuthLoading: supabaseAuth.isAuthLoading || userAuth.isLoading,
     isAuthenticated: supabaseAuth.isAuthenticated || userAuth.isAuth,
