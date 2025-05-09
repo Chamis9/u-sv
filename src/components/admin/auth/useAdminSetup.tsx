@@ -1,31 +1,32 @@
 
 import { useState, useEffect } from "react";
+import { setupAdminAccount } from "@/utils/authHelpers";
 
 export function useAdminSetup() {
   const [setupComplete, setSetupComplete] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    // Initialize with a simple check that always completes 
-    // without relying on a non-existent function
-    setIsInitializing(true);
-    
-    try {
-      // Check if admin user exists in localStorage
-      const adminAuthenticated = localStorage.getItem('admin_authenticated') === 'true';
-      setSetupComplete(adminAuthenticated);
-      
-      if (adminAuthenticated) {
-        console.log("Administrator account is available");
-      } else {
-        console.log("No administrator account is configured");
+    const setupAdmin = async () => {
+      setIsInitializing(true);
+      try {
+        const success = await setupAdminAccount();
+        setSetupComplete(success);
+        
+        if (success) {
+          console.log("Administratora konts pieejams lietošanai");
+        } else {
+          console.error("Neizdevās uzstādīt administratora kontu");
+        }
+      } catch (error) {
+        console.error("Error setting up admin account:", error);
+        setSetupComplete(false);
+      } finally {
+        setIsInitializing(false);
       }
-    } catch (error) {
-      console.error("Error checking admin status:", error);
-      setSetupComplete(false);
-    } finally {
-      setIsInitializing(false);
-    }
+    };
+    
+    setupAdmin();
   }, []);
 
   return { setupComplete, isInitializing };

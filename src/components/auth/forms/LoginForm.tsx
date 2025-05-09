@@ -10,7 +10,7 @@ import { EmailInput } from "../EmailInput";
 import { PasswordInput } from "../PasswordInput";
 import { loginFormSchema, type LoginFormData } from "../schema";
 import { usePreviousEmails } from "@/hooks/usePreviousEmails";
-import { useAuth } from "@/contexts/AuthContext";
+import { useUserAuth } from "@/hooks/useUserAuth";
 
 interface LoginFormProps {
   translations: any;
@@ -21,7 +21,7 @@ interface LoginFormProps {
 export function LoginForm({ translations, languageCode, onClose }: LoginFormProps) {
   const [isLoading, setIsLoading] = React.useState(false);
   const { toast } = useToast();
-  const { login } = useAuth(); // Use the consolidated auth context
+  const { login } = useUserAuth();
   const { previousEmails, showDropdown, setShowDropdown } = usePreviousEmails();
 
   const form = useForm<LoginFormData>({
@@ -63,19 +63,11 @@ export function LoginForm({ translations, languageCode, onClose }: LoginFormProp
         localStorage.setItem('globalPreviousEmails', JSON.stringify(updatedEmails));
       }
 
-      console.log('Attempting login with:', values.email);
-      
-      // Login using the auth context hook
+      // Login using the custom hook
       const success = await login(values.email, values.password);
       
       if (success) {
-        toast({
-          description: translations.loginSuccessful || "Successfully logged in",
-        });
-        
-        // Close the dialog and reload the page to ensure a clean state
-        onClose();
-        window.location.reload();
+        if (onClose) onClose();
       } else {
         toast({
           variant: "destructive",

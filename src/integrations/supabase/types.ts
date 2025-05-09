@@ -325,16 +325,6 @@ export type Database = {
         Args: { check_email: string }
         Returns: boolean
       }
-      create_user_profile: {
-        Args: {
-          user_id: string
-          user_email: string
-          first_name?: string
-          last_name?: string
-          phone_number?: string
-        }
-        Returns: Json
-      }
       get_activities: {
         Args: { page_size: number; page_number: number }
         Returns: Json[]
@@ -417,10 +407,6 @@ export type Database = {
           email: string
           phone: string
         }
-        Returns: boolean
-      }
-      user_exists_by_email: {
-        Args: { email_to_check: string }
         Returns: boolean
       }
     }

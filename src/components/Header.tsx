@@ -9,7 +9,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { UserHoverCard } from "./auth/user-menu/UserHoverCard";
 import { useNavigate } from "react-router-dom";
 import { LoginButton } from "./auth/LoginButton";
-import { UserAvatar } from "./auth/UserAvatar";
 
 export function Header() {
   const navigationLinks = getNavigationLinks();
@@ -49,7 +48,7 @@ export function Header() {
             <LoginButton 
               variant="ghost" 
               className="text-ticket-text hover:text-ticket-accent transition-colors hover:bg-transparent"
-              showIcon={true}
+              showIcon={false}
             >
               <UserCircle size={20} className="text-ticket-accent hover:text-ticket-accent" />
             </LoginButton>

@@ -1,13 +1,12 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuthActions } from './auth/useAuthActions';
+import { toast } from '@/components/ui/use-toast';
 
 export function useUserAuth() {
   const [isAuth, setIsAuth] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const { login: authLogin, register: authRegister, logout: authLogout } = useAuthActions();
 
   // Check for authentication on mount
   useEffect(() => {
@@ -26,7 +25,7 @@ export function useUserAuth() {
       // Set up auth state listener
       const { data: authListener } = supabase.auth.onAuthStateChange(
         (event, session) => {
-          console.log('Auth state changed:', event, session?.user?.email || 'No session');
+          console.log('Auth state changed:', event);
           setIsAuth(!!session);
           setUser(session?.user || null);
         }
@@ -40,12 +39,71 @@ export function useUserAuth() {
     checkAuth();
   }, []);
 
-  return { 
-    isAuth, 
-    isLoading, 
-    user, 
-    login: authLogin, 
-    register: authRegister, 
-    logout: authLogout 
+  const login = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive"
+        });
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
+    }
   };
+
+  const register = async (email: string, password: string, userData: any) => {
+    try {
+      console.log('Starting registration process for:', email);
+      
+      // Simplified options without email redirect
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: userData.firstName,
+            last_name: userData.lastName,
+            phone: userData.phoneNumber ? `${userData.countryCode}${userData.phoneNumber}` : null,
+          }
+        }
+      });
+      
+      if (error) {
+        console.error('Registration error:', error);
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive"
+        });
+        return false;
+      }
+      
+      console.log('Registration successful, user data:', data);
+      return true;
+    } catch (error) {
+      console.error('Registration error:', error);
+      return false;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  return { isAuth, isLoading, user, login, register, logout };
 }

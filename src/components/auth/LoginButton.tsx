@@ -38,23 +38,14 @@ interface LoginButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   onClose?: () => void;
   variant?: string;
   showIcon?: boolean;
-  children?: React.ReactNode;
 }
 
-export function LoginButton({ 
-  className, 
-  defaultTab = "login", 
-  onClose, 
-  variant = "default", 
-  showIcon = true,
-  children, 
-  ...props 
-}: LoginButtonProps) {
+export function LoginButton({ className, defaultTab = "login", onClose, variant = "default", showIcon = true, ...props }: LoginButtonProps) {
   const [open, setOpen] = React.useState(false);
   const { toast } = useToast();
   const { currentLanguage } = useLanguage();
   const translations = getLoginTranslations(currentLanguage.code);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isLoggingIn, setIsLoggingIn] = React.useState(false);
   const { login } = useAuth();
   const languageCode = currentLanguage.code;
@@ -65,6 +56,33 @@ export function LoginButton({
       setOpen(true);
     }
   }, [searchParams]);
+
+  const handleLogin = async (values: any) => {
+    console.log('Attempting login with:', values.email);
+    setIsLoggingIn(true);
+    
+    try {
+      const success = await login(values.email, values.password);
+      
+      if (success) {
+        console.log('Login successful');
+        toast({
+          description: languageCode === 'lv' ? 'Veiksmīga pieslēgšanās' : 'Successfully logged in'
+        });
+        onClose?.();
+      } else {
+        console.log('Login failed');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      toast({
+        variant: "destructive", 
+        description: translations.invalidCredentials
+      });
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
 
   const handleCloseModal = () => {
     setOpen(false);
@@ -79,7 +97,7 @@ export function LoginButton({
         className={cn(className)}
         {...props}
       >
-        {children || (showIcon ? <UserCircle size={20} className="text-ticket-accent" /> : translations.login)}
+        {props.children || (showIcon ? <UserCircle size={20} className="text-ticket-accent" /> : translations.login)}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px] border-border bg-background">

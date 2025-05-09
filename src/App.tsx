@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -8,7 +9,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { LanguageProvider } from "./features/language";
 import { clearAllCookies } from "./utils/cookieManager";
 import { ThemeProvider } from "./components/theme/ThemeProvider";
-import { AuthProvider } from "./contexts/auth"; // Updated import path
+import { AuthProvider } from "./contexts/AuthContext";
 
 // Import pages
 import Index from "./pages/Index";

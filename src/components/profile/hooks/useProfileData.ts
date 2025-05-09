@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { User } from "@/types/users";
-import { useAuth } from "@/contexts/auth"; // Updated import path
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { createMockUser } from "../utils/mockUserUtils";
 

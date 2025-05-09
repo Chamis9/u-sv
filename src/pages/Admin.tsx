@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
@@ -6,7 +7,7 @@ import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminLoginSection } from "@/components/admin/AdminLoginSection";
-import { AuthProvider, useAuth } from "@/contexts/auth"; // Updated import path
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AdminUsers } from "@/components/admin/AdminUsers";
 import { AdminSubscribers } from "@/components/admin/AdminSubscribers";
