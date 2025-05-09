@@ -21,7 +21,7 @@ export function Footer() {
               {footer.allRightsReserved}
             </p>
           </div>
-          <div className="flex flex-wrap justify-center md:justify-end items-center gap-2 sm:gap-4">
+          <div className="flex flex-wrap justify-center md:justify-end items-center gap-3 sm:gap-4">
             <Link 
               to="/about-us"
               onClick={handleLinkClick}
@@ -38,8 +38,8 @@ export function Footer() {
               <Mail size={14} className="hidden sm:inline" />
               <span>{footer.contactLink || "Kontakti"}</span>
             </Link>
-            <div className="flex items-center text-xs sm:text-sm text-ticket-text/70">
-              <span className="flex items-center">
+            <div className="flex items-center text-xs text-ticket-text/70">
+              <span className="flex items-center whitespace-nowrap">
                 {footer.madeWith} 
                 <Heart 
                   className="mx-1 h-3 w-3 sm:h-4 sm:w-4" 
