@@ -79,6 +79,22 @@ export function ProfileContainer({ isAuthenticated, isLoading, userId }: Profile
                 isLoading={isDataLoading}
               />
             } />
+            <Route path="/payments" element={
+              <ProfileMainContent
+                activeTab="payments"
+                user={user}
+                onUserUpdate={updateUser}
+                isLoading={isDataLoading}
+              />
+            } />
+            <Route path="/settings" element={
+              <ProfileMainContent
+                activeTab="settings"
+                user={user}
+                onUserUpdate={updateUser}
+                isLoading={isDataLoading}
+              />
+            } />
             <Route path="*" element={<Navigate to={`/profile/${userId}/account`} replace />} />
           </Routes>
         </div>
