@@ -11,39 +11,30 @@ interface ProfileHeaderProps {
 export function ProfileHeader({ activeTab, user }: ProfileHeaderProps) {
   const { currentLanguage } = useLanguage();
   
-  const t = (lvText: string, enText: string, ruText?: string) => {
+  const t = (lvText: string, enText: string) => {
     if (currentLanguage.code === 'lv') return lvText;
-    if (currentLanguage.code === 'ru') return ruText || enText;
     return enText;
   };
   
   const getHeaderTitle = () => {
     switch (activeTab) {
       case "account":
-        return t("Mans konts", "My Account", "Мой аккаунт");
+        return t("Mans konts", "My Account");
       case "tickets":
-        return t("Manas biļetes", "My Tickets", "Мои билеты");
-      case "payments":
-        return t("Mani maksājumi", "My Payments", "Мои платежи");
-      case "settings":
-        return t("Iestatījumi", "Settings", "Настройки");
+        return t("Manas biļetes", "My Tickets");
       default:
-        return t("Mans profils", "My Profile", "Мой профиль");
+        return t("Mans profils", "My Profile");
     }
   };
   
   const getHeaderDescription = () => {
     switch (activeTab) {
       case "account":
-        return t("Pārvaldiet savu konta informāciju", "Manage your account information", "Управление информацией вашего аккаунта");
+        return t("Pārvaldiet savu konta informāciju", "Manage your account information");
       case "tickets":
-        return t("Apskatiet savas biļetes", "View your tickets", "Просмотр ваших билетов");
-      case "payments":
-        return t("Apskatiet savus maksājumus", "View your payment history", "Просмотр истории ваших платежей");
-      case "settings":
-        return t("Pielāgojiet savas preferences", "Customize your preferences", "Настройка ваших предпочтений");
+        return t("Apskatiet savas biļetes", "View your tickets");
       default:
-        return t("Pārvaldiet savu lietotāja profilu", "Manage your user profile", "Управление вашим профилем пользователя");
+        return t("Pārvaldiet savu lietotāja profilu", "Manage your user profile");
     }
   };
   
