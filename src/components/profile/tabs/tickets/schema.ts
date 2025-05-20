@@ -9,8 +9,12 @@ export const ticketFormSchema = z.object({
   category: z.string().min(1, {
     message: "Category is required.",
   }),
-  venue: z.string().optional(),
-  eventDate: z.string().optional(),
+  venue: z.string().min(1, {
+    message: "Venue is required.",
+  }),
+  eventDate: z.string().min(1, {
+    message: "Event date is required.",
+  }),
   eventTime: z.string().optional(),
   pricePerUnit: z.string().refine(
     (val) => !isNaN(Number(val)) && Number(val) > 0,

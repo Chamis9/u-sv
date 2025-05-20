@@ -5,6 +5,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { TicketFormValues } from "../schema";
+import { useLanguage } from "@/features/language";
 
 interface BasicInfoFieldsProps {
   form: UseFormReturn<TicketFormValues>;
@@ -12,18 +13,39 @@ interface BasicInfoFieldsProps {
 }
 
 export function BasicInfoFields({ form, t }: BasicInfoFieldsProps) {
+  const { currentLanguage } = useLanguage();
+
+  // Custom error messages based on language
+  const getErrorMessage = (error: any) => {
+    if (!error) return null;
+    
+    if (error.message === "Title must be at least 3 characters.") {
+      return currentLanguage.code === 'lv' 
+        ? "Nosaukumam jābūt vismaz 3 rakstzīmēm." 
+        : "Title must be at least 3 characters.";
+    }
+    
+    return error.message;
+  };
+
   return (
     <>
       <FormField
         control={form.control}
         name="title"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
-            <FormLabel>{t("Nosaukums", "Title")}</FormLabel>
+            <FormLabel className="font-medium">
+              {t("Nosaukums", "Title")} <span className="text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <Input {...field} placeholder={t("Ievadiet nosaukumu", "Enter title")} />
             </FormControl>
-            <FormMessage />
+            {fieldState.error && (
+              <FormMessage>
+                {getErrorMessage(fieldState.error)}
+              </FormMessage>
+            )}
           </FormItem>
         )}
       />

@@ -5,6 +5,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { TicketFormValues } from "../schema";
 import { TotalPriceField } from "./TotalPriceField";
+import { useLanguage } from "@/features/language";
 
 interface QuantityPriceFieldsProps {
   form: UseFormReturn<TicketFormValues>;
@@ -12,15 +13,38 @@ interface QuantityPriceFieldsProps {
 }
 
 export function QuantityPriceFields({ form, t }: QuantityPriceFieldsProps) {
+  const { currentLanguage } = useLanguage();
+  
+  // Custom error messages based on language
+  const getErrorMessage = (error: any) => {
+    if (!error) return null;
+    
+    if (error.message === "Price per unit must be a valid number greater than 0") {
+      return currentLanguage.code === 'lv' 
+        ? "Cenai par biļeti jābūt lielākai par 0" 
+        : "Price per unit must be a valid number greater than 0";
+    }
+    
+    if (error.message === "Quantity must be a valid number greater than 0") {
+      return currentLanguage.code === 'lv' 
+        ? "Biļešu skaitam jābūt lielākam par 0" 
+        : "Quantity must be a valid number greater than 0";
+    }
+    
+    return error.message;
+  };
+
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField
           control={form.control}
           name="pricePerUnit"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel>{t("Cena par biļeti", "Price per ticket")}</FormLabel>
+              <FormLabel className="font-medium">
+                {t("Cena par biļeti", "Price per ticket")} <span className="text-red-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input 
                   {...field} 
@@ -28,9 +52,14 @@ export function QuantityPriceFields({ form, t }: QuantityPriceFieldsProps) {
                   min="0.01" 
                   step="0.01" 
                   placeholder="0.00" 
+                  required
                 />
               </FormControl>
-              <FormMessage />
+              {fieldState.error && (
+                <FormMessage>
+                  {getErrorMessage(fieldState.error)}
+                </FormMessage>
+              )}
             </FormItem>
           )}
         />
@@ -38,9 +67,11 @@ export function QuantityPriceFields({ form, t }: QuantityPriceFieldsProps) {
         <FormField
           control={form.control}
           name="quantity"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel>{t("Biļešu skaits", "Ticket quantity")}</FormLabel>
+              <FormLabel className="font-medium">
+                {t("Biļešu skaits", "Ticket quantity")} <span className="text-red-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input 
                   {...field} 
@@ -48,9 +79,14 @@ export function QuantityPriceFields({ form, t }: QuantityPriceFieldsProps) {
                   min="1" 
                   step="1" 
                   placeholder="1" 
+                  required
                 />
               </FormControl>
-              <FormMessage />
+              {fieldState.error && (
+                <FormMessage>
+                  {getErrorMessage(fieldState.error)}
+                </FormMessage>
+              )}
             </FormItem>
           )}
         />

@@ -4,6 +4,7 @@ import { UseFormReturn } from "react-hook-form";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { TicketFormValues } from "../schema";
+import { useLanguage } from "@/features/language";
 
 interface EventDetailsFieldsProps {
   form: UseFormReturn<TicketFormValues>;
@@ -11,21 +12,48 @@ interface EventDetailsFieldsProps {
 }
 
 export function EventDetailsFields({ form, t }: EventDetailsFieldsProps) {
+  const { currentLanguage } = useLanguage();
+  
+  // Custom error messages based on language
+  const getErrorMessage = (error: any) => {
+    if (!error) return null;
+    
+    if (error.message === "Venue is required.") {
+      return currentLanguage.code === 'lv' 
+        ? "Norises vieta ir obligāta." 
+        : "Venue is required.";
+    }
+    
+    if (error.message === "Event date is required.") {
+      return currentLanguage.code === 'lv' 
+        ? "Datums ir obligāts." 
+        : "Event date is required.";
+    }
+    
+    return error.message;
+  };
+  
   return (
     <>
       <FormField
         control={form.control}
         name="venue"
-        render={({ field }) => (
+        render={({ field, fieldState }) => (
           <FormItem>
-            <FormLabel>{t("Norises vieta", "Venue")}</FormLabel>
+            <FormLabel className="font-medium">
+              {t("Norises vieta", "Venue")} <span className="text-red-500">*</span>
+            </FormLabel>
             <FormControl>
               <Input 
                 {...field} 
                 placeholder={t("Ievadiet norises vietu", "Enter venue")} 
               />
             </FormControl>
-            <FormMessage />
+            {fieldState.error && (
+              <FormMessage>
+                {getErrorMessage(fieldState.error)}
+              </FormMessage>
+            )}
           </FormItem>
         )}
       />
@@ -34,16 +62,23 @@ export function EventDetailsFields({ form, t }: EventDetailsFieldsProps) {
         <FormField
           control={form.control}
           name="eventDate"
-          render={({ field }) => (
+          render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel>{t("Pasākuma datums", "Event date")}</FormLabel>
+              <FormLabel className="font-medium">
+                {t("Pasākuma datums", "Event date")} <span className="text-red-500">*</span>
+              </FormLabel>
               <FormControl>
                 <Input 
                   {...field} 
                   type="date"
+                  required
                 />
               </FormControl>
-              <FormMessage />
+              {fieldState.error && (
+                <FormMessage>
+                  {getErrorMessage(fieldState.error)}
+                </FormMessage>
+              )}
             </FormItem>
           )}
         />
