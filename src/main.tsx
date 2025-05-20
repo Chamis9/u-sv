@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import React from 'react'
 import App from './App.tsx'
 import './index.css'
+import { HelmetProvider } from 'react-helmet-async'
 
 const root = createRoot(document.getElementById("root")!);
 
@@ -10,9 +11,15 @@ const root = createRoot(document.getElementById("root")!);
 if (import.meta.env.DEV) {
   root.render(
     <React.StrictMode>
-      <App />
+      <HelmetProvider>
+        <App />
+      </HelmetProvider>
     </React.StrictMode>
   );
 } else {
-  root.render(<App />);
+  root.render(
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
+  );
 }
