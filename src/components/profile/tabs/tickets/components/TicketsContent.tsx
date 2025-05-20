@@ -14,6 +14,7 @@ interface TicketsContentProps {
   tickets: UserTicket[];
   isLoading: boolean;
   onDelete: (ticketId: string) => void;
+  onView: (ticket: UserTicket) => void;  // Added the missing onView property
   onEdit?: (ticket: UserTicket) => void;
   loadingDelete?: boolean;
   ticketType: "added" | "purchased";
@@ -23,6 +24,7 @@ export function TicketsContent({
   tickets, 
   isLoading, 
   onDelete, 
+  onView,  // Added the missing parameter
   onEdit,
   loadingDelete = false,
   ticketType
@@ -38,6 +40,7 @@ export function TicketsContent({
   const handleViewTicket = (ticket: UserTicket) => {
     setSelectedTicket(ticket);
     setIsPreviewOpen(true);
+    onView(ticket);  // Call the onView callback passed from parent
   };
 
   if (isLoading) {
