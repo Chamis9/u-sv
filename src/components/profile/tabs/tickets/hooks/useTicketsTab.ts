@@ -97,27 +97,6 @@ export function useTicketsTab(user: User) {
     setPurchasedTickets(purchased);
   }, [tickets, authUserId, isAuthenticated]);
 
-  // Force refresh tickets on initial load - only runs when authUserId changes
-  useEffect(() => {
-    if (isAuthenticated && authUserId) {
-      console.log("Initial tickets load for authenticated user:", authUserId);
-      
-      // Verify auth session before initial load
-      const checkSessionAndRefresh = async () => {
-        try {
-          const { data: session, error: sessionError } = await supabase.auth.getSession();
-          if (!sessionError && session.session) {
-            refreshTickets();
-          }
-        } catch (err) {
-          console.error("Session check error:", err);
-        }
-      };
-      
-      checkSessionAndRefresh();
-    }
-  }, [isAuthenticated, authUserId, refreshTickets]);
-
   return {
     addedTickets,
     purchasedTickets,

@@ -78,9 +78,11 @@ export function useTicketQueries(userId?: string) {
       }
     },
     enabled: isAuthenticated,
-    staleTime: 1000 * 30, // 30 seconds
+    staleTime: 1000 * 60, // 1 minute
+    gcTime: 1000 * 60 * 5, // 5 minutes
+    retry: 1, // Only retry once
     refetchOnMount: true,
-    refetchOnWindowFocus: true
+    refetchOnWindowFocus: false // Disable automatic refetch on window focus
   });
 
   // Function to force refresh tickets

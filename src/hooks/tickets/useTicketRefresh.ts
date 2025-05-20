@@ -1,5 +1,5 @@
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage } from "@/features/language";
@@ -14,10 +14,18 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
   const queryClient = useQueryClient();
   const { currentLanguage } = useLanguage();
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const lastRefreshTime = useRef<number>(0);
   
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
   
   const refreshTickets = useCallback(async () => {
+    // Throttle refreshes - don't allow more than one refresh every 5 seconds
+    const now = Date.now();
+    if (now - lastRefreshTime.current < 5000) {
+      console.log("Refresh throttled - too frequent calls");
+      return false;
+    }
+    
     if (!isAuthenticated) {
       console.log("Cannot refresh tickets: user not authenticated");
       return false;
@@ -29,6 +37,7 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
     }
     
     setIsRefreshing(true);
+    lastRefreshTime.current = now;
     
     try {
       // Verify the auth session is valid before refreshing

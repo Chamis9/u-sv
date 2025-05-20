@@ -21,6 +21,7 @@ interface TicketsTabProps {
 export function TicketsTab({ user }: TicketsTabProps) {
   const { isAuthenticated } = useAuth();
   const initialLoadRef = useRef(false);
+  const authListenerRef = useRef<{ subscription: { unsubscribe: () => void } } | null>(null);
   
   const {
     addedTickets,
@@ -55,11 +56,9 @@ export function TicketsTab({ user }: TicketsTabProps) {
   const handleRefreshClick = useCallback(async () => {
     console.log("Manual refresh triggered from button");
     await refreshTickets();
-    // Also refresh using the tab's function to ensure UI consistency
-    refreshTicketsFromTab();
-  }, [refreshTickets, refreshTicketsFromTab]);
+  }, [refreshTickets]);
   
-  // Force refresh on component mount and when user changes - with ref to prevent infinite loop
+  // Force refresh on component mount only once
   useEffect(() => {
     const verifyAndRefresh = async () => {
       if (isAuthenticated && !initialLoadRef.current) {
@@ -78,13 +77,20 @@ export function TicketsTab({ user }: TicketsTabProps) {
     };
     
     verifyAndRefresh();
-  }, [isAuthenticated, refreshTicketsFromTab]);
+    // Only depend on isAuthenticated, not refreshTicketsFromTab
+  }, [isAuthenticated]);
 
-  // Set up automatic refreshing when ticket state changes
+  // Set up automatic refreshing when auth state changes - once
   useEffect(() => {
+    // Clean up previous listener if it exists
+    if (authListenerRef.current) {
+      authListenerRef.current.subscription.unsubscribe();
+    }
+    
     // Listen for changes in auth state
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log("Auth state changed:", event);
         if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
           console.log("Auth state changed, refreshing tickets");
           refreshTicketsFromTab();
@@ -92,11 +98,16 @@ export function TicketsTab({ user }: TicketsTabProps) {
       }
     );
 
+    // Store the listener for cleanup
+    authListenerRef.current = authListener;
+
     return () => {
       // Clean up the subscription
-      authListener?.subscription.unsubscribe();
+      if (authListenerRef.current) {
+        authListenerRef.current.subscription.unsubscribe();
+      }
     };
-  }, [refreshTicketsFromTab]);
+  }, []); // Empty dependency array - only run once
   
   if (!isAuthenticated) {
     return (
@@ -158,7 +169,6 @@ export function TicketsTab({ user }: TicketsTabProps) {
         onOpenChange={setAddTicketOpen}
         onClose={() => {
           setAddTicketOpen(false);
-          // No need to call refreshTickets here, it's now handled in AddTicketDialog
         }}
       />
       
@@ -168,7 +178,6 @@ export function TicketsTab({ user }: TicketsTabProps) {
         onOpenChange={setEditTicketOpen}
         onClose={() => {
           setEditTicketOpen(false);
-          // No need to call refreshTickets here, it's now handled in EditTicketDialog
         }}
         currentTicket={currentEditTicket}
         onUpdate={handleUpdateTicket}
