@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Search, CalendarIcon, X } from "lucide-react";
+import { Search, CalendarIcon, X, Trash2 } from "lucide-react";
 
 interface EventSearchFilterProps {
   searchQuery: string;
@@ -59,8 +59,8 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
           <Button variant="outline" className="w-full sm:w-[300px] flex justify-between items-center">
             <div className="flex items-center">
               <CalendarIcon className="mr-2 h-4 w-4 text-green-600 dark:text-green-400" />
-              {/* Always apply green text color when dates are selected */}
-              <span className={`truncate ${startDate || endDate ? "text-green-600 dark:text-green-400" : ""}`}>
+              {/* Always apply green text color to the dates text */}
+              <span className="truncate text-green-600 dark:text-green-400">
                 {dateButtonText}
               </span>
             </div>
@@ -76,21 +76,35 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            initialFocus
-            mode="range"
-            defaultMonth={startDate}
-            selected={{
-              from: startDate,
-              to: endDate
-            }}
-            onSelect={(range) => {
-              setStartDate(range?.from);
-              setEndDate(range?.to);
-            }}
-            numberOfMonths={2}
-            className="pointer-events-auto"
-          />
+          <div className="p-3 flex flex-col gap-3">
+            <Calendar
+              initialFocus
+              mode="range"
+              defaultMonth={startDate}
+              selected={{
+                from: startDate,
+                to: endDate
+              }}
+              onSelect={(range) => {
+                setStartDate(range?.from);
+                setEndDate(range?.to);
+              }}
+              numberOfMonths={2}
+              className="pointer-events-auto"
+            />
+            
+            {/* Clear button - only show when dates are selected */}
+            {(startDate || endDate) && (
+              <Button 
+                variant="outline" 
+                onClick={clearDateFilters}
+                className="flex items-center gap-2 self-end text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 border-green-600 dark:border-green-400 hover:border-green-700 dark:hover:border-green-300"
+              >
+                <Trash2 className="h-4 w-4" />
+                {t("Notīrīt", "Clear")}
+              </Button>
+            )}
+          </div>
         </PopoverContent>
       </Popover>
     </div>
