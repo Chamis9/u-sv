@@ -56,8 +56,8 @@ export const useTicketPurchase = () => {
       toast({
         title: currentLanguage.code === 'lv' ? "Kļūda" : "Error",
         description: currentLanguage.code === 'lv'
-          ? "Neizdevās iegādāties biļeti. Lūdzu, mēģiniet vēlreiz."
-          : "Failed to purchase ticket. Please try again.",
+          ? "Biļešu iegādes iespēja vēl tiek izstrādāta. Paldies par pacietību!"
+          : "Ticket purchasing functionality is still under development. Thank you for your patience!",
         variant: "destructive"
       });
       return false;
