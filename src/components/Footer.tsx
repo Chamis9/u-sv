@@ -1,6 +1,6 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/features/language";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -27,8 +27,45 @@ const translations = {
 };
 
 export function Footer() {
-  const { t } = useTranslation();
   const { currentLanguage, setLanguage } = useLanguage();
+  
+  // Create a translation function that doesn't depend on react-i18next
+  const t = (key: string) => {
+    // Basic implementation that returns the key for demonstration
+    // In a real app, you'd have a more sophisticated translation system
+    const translations: Record<string, Record<string, string>> = {
+      "lv": {
+        "footer.about": "Par mums",
+        "footer.privacyPolicy": "Privātuma politika",
+        "footer.subscribe": "Pierakstīties jaunumiem",
+        "footer.emailPlaceholder": "Jūsu e-pasts",
+        "footer.subscribeButton": "Abonēt",
+        "footer.followUs": "Sekojiet mums",
+        "navigation.home": "Sākums",
+        "navigation.events": "Pasākumi",
+        "navigation.tickets": "Biļetes",
+        "navigation.about": "Par mums",
+        "navigation.contact": "Kontakti",
+        "navigation.docs": "Dokumentācija"
+      },
+      "en": {
+        "footer.about": "About Us",
+        "footer.privacyPolicy": "Privacy Policy",
+        "footer.subscribe": "Subscribe to updates",
+        "footer.emailPlaceholder": "Your email",
+        "footer.subscribeButton": "Subscribe",
+        "footer.followUs": "Follow Us",
+        "navigation.home": "Home",
+        "navigation.events": "Events",
+        "navigation.tickets": "Tickets",
+        "navigation.about": "About Us",
+        "navigation.contact": "Contact",
+        "navigation.docs": "Documentation"
+      }
+    };
+    
+    return translations[currentLanguage.code]?.[key] || key;
+  };
 
   return (
     <footer className="bg-background py-12">

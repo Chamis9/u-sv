@@ -1,3 +1,4 @@
+
 import { LanguageSelector } from "@/features/language";
 import { Logo } from "./header/Logo";
 import { Navigation, getNavigationLinks } from "./header/Navigation";
@@ -16,7 +17,7 @@ export function Header() {
     { href: "/tickets", translationKey: "navigation.tickets" },
     { href: "/about", translationKey: "navigation.about" },
     { href: "/contact", translationKey: "navigation.contact" },
-    { href: "/docs", translationKey: "navigation.docs" }, // Add this line
+    { href: "/docs", translationKey: "navigation.docs" },
   ];
   const navigationLinks = getNavigationLinks(navLinks);
   const { currentLanguage } = useLanguage();

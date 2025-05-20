@@ -1,15 +1,15 @@
-import React, { Suspense, useEffect } from "react";
+
+import React, { Suspense } from "react";
 import {
   BrowserRouter,
   Routes,
   Route,
-  useLocation,
+  useLocation
 } from "react-router-dom";
 import { Helmet } from 'react-helmet-async';
 import { useLanguage } from "@/features/language";
 import { Toaster } from "@/components/ui/toaster"
-import { useIsDesktop } from "./hooks/useIsDesktop";
-import { ScrollToTop } from "./utils/operations/clientOperations";
+import { useDevice } from "./hooks/useDevice";
 
 import Index from "./pages/Index";
 import AboutUs from "./pages/AboutUs";
@@ -20,16 +20,24 @@ import Profile from "./pages/Profile";
 import Tickets from "./pages/Tickets";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
-import { SiteHeader } from "./components/Header";
-import { SiteFooter } from "./components/Footer";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
 import { AuthProvider } from "./contexts/AuthContext";
-import { MobileHeader } from "./components/MobileHeader";
-import { SupabaseListener } from "./components/SupabaseListener";
 import Documentation from './pages/Documentation';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  
+  return null;
+}
 
 function AppContent() {
   const { currentLanguage } = useLanguage();
-  const isDesktop = useIsDesktop();
+  const { isDesktop } = useDevice();
 
   // Function to translate text based on current language
   const t = (lvText: string, enText: string) =>
@@ -47,8 +55,7 @@ function AppContent() {
       </Helmet>
 
       <AuthProvider>
-        <SupabaseListener />
-        {isDesktop ? <SiteHeader /> : <MobileHeader />}
+        <Header />
 
         <main className="flex-1">
           <ScrollToTop />
@@ -63,13 +70,13 @@ function AppContent() {
             <Route path="/profile/:tab" element={<Profile />} />
             <Route path="/tickets" element={<Tickets />} />
             <Route path="/tickets/:category" element={<Tickets />} />
-            <Route path="/docs" element={<Documentation />} /> {/* Add this line */}
+            <Route path="/docs" element={<Documentation />} />
             <Route path="/admin/*" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
 
-        <SiteFooter />
+        <Footer />
       </AuthProvider>
       <Toaster />
     </>

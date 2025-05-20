@@ -1,4 +1,38 @@
-export const navigation = {
+
+export type NavigationTranslations = {
+  home: string;
+  events: string;
+  tickets: string;
+  about: string;
+  contact: string;
+  docs: string;
+  profile: string;
+  admin: string;
+  login: string;
+  logout: string;
+  register: string;
+  account: string;
+  payments: string;
+  settings: string;
+  users: string;
+  subscribers: string;
+  events_admin: string;
+  categories: string;
+  activity: string;
+  system: string;
+};
+
+export type ThemeTranslations = {
+  light: string;
+  dark: string;
+  system: string;
+};
+
+export type LanguageSelectorTranslations = {
+  selectLanguage: string;
+};
+
+export const navigationTranslations = {
   lv: {
     home: "Sākums",
     events: "Pasākumi",
@@ -43,4 +77,26 @@ export const navigation = {
     activity: "Activity",
     system: "System",
   },
+};
+
+export const themeTranslations = {
+  lv: {
+    light: "Gaišs",
+    dark: "Tumšs",
+    system: "Sistēmas"
+  },
+  en: {
+    light: "Light",
+    dark: "Dark",
+    system: "System"
+  }
+};
+
+export const languageSelectorTranslations = {
+  lv: {
+    selectLanguage: "Izvēlieties valodu"
+  },
+  en: {
+    selectLanguage: "Select language"
+  }
 };
