@@ -33,8 +33,9 @@ export function CategorySelector({ value, onChange }: CategorySelectorProps) {
     <Select 
       value={value} 
       onValueChange={onChange}
+      required
     >
-      <SelectTrigger>
+      <SelectTrigger className={value ? "" : "text-muted-foreground"}>
         <SelectValue placeholder={t("Izvēlieties kategoriju", "Select a category")} />
       </SelectTrigger>
       <SelectContent>

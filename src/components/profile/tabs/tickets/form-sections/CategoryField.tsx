@@ -4,6 +4,7 @@ import { UseFormReturn } from "react-hook-form";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { CategorySelector } from "../CategorySelector";
 import { TicketFormValues } from "../schema";
+import { useLanguage } from "@/features/language";
 
 interface CategoryFieldProps {
   form: UseFormReturn<TicketFormValues>;
@@ -11,20 +12,41 @@ interface CategoryFieldProps {
 }
 
 export function CategoryField({ form, t }: CategoryFieldProps) {
+  const { currentLanguage } = useLanguage();
+  
+  // Custom error messages based on language
+  const getErrorMessage = (error: any) => {
+    if (!error) return null;
+    
+    if (error.message === "Category is required.") {
+      return currentLanguage.code === 'lv' 
+        ? "Kategorija ir obligāta." 
+        : "Category is required.";
+    }
+    
+    return error.message;
+  };
+  
   return (
     <FormField
       control={form.control}
       name="category"
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <FormItem>
-          <FormLabel>{t("Kategorija", "Category")}</FormLabel>
+          <FormLabel className="font-medium">
+            {t("Kategorija", "Category")} <span className="text-red-500">*</span>
+          </FormLabel>
           <FormControl>
             <CategorySelector 
               value={field.value} 
               onChange={field.onChange}
             />
           </FormControl>
-          <FormMessage />
+          {fieldState.error && (
+            <FormMessage>
+              {getErrorMessage(fieldState.error)}
+            </FormMessage>
+          )}
         </FormItem>
       )}
     />

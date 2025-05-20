@@ -6,7 +6,9 @@ export const ticketFormSchema = z.object({
     message: "Title must be at least 3 characters.",
   }),
   description: z.string().optional(),
-  category: z.string().optional(),
+  category: z.string().min(1, {
+    message: "Category is required.",
+  }),
   venue: z.string().optional(),
   eventDate: z.string().optional(),
   eventTime: z.string().optional(),
