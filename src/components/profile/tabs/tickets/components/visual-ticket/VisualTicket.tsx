@@ -43,12 +43,12 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
   
   return (
     <>
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-        {/* Ticket header with color band - CHANGED FROM GREEN TO YELLOW */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col h-full">
+        {/* Ticket header with color band */}
         <div className={`h-2 ${ticket.status === 'sold' ? "bg-blue-500" : ticket.status === 'available' ? "bg-ticket-accent" : "bg-orange-500"}`}></div>
         
-        <div className="p-4">
-          <div className="flex items-start justify-between">
+        <div className="p-4 flex flex-col flex-grow">
+          <div className="flex items-start justify-between mb-auto">
             <TicketHeader 
               ticket={ticket} 
               currentLanguageCode={currentLanguage.code}
@@ -64,14 +64,16 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
             t={t}
           />
           
-          <TicketActions
-            ticket={ticket}
-            onView={handleViewClick}
-            onEdit={handleEditClick}
-            onDelete={handleDeleteClick}
-            ticketType={ticketType}
-            t={t}
-          />
+          <div className="mt-auto">
+            <TicketActions
+              ticket={ticket}
+              onView={handleViewClick}
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
+              ticketType={ticketType}
+              t={t}
+            />
+          </div>
         </div>
       </div>
       

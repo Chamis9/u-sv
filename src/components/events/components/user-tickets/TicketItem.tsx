@@ -29,12 +29,12 @@ export const TicketItem: React.FC<TicketItemProps> = ({
   isDeleting
 }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col h-full">
       {/* Ticket color band */}
       <div className="h-2 bg-ticket-accent"></div>
       
-      <div className="p-4">
-        <div className="flex items-start justify-between">
+      <div className="p-4 flex flex-col flex-grow">
+        <div className="flex items-start justify-between mb-auto">
           <div className="flex-1">
             <h3 className="font-bold text-lg mb-1 text-gray-900 dark:text-gray-100 break-words">
               {ticket.title}
@@ -63,15 +63,6 @@ export const TicketItem: React.FC<TicketItemProps> = ({
               <Tag className="h-4 w-4 mr-1 text-muted-foreground flex-shrink-0" />
               <span className="text-sm text-muted-foreground break-words">{ticket.category}</span>
             </div>
-            
-            <div className="text-xl font-bold text-primary">
-              {formatPrice(ticket.price)}
-            </div>
-            
-            {/* Always show quantity and price per unit, even for single tickets */}
-            <div className="text-sm text-muted-foreground mt-1">
-              {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
-            </div>
           </div>
           
           <div className="ml-4 mt-1">
@@ -79,43 +70,54 @@ export const TicketItem: React.FC<TicketItemProps> = ({
           </div>
         </div>
         
-        <div className="mt-4 flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onView(ticket)}
-            className="flex-1 text-gray-800 border-gray-400"
-          >
-            <Eye className="h-4 w-4 mr-2" />
-            {t("Skatīt", "View")}
-          </Button>
+        <div className="mt-auto">
+          <div className="text-xl font-bold text-primary">
+            {formatPrice(ticket.price)}
+          </div>
           
-          {/* Show Delete button if user is the owner of this ticket */}
-          {isAuthenticated && userId === ticket.seller_id && onDelete && (
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => onDelete(ticket.id)}
-              className="flex-1"
-              disabled={isDeleting}
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              {t("Dzēst", "Delete")}
-            </Button>
-          )}
+          {/* Always show quantity and price per unit, even for single tickets */}
+          <div className="text-sm text-muted-foreground mt-1 mb-4">
+            {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
+          </div>
           
-          {/* Don't show Buy button if user is the seller */}
-          {(!isAuthenticated || userId !== ticket.seller_id) && (
+          <div className="flex gap-2">
             <Button
-              variant="orange"
+              variant="outline"
               size="sm"
-              onClick={() => onPurchase(ticket)}
-              className="flex-1"
+              onClick={() => onView(ticket)}
+              className="flex-1 text-gray-800 border-gray-400"
             >
-              <Ticket className="h-4 w-4 mr-2" />
-              {t("Pirkt biļeti", "Buy ticket")}
+              <Eye className="h-4 w-4 mr-2" />
+              {t("Skatīt", "View")}
             </Button>
-          )}
+            
+            {/* Show Delete button if user is the owner of this ticket */}
+            {isAuthenticated && userId === ticket.seller_id && onDelete && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => onDelete(ticket.id)}
+                className="flex-1"
+                disabled={isDeleting}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                {t("Dzēst", "Delete")}
+              </Button>
+            )}
+            
+            {/* Don't show Buy button if user is the seller */}
+            {(!isAuthenticated || userId !== ticket.seller_id) && (
+              <Button
+                variant="orange"
+                size="sm"
+                onClick={() => onPurchase(ticket)}
+                className="flex-1"
+              >
+                <Ticket className="h-4 w-4 mr-2" />
+                {t("Pirkt biļeti", "Buy ticket")}
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

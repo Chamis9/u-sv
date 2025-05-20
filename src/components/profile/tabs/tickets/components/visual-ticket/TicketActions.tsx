@@ -22,7 +22,7 @@ export function TicketActions({
   t 
 }: TicketActionsProps) {
   return (
-    <div className="mt-4 flex gap-2">
+    <div className="flex gap-2">
       <Button
         variant="outline"
         size="sm"

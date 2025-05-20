@@ -68,12 +68,12 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
   
   return (
     <>
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col h-full">
         {/* Ticket header with color band */}
         <div className={`h-2 ${getStatusColor(ticket.status)}`}></div>
         
-        <div className="p-3 sm:p-4">
-          <div className="flex items-start justify-between">
+        <div className="p-3 sm:p-4 flex flex-col flex-grow">
+          <div className="flex items-start justify-between mb-auto">
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-base sm:text-lg mb-1 break-words">{ticket.title}</h3>
               <div className="flex flex-wrap items-center text-xs sm:text-sm text-muted-foreground mb-1">
@@ -107,15 +107,6 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
                   {getStatusText(ticket.status)}
                 </Badge>
               </div>
-              
-              <div className="text-lg sm:text-xl font-bold text-primary">
-                {formatPrice(ticket.price)}
-              </div>
-              
-              {/* Always show quantity and price per unit, even for single tickets */}
-              <div className="text-xs sm:text-sm text-muted-foreground mt-1">
-                {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
-              </div>
             </div>
             
             <div className="ml-3 mt-1 hidden sm:block">
@@ -123,54 +114,65 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
             </div>
           </div>
           
-          <div className="mt-3 flex flex-wrap gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleViewClick}
-              className="flex-1 text-xs px-2 h-8"
-            >
-              <Eye className="h-3 w-3 mr-1" />
-              {t("Skatīt", "View")}
-            </Button>
+          <div className="mt-auto">
+            <div className="text-lg sm:text-xl font-bold text-primary mb-1">
+              {formatPrice(ticket.price)}
+            </div>
             
-            {ticket.file_path && (
+            {/* Always show quantity and price per unit, even for single tickets */}
+            <div className="text-xs sm:text-sm text-muted-foreground mb-4">
+              {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  window.open(`https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/tickets/${ticket.file_path}`, '_blank');
-                }}
+                onClick={handleViewClick}
                 className="flex-1 text-xs px-2 h-8"
               >
-                <Download className="h-3 w-3 mr-1" />
-                {t("Lejupielādēt", "Download")}
+                <Eye className="h-3 w-3 mr-1" />
+                {t("Skatīt", "View")}
               </Button>
-            )}
-            
-            {ticketType === "added" && ticket.status === 'available' && onEdit && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onEdit(ticket)}
-                className="flex-1 text-xs px-2 h-8"
-              >
-                <Pencil className="h-3 w-3 mr-1" />
-                {t("Rediģēt", "Edit")}
-              </Button>
-            )}
-            
-            {ticketType === "added" && ticket.status === 'available' && onDelete && (
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleDeleteClick}
-                className="flex-1 text-xs px-2 h-8"
-              >
-                <Trash2 className="h-3 w-3 mr-1" />
-                {t("Dzēst", "Delete")}
-              </Button>
-            )}
+              
+              {ticket.file_path && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    window.open(`https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/tickets/${ticket.file_path}`, '_blank');
+                  }}
+                  className="flex-1 text-xs px-2 h-8"
+                >
+                  <Download className="h-3 w-3 mr-1" />
+                  {t("Lejupielādēt", "Download")}
+                </Button>
+              )}
+              
+              {ticketType === "added" && ticket.status === 'available' && onEdit && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onEdit(ticket)}
+                  className="flex-1 text-xs px-2 h-8"
+                >
+                  <Pencil className="h-3 w-3 mr-1" />
+                  {t("Rediģēt", "Edit")}
+                </Button>
+              )}
+              
+              {ticketType === "added" && ticket.status === 'available' && onDelete && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleDeleteClick}
+                  className="flex-1 text-xs px-2 h-8"
+                >
+                  <Trash2 className="h-3 w-3 mr-1" />
+                  {t("Dzēst", "Delete")}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>
