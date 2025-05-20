@@ -12,7 +12,7 @@ export type HowItWorksTranslations = {
 
 export const howItWorksTranslations: Record<string, HowItWorksTranslations> = {
   lv: {
-    title: "Kā tas darbojas",
+    title: "Kā tas strādā",
     subtitle: "Pārdod vai iegādājies biļeti droši un ērti",
     steps: [
       {
