@@ -19,7 +19,8 @@ export function Header() {
     { href: "/contact", translationKey: "navigation.contact" },
     { href: "/docs", translationKey: "navigation.docs" },
   ];
-  const navigationLinks = getNavigationLinks(navLinks);
+  // Get navigation links without passing arguments
+  const navigationLinks = getNavigationLinks();
   const { currentLanguage } = useLanguage();
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();

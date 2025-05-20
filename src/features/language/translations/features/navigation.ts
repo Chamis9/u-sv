@@ -30,6 +30,7 @@ export type ThemeTranslations = {
 
 export type LanguageSelectorTranslations = {
   selectLanguage: string;
+  label: string;  // Added this property
 };
 
 export const navigationTranslations = {
@@ -94,9 +95,11 @@ export const themeTranslations = {
 
 export const languageSelectorTranslations = {
   lv: {
-    selectLanguage: "Izvēlieties valodu"
+    selectLanguage: "Izvēlieties valodu",
+    label: "Valoda"
   },
   en: {
-    selectLanguage: "Select language"
+    selectLanguage: "Select language",
+    label: "Language"
   }
 };
