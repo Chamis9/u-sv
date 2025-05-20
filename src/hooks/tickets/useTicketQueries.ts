@@ -86,7 +86,7 @@ export function useTicketQueries(userId?: string) {
     staleTime: 1000 * 60 * 5, // 5 minutes - dramatically increase stale time
     gcTime: 1000 * 60 * 30, // 30 minutes - keep in cache longer
     retry: 1, // Only retry once
-    refetchOnMount: 'stale',
+    refetchOnMount: true, // Changed from 'stale' to true - this is a valid option in React Query v5
     refetchOnWindowFocus: false, // Disable automatic refetch on window focus
     refetchInterval: false // Disable polling
   });
