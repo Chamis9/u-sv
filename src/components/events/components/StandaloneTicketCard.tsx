@@ -26,7 +26,7 @@ export const StandaloneTicketCard: React.FC<StandaloneTicketCardProps> = ({
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
       <div className="p-4 flex-grow">
-        <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">{ticket.title}</h3>
+        <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100 break-words">{ticket.title}</h3>
         {ticket.description && (
           <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
             {ticket.description}
@@ -39,7 +39,7 @@ export const StandaloneTicketCard: React.FC<StandaloneTicketCardProps> = ({
         )}
         {ticket.event_date && (
           <div className="text-sm text-gray-600 dark:text-gray-300 mb-3 flex items-center">
-            <Calendar className="h-4 w-4 mr-1" />
+            <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
             {format(new Date(ticket.event_date), 'dd.MM.yyyy', { locale })}
           </div>
         )}

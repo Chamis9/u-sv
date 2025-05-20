@@ -36,15 +36,17 @@ export const TicketItem: React.FC<TicketItemProps> = ({
       <div className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <h3 className="font-bold text-lg mb-1 truncate text-gray-900 dark:text-gray-100">{ticket.title}</h3>
+            <h3 className="font-bold text-lg mb-1 text-gray-900 dark:text-gray-100 break-words">
+              {ticket.title}
+            </h3>
             <div className="flex items-center text-sm text-muted-foreground mb-1">
-              <Calendar className="h-4 w-4 mr-1" />
+              <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
               {ticket.event_date 
                 ? formatDate(ticket.event_date, currentLanguageCode === 'lv' ? 'lv-LV' : 'en-US')
                 : formatDate(ticket.created_at, currentLanguageCode === 'lv' ? 'lv-LV' : 'en-US')}
               {ticket.event_time && (
                 <span className="ml-2 flex items-center">
-                  <Clock className="h-3 w-3 mr-1" />
+                  <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
                   {ticket.event_time}
                 </span>
               )}
@@ -52,14 +54,14 @@ export const TicketItem: React.FC<TicketItemProps> = ({
             
             {ticket.venue && (
               <div className="flex items-center text-sm text-muted-foreground mb-3">
-                <MapPin className="h-4 w-4 mr-1" />
-                {ticket.venue}
+                <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
+                <span className="break-words">{ticket.venue}</span>
               </div>
             )}
             
             <div className="flex items-center mb-4">
-              <Tag className="h-4 w-4 mr-1 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">{ticket.category}</span>
+              <Tag className="h-4 w-4 mr-1 text-muted-foreground flex-shrink-0" />
+              <span className="text-sm text-muted-foreground break-words">{ticket.category}</span>
             </div>
             
             <div className="text-xl font-bold text-primary">

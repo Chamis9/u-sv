@@ -39,6 +39,7 @@ export function TabContent({
           tickets={tickets}
           isLoading={isLoading}
           onDelete={onDelete}
+          onView={onView}
           onEdit={onEdit}
           ticketType={ticketType}
         />

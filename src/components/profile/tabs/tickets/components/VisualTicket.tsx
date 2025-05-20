@@ -75,17 +75,17 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
         <div className="p-3 sm:p-4">
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-base sm:text-lg mb-1 truncate">{ticket.title}</h3>
+              <h3 className="font-semibold text-base sm:text-lg mb-1 break-words">{ticket.title}</h3>
               <div className="flex flex-wrap items-center text-xs sm:text-sm text-muted-foreground mb-1">
                 <div className="flex items-center mr-3 mb-1">
-                  <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                  <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
                   {ticket.event_date 
                     ? formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')
                     : formatDate(ticket.created_at, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
                 </div>
                 {ticket.event_time && (
                   <div className="flex items-center mb-1">
-                    <Clock className="h-3 w-3 mr-1" />
+                    <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
                     {formatTime(ticket.event_time)}
                   </div>
                 )}
@@ -93,15 +93,15 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
               
               {ticket.venue && (
                 <div className="flex items-center text-xs sm:text-sm text-muted-foreground mb-2">
-                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                  <span className="truncate">{ticket.venue}</span>
+                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0" />
+                  <span className="break-words">{ticket.venue}</span>
                 </div>
               )}
               
               <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                 <div className="flex items-center">
-                  <Tag className="h-3 w-3 sm:h-4 sm:w-4 mr-1 text-muted-foreground" />
-                  <span className="text-xs sm:text-sm text-muted-foreground truncate max-w-[150px]">{ticket.category}</span>
+                  <Tag className="h-3 w-3 sm:h-4 sm:w-4 mr-1 text-muted-foreground flex-shrink-0" />
+                  <span className="text-xs sm:text-sm text-muted-foreground break-words max-w-[150px]">{ticket.category}</span>
                 </div>
                 <Badge className={`${getStatusColor(ticket.status)} text-xs whitespace-nowrap`}>
                   {getStatusText(ticket.status)}

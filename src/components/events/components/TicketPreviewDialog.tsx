@@ -75,10 +75,10 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
         
         <div className="py-4">
           <div className="space-y-4">
-            <h3 className="text-xl font-bold">{ticket.title}</h3>
+            <h3 className="text-xl font-bold break-words">{ticket.title}</h3>
             
             {ticket.description && (
-              <p className="text-sm text-gray-600 dark:text-gray-300">
+              <p className="text-sm text-gray-600 dark:text-gray-300 break-words">
                 {ticket.description}
               </p>
             )}
@@ -86,7 +86,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
             <div className="grid gap-2">
               {ticket.event_date && (
                 <div className="flex items-center text-sm">
-                  <Calendar className="h-4 w-4 mr-2 text-gray-500" />
+                  <Calendar className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
                   <span>
                     {formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
                   </span>
@@ -95,26 +95,26 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
               
               {ticket.event_time && (
                 <div className="flex items-center text-sm">
-                  <Clock className="h-4 w-4 mr-2 text-gray-500" />
+                  <Clock className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
                   <span>{ticket.event_time}</span>
                 </div>
               )}
               
               {ticket.venue && (
                 <div className="flex items-center text-sm">
-                  <MapPin className="h-4 w-4 mr-2 text-gray-500" />
-                  <span>{ticket.venue}</span>
+                  <MapPin className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
+                  <span className="break-words">{ticket.venue}</span>
                 </div>
               )}
               
               <div className="flex items-center text-sm">
-                <Tag className="h-4 w-4 mr-2 text-gray-500" />
-                <span>{ticket.category}</span>
+                <Tag className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
+                <span className="break-words">{ticket.category}</span>
               </div>
               
               {sellerName && (
                 <div className="flex items-center text-sm">
-                  <User className="h-4 w-4 mr-2 text-gray-500" />
+                  <User className="h-4 w-4 mr-2 text-gray-500 flex-shrink-0" />
                   <span>{t('Pārdevējs', 'Seller')}: {sellerName}</span>
                 </div>
               )}
@@ -153,4 +153,3 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
     </Dialog>
   );
 };
-
