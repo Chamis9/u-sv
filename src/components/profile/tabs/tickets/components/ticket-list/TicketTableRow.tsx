@@ -48,6 +48,9 @@ export function TicketTableRow({
       <TableCell className="hidden md:table-cell">
         {formatDate(ticket.created_at, t('lv-LV', 'en-US'))}
       </TableCell>
+      <TableCell className="hidden md:table-cell">
+        {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")}
+      </TableCell>
       <TableCell>{getStatusBadge(ticket.status)}</TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-2">

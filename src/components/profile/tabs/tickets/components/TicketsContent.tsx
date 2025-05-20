@@ -8,6 +8,7 @@ import { AlertCircle, Ticket } from "lucide-react";
 import { VisualTicket } from "./visual-ticket";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TicketDetailDialog } from "./ticket-list/TicketDetailDialog";
+import { TicketPreviewDialog } from "@/components/events/components/TicketPreviewDialog";
 
 interface TicketsContentProps {
   tickets: UserTicket[];
@@ -28,9 +29,16 @@ export function TicketsContent({
 }: TicketsContentProps) {
   const { currentLanguage } = useLanguage();
   const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
+
+  // Enhanced view handler to open the preview
+  const handleViewTicket = (ticket: UserTicket) => {
+    setSelectedTicket(ticket);
+    setIsPreviewOpen(true);
+  };
 
   if (isLoading) {
     return (
@@ -66,7 +74,7 @@ export function TicketsContent({
           <VisualTicket
             key={ticket.id}
             ticket={ticket}
-            onView={setSelectedTicket}
+            onView={handleViewTicket}
             onEdit={onEdit}
             onDelete={!loadingDelete ? onDelete : undefined}
             ticketType={ticketType}
@@ -80,6 +88,13 @@ export function TicketsContent({
         setSelectedTicket={setSelectedTicket}
         onEdit={onEdit}
         ticketType={ticketType}
+      />
+      
+      {/* Ticket Preview Dialog */}
+      <TicketPreviewDialog
+        ticket={selectedTicket}
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
       />
     </>
   );

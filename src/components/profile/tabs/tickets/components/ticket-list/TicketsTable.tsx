@@ -42,6 +42,7 @@ export function TicketsTable({
           <TableHead>{t("Nosaukums", "Title")}</TableHead>
           <TableHead>{t("Cena", "Price")}</TableHead>
           <TableHead className="hidden md:table-cell">{t("Datums", "Date")}</TableHead>
+          <TableHead className="hidden md:table-cell">{t("Biļešu skaits", "Quantity")}</TableHead>
           <TableHead>{t("Statuss", "Status")}</TableHead>
           <TableHead className="text-right">{t("Darbības", "Actions")}</TableHead>
         </TableRow>

@@ -2,15 +2,17 @@
 import React from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import { UserTicket } from "@/hooks/tickets";
+import { useLanguage } from "@/features/language";
+import { useDevice } from "@/hooks/useDevice";
 import { TicketsContent } from "../TicketsContent";
-import { TicketsList } from "../ticket-list/TicketsList";
+import { TicketsList } from "../ticket-list";
 
 interface TabContentProps {
-  value: "added" | "purchased";
+  value: string;
   tickets: UserTicket[];
-  onDelete: (id: string) => void;
-  onEdit?: (ticket: UserTicket) => void;
+  onDelete: (ticketId: string) => void;
   onView: (ticket: UserTicket) => void;
+  onEdit?: (ticket: UserTicket) => void;
   isLoading: boolean;
   ticketType: "added" | "purchased";
 }
@@ -21,46 +23,32 @@ export function TabContent({
   onDelete, 
   onView, 
   onEdit,
-  isLoading,
-  ticketType
+  isLoading, 
+  ticketType 
 }: TabContentProps) {
-  // Check screen size for responsive rendering
-  const [isLargeScreen, setIsLargeScreen] = React.useState(false);
+  const { isMobile } = useDevice();
+  const { currentLanguage } = useLanguage();
   
-  React.useEffect(() => {
-    const checkScreenSize = () => {
-      setIsLargeScreen(window.innerWidth >= 768);
-    };
-    
-    // Initial check
-    checkScreenSize();
-    
-    // Add event listener
-    window.addEventListener('resize', checkScreenSize);
-    
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', checkScreenSize);
-    };
-  }, []);
+  const t = (lvText: string, enText: string) => 
+    currentLanguage.code === 'lv' ? lvText : enText;
   
   return (
-    <TabsContent value={value} className="space-y-4">
-      {isLargeScreen ? (
-        <TicketsList 
-          tickets={tickets}
-          onDelete={onDelete}
-          onView={onView}
-          onEdit={onEdit}
-          isLoading={isLoading}
-          ticketType={ticketType}
-        />
-      ) : (
+    <TabsContent value={value} className="pt-4">
+      {isMobile ? (
         <TicketsContent
           tickets={tickets}
           isLoading={isLoading}
           onDelete={onDelete}
           onEdit={onEdit}
+          ticketType={ticketType}
+        />
+      ) : (
+        <TicketsList
+          tickets={tickets}
+          onDelete={onDelete}
+          onView={onView}
+          onEdit={onEdit}
+          isLoading={isLoading}
           ticketType={ticketType}
         />
       )}
