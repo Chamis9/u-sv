@@ -1,9 +1,10 @@
 
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage } from "@/features/language";
 import { supabase } from "@/integrations/supabase/client";
+import { useTicketRefresh as useGlobalTicketRefresh } from "@/hooks/tickets/hooks/useTicketRefresh";
 
 interface UseTicketRefreshProps {
   userId?: string;
@@ -13,16 +14,18 @@ interface UseTicketRefreshProps {
 export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshProps) {
   const queryClient = useQueryClient();
   const { currentLanguage } = useLanguage();
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const lastRefreshTime = useRef<number>(0);
+  const refreshAttemptedRef = useRef<boolean>(false);
+  const { refreshTickets: globalRefreshTickets, isRefreshing } = useGlobalTicketRefresh({ 
+    userId, 
+    isAuthenticated 
+  });
   
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
   
   const refreshTickets = useCallback(async () => {
-    // Throttle refreshes - don't allow more than one refresh every 5 seconds
-    const now = Date.now();
-    if (now - lastRefreshTime.current < 5000) {
-      console.log("Refresh throttled - too frequent calls");
+    // Only allow one refresh per component mount
+    if (refreshAttemptedRef.current) {
+      console.log("Refresh already attempted for this component instance");
       return false;
     }
     
@@ -31,52 +34,22 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
       return false;
     }
     
-    if (isRefreshing) {
-      console.log("Refresh already in progress, skipping");
-      return false;
-    }
-    
-    console.log(`Starting ticket refresh process...`);
-    setIsRefreshing(true);
-    lastRefreshTime.current = now;
-    
     try {
-      // Always verify auth session first
-      const { data: session, error: sessionError } = await supabase.auth.getSession();
-        
-      if (sessionError || !session.session) {
-        console.error("Authentication session error:", sessionError);
-        toast({
-          title: t("Autentifikācijas kļūda", "Authentication error"),
-          description: t("Lūdzu, pieslēdzieties vēlreiz", "Please log in again"),
-          variant: "destructive"
-        });
-        return false;
+      refreshAttemptedRef.current = true;
+      const result = await globalRefreshTickets();
+      
+      if (result) {
+        // Optional success toast - uncomment if you want to show success messages
+        // toast({
+        //   title: t("Biļetes atjaunotas", "Tickets refreshed"),
+        //   description: t("Biļešu saraksts ir atjaunināts", "Ticket list has been updated"),
+        // });
       }
       
-      // Use the authenticated user ID from the session
-      const authUserId = session.session.user.id;
-      console.log(`Using authenticated user ID for refresh: ${authUserId}`);
-      
-      // Invalidate and immediately refetch using authUserId
-      await queryClient.invalidateQueries({ 
-        queryKey: ['user-tickets', authUserId]
-      });
-      
-      // Force refetch using authUserId
-      await queryClient.refetchQueries({ 
-        queryKey: ['user-tickets', authUserId],
-        exact: true,
-        type: 'active',
-      });
-      
-      console.log("Tickets refreshed successfully");
-      
-      return true;
+      return result;
     } catch (error) {
       console.error("Error refreshing tickets:", error);
       
-      // Show an error toast
       toast({
         title: t("Kļūda", "Error"),
         description: t("Neizdevās atjaunot biļetes", "Failed to refresh tickets"),
@@ -84,10 +57,13 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
       });
       
       return false;
-    } finally {
-      setIsRefreshing(false);
     }
-  }, [isAuthenticated, queryClient, t, isRefreshing]);
+  }, [isAuthenticated, globalRefreshTickets, t]);
+  
+  // Reset the refresh attempt ref when userId changes
+  useCallback(() => {
+    refreshAttemptedRef.current = false;
+  }, [userId]);
   
   return { refreshTickets, isRefreshing };
 }

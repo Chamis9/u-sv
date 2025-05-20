@@ -3,11 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { UserTicket } from "./types";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRef } from "react";
 
 export function useTicketQueries(userId?: string) {
   const { isAuthenticated } = useAuth();
+  const initialFetchDone = useRef(false);
   
-  // Fetch user tickets with enhanced error handling
+  // Fetch user tickets with enhanced error handling and caching
   const { data: tickets = [], isLoading, error, refetch } = useQuery({
     queryKey: ['user-tickets', userId],
     queryFn: async (): Promise<UserTicket[]> => {
@@ -17,6 +19,12 @@ export function useTicketQueries(userId?: string) {
       }
       
       try {
+        // Avoid logging on every query attempt to reduce console noise
+        if (!initialFetchDone.current) {
+          console.log(`Initial tickets load for authenticated user: ${userId}`);
+          initialFetchDone.current = true;
+        }
+        
         // First verify the auth session is valid
         const { data: session, error: sessionError } = await supabase.auth.getSession();
         
@@ -27,8 +35,6 @@ export function useTicketQueries(userId?: string) {
         
         // Use the authenticated user ID for the query to ensure RLS policies work correctly
         const authUserId = session.session.user.id;
-        
-        console.log(`Fetching tickets for authenticated user ID: ${authUserId}`);
         
         // Query the tickets table with enhanced filters to get the user's tickets
         const { data: ticketsData, error } = await supabase
@@ -69,7 +75,6 @@ export function useTicketQueries(userId?: string) {
           return formattedTickets;
         }
         
-        console.log(`No tickets found for authenticated user: ${authUserId}`);
         return [];
         
       } catch (error) {
@@ -78,16 +83,17 @@ export function useTicketQueries(userId?: string) {
       }
     },
     enabled: isAuthenticated,
-    staleTime: 1000 * 60, // 1 minute
-    gcTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5, // 5 minutes - dramatically increase stale time
+    gcTime: 1000 * 60 * 30, // 30 minutes - keep in cache longer
     retry: 1, // Only retry once
-    refetchOnMount: true,
-    refetchOnWindowFocus: false // Disable automatic refetch on window focus
+    refetchOnMount: 'stale',
+    refetchOnWindowFocus: false, // Disable automatic refetch on window focus
+    refetchInterval: false // Disable polling
   });
 
   // Function to force refresh tickets
   const refreshTickets = async () => {
-    console.log("Manually refreshing tickets...");
+    console.log("Manually refreshing tickets via useTicketQueries...");
     return await refetch();
   };
 

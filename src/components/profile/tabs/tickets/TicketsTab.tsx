@@ -60,53 +60,57 @@ export function TicketsTab({ user }: TicketsTabProps) {
   
   // Force refresh on component mount only once
   useEffect(() => {
-    const verifyAndRefresh = async () => {
-      if (isAuthenticated && !initialLoadRef.current) {
-        console.log("TicketsTab mounted, checking authentication and refreshing tickets");
+    if (isAuthenticated && !initialLoadRef.current) {
+      const verifyAndRefresh = async () => {
+        console.log("TicketsTab mounted, performing initial load check");
         initialLoadRef.current = true; // Mark as initialized
         
-        // Get the current auth session
-        const { data: session, error } = await supabase.auth.getSession();
-        if (session?.session && !error) {
-          console.log(`Authenticated user ID from session: ${session.session.user.id}`);
-          refreshTicketsFromTab();
-        } else {
-          console.error("Authentication session error:", error);
+        try {
+          // Get the current auth session
+          const { data: session, error } = await supabase.auth.getSession();
+          if (session?.session && !error) {
+            console.log(`Initial auth check passed, user ID: ${session.session.user.id}`);
+            // No need to force a refresh here - the queries will handle it
+          } else if (error) {
+            console.error("Authentication session error:", error);
+          }
+        } catch (err) {
+          console.error("Error checking session:", err);
         }
-      }
-    };
-    
-    verifyAndRefresh();
-    // Only depend on isAuthenticated, not refreshTicketsFromTab
-  }, [isAuthenticated]);
+      };
+      
+      verifyAndRefresh();
+    }
+  }, [isAuthenticated]); // Only depend on authentication status
 
-  // Set up automatic refreshing when auth state changes - once
+  // Set up auth state change listener - only once
   useEffect(() => {
-    // Clean up previous listener if it exists
-    if (authListenerRef.current) {
-      authListenerRef.current.subscription.unsubscribe();
+    // Only set up the listener if not already set
+    if (!authListenerRef.current) {
+      // Listen for changes in auth state
+      const { data: authListener } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          console.log("Auth state changed:", event);
+          if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+            console.log("Auth state changed, refreshing tickets");
+            refreshTicketsFromTab();
+          }
+        }
+      );
+
+      // Store the listener for cleanup
+      authListenerRef.current = authListener;
+
+      // Clean up function
+      return () => {
+        if (authListenerRef.current) {
+          authListenerRef.current.subscription.unsubscribe();
+          authListenerRef.current = null;
+        }
+      };
     }
     
-    // Listen for changes in auth state
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log("Auth state changed:", event);
-        if (session && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-          console.log("Auth state changed, refreshing tickets");
-          refreshTicketsFromTab();
-        }
-      }
-    );
-
-    // Store the listener for cleanup
-    authListenerRef.current = authListener;
-
-    return () => {
-      // Clean up the subscription
-      if (authListenerRef.current) {
-        authListenerRef.current.subscription.unsubscribe();
-      }
-    };
+    return () => {}; // No-op if listener already set up
   }, []); // Empty dependency array - only run once
   
   if (!isAuthenticated) {
