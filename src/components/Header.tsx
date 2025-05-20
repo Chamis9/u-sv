@@ -1,4 +1,3 @@
-
 import { LanguageSelector } from "@/features/language";
 import { Logo } from "./header/Logo";
 import { Navigation, getNavigationLinks } from "./header/Navigation";
@@ -11,7 +10,15 @@ import { useNavigate } from "react-router-dom";
 import { LoginButton } from "./auth/LoginButton";
 
 export function Header() {
-  const navigationLinks = getNavigationLinks();
+  const navLinks = [
+    { href: "/", translationKey: "navigation.home" },
+    { href: "/events", translationKey: "navigation.events" },
+    { href: "/tickets", translationKey: "navigation.tickets" },
+    { href: "/about", translationKey: "navigation.about" },
+    { href: "/contact", translationKey: "navigation.contact" },
+    { href: "/docs", translationKey: "navigation.docs" }, // Add this line
+  ];
+  const navigationLinks = getNavigationLinks(navLinks);
   const { currentLanguage } = useLanguage();
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();

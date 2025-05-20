@@ -1,63 +1,46 @@
-
-export interface NavigationTranslations {
-  home: string;
-  events: string;
-  tickets: string;
-  contact: string;
-  aboutUs: string;
-}
-
-export interface ThemeTranslations {
-  label: string;
-  light: string;
-  dark: string;
-  system: string;
-}
-
-export interface LanguageSelectorTranslations {
-  label: string;
-  selector: string;
-}
-
-export const navigationTranslations = {
+export const navigation = {
   lv: {
-    home: "Sākumlapa",
-    events: "Biļetes",
+    home: "Sākums",
+    events: "Pasākumi",
     tickets: "Biļetes",
+    about: "Par mums",
     contact: "Kontakti",
-    aboutUs: "Par mums"
+    docs: "Dokumentācija",
+    profile: "Profils",
+    admin: "Admin Panelis",
+    login: "Ielogoties",
+    logout: "Izlogoties",
+    register: "Reģistrēties",
+    account: "Konts",
+    payments: "Maksājumi",
+    settings: "Iestatījumi",
+    users: "Lietotāji",
+    subscribers: "Abonenti",
+    events_admin: "Pasākumi",
+    categories: "Kategorijas",
+    activity: "Aktivitāte",
+    system: "Sistēma",
   },
   en: {
     home: "Home",
-    events: "Tickets",
+    events: "Events",
     tickets: "Tickets",
+    about: "About Us",
     contact: "Contact",
-    aboutUs: "About Us"
-  }
-};
-
-export const themeTranslations = {
-  lv: {
-    label: "Motīvs",
-    light: "Gaišs",
-    dark: "Tumšs",
-    system: "Sistēmas"
+    docs: "Documentation",
+    profile: "Profile",
+    admin: "Admin Panel",
+    login: "Login",
+    logout: "Logout",
+    register: "Register",
+    account: "Account",
+    payments: "Payments",
+    settings: "Settings",
+    users: "Users",
+    subscribers: "Subscribers",
+    events_admin: "Events",
+    categories: "Categories",
+    activity: "Activity",
+    system: "System",
   },
-  en: {
-    label: "Theme",
-    light: "Light",
-    dark: "Dark",
-    system: "System"
-  }
-};
-
-export const languageSelectorTranslations = {
-  lv: {
-    label: "Valoda",
-    selector: "Izvēlieties valodu"
-  },
-  en: {
-    label: "Language",
-    selector: "Select language"
-  }
 };

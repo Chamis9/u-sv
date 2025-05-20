@@ -1,119 +1,87 @@
+import React, { Suspense, useEffect } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import { Helmet } from 'react-helmet-async';
+import { useLanguage } from "@/features/language";
+import { Toaster } from "@/components/ui/toaster"
+import { useIsDesktop } from "./hooks/useIsDesktop";
+import { ScrollToTop } from "./utils/operations/clientOperations";
 
-import React, { useEffect, useState, lazy, Suspense } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { HelmetProvider } from 'react-helmet-async';
-import { LanguageProvider } from "./features/language";
-import { clearAllCookies } from "./utils/cookieManager";
-import { ThemeProvider } from "./components/theme/ThemeProvider";
-import { AuthProvider } from "./contexts/AuthContext";
-
-// Import pages
 import Index from "./pages/Index";
+import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
 import Events from "./pages/Events";
-import Tickets from "./pages/Tickets";
-import AboutUs from "./pages/AboutUs";
-// Import Profile page directly instead of using dynamic import
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Profile from "./pages/Profile";
+import Tickets from "./pages/Tickets";
+import NotFound from "./pages/NotFound";
+import Admin from "./pages/Admin";
+import { SiteHeader } from "./components/Header";
+import { SiteFooter } from "./components/Footer";
+import { AuthProvider } from "./contexts/AuthContext";
+import { MobileHeader } from "./components/MobileHeader";
+import { SupabaseListener } from "./components/SupabaseListener";
+import Documentation from './pages/Documentation';
 
-// Lazy load other pages for better performance
-const NotFound = lazy(() => import("./pages/NotFound"));
-const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
-const Admin = lazy(() => import("./pages/Admin"));
+function AppContent() {
+  const { currentLanguage } = useLanguage();
+  const isDesktop = useIsDesktop();
 
-// Import the CategoryEventList component
-import { CategoryEventList } from "./components/events/CategoryEventList";
-
-// Import the EventTickets component
-import { EventTickets } from "./components/events/EventTickets";
-
-// Create a loading component
-const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-  </div>
-);
-
-// Create the query client only once
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      retry: 1,
-    },
-  },
-});
-
-// Global logout function - updated for local auth
-const handleLogout = () => {
-  clearAllCookies();
-  localStorage.removeItem('admin_authenticated');
-  console.log("User logged out and cookies cleared");
-};
-
-// Make the logout function globally available
-window.logout = handleLogout;
-
-const App = () => {
-  const [isInitializing, setIsInitializing] = useState(true);
-  
-  useEffect(() => {
-    // Simplified initialization
-    const timer = setTimeout(() => {
-      setIsInitializing(false);
-    }, 500);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isInitializing) {
-    return <PageLoader />;
-  }
+  // Function to translate text based on current language
+  const t = (lvText: string, enText: string) =>
+    currentLanguage.code === 'lv' ? lvText : enText;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <HelmetProvider>
-        <TooltipProvider>
-          <ThemeProvider defaultTheme="light" storageKey="ui-theme">
-            <AuthProvider>
-              <LanguageProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <Suspense fallback={<PageLoader />}>
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/events" element={<Events />} />
-                      <Route path="/events/:category" element={<CategoryEventList />} />
-                      <Route path="/events/:category/:eventId" element={<EventTickets />} />
-                      <Route path="/tickets" element={<Tickets />} />
-                      <Route path="/about-us" element={<AboutUs />} />
-                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/admin/*" element={<Admin />} />
-                      <Route path="/profile/*" element={<Profile />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Suspense>
-                </BrowserRouter>
-              </LanguageProvider>
-            </AuthProvider>
-          </ThemeProvider>
-        </TooltipProvider>
-      </HelmetProvider>
-    </QueryClientProvider>
+    <>
+      <Helmet>
+        <html lang={currentLanguage.code} />
+        <title>netieku.es</title>
+        <meta name="description" content={t(
+          'netieku.es - pirkt, pārdot un apmainīt biļetes uz pasākumiem',
+          'netieku.es - buy, sell and exchange tickets to events'
+        )} />
+      </Helmet>
+
+      <AuthProvider>
+        <SupabaseListener />
+        {isDesktop ? <SiteHeader /> : <MobileHeader />}
+
+        <main className="flex-1">
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/events/:category" element={<Events />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/:tab" element={<Profile />} />
+            <Route path="/tickets" element={<Tickets />} />
+            <Route path="/tickets/:category" element={<Tickets />} />
+            <Route path="/docs" element={<Documentation />} /> {/* Add this line */}
+            <Route path="/admin/*" element={<Admin />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+
+        <SiteFooter />
+      </AuthProvider>
+      <Toaster />
+    </>
   );
 }
 
-// Update TypeScript declaration
-declare global {
-  interface Window {
-    logout?: () => void;
-  }
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  );
 }
 
 export default App;

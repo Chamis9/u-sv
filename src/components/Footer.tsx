@@ -1,56 +1,109 @@
-
-import { Landmark, Shield, Mail, Building2, Heart } from "lucide-react";
-import { useLanguage } from "@/features/language";
-import { Button } from "./ui/button";
+import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/features/language";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Facebook, Instagram, Youtube } from "lucide-react";
+import { languages } from "@/features/language/languages";
+
+const translations = {
+  footer: {
+    about: "footer.about",
+    privacyPolicy: "footer.privacyPolicy",
+    subscribe: "footer.subscribe",
+    emailPlaceholder: "footer.emailPlaceholder",
+    subscribeButton: "footer.subscribeButton",
+    followUs: "footer.followUs",
+  },
+  navigation: {
+    home: "navigation.home",
+    events: "navigation.events",
+    tickets: "navigation.tickets",
+    about: "navigation.about",
+    contact: "navigation.contact",
+    docs: "navigation.docs",
+  },
+};
 
 export function Footer() {
-  const { translations } = useLanguage();
-  const { footer } = translations;
-
-  const handleLinkClick = () => {
-    window.scrollTo(0, 0);
-  };
+  const { t } = useTranslation();
+  const { currentLanguage, setLanguage } = useLanguage();
 
   return (
-    <footer className="bg-ticket-bg py-6 md:py-8 px-4 text-ticket-text/70 border-t border-ticket-text/10">
-      <div className="container mx-auto">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
-          <div className="text-center md:text-left mb-4 md:mb-0">
-            <p className="text-xs sm:text-sm text-ticket-text/70">
-              {footer.allRightsReserved}
-            </p>
-          </div>
-          <div className="flex flex-wrap justify-center md:justify-end items-center gap-3 sm:gap-4">
-            <Link 
-              to="/about-us"
-              onClick={handleLinkClick}
-              className="text-ticket-text/70 hover:text-ticket-accent transition-colors flex items-center gap-1 text-xs sm:text-sm"
-            >
-              <Landmark size={14} className="hidden sm:inline" />
-              <span>{translations.navigation?.aboutUs || "Par mums"}</span>
-            </Link>
-            <Link 
-              to="/contact" 
-              onClick={handleLinkClick}
-              className="text-ticket-text/70 hover:text-ticket-accent transition-colors flex items-center gap-1 text-xs sm:text-sm"
-            >
-              <Mail size={14} className="hidden sm:inline" />
-              <span>{footer.contactLink || "Kontakti"}</span>
-            </Link>
-            <div className="flex items-center text-xs text-ticket-text/70">
-              <span className="flex items-center whitespace-nowrap">
-                {footer.madeWith} 
-                <Heart 
-                  className="mx-1 h-3 w-3 sm:h-4 sm:w-4" 
-                  fill="#f7b731" 
-                  strokeWidth={0}
-                />
-                {footer.location}
-              </span>
-            </div>
+    <footer className="bg-background py-12">
+      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold">{t(translations.footer.about)}</h3>
+          <ul className="space-y-2">
+            <li>
+              <Link to="/about" className="text-muted-foreground hover:text-foreground transition">
+                {t(translations.navigation.about)}
+              </Link>
+            </li>
+            <li>
+              <Link to="/contact" className="text-muted-foreground hover:text-foreground transition">
+                {t(translations.navigation.contact)}
+              </Link>
+            </li>
+            <li>
+              <Link to="/privacy-policy" className="text-muted-foreground hover:text-foreground transition">
+                {t(translations.footer.privacyPolicy)}
+              </Link>
+            </li>
+            <li>
+              <Link to="/docs" className="text-muted-foreground hover:text-foreground transition">
+                {t(translations.navigation.docs)}
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold">{t(translations.footer.subscribe)}</h3>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Input type="email" placeholder={t(translations.footer.emailPlaceholder)} className="w-full sm:w-auto" />
+            <Button>{t(translations.footer.subscribeButton)}</Button>
           </div>
         </div>
+
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold">{t(translations.footer.followUs)}</h3>
+          <div className="flex gap-4">
+            <a href="#" className="hover:text-foreground transition">
+              <Facebook className="h-5 w-5" />
+            </a>
+            <a href="#" className="hover:text-foreground transition">
+              <Instagram className="h-5 w-5" />
+            </a>
+            <a href="#" className="hover:text-foreground transition">
+              <Youtube className="h-5 w-5" />
+            </a>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold">Language</h3>
+          <select
+            className="bg-background border border-input rounded-md px-4 py-2 text-sm"
+            value={currentLanguage.code}
+            onChange={(e) => {
+              const selectedLanguage = languages.find((lang) => lang.code === e.target.value);
+              if (selectedLanguage) {
+                setLanguage(selectedLanguage);
+              }
+            }}
+          >
+            {languages.map((lang) => (
+              <option key={lang.code} value={lang.code}>
+                {lang.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className="container mx-auto px-4 mt-8 text-center text-muted-foreground border-t pt-4">
+        © {new Date().getFullYear()} netieku.es. All rights reserved.
       </div>
     </footer>
   );
