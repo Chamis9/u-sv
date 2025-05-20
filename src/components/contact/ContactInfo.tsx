@@ -48,10 +48,8 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({ translations: t }) => 
           <Phone className="text-ticket-accent" size={24} />
           <h3 className="text-xl font-semibold text-ticket-text">{t.phoneTitle}</h3>
         </div>
-        <p className="pl-9">
-          <a href="tel:+37120000000" className="text-ticket-text/80 font-medium hover:text-ticket-accent transition-colors">
-            {t.phone}
-          </a>
+        <p className="pl-9 text-ticket-text/80 font-medium">
+          {t.phone}
         </p>
       </div>
       
