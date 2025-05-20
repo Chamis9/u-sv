@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { User } from "@/types/users";
 import { useUserTickets, UserTicket, AddTicketData } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 export function useTicketsTab(user: User) {
   const { isAuthenticated } = useAuth();
   const { currentLanguage } = useLanguage();
+  const authCheckedRef = useRef(false);
   
   // State for managing tickets and UI
   const [addedTickets, setAddedTickets] = useState<UserTicket[]>([]);
@@ -20,10 +21,11 @@ export function useTicketsTab(user: User) {
   const [currentEditTicket, setCurrentEditTicket] = useState<UserTicket | null>(null);
   const [authUserId, setAuthUserId] = useState<string | null>(null);
 
-  // Get authenticated user ID from session
+  // Get authenticated user ID from session - only runs once when authenticated
   useEffect(() => {
     const fetchAuthUserId = async () => {
-      if (isAuthenticated) {
+      if (isAuthenticated && !authCheckedRef.current) {
+        authCheckedRef.current = true; // Mark as checked to prevent infinite loop
         try {
           const { data: session } = await supabase.auth.getSession();
           if (session && session.session) {
@@ -95,7 +97,7 @@ export function useTicketsTab(user: User) {
     setPurchasedTickets(purchased);
   }, [tickets, authUserId, isAuthenticated]);
 
-  // Force refresh tickets on initial load
+  // Force refresh tickets on initial load - only runs when authUserId changes
   useEffect(() => {
     if (isAuthenticated && authUserId) {
       console.log("Initial tickets load for authenticated user:", authUserId);

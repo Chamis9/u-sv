@@ -1,5 +1,5 @@
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage } from "@/features/language";
@@ -13,6 +13,7 @@ interface UseTicketRefreshProps {
 export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshProps) {
   const queryClient = useQueryClient();
   const { currentLanguage } = useLanguage();
+  const [isRefreshing, setIsRefreshing] = useState(false);
   
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
   
@@ -21,6 +22,13 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
       console.log("Cannot refresh tickets: user not authenticated");
       return false;
     }
+    
+    if (isRefreshing) {
+      console.log("Refresh already in progress, skipping");
+      return false;
+    }
+    
+    setIsRefreshing(true);
     
     try {
       // Verify the auth session is valid before refreshing
@@ -71,8 +79,10 @@ export function useTicketRefresh({ userId, isAuthenticated }: UseTicketRefreshPr
       });
       
       return false;
+    } finally {
+      setIsRefreshing(false);
     }
-  }, [isAuthenticated, queryClient, t]);
+  }, [isAuthenticated, queryClient, t, isRefreshing]);
   
-  return { refreshTickets };
+  return { refreshTickets, isRefreshing };
 }

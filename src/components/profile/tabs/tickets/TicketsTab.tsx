@@ -1,5 +1,5 @@
 
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useRef } from "react";
 import { User } from "@/types/users";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs } from "@/components/ui/tabs";
@@ -20,6 +20,8 @@ interface TicketsTabProps {
 
 export function TicketsTab({ user }: TicketsTabProps) {
   const { isAuthenticated } = useAuth();
+  const initialLoadRef = useRef(false);
+  
   const {
     addedTickets,
     purchasedTickets,
@@ -57,11 +59,13 @@ export function TicketsTab({ user }: TicketsTabProps) {
     refreshTicketsFromTab();
   }, [refreshTickets, refreshTicketsFromTab]);
   
-  // Force refresh on component mount and when user changes
+  // Force refresh on component mount and when user changes - with ref to prevent infinite loop
   useEffect(() => {
     const verifyAndRefresh = async () => {
-      if (isAuthenticated) {
+      if (isAuthenticated && !initialLoadRef.current) {
         console.log("TicketsTab mounted, checking authentication and refreshing tickets");
+        initialLoadRef.current = true; // Mark as initialized
+        
         // Get the current auth session
         const { data: session, error } = await supabase.auth.getSession();
         if (session?.session && !error) {
