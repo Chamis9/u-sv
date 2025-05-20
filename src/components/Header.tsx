@@ -11,15 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { LoginButton } from "./auth/LoginButton";
 
 export function Header() {
-  const navLinks = [
-    { href: "/", translationKey: "navigation.home" },
-    { href: "/events", translationKey: "navigation.events" },
-    { href: "/tickets", translationKey: "navigation.tickets" },
-    { href: "/about", translationKey: "navigation.about" },
-    { href: "/contact", translationKey: "navigation.contact" },
-    { href: "/docs", translationKey: "navigation.docs" },
-  ];
-  // Get navigation links without passing arguments
   const navigationLinks = getNavigationLinks();
   const { currentLanguage } = useLanguage();
   const { user, isAuthenticated, logout } = useAuth();

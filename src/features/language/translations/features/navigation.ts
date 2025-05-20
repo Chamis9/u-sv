@@ -1,92 +1,50 @@
 
-export type NavigationTranslations = {
+export interface NavigationTranslations {
   home: string;
   events: string;
   tickets: string;
-  about: string;
   contact: string;
-  docs: string;
-  profile: string;
-  admin: string;
-  login: string;
-  logout: string;
-  register: string;
-  account: string;
-  payments: string;
-  settings: string;
-  users: string;
-  subscribers: string;
-  events_admin: string;
-  categories: string;
-  activity: string;
-  system: string;
-};
+  aboutUs: string;
+}
 
-export type ThemeTranslations = {
+export interface ThemeTranslations {
+  label: string;
   light: string;
   dark: string;
   system: string;
-};
+}
 
-export type LanguageSelectorTranslations = {
-  selectLanguage: string;
-  label: string;  // Added this property
-};
+export interface LanguageSelectorTranslations {
+  label: string;
+  selector: string;
+}
 
 export const navigationTranslations = {
   lv: {
-    home: "Sākums",
-    events: "Pasākumi",
+    home: "Sākumlapa",
+    events: "Biļetes",
     tickets: "Biļetes",
-    about: "Par mums",
     contact: "Kontakti",
-    docs: "Dokumentācija",
-    profile: "Profils",
-    admin: "Admin Panelis",
-    login: "Ielogoties",
-    logout: "Izlogoties",
-    register: "Reģistrēties",
-    account: "Konts",
-    payments: "Maksājumi",
-    settings: "Iestatījumi",
-    users: "Lietotāji",
-    subscribers: "Abonenti",
-    events_admin: "Pasākumi",
-    categories: "Kategorijas",
-    activity: "Aktivitāte",
-    system: "Sistēma",
+    aboutUs: "Par mums"
   },
   en: {
     home: "Home",
-    events: "Events",
+    events: "Tickets",
     tickets: "Tickets",
-    about: "About Us",
     contact: "Contact",
-    docs: "Documentation",
-    profile: "Profile",
-    admin: "Admin Panel",
-    login: "Login",
-    logout: "Logout",
-    register: "Register",
-    account: "Account",
-    payments: "Payments",
-    settings: "Settings",
-    users: "Users",
-    subscribers: "Subscribers",
-    events_admin: "Events",
-    categories: "Categories",
-    activity: "Activity",
-    system: "System",
-  },
+    aboutUs: "About Us"
+  }
 };
 
 export const themeTranslations = {
   lv: {
+    label: "Motīvs",
     light: "Gaišs",
     dark: "Tumšs",
     system: "Sistēmas"
   },
   en: {
+    label: "Theme",
     light: "Light",
     dark: "Dark",
     system: "System"
@@ -95,11 +53,11 @@ export const themeTranslations = {
 
 export const languageSelectorTranslations = {
   lv: {
-    selectLanguage: "Izvēlieties valodu",
-    label: "Valoda"
+    label: "Valoda",
+    selector: "Izvēlieties valodu"
   },
   en: {
-    selectLanguage: "Select language",
-    label: "Language"
+    label: "Language",
+    selector: "Select language"
   }
 };
