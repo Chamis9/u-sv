@@ -22,7 +22,7 @@ export const Hero = memo(function Hero() {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
-            "name": "netieku.es - biļešu apmaiņas platforma",
+            "name": "SellTiX - biļešu apmaiņas platforma",
             "description": "Pirmā biļešu apmaiņas platforma Latvijā",
             "offers": {
               "@type": "Offer",
@@ -53,7 +53,7 @@ export const Hero = memo(function Hero() {
               <Card className="bg-gradient-to-br from-ticket-bg to-ticket-bg/80 border-2 border-ticket-accent/30 rounded-xl shadow-lg shadow-orange-500/20 overflow-hidden max-w-xs">
                 <CardContent className="p-2 sm:p-4 relative">
                   <div className="absolute top-2 right-2 z-10">
-                    <TicketVerifyIcon size={100} />
+                    <TicketVerifyIcon size={100} className="opacity-100" />
                   </div>
                   <div className="bg-ticket-bg/40 rounded-lg p-4 border border-ticket-accent/10">
                     <div className="flex flex-col gap-3 mt-20 items-start text-left">
@@ -83,7 +83,7 @@ export const Hero = memo(function Hero() {
           <div className="mt-8 md:mt-12">
             <p className="text-xl md:text-2xl text-ticket-text mb-8 max-w-3xl mx-auto">
               {texts.mainCta}
-              <span className="text-ticket-accent font-bold"> NETIEKU.ES</span>!
+              <span className="text-ticket-accent font-bold"> SellTiX</span>!
             </p>
             
             <p className="text-lg md:text-xl text-ticket-text/90 mb-6 max-w-3xl mx-auto">
@@ -114,7 +114,7 @@ const getHeroTexts = (langCode: string) => {
         "Pārdod <span class='text-ticket-accent'>biļeti</span> droši"
       ],
       mainCta: "Gribi uz pasākumu, bet biļetes izpārdotas? Ieskaties",
-      description: "Pērc vai pārdod biļetes uz koncertiem, teātri, sporta pasākumiem u.c."
+      description: "SellTiX ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem."
     },
     en: {
       heading: [
@@ -123,7 +123,7 @@ const getHeroTexts = (langCode: string) => {
         "Sell your <span class='text-ticket-accent'>ticket</span> safely"
       ],
       mainCta: "Want to attend an event, but tickets are sold out? Check out",
-      description: "Buy or sell tickets to concerts, theater, sports events, and more."
+      description: "SellTiX is a platform where users can safely sell and purchase tickets from other users."
     },
     ru: {
       heading: [
@@ -132,7 +132,7 @@ const getHeroTexts = (langCode: string) => {
         "Продай <span class='text-ticket-accent'>билет</span> безопасно"
       ],
       mainCta: "Хочешь на мероприятие, но билеты распроданы? Загляни в",
-      description: "Покупай или продавай билеты на концерты, театр, спортивные мероприятия и др."
+      description: "SellTiX - это платформа, где пользователи могут безопасно продавать и покупать билеты у других пользователей."
     }
   };
 
