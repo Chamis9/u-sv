@@ -4,7 +4,6 @@ import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
 import { Helmet } from "react-helmet-async";
 import { TicketVerifyIcon } from "@/components/icons/TicketVerifyIcon";
-import { Card, CardContent } from "@/components/ui/card";
 
 export const Hero = memo(function Hero() {
   const { translations, currentLanguage } = useLanguage();
@@ -49,34 +48,8 @@ export const Hero = memo(function Hero() {
               </p>
             </div>
             
-            <div className="flex-shrink-0 transform transition-all hover:scale-105">
-              <Card className="bg-gradient-to-br from-ticket-bg to-ticket-bg/80 border-2 border-ticket-accent/30 rounded-xl shadow-lg shadow-orange-500/20 overflow-hidden max-w-xs">
-                <CardContent className="p-2 sm:p-4 relative">
-                  <div className="absolute top-2 right-2 z-10">
-                    <TicketVerifyIcon size={100} />
-                  </div>
-                  <div className="bg-ticket-bg/40 rounded-lg p-4 border border-ticket-accent/10">
-                    <div className="flex flex-col gap-3 mt-20 items-start text-left">
-                      <div className="w-full">
-                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Event</div>
-                        <div className="text-lg font-semibold text-ticket-accent truncate">Concert Show 2025</div>
-                      </div>
-                      <div className="w-full">
-                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Date</div>
-                        <div className="text-base text-ticket-text truncate">May 21, 2025 · 19:00</div>
-                      </div>
-                      <div className="w-full">
-                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Seat</div>
-                        <div className="text-base text-ticket-text truncate">Section A, Row 12, Seat 23</div>
-                      </div>
-                      <div className="w-full">
-                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Price</div>
-                        <div className="text-lg font-semibold text-ticket-accent">€65.00</div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            <div className="flex-shrink-0">
+              <TicketVerifyIcon size={180} />
             </div>
           </div>
           
