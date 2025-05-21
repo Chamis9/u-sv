@@ -4,7 +4,6 @@ import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
 import { Helmet } from "react-helmet-async";
 import { TicketVerifyIcon } from "@/components/icons/TicketVerifyIcon";
-import { Check } from "lucide-react";
 
 export const Hero = memo(function Hero() {
   const { translations, currentLanguage } = useLanguage();
@@ -50,23 +49,7 @@ export const Hero = memo(function Hero() {
             </div>
             
             <div className="flex-shrink-0">
-              {/* Ticket visual with check mark inspired by the uploaded image */}
-              <div className="relative">
-                <div className="w-[180px] h-[180px] rounded-full bg-[#f5efd6] flex items-center justify-center">
-                  <div className="w-20 h-16 bg-[#f2ca53] rounded-md relative overflow-hidden flex items-center justify-center">
-                    {/* Ticket notch left */}
-                    <div className="absolute w-3 h-3 rounded-full bg-[#f5efd6] -left-1.5 top-3"></div>
-                    {/* Ticket notch right */}
-                    <div className="absolute w-3 h-3 rounded-full bg-[#f5efd6] -right-1.5 top-3"></div>
-                    {/* Ticket divider */}
-                    <div className="absolute h-full w-[1px] border-l border-dashed border-[#f5efd6]/60 left-[40%]"></div>
-                  </div>
-                  {/* Check mark in bottom right */}
-                  <div className="absolute bottom-2 right-5 bg-[#006e5f] rounded-full p-2">
-                    <Check size={20} className="text-white" strokeWidth={3} />
-                  </div>
-                </div>
-              </div>
+              <TicketVerifyIcon size={180} />
             </div>
           </div>
           
