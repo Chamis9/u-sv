@@ -21,7 +21,7 @@ export const Hero = memo(function Hero() {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
-            "name": "netieku.es - biļešu apmaiņas platforma",
+            "name": "SellTiX - biļešu apmaiņas platforma",
             "description": "Pirmā biļešu apmaiņas platforma Latvijā",
             "offers": {
               "@type": "Offer",
@@ -49,14 +49,31 @@ export const Hero = memo(function Hero() {
             </div>
             
             <div className="flex-shrink-0">
-              <TicketVerifyIcon size={180} />
+              <div className="relative">
+                <div className="rounded-full bg-[#FDF6E3] flex items-center justify-center" style={{ width: 180, height: 180 }}>
+                  <span className="absolute bottom-4 right-4 bg-[#FDF6E3] rounded-full p-1">
+                    <svg className="h-9 w-9 text-[#0E8970]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                      <line x1="2" y1="10" x2="22" y2="10" />
+                    </svg>
+                  </span>
+                  <svg className="h-24 w-24 text-[#F5BE4F]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M2 9V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3" />
+                    <path d="M2 15v3a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-3" />
+                    <path d="M4 9h16" />
+                    <path d="M4 15h16" />
+                    <path d="M10 5v14" />
+                    <path d="M14 5v14" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
           
           <div className="mt-8 md:mt-12">
             <p className="text-xl md:text-2xl text-ticket-text mb-8 max-w-3xl mx-auto">
               {texts.mainCta}
-              <span className="text-ticket-accent font-bold"> NETIEKU.ES</span>!
+              <span className="text-ticket-accent font-bold"> SellTiX</span>!
             </p>
             
             <p className="text-lg md:text-xl text-ticket-text/90 mb-6 max-w-3xl mx-auto">
