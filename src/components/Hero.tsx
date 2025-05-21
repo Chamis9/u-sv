@@ -4,6 +4,7 @@ import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
 import { Helmet } from "react-helmet-async";
 import { TicketVerifyIcon } from "@/components/icons/TicketVerifyIcon";
+import { Card, CardContent } from "@/components/ui/card";
 
 export const Hero = memo(function Hero() {
   const { translations, currentLanguage } = useLanguage();
@@ -48,25 +49,34 @@ export const Hero = memo(function Hero() {
               </p>
             </div>
             
-            <div className="flex-shrink-0">
-              <div className="relative">
-                <div className="rounded-full bg-[#FDF6E3] flex items-center justify-center" style={{ width: 180, height: 180 }}>
-                  <span className="absolute bottom-4 right-4 bg-[#FDF6E3] rounded-full p-1">
-                    <svg className="h-9 w-9 text-[#0E8970]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                      <line x1="2" y1="10" x2="22" y2="10" />
-                    </svg>
-                  </span>
-                  <svg className="h-24 w-24 text-[#F5BE4F]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M2 9V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3" />
-                    <path d="M2 15v3a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-3" />
-                    <path d="M4 9h16" />
-                    <path d="M4 15h16" />
-                    <path d="M10 5v14" />
-                    <path d="M14 5v14" />
-                  </svg>
-                </div>
-              </div>
+            <div className="flex-shrink-0 transform transition-all hover:scale-105">
+              <Card className="bg-gradient-to-br from-ticket-bg to-ticket-bg/80 border-2 border-ticket-accent/30 rounded-xl shadow-lg shadow-orange-500/20 overflow-hidden max-w-xs">
+                <CardContent className="p-2 sm:p-4 relative">
+                  <div className="absolute top-2 right-2 z-10">
+                    <TicketVerifyIcon size={100} className="opacity-100" />
+                  </div>
+                  <div className="bg-ticket-bg/40 rounded-lg p-4 border border-ticket-accent/10">
+                    <div className="flex flex-col gap-3 mt-20 items-start text-left">
+                      <div className="w-full">
+                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Event</div>
+                        <div className="text-lg font-semibold text-ticket-accent truncate">Concert Show 2025</div>
+                      </div>
+                      <div className="w-full">
+                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Date</div>
+                        <div className="text-base text-ticket-text truncate">May 21, 2025 · 19:00</div>
+                      </div>
+                      <div className="w-full">
+                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Seat</div>
+                        <div className="text-base text-ticket-text truncate">Section A, Row 12, Seat 23</div>
+                      </div>
+                      <div className="w-full">
+                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Price</div>
+                        <div className="text-lg font-semibold text-ticket-accent">€65.00</div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
           
@@ -104,7 +114,7 @@ const getHeroTexts = (langCode: string) => {
         "Pārdod <span class='text-ticket-accent'>biļeti</span> droši"
       ],
       mainCta: "Gribi uz pasākumu, bet biļetes izpārdotas? Ieskaties",
-      description: "Pērc vai pārdod biļetes uz koncertiem, teātri, sporta pasākumiem u.c."
+      description: "SellTiX ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem."
     },
     en: {
       heading: [
@@ -113,7 +123,7 @@ const getHeroTexts = (langCode: string) => {
         "Sell your <span class='text-ticket-accent'>ticket</span> safely"
       ],
       mainCta: "Want to attend an event, but tickets are sold out? Check out",
-      description: "Buy or sell tickets to concerts, theater, sports events, and more."
+      description: "SellTiX is a platform where users can safely sell and purchase tickets from other users."
     },
     ru: {
       heading: [
@@ -122,7 +132,7 @@ const getHeroTexts = (langCode: string) => {
         "Продай <span class='text-ticket-accent'>билет</span> безопасно"
       ],
       mainCta: "Хочешь на мероприятие, но билеты распроданы? Загляни в",
-      description: "Покупай или продавай билеты на концерты, театр, спортивные мероприятия и др."
+      description: "SellTiX - это платформа, где пользователи могут безопасно продавать и покупать билеты у других пользователей."
     }
   };
 
