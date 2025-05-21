@@ -28,7 +28,7 @@ export function Header() {
   };
   
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 py-3 md:py-4 px-4 md:px-6 bg-ticket-bg/80 backdrop-blur-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 py-3 md:py-4 px-4 md:px-6 bg-ticket-bg/90 backdrop-blur-sm border-b border-ticket-accent/10">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <MobileMenu links={navigationLinks} />

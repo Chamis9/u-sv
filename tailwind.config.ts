@@ -77,11 +77,11 @@ export default {
 					900: '#7c2d12',
 				},
 				ticket: {
-					bg: '#00635a',        // Teal background from image
-					text: '#f2e8c9',      // Cream/beige text color from image
-					accent: '#f7b731',    // Yellow/gold from the ticket in the image
-					check: '#00635a',     // Teal check color
-					checkbg: '#f2e8c9',   // Cream background for check
+					bg: '#1A1F2C',        // Dark background color
+					text: '#f8f9fa',      // Light text color
+					accent: '#f97316',    // Orange from the logo
+					check: '#1A1F2C',     // Dark background for icons
+					checkbg: '#f97316',   // Orange background for check
 				},
 			},
 			borderRadius: {

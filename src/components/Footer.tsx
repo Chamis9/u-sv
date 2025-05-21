@@ -13,7 +13,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-ticket-bg py-6 md:py-8 px-4 text-ticket-text/70 border-t border-ticket-text/10">
+    <footer className="bg-ticket-bg py-6 md:py-8 px-4 text-ticket-text/70 border-t border-ticket-accent/10">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
           <div className="text-center md:text-left mb-4 md:mb-0">
@@ -27,7 +27,7 @@ export function Footer() {
               onClick={handleLinkClick}
               className="text-ticket-text/70 hover:text-ticket-accent transition-colors flex items-center gap-1 text-xs sm:text-sm"
             >
-              <Landmark size={14} className="hidden sm:inline" />
+              <Landmark size={14} className="hidden sm:inline text-ticket-accent" />
               <span>{translations.navigation?.aboutUs || "Par mums"}</span>
             </Link>
             <Link 
@@ -35,7 +35,7 @@ export function Footer() {
               onClick={handleLinkClick}
               className="text-ticket-text/70 hover:text-ticket-accent transition-colors flex items-center gap-1 text-xs sm:text-sm"
             >
-              <Mail size={14} className="hidden sm:inline" />
+              <Mail size={14} className="hidden sm:inline text-ticket-accent" />
               <span>{footer.contactLink || "Kontakti"}</span>
             </Link>
             <div className="flex items-center text-xs text-ticket-text/70">
@@ -43,7 +43,7 @@ export function Footer() {
                 {footer.madeWith} 
                 <Heart 
                   className="mx-1 h-3 w-3 sm:h-4 sm:w-4" 
-                  fill="#f7b731" 
+                  fill="#f97316" 
                   strokeWidth={0}
                 />
                 {footer.location}

@@ -17,7 +17,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 20 14.3% 4.1%;
 
-    --primary: 168 100% 19.6%;
+    --primary: 24 70% 50%;
     --primary-foreground: 60 9.1% 97.8%;
 
     --secondary: 60 4.8% 95.9%;
@@ -40,33 +40,33 @@
   }
 
   .dark {
-    --background: 168 100% 19.6%;
-    --foreground: 55 25% 85%;
+    --background: 240 15% 15%;
+    --foreground: 0 0% 95%;
 
-    --card: 168 100% 19.6%;
-    --card-foreground: 55 25% 85%;
+    --card: 240 15% 15%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 168 100% 19.6%;
-    --popover-foreground: 55 25% 85%;
+    --popover: 240 15% 15%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 55 25% 85%;
-    --primary-foreground: 168 100% 19.6%;
+    --primary: 24 95% 53%;
+    --primary-foreground: 240 15% 15%;
 
-    --secondary: 168 74% 29%;
-    --secondary-foreground: 55 25% 85%;
+    --secondary: 240 12% 22%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 168 74% 29%;
-    --muted-foreground: 55 14% 70%;
+    --muted: 240 12% 22%;
+    --muted-foreground: 240 5% 70%;
 
-    --accent: 168 74% 29%;
-    --accent-foreground: 55 25% 85%;
+    --accent: 240 12% 22%;
+    --accent-foreground: 0 0% 95%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 55 25% 85%;
+    --destructive-foreground: 0 0% 95%;
 
-    --border: 168 74% 29%;
-    --input: 168 74% 29%;
-    --ring: 55 25% 85%;
+    --border: 240 12% 22%;
+    --input: 240 12% 22%;
+    --ring: 24 95% 53%;
   }
 }
 
@@ -76,7 +76,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-ticket-bg text-ticket-text font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -97,7 +97,7 @@
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-r from-ticket-text to-white bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-transparent;
   }
   
   /* Performance optimizations */
@@ -124,9 +124,9 @@
   }
 }
 
-/* Custom styles for teal theme */
+/* Custom styles for orange theme */
 .ticket-icon {
-  @apply bg-ticket-checkbg text-ticket-check rounded-full p-2 inline-flex items-center justify-center;
+  @apply bg-ticket-accent text-ticket-check rounded-full p-2 inline-flex items-center justify-center;
 }
 
 .app-background {
@@ -134,5 +134,5 @@
 }
 
 .ticket-card {
-  @apply border-ticket-text/20 bg-ticket-bg/90;
+  @apply border-ticket-accent/20 bg-ticket-bg/90;
 }
