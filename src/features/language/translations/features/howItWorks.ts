@@ -54,5 +54,27 @@ export const howItWorksTranslations: Record<string, HowItWorksTranslations> = {
         description: "Event attendance and emotions are guaranteed"
       }
     ]
+  },
+  ru: {
+    title: "Как это работает",
+    subtitle: "Продавай или покупай билеты безопасно и удобно",
+    steps: [
+      {
+        title: "Зарегистрируйся и верифицируй себя",
+        description: "Создай аккаунт и подтверди свою личность"
+      },
+      {
+        title: "Размести билет",
+        description: "Быстро и просто размести билет на мероприятие на платформе"
+      },
+      {
+        title: "Безопасный обмен",
+        description: "Простой и безопасный процесс обмена"
+      },
+      {
+        title: "Посети мероприятие",
+        description: "Посещение мероприятия и эмоции гарантированы"
+      }
+    ]
   }
 };

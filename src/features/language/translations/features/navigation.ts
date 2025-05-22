@@ -33,6 +33,13 @@ export const navigationTranslations = {
     tickets: "Tickets",
     contact: "Contact",
     aboutUs: "About Us"
+  },
+  ru: {
+    home: "Главная",
+    events: "Билеты",
+    tickets: "Билеты",
+    contact: "Контакты",
+    aboutUs: "О нас"
   }
 };
 
@@ -48,6 +55,12 @@ export const themeTranslations = {
     light: "Light",
     dark: "Dark",
     system: "System"
+  },
+  ru: {
+    label: "Тема",
+    light: "Светлая",
+    dark: "Темная",
+    system: "Системная"
   }
 };
 
@@ -59,5 +72,9 @@ export const languageSelectorTranslations = {
   en: {
     label: "Language",
     selector: "Select language"
+  },
+  ru: {
+    label: "Язык",
+    selector: "Выберите язык"
   }
 };
