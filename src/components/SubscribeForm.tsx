@@ -15,7 +15,35 @@ export function SubscribeForm() {
     handleSubmit 
   } = useSubscribeForm();
 
-  const texts = getTranslations(currentLanguage.code);
+  // Get translations for the current language
+  const getSubscribeTranslations = () => {
+    const translations = {
+      lv: {
+        placeholder: "E-pasta adrese",
+        button: "Pieteikties",
+        sending: "Sūta..."
+      },
+      en: {
+        placeholder: "Email address",
+        button: "Subscribe",
+        sending: "Sending..."
+      },
+      et: {
+        placeholder: "E-posti aadress",
+        button: "Telli",
+        sending: "Saatmine..."
+      },
+      lt: {
+        placeholder: "El. pašto adresas",
+        button: "Prenumeruoti",
+        sending: "Siunčiama..."
+      }
+    };
+
+    return translations[currentLanguage.code as keyof typeof translations] || translations.en;
+  };
+
+  const texts = getSubscribeTranslations();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -55,25 +83,3 @@ export function SubscribeForm() {
     </form>
   );
 }
-
-const getTranslations = (langCode: string) => {
-  const translations = {
-    lv: {
-      placeholder: "E-pasts",
-      button: "Pieteikties",
-      sending: "Sūta..."
-    },
-    en: {
-      placeholder: "Email",
-      button: "Subscribe",
-      sending: "Sending..."
-    },
-    ru: {
-      placeholder: "Электронная почта",
-      button: "Подписаться",
-      sending: "Отправка..."
-    }
-  };
-
-  return translations[langCode as keyof typeof translations] || translations.en;
-};

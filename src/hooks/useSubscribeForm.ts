@@ -135,6 +135,34 @@ const getTranslations = (langCode: string) => {
       invalidEmail: "Please enter a valid email address",
       rateLimit: "Please wait 30 seconds before trying again.",
       emailExists: "This email is already subscribed to our newsletter."
+    },
+    et: {
+      placeholder: "E-posti aadress",
+      button: "Telli",
+      sending: "Saatmine...",
+      successTitle: "Täname tellimise eest!",
+      successMessage: "Hoiame teid kõigi uudistega kursis.",
+      errorTitle: "Viga!",
+      errorMessage: "E-posti aadressi salvestamine ebaõnnestus. Palun proovi uuesti.",
+      previousEmails: "Varem kasutatud e-postiaadressid",
+      selectEmail: "Vali e-post...",
+      invalidEmail: "Palun sisestage kehtiv e-posti aadress",
+      rateLimit: "Palun oodake 30 sekundit enne järgmist katset.",
+      emailExists: "See e-posti aadress on juba meie uudiskirja tellinud."
+    },
+    lt: {
+      placeholder: "El. pašto adresas",
+      button: "Prenumeruoti",
+      sending: "Siunčiama...",
+      successTitle: "Ačiū, kad užsiprenumeravote!",
+      successMessage: "Mes jus informuosime apie visas naujienas.",
+      errorTitle: "Klaida!",
+      errorMessage: "Nepavyko išsaugoti el. pašto adreso. Bandykite dar kartą.",
+      previousEmails: "Anksčiau naudoti el. paštai",
+      selectEmail: "Pasirinkite el. paštą...",
+      invalidEmail: "Įveskite galiojantį el. pašto adresą",
+      rateLimit: "Palaukite 30 sekundžių prieš bandant dar kartą.",
+      emailExists: "Šis el. paštas jau yra užsiprenumeravęs mūsų naujienlaiškį."
     }
   };
 
