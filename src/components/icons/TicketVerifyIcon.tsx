@@ -13,10 +13,10 @@ export const TicketVerifyIcon: React.FC<TicketVerifyIconProps> = ({
 }) => {
   return (
     <div className={`relative ${className}`} style={{ width: size, height: size }}>
-      <div className="absolute inset-0 rounded-full bg-ticket-checkbg border-4 border-ticket-text/20 flex items-center justify-center">
+      <div className="absolute inset-0 rounded-full bg-ticket-accent border-4 border-ticket-text/20 flex items-center justify-center">
         <Ticket 
           size={size * 0.6} 
-          className="text-ticket-accent" 
+          className="text-ticket-check" 
           strokeWidth={2}
         />
       </div>
