@@ -125,14 +125,23 @@ const getHeroTexts = (langCode: string) => {
       mainCta: "Want to attend an event, but tickets are sold out? Check out",
       description: "SellTiX is a platform where users can safely sell and purchase tickets from other users."
     },
-    ru: {
+    et: {
       heading: [
-        "Не попадаешь на",
-        "мероприятие?",
-        "Продай <span class='text-ticket-accent'>билет</span> безопасно"
+        "Ei saa",
+        "üritusele?",
+        "Müü oma <span class='text-ticket-accent'>pilet</span> turvaliselt"
       ],
-      mainCta: "Хочешь на мероприятие, но билеты распроданы? Загляни в",
-      description: "SellTiX - это платформа, где пользователи могут безопасно продавать и покупать билеты у других пользователей."
+      mainCta: "Soovid minna üritusele, kuid piletid on välja müüdud? Vaata",
+      description: "SellTiX on platvorm, kus kasutajad saavad turvaliselt müüa ja osta pileteid teistelt kasutajatelt."
+    },
+    lt: {
+      heading: [
+        "Negalite dalyvauti",
+        "renginyje?",
+        "Parduokite savo <span class='text-ticket-accent'>bilietą</span> saugiai"
+      ],
+      mainCta: "Norite dalyvauti renginyje, bet bilietai išparduoti? Patikrinkite",
+      description: "SellTiX yra platforma, kurioje vartotojai gali saugiai parduoti ir pirkti bilietus iš kitų vartotojų."
     }
   };
 

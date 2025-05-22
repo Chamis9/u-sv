@@ -34,12 +34,19 @@ export const navigationTranslations = {
     contact: "Contact",
     aboutUs: "About Us"
   },
-  ru: {
-    home: "Главная",
-    events: "Билеты",
-    tickets: "Билеты",
-    contact: "Контакты",
-    aboutUs: "О нас"
+  et: {
+    home: "Avaleht",
+    events: "Piletid",
+    tickets: "Piletid",
+    contact: "Kontakt",
+    aboutUs: "Meist"
+  },
+  lt: {
+    home: "Pagrindinis",
+    events: "Bilietai",
+    tickets: "Bilietai",
+    contact: "Kontaktai",
+    aboutUs: "Apie mus"
   }
 };
 
@@ -56,11 +63,17 @@ export const themeTranslations = {
     dark: "Dark",
     system: "System"
   },
-  ru: {
-    label: "Тема",
-    light: "Светлая",
-    dark: "Темная",
-    system: "Системная"
+  et: {
+    label: "Teema",
+    light: "Hele",
+    dark: "Tume",
+    system: "Süsteemi"
+  },
+  lt: {
+    label: "Tema",
+    light: "Šviesi",
+    dark: "Tamsi",
+    system: "Sistemos"
   }
 };
 
@@ -73,8 +86,12 @@ export const languageSelectorTranslations = {
     label: "Language",
     selector: "Select language"
   },
-  ru: {
-    label: "Язык",
-    selector: "Выберите язык"
+  et: {
+    label: "Keel",
+    selector: "Vali keel"
+  },
+  lt: {
+    label: "Kalba",
+    selector: "Pasirinkite kalbą"
   }
 };

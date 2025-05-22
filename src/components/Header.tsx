@@ -16,9 +16,10 @@ export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
-  const t = (lvText: string, enText: string, ruText?: string) => {
+  const t = (lvText: string, enText: string) => {
     if (currentLanguage.code === 'lv') return lvText;
-    if (currentLanguage.code === 'ru') return ruText || enText;
+    if (currentLanguage.code === 'et') return enText;
+    if (currentLanguage.code === 'lt') return enText;
     return enText;
   };
 

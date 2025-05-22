@@ -24,11 +24,18 @@ export const heroTranslations: Record<string, HeroTranslations> = {
     subscribeText: "Subscribe to learn about platform launch",
     learnMoreBtn: "Learn more",
   },
-  ru: {
-    title: "Покупайте и продавайте билеты",
-    titleHighlight: "просто и безопасно",
-    subtitle: "Первая платформа для обмена билетами в странах Балтии",
-    subscribeText: "Подпишитесь, чтобы узнать о запуске платформы",
-    learnMoreBtn: "Узнать больше",
+  et: {
+    title: "Müü ja osta pileteid",
+    titleHighlight: "lihtsalt ja turvaliselt",
+    subtitle: "Esimene piletite vahetusplatvorm Baltikumis",
+    subscribeText: "Liitu, et saada teada platvormi käivitamisest",
+    learnMoreBtn: "Loe lähemalt",
+  },
+  lt: {
+    title: "Parduokite ir pirkite bilietus",
+    titleHighlight: "paprastai ir saugiai",
+    subtitle: "Pirmoji bilietų mainų platforma Baltijos šalyse",
+    subscribeText: "Užsiregistruokite, kad sužinotumėte apie platformos paleidimą",
+    learnMoreBtn: "Sužinoti daugiau",
   }
 };

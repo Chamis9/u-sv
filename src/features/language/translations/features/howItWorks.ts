@@ -55,25 +55,47 @@ export const howItWorksTranslations: Record<string, HowItWorksTranslations> = {
       }
     ]
   },
-  ru: {
-    title: "Как это работает",
-    subtitle: "Продавай или покупай билеты безопасно и удобно",
+  et: {
+    title: "Kuidas see toimib",
+    subtitle: "Müü või osta pileteid turvaliselt ja mugavalt",
     steps: [
       {
-        title: "Зарегистрируйся и верифицируй себя",
-        description: "Создай аккаунт и подтверди свою личность"
+        title: "Registreeri ja verifitseeri",
+        description: "Loo konto ja verifitseeri oma identiteet"
       },
       {
-        title: "Размести билет",
-        description: "Быстро и просто размести билет на мероприятие на платформе"
+        title: "Lisa pilet",
+        description: "Lisa oma üritus platvormile kiiresti ja lihtsalt"
       },
       {
-        title: "Безопасный обмен",
-        description: "Простой и безопасный процесс обмена"
+        title: "Turvaline vahetus",
+        description: "Lihtne ja turvaline vahetusprotsess"
       },
       {
-        title: "Посети мероприятие",
-        description: "Посещение мероприятия и эмоции гарантированы"
+        title: "Külasta üritust",
+        description: "Ürituse külastus ja emotsioonid on garanteeritud"
+      }
+    ]
+  },
+  lt: {
+    title: "Kaip tai veikia",
+    subtitle: "Parduokite arba pirkite bilietus saugiai ir patogiai",
+    steps: [
+      {
+        title: "Užsiregistruokite ir patvirtinkite",
+        description: "Sukurkite paskyrą ir patvirtinkite savo tapatybę"
+      },
+      {
+        title: "Įkelkite bilietą",
+        description: "Greitai ir lengvai įkelkite renginio bilietą į platformą"
+      },
+      {
+        title: "Saugus keitimasis",
+        description: "Paprastas ir saugus keitimosi procesas"
+      },
+      {
+        title: "Apsilankykite renginyje",
+        description: "Renginio lankymas ir emocijos garantuojamos"
       }
     ]
   }

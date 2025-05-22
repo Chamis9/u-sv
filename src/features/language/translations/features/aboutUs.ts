@@ -23,12 +23,20 @@ export const aboutUsTranslations = {
       "We are based on three core values: honesty, security, and customer satisfaction. We guarantee 100% secure transactions."
     ]
   },
-  ru: {
-    title: "О нас",
+  et: {
+    title: "Meist",
     content: [
-      "SellTiX - это платформа, где пользователи могут безопасно продавать и покупать билеты у других пользователей.",
-      "Наша платформа позволяет пользователям продавать и покупать билеты у других пользователей. Для обеспечения безопасности только верифицированные пользователи могут совершать сделки на нашей платформе.",
-      "Мы основываемся на трех основных ценностях: честность, безопасность и удовлетворенность клиентов. Мы гарантируем 100% безопасные транзакции."
+      "SellTiX on platvorm, kus kasutajad saavad turvaliselt müüa ja osta pileteid teistelt kasutajatelt.",
+      "Meie platvorm võimaldab kasutajatel müüa ja osta pileteid teistelt kasutajatelt. Turvalisuse tagamiseks saavad tehinguid teha ainult verifitseeritud kasutajad.",
+      "Me põhineme kolmel põhiväärtusel: ausus, turvalisus ja klientide rahulolu. Me garanteerime 100% turvalised tehingud."
+    ]
+  },
+  lt: {
+    title: "Apie mus",
+    content: [
+      "SellTiX yra platforma, kurioje vartotojai gali saugiai parduoti ir pirkti bilietus iš kitų vartotojų.",
+      "Mūsų platforma leidžia vartotojams parduoti ir pirkti bilietus iš kitų vartotojų. Siekiant užtikrinti saugumą, tik patvirtinti vartotojai gali atlikti operacijas mūsų platformoje.",
+      "Mes remiamės trimis pagrindinėmis vertybėmis: sąžiningumu, saugumu ir klientų pasitenkinimu. Mes garantuojame 100% saugius sandorius."
     ]
   }
 };
