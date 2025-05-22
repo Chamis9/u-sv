@@ -6,7 +6,12 @@ import { Link } from "react-router-dom";
 
 export function Footer() {
   const { translations } = useLanguage();
-  const { footer } = translations;
+  const footer = translations.footer || {
+    allRightsReserved: "© 2025 netieku.es",
+    madeWith: "Made with",
+    location: "in Latvia",
+    contactLink: "Contact"
+  };
 
   const handleLinkClick = () => {
     window.scrollTo(0, 0);

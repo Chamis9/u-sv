@@ -26,5 +26,21 @@ export const footerTranslations: Record<Language['code'], FooterTranslations> = 
     cookieSettings: "Cookie Settings",
     privacyPolicy: "Privacy Policy",
     contactLink: "Contact"
+  },
+  et: {
+    allRightsReserved: "© 2025 netieku.es",
+    madeWith: "Tehtud",
+    location: "Lätis",
+    cookieSettings: "Küpsiste seaded",
+    privacyPolicy: "Privaatsuspoliitika",
+    contactLink: "Kontakt"
+  },
+  lt: {
+    allRightsReserved: "© 2025 netieku.es",
+    madeWith: "Sukurta su",
+    location: "Latvijoje",
+    cookieSettings: "Slapukų nustatymai",
+    privacyPolicy: "Privatumo politika",
+    contactLink: "Kontaktai"
   }
 };
