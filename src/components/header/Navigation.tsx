@@ -8,7 +8,7 @@ export function Navigation() {
   
   const navigationLinks = [
     { href: "/", label: translations?.navigation?.home || "Home" },
-    { href: "/events", label: translations?.navigation?.events || "Events" },
+    { href: "/events", label: translations?.navigation?.tickets || "Tickets" },
     { href: "/contact", label: translations?.navigation?.contact || "Contact" }
   ];
   
@@ -32,7 +32,7 @@ export const getNavigationLinks = () => {
   
   return [
     { href: "/", label: translations?.navigation?.home || "Home" },
-    { href: "/events", label: translations?.navigation?.events || "Events" },
+    { href: "/events", label: translations?.navigation?.tickets || "Tickets" },
     { href: "/contact", label: translations?.navigation?.contact || "Contact" }
   ];
 };

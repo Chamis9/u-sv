@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Check, Users, Info } from "lucide-react";
 
 const AboutUs = () => {
-  const { translations } = useLanguage();
+  const { translations, currentLanguage } = useLanguage();
   
   const companyInfo = {
     lv: [
@@ -46,34 +46,50 @@ const AboutUs = () => {
         icon: <Check className="h-8 w-8 text-ticket-accent" />
       }
     ],
-    ru: [
+    et: [
       {
-        title: "Наше видение",
-        content: "Наша цель - создать инновационную и надежную платформу для продажи билетов, которая объединяет посетителей мероприятий с другими посетителями, обеспечивая безопасный и удобный процесс покупки билетов.",
+        title: "Meie visioon",
+        content: "Meie eesmärk on luua usaldusväärne piletite kauplemise platvorm, mis ühendab ürituste külastajaid teiste osalejatega, tagades turvalise ja mugava piletite ostmise protsessi.",
         icon: <Users className="h-8 w-8 text-ticket-accent" />
       },
       {
-        title: "Наши ценности",
-        content: "Мы основываемся на трех основных ценностях: честность, безопасность и удовлетворенность клиентов. Мы гарантируем 100% безопасные транзакции.",
+        title: "Meie väärtused",
+        content: "Me põhineme kolmel põhiväärtusel: ausus, turvalisus ja klientide rahulolu. Me garanteerime 100% turvalised tehingud.",
         icon: <Info className="h-8 w-8 text-ticket-accent" />
       },
       {
-        title: "Что мы предлагаем",
-        content: "Наша платформа позволяет пользователям напрямую продавать и покупать билеты у других пользователей. Для обеспечения безопасности только проверенные пользователи могут совершать сделки на нашей платформе.",
+        title: "Mida me pakume",
+        content: "Meie platvorm võimaldab kasutajatel müüa ja osta pileteid teistelt kasutajatelt. Turvalisuse tagamiseks saavad tehinguid teha ainult verifitseeritud kasutajad.",
+        icon: <Check className="h-8 w-8 text-ticket-accent" />
+      }
+    ],
+    lt: [
+      {
+        title: "Mūsų vizija",
+        content: "Mūsų tikslas yra sukurti patikimą bilietų prekybos platformą, jungiančią renginių lankytojus su kitais dalyviais, užtikrinant saugų ir patogų bilietų įsigijimo procesą.",
+        icon: <Users className="h-8 w-8 text-ticket-accent" />
+      },
+      {
+        title: "Mūsų vertybės",
+        content: "Mes remiamės trimis pagrindinėmis vertybėmis: sąžiningumu, saugumu ir klientų pasitenkinimu. Mes garantuojame 100% saugius sandorius.",
+        icon: <Info className="h-8 w-8 text-ticket-accent" />
+      },
+      {
+        title: "Ką mes siūlome",
+        content: "Mūsų platforma leidžia vartotojams parduoti ir pirkti bilietus iš kitų vartotojų. Siekiant užtikrinti saugumą, tik patvirtinti vartotojai gali atlikti operacijas mūsų platformoje.",
         icon: <Check className="h-8 w-8 text-ticket-accent" />
       }
     ]
   };
   
-  const { currentLanguage } = useLanguage();
   const content = companyInfo[currentLanguage.code as keyof typeof companyInfo] || companyInfo.en;
   
   return (
     <ThemeProvider defaultTheme="light" disableToggle={false}>
       <div className="min-h-screen flex flex-col bg-ticket-bg text-ticket-text">
         <SEO 
-          title={translations.aboutUs?.title || "Par mums - netieku.es"}
-          description={translations.aboutUs?.content?.[0] || "Mūsu mērķis ir radīt uzticamu platformu biļešu tirdzniecībai"}
+          title={translations.aboutUs?.title || "Par mums - SellTiX"}
+          description={translations.aboutUs?.content?.[0] || "SellTiX ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem"}
         />
         <Header />
         
@@ -85,9 +101,12 @@ const AboutUs = () => {
               </h1>
               
               <div className="text-xl mb-12 text-ticket-text/80 text-center">
-                <span className="text-ticket-accent font-semibold">netieku.es</span> {currentLanguage.code === 'en' ? 
-                  "is a platform where users can safely sell and purchase tickets from other users" : 
-                  "ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem"}
+                <span className="text-ticket-accent font-semibold">SellTiX</span> {
+                  currentLanguage.code === 'lv' ? "ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem" : 
+                  currentLanguage.code === 'et' ? "on platvorm, kus kasutajad saavad turvaliselt müüa ja osta pileteid teistelt kasutajatelt" :
+                  currentLanguage.code === 'lt' ? "yra platforma, kurioje vartotojai gali saugiai parduoti ir pirkti bilietus iš kitų vartotojų" :
+                  "is a platform where users can safely sell and purchase tickets from other users"
+                }
               </div>
             
               <div className="grid gap-8 md:grid-cols-3">
@@ -111,16 +130,19 @@ const AboutUs = () => {
               <div className="mt-12 bg-ticket-bg/50 p-6 rounded-lg border border-ticket-accent">
                 <h2 className="text-2xl font-semibold mb-4 text-ticket-accent">
                   {currentLanguage.code === 'lv' ? "Verificēti lietotāji" : 
-                  currentLanguage.code === 'ru' ? "Проверенные пользователи" : 
-                  "Verified Users"}
+                   currentLanguage.code === 'et' ? "Verifitseeritud kasutajad" :
+                   currentLanguage.code === 'lt' ? "Patvirtinti vartotojai" : 
+                   "Verified Users"}
                 </h2>
                 <div className="flex items-start">
                   <Check className="h-6 w-6 text-ticket-accent mt-1 mr-3 flex-shrink-0" />
                   <p className="text-ticket-text/80">
                     {currentLanguage.code === 'lv' ? 
                       "Mūsu platformā pārdot var tikai verificēti lietotāji. Tas nodrošina augstākā līmeņa drošību un uzticamību visiem mūsu lietotājiem. Katra darījuma drošība tiek garantēta." : 
-                    currentLanguage.code === 'ru' ? 
-                      "На нашей платформе могут работать только проверенные пользователи. Это обеспечивает высочайший уровень безопасности и надежности для всех наших пользователей. Каждый билет проверяется, и безопасность каждой транзакции гарантируется." :
+                    currentLanguage.code === 'et' ? 
+                      "Meie platvormil saavad müüa ainult verifitseeritud kasutajad. See tagab kõrgeima turvalisuse ja usaldusväärsuse kõigile meie kasutajatele. Iga tehingu turvalisus on garanteeritud." :
+                    currentLanguage.code === 'lt' ? 
+                      "Mūsų platformoje parduoti gali tik patvirtinti vartotojai. Tai užtikrina aukščiausio lygio saugumą ir patikimumą visiems mūsų vartotojams. Kiekvieno sandorio saugumas yra garantuotas." :
                       "Only verified users can sell on our platform. This ensures the highest level of security and reliability for all our users. The security of each transaction is guaranteed."}
                   </p>
                 </div>

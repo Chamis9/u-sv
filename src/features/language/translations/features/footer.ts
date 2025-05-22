@@ -12,7 +12,7 @@ export type FooterTranslations = {
 
 export const footerTranslations: Record<Language['code'], FooterTranslations> = {
   lv: {
-    allRightsReserved: "© 2025 netieku.es",
+    allRightsReserved: "© 2025 SellTiX",
     madeWith: "Radīts ar",
     location: "Latvijā",
     cookieSettings: "Sīkdatņu iestatījumi",
@@ -20,7 +20,7 @@ export const footerTranslations: Record<Language['code'], FooterTranslations> = 
     contactLink: "Kontakti"
   },
   en: {
-    allRightsReserved: "© 2025 netieku.es",
+    allRightsReserved: "© 2025 SellTiX",
     madeWith: "Made with",
     location: "in Latvia",
     cookieSettings: "Cookie Settings",
@@ -28,7 +28,7 @@ export const footerTranslations: Record<Language['code'], FooterTranslations> = 
     contactLink: "Contact"
   },
   et: {
-    allRightsReserved: "© 2025 netieku.es",
+    allRightsReserved: "© 2025 SellTiX",
     madeWith: "Tehtud",
     location: "Lätis",
     cookieSettings: "Küpsiste seaded",
@@ -36,7 +36,7 @@ export const footerTranslations: Record<Language['code'], FooterTranslations> = 
     contactLink: "Kontakt"
   },
   lt: {
-    allRightsReserved: "© 2025 netieku.es",
+    allRightsReserved: "© 2025 SellTiX",
     madeWith: "Sukurta su",
     location: "Latvijoje",
     cookieSettings: "Slapukų nustatymai",

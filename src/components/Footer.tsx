@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 export function Footer() {
   const { translations } = useLanguage();
   const footer = translations.footer || {
-    allRightsReserved: "© 2025 netieku.es",
+    allRightsReserved: "© 2025 SellTiX",
     madeWith: "Made with",
     location: "in Latvia",
     contactLink: "Contact"
