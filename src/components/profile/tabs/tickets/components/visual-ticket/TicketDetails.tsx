@@ -41,19 +41,19 @@ export function TicketDetails({ ticket, t }: TicketDetailsProps) {
     <>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
-          <Tag className="h-4 w-4 mr-1 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">{ticket.category}</span>
+          <Tag className="h-4 w-4 mr-1 text-gray-500 dark:text-gray-400" />
+          <span className="text-sm text-gray-600 dark:text-gray-300">{ticket.category}</span>
         </div>
-        <Badge className={getStatusColor(ticket.status)}>
+        <Badge className={`${getStatusColor(ticket.status)} text-white`}>
           {getStatusText(ticket.status)}
         </Badge>
       </div>
       
-      <div className="text-xl font-bold text-primary">
+      <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
         {formatPrice(ticket.price)}
       </div>
       
-      <div className="text-sm text-muted-foreground mt-1">
+      <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
         {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
       </div>
     </>

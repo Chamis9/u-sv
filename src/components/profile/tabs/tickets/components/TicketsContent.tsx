@@ -14,7 +14,7 @@ interface TicketsContentProps {
   tickets: UserTicket[];
   isLoading: boolean;
   onDelete: (ticketId: string) => void;
-  onView: (ticket: UserTicket) => void;  // Added the missing onView property
+  onView: (ticket: UserTicket) => void;
   onEdit?: (ticket: UserTicket) => void;
   loadingDelete?: boolean;
   ticketType: "added" | "purchased";
@@ -24,7 +24,7 @@ export function TicketsContent({
   tickets, 
   isLoading, 
   onDelete, 
-  onView,  // Added the missing parameter
+  onView,
   onEdit,
   loadingDelete = false,
   ticketType
@@ -40,7 +40,7 @@ export function TicketsContent({
   const handleViewTicket = (ticket: UserTicket) => {
     setSelectedTicket(ticket);
     setIsPreviewOpen(true);
-    onView(ticket);  // Call the onView callback passed from parent
+    onView(ticket);
   };
 
   if (isLoading) {
@@ -55,13 +55,13 @@ export function TicketsContent({
 
   if (tickets.length === 0) {
     return (
-      <Alert className="bg-gray-50/50 dark:bg-gray-800/50 border-none">
-        <Ticket className="h-5 w-5 text-muted-foreground" />
-        <AlertTitle>{ticketType === "added" 
+      <Alert className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
+        <Ticket className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+        <AlertTitle className="text-gray-900 dark:text-gray-100">{ticketType === "added" 
           ? t("Nav pievienotu biļešu", "No added tickets") 
           : t("Nav iegādātu biļešu", "No purchased tickets")}
         </AlertTitle>
-        <AlertDescription>
+        <AlertDescription className="text-gray-600 dark:text-gray-300">
           {ticketType === "added" 
             ? t("Jūsu pievienotās biļetes parādīsies šeit", "Your added tickets will appear here") 
             : t("Jūsu iegādātās biļetes parādīsies šeit", "Your purchased tickets will appear here")}

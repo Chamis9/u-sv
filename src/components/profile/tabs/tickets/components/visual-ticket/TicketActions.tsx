@@ -27,7 +27,7 @@ export function TicketActions({
         variant="outline"
         size="sm"
         onClick={onView}
-        className="flex-1 text-gray-800 border-gray-400"
+        className="flex-1 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
       >
         <Eye className="h-4 w-4 mr-2" />
         {t("Skatīt", "View")}
@@ -40,7 +40,7 @@ export function TicketActions({
           onClick={() => {
             window.open(`https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/tickets/${ticket.file_path}`, '_blank');
           }}
-          className="flex-1"
+          className="flex-1 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
         >
           <Download className="h-4 w-4 mr-2" />
           {t("Lejupielādēt", "Download")}
@@ -52,7 +52,7 @@ export function TicketActions({
           variant="outline"
           size="sm"
           onClick={onEdit}
-          className="flex-1"
+          className="flex-1 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
         >
           <Pencil className="h-4 w-4 mr-2" />
           {t("Rediģēt", "Edit")}
