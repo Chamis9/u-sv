@@ -11,10 +11,16 @@ import { useNavigate } from "react-router-dom";
 import { LoginButton } from "./auth/LoginButton";
 
 export function Header() {
-  const navigationLinks = getNavigationLinks();
-  const { currentLanguage } = useLanguage();
+  const { currentLanguage, translations } = useLanguage();
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+
+  // Default navigation links if there's an issue with the translations
+  const navigationLinks = [
+    { href: "/", label: "Home" },
+    { href: "/events", label: "Events" },
+    { href: "/contact", label: "Contact" }
+  ];
 
   const t = (lvText: string, enText: string) => {
     if (currentLanguage.code === 'lv') return lvText;

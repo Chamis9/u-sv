@@ -22,28 +22,28 @@ export interface LanguageSelectorTranslations {
 export const navigationTranslations = {
   lv: {
     home: "Sākumlapa",
-    events: "Biļetes",
+    events: "Pasākumi",
     tickets: "Biļetes",
     contact: "Kontakti",
     aboutUs: "Par mums"
   },
   en: {
     home: "Home",
-    events: "Tickets",
+    events: "Events",
     tickets: "Tickets",
     contact: "Contact",
     aboutUs: "About Us"
   },
   et: {
     home: "Avaleht",
-    events: "Piletid",
+    events: "Sündmused",
     tickets: "Piletid",
     contact: "Kontakt",
     aboutUs: "Meist"
   },
   lt: {
     home: "Pagrindinis",
-    events: "Bilietai",
+    events: "Renginiai",
     tickets: "Bilietai",
     contact: "Kontaktai",
     aboutUs: "Apie mus"
