@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useLanguage } from "@/features/language";
 import { UserAvatar } from "./UserAvatar";
@@ -111,10 +112,10 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
             user={completeUserObject} 
             size="lg"
           />
-          <h2 className="text-xl font-semibold mt-2">
+          <h2 className="text-xl font-semibold mt-2 text-gray-900 dark:text-gray-100">
             {fullName}
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             {user ? user.email : ""}
           </p>
         </div>
@@ -125,7 +126,7 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
           <Button 
             key={item.id}
             variant={activeTab === item.id ? "default" : "ghost"}
-            className="w-full justify-start"
+            className="w-full justify-start text-gray-800 dark:text-gray-200"
             onClick={() => onTabChange(item.id)}
           >
             <span className="mr-2">{item.icon}</span> {item.label}
