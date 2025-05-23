@@ -1,14 +1,13 @@
 
-import React from "react";
-import { TabsContent } from "@/components/ui/tabs";
-import { UserTicket } from "@/hooks/tickets";
-import { useLanguage } from "@/features/language";
-import { useDevice } from "@/hooks/useDevice";
-import { TicketsContent } from "../TicketsContent";
-import { TicketsList } from "../ticket-list";
+import React from 'react';
+import { TabsContent } from '@/components/ui/tabs';
+import { UserTicket } from '@/hooks/tickets/types';
+import { TicketsContent } from '../TicketsContent';
+import { TicketsList } from '../ticket-list/TicketsList';
+import { VisualTicket } from '../visual-ticket/VisualTicket';
 
 interface TabContentProps {
-  value: string;
+  value: "added" | "purchased";
   tickets: UserTicket[];
   onDelete: (ticketId: string) => void;
   onView: (ticket: UserTicket) => void;
@@ -22,20 +21,14 @@ export function TabContent({
   tickets, 
   onDelete, 
   onView, 
-  onEdit,
-  isLoading, 
-  ticketType 
+  onEdit, 
+  isLoading,
+  ticketType
 }: TabContentProps) {
-  const { isMobile } = useDevice();
-  const { currentLanguage } = useLanguage();
-  
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
-  
   return (
-    <TabsContent value={value} className="pt-4">
-      {isMobile ? (
-        <TicketsContent
+    <TabsContent value={value} className="mt-2 p-0">
+      <div className="w-full">
+        <TicketsContent 
           tickets={tickets}
           isLoading={isLoading}
           onDelete={onDelete}
@@ -43,16 +36,7 @@ export function TabContent({
           onEdit={onEdit}
           ticketType={ticketType}
         />
-      ) : (
-        <TicketsList
-          tickets={tickets}
-          onDelete={onDelete}
-          onView={onView}
-          onEdit={onEdit}
-          isLoading={isLoading}
-          ticketType={ticketType}
-        />
-      )}
+      </div>
     </TabsContent>
   );
 }

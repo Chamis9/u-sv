@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { UserTicket } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, Ticket } from "lucide-react";
 import { VisualTicket } from "./visual-ticket";

@@ -70,7 +70,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <DialogHeader>
-          <DialogTitle className="text-gray-900 dark:text-gray-100">{t('Biļetes informācija', 'Ticket Information')}</DialogTitle>
+          <DialogTitle className="text-xl text-gray-900 dark:text-gray-100">{t('Biļetes informācija', 'Ticket Information')}</DialogTitle>
         </DialogHeader>
         
         <div className="py-4">
@@ -78,15 +78,15 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
             <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 break-words">{ticket.title}</h3>
             
             {ticket.description && (
-              <p className="text-sm text-gray-600 dark:text-gray-300 break-words">
+              <p className="text-sm text-gray-700 dark:text-gray-300 break-words">
                 {ticket.description}
               </p>
             )}
             
-            <div className="grid gap-2">
+            <div className="grid gap-3">
               {ticket.event_date && (
                 <div className="flex items-center text-sm text-gray-700 dark:text-gray-300">
-                  <Calendar className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <Calendar className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-400 flex-shrink-0" />
                   <span>
                     {formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
                   </span>
@@ -95,26 +95,26 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
               
               {ticket.event_time && (
                 <div className="flex items-center text-sm text-gray-700 dark:text-gray-300">
-                  <Clock className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <Clock className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-400 flex-shrink-0" />
                   <span>{ticket.event_time}</span>
                 </div>
               )}
               
               {ticket.venue && (
                 <div className="flex items-center text-sm text-gray-700 dark:text-gray-300">
-                  <MapPin className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <MapPin className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-400 flex-shrink-0" />
                   <span className="break-words">{ticket.venue}</span>
                 </div>
               )}
               
               <div className="flex items-center text-sm text-gray-700 dark:text-gray-300">
-                <Tag className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                <Tag className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-400 flex-shrink-0" />
                 <span className="break-words">{ticket.category}</span>
               </div>
               
               {sellerName && (
                 <div className="flex items-center text-sm text-gray-700 dark:text-gray-300">
-                  <User className="h-4 w-4 mr-2 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <User className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-400 flex-shrink-0" />
                   <span>{t('Pārdevējs', 'Seller')}: {sellerName}</span>
                 </div>
               )}
@@ -129,7 +129,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
                 <Ticket className="h-8 w-8 text-orange-500 opacity-50" />
               </div>
               
-              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                 {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
               </div>
             </div>
@@ -152,4 +152,4 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
       </DialogContent>
     </Dialog>
   );
-};
+}

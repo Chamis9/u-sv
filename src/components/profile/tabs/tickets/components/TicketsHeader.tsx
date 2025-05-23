@@ -56,7 +56,7 @@ export function TicketsHeader({ onAddTicket, onRefresh }: TicketsHeaderProps) {
           size={isMobile ? "icon" : "default"} 
           variant="outline" 
           disabled={isRefreshing} 
-          className="flex-1 sm:flex-none border-2 border-gray-300 dark:border-gray-600 font-medium"
+          className="flex-1 sm:flex-none border-2 border-gray-300 dark:border-gray-600 font-medium text-gray-800 dark:text-white"
         >
           <RefreshCw className={`h-5 w-5 ${isMobile ? '' : 'mr-2'} ${isRefreshing ? 'animate-spin' : ''} text-gray-700 dark:text-gray-200`} />
           {!isMobile && (isRefreshing 
