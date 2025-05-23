@@ -49,14 +49,16 @@ export function TicketsHeader({ onAddTicket, onRefresh }: TicketsHeaderProps) {
   
   return (
     <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 border-b border-border pb-4">
-      <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">{t("Manas biļetes", "My Tickets")}</CardTitle>
+      <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+        {t("Manas biļetes", "My Tickets")}
+      </CardTitle>
       <div className="flex w-full sm:w-auto space-x-3">
         <Button 
           onClick={handleRefresh} 
           size={isMobile ? "icon" : "default"} 
           variant="outline" 
           disabled={isRefreshing} 
-          className="flex-1 sm:flex-none border-2 border-gray-300 dark:border-gray-600 font-medium text-gray-800 dark:text-white"
+          className="flex-1 sm:flex-none border-2 border-gray-300 dark:border-gray-600 font-medium text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
         >
           <RefreshCw className={`h-5 w-5 ${isMobile ? '' : 'mr-2'} ${isRefreshing ? 'animate-spin' : ''} text-gray-700 dark:text-gray-200`} />
           {!isMobile && (isRefreshing 

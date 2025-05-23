@@ -40,13 +40,14 @@ export function EventDetailsFields({ form, t }: EventDetailsFieldsProps) {
         name="venue"
         render={({ field, fieldState }) => (
           <FormItem>
-            <FormLabel className="font-medium">
+            <FormLabel className="font-medium text-gray-900 dark:text-white">
               {t("Norises vieta", "Venue")} <span className="text-red-500">*</span>
             </FormLabel>
             <FormControl>
               <Input 
                 {...field} 
-                placeholder={t("Ievadiet norises vietu", "Enter venue")} 
+                placeholder={t("Ievadiet norises vietu", "Enter venue")}
+                className="text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700" 
               />
             </FormControl>
             {fieldState.error && (
@@ -64,7 +65,7 @@ export function EventDetailsFields({ form, t }: EventDetailsFieldsProps) {
           name="eventDate"
           render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel className="font-medium">
+              <FormLabel className="font-medium text-gray-900 dark:text-white">
                 {t("Pasākuma datums", "Event date")} <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
@@ -72,6 +73,7 @@ export function EventDetailsFields({ form, t }: EventDetailsFieldsProps) {
                   {...field} 
                   type="date"
                   required
+                  className="text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
                 />
               </FormControl>
               {fieldState.error && (
@@ -88,11 +90,14 @@ export function EventDetailsFields({ form, t }: EventDetailsFieldsProps) {
           name="eventTime"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("Pasākuma laiks", "Event time")}</FormLabel>
+              <FormLabel className="font-medium text-gray-900 dark:text-white">
+                {t("Pasākuma laiks", "Event time")}
+              </FormLabel>
               <FormControl>
                 <Input 
                   {...field} 
                   type="time"
+                  className="text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
                 />
               </FormControl>
               <FormMessage />

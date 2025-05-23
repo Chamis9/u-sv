@@ -35,11 +35,15 @@ export function BasicInfoFields({ form, t }: BasicInfoFieldsProps) {
         name="title"
         render={({ field, fieldState }) => (
           <FormItem>
-            <FormLabel className="font-medium">
+            <FormLabel className="font-medium text-gray-900 dark:text-white">
               {t("Nosaukums", "Title")} <span className="text-red-500">*</span>
             </FormLabel>
             <FormControl>
-              <Input {...field} placeholder={t("Ievadiet nosaukumu", "Enter title")} />
+              <Input 
+                {...field} 
+                placeholder={t("Ievadiet nosaukumu", "Enter title")}
+                className="text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
+              />
             </FormControl>
             {fieldState.error && (
               <FormMessage>
@@ -55,12 +59,15 @@ export function BasicInfoFields({ form, t }: BasicInfoFieldsProps) {
         name="description"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>{t("Apraksts", "Description")}</FormLabel>
+            <FormLabel className="font-medium text-gray-900 dark:text-white">
+              {t("Apraksts", "Description")}
+            </FormLabel>
             <FormControl>
               <Textarea 
                 {...field} 
                 placeholder={t("Ievadiet biļetes aprakstu", "Enter ticket description")} 
                 rows={3}
+                className="text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
               />
             </FormControl>
             <FormMessage />

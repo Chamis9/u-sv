@@ -33,7 +33,7 @@ export function CategoryField({ form, t }: CategoryFieldProps) {
       name="category"
       render={({ field, fieldState }) => (
         <FormItem>
-          <FormLabel className="font-medium">
+          <FormLabel className="font-medium text-gray-900 dark:text-white">
             {t("Kategorija", "Category")} <span className="text-red-500">*</span>
           </FormLabel>
           <FormControl>

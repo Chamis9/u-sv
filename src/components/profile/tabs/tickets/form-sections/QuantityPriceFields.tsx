@@ -42,7 +42,7 @@ export function QuantityPriceFields({ form, t }: QuantityPriceFieldsProps) {
           name="pricePerUnit"
           render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel className="font-medium">
+              <FormLabel className="font-medium text-gray-900 dark:text-white">
                 {t("Cena par biļeti", "Price per ticket")} <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
@@ -53,6 +53,7 @@ export function QuantityPriceFields({ form, t }: QuantityPriceFieldsProps) {
                   step="0.01" 
                   placeholder="0.00" 
                   required
+                  className="text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
                 />
               </FormControl>
               {fieldState.error && (
@@ -69,7 +70,7 @@ export function QuantityPriceFields({ form, t }: QuantityPriceFieldsProps) {
           name="quantity"
           render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel className="font-medium">
+              <FormLabel className="font-medium text-gray-900 dark:text-white">
                 {t("Biļešu skaits", "Ticket quantity")} <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
@@ -80,6 +81,7 @@ export function QuantityPriceFields({ form, t }: QuantityPriceFieldsProps) {
                   step="1" 
                   placeholder="1" 
                   required
+                  className="text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
                 />
               </FormControl>
               {fieldState.error && (

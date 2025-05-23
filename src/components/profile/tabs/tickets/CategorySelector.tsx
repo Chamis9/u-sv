@@ -35,10 +35,10 @@ export function CategorySelector({ value, onChange }: CategorySelectorProps) {
       onValueChange={onChange}
       required
     >
-      <SelectTrigger className={value ? "" : "text-muted-foreground"}>
+      <SelectTrigger className={`${value ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400"} border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700`}>
         <SelectValue placeholder={t("Izvēlieties kategoriju", "Select a category")} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
         {isLoading ? (
           <SelectItem value="loading" disabled>
             {t("Ielādē...", "Loading...")}

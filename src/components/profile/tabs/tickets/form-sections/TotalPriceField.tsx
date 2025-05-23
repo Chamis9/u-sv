@@ -41,13 +41,15 @@ export function TotalPriceField({ form, t }: TotalPriceFieldProps) {
       name="price"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{t("Kopējā summa", "Total price")}</FormLabel>
+          <FormLabel className="font-medium text-gray-900 dark:text-white">
+            {t("Kopējā summa", "Total price")}
+          </FormLabel>
           <FormControl>
             <Input
               {...field}
               type="text"
               disabled
-              className="bg-gray-100"
+              className="bg-gray-100 dark:bg-gray-600 text-gray-900 dark:text-gray-200 font-medium"
               placeholder="0.00"
             />
           </FormControl>
