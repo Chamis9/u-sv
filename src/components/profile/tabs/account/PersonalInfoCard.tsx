@@ -28,8 +28,10 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
   return (
     <Card className="bg-card dark:bg-gray-900">
       <CardHeader>
-        <CardTitle>{t("Personīgā informācija", "Personal Information")}</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-gray-900 dark:text-white">
+          {t("Personīgā informācija", "Personal Information")}
+        </CardTitle>
+        <CardDescription className="text-gray-700 dark:text-gray-300 font-medium">
           {t(
             "Pārvaldiet savu profila informāciju", 
             "Manage your profile information"
@@ -53,6 +55,7 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
             <Button 
               onClick={() => setIsEditing(true)}
               className="mt-4"
+              variant="orange"
             >
               {t("Rediģēt", "Edit")}
             </Button>

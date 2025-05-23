@@ -107,8 +107,10 @@ export function SecurityCard() {
     <>
       <Card className="bg-card dark:bg-gray-900">
         <CardHeader>
-          <CardTitle>{t("Drošība", "Security")}</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-gray-900 dark:text-white">
+            {t("Drošība", "Security")}
+          </CardTitle>
+          <CardDescription className="text-gray-700 dark:text-gray-300 font-medium">
             {t(
               "Pārvaldiet sava konta drošības iestatījumus", 
               "Manage your account security settings"
@@ -117,17 +119,17 @@ export function SecurityCard() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <h3 className="text-lg font-medium mb-2">
+            <h3 className="text-lg font-medium mb-2 text-gray-900 dark:text-white">
               {t("Parole", "Password")}
             </h3>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-gray-700 dark:text-gray-300 mb-4 font-medium">
               {t(
                 "Mainiet paroli, lai uzlabotu konta drošību", 
                 "Change your password to improve account security"
               )}
             </p>
             <Button 
-              variant="outline"
+              variant="orange"
               onClick={() => setIsDialogOpen(true)}
               className="flex items-center"
             >
@@ -139,10 +141,12 @@ export function SecurityCard() {
       </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-800">
           <DialogHeader>
-            <DialogTitle>{t("Mainīt paroli", "Change Password")}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-900 dark:text-white">
+              {t("Mainīt paroli", "Change Password")}
+            </DialogTitle>
+            <DialogDescription className="text-gray-700 dark:text-gray-300">
               {t(
                 "Ievadiet savu pašreizējo paroli un jauno paroli zemāk.",
                 "Enter your current password and your new password below."
@@ -157,11 +161,13 @@ export function SecurityCard() {
                 name="currentPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("Pašreizējā parole", "Current Password")}</FormLabel>
+                    <FormLabel className="text-gray-900 dark:text-gray-100">
+                      {t("Pašreizējā parole", "Current Password")}
+                    </FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input type="password" {...field} className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500" />
                   </FormItem>
                 )}
               />
@@ -171,11 +177,13 @@ export function SecurityCard() {
                 name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("Jaunā parole", "New Password")}</FormLabel>
+                    <FormLabel className="text-gray-900 dark:text-gray-100">
+                      {t("Jaunā parole", "New Password")}
+                    </FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input type="password" {...field} className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500" />
                   </FormItem>
                 )}
               />
@@ -185,11 +193,13 @@ export function SecurityCard() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("Apstiprināt jauno paroli", "Confirm New Password")}</FormLabel>
+                    <FormLabel className="text-gray-900 dark:text-gray-100">
+                      {t("Apstiprināt jauno paroli", "Confirm New Password")}
+                    </FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input type="password" {...field} className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500" />
                   </FormItem>
                 )}
               />
@@ -199,10 +209,11 @@ export function SecurityCard() {
                   type="button" 
                   variant="outline" 
                   onClick={() => setIsDialogOpen(false)}
+                  className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
                 >
                   {t("Atcelt", "Cancel")}
                 </Button>
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" variant="orange" disabled={isLoading}>
                   {isLoading ? (
                     <span className="flex items-center">
                       <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

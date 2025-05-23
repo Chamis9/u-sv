@@ -49,10 +49,10 @@ export function ProfileHeader({ activeTab, user }: ProfileHeaderProps) {
   
   return (
     <div className="mb-6">
-      <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+      <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
         {getHeaderTitle()}
       </h1>
-      <p className="text-gray-600 dark:text-gray-300 mt-1">
+      <p className="text-gray-700 dark:text-gray-300 font-medium mt-1">
         {getHeaderDescription()}
       </p>
     </div>
