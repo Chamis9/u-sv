@@ -29,7 +29,7 @@ export function TicketActions({
       </div>
       
       {/* Always show quantity and price per unit, even for single tickets */}
-      <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-4">
+      <div className="text-xs sm:text-sm text-gray-700 dark:text-gray-200 mb-4">
         {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
       </div>
       
@@ -38,7 +38,7 @@ export function TicketActions({
           variant="orange"
           size="sm"
           onClick={onView}
-          className="flex-1 text-xs px-2 h-8 text-white"
+          className="flex-1 text-xs px-2 h-8 text-white font-medium"
         >
           <Eye className="h-3 w-3 mr-1" />
           {t("Skatīt", "View")}
@@ -63,7 +63,7 @@ export function TicketActions({
             variant="outline"
             size="sm"
             onClick={onEdit}
-            className="flex-1 text-xs px-2 h-8 text-blue-600 hover:bg-blue-50 hover:text-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/20"
+            className="flex-1 text-xs px-2 h-8 text-blue-600 hover:bg-blue-50 hover:text-blue-800 dark:text-blue-300 dark:hover:bg-blue-900/20"
           >
             <Pencil className="h-3 w-3 mr-1" />
             {t("Rediģēt", "Edit")}

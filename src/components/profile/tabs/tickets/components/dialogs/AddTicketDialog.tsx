@@ -33,7 +33,7 @@ export function AddTicketDialog({ open, onOpenChange, onClose }: AddTicketDialog
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-gray-900 dark:text-white text-xl">
             {t("Pievienot biļeti", "Add ticket")}
           </DialogTitle>
         </DialogHeader>

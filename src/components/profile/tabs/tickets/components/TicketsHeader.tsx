@@ -49,7 +49,7 @@ export function TicketsHeader({ onAddTicket, onRefresh }: TicketsHeaderProps) {
   
   return (
     <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0 border-b border-border pb-4">
-      <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t("Manas biļetes", "My Tickets")}</CardTitle>
+      <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">{t("Manas biļetes", "My Tickets")}</CardTitle>
       <div className="flex w-full sm:w-auto space-x-3">
         <Button 
           onClick={handleRefresh} 

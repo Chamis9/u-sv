@@ -39,9 +39,9 @@ export function TicketDetails({ ticket, t }: TicketDetailsProps) {
   
   return (
     <div className="my-3">
-      <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-2">
+      <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-700 dark:text-gray-200 mb-2">
         <div className="flex items-center mr-3 mb-1">
-          <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0 text-gray-600 dark:text-gray-400" />
+          <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0 text-gray-600 dark:text-gray-300" />
           {ticket.event_date 
             ? formatDate(ticket.event_date, 'lv-LV')
             : formatDate(ticket.created_at, 'lv-LV')}
@@ -49,26 +49,26 @@ export function TicketDetails({ ticket, t }: TicketDetailsProps) {
         
         {ticket.event_time && (
           <div className="flex items-center mb-1 ml-2">
-            <Clock className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0 text-gray-600 dark:text-gray-400" />
+            <Clock className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0 text-gray-600 dark:text-gray-300" />
             <span>{ticket.event_time}</span>
           </div>
         )}
       </div>
       
       {ticket.venue && (
-        <div className="flex items-center text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-2">
-          <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0 text-gray-600 dark:text-gray-400" />
+        <div className="flex items-center text-xs sm:text-sm text-gray-700 dark:text-gray-200 mb-2">
+          <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1 flex-shrink-0 text-gray-600 dark:text-gray-300" />
           <span className="break-words line-clamp-1">{ticket.venue}</span>
         </div>
       )}
       
       <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
         <div className="flex items-center">
-          <Tag className="h-3 w-3 sm:h-4 sm:w-4 mr-1 text-gray-600 dark:text-gray-400 flex-shrink-0" />
-          <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 break-words max-w-[150px]">{ticket.category}</span>
+          <Tag className="h-3 w-3 sm:h-4 sm:w-4 mr-1 text-gray-600 dark:text-gray-300 flex-shrink-0" />
+          <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-200 break-words max-w-[150px]">{ticket.category}</span>
         </div>
         
-        <Badge className={`${getStatusColor(ticket.status)} text-xs whitespace-nowrap text-white`}>
+        <Badge className={`${getStatusColor(ticket.status)} text-xs whitespace-nowrap text-white font-medium`}>
           {getStatusText(ticket.status)}
         </Badge>
       </div>

@@ -85,11 +85,11 @@ export function AddTicketForm({
             name="file"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("Biļetes fails", "Ticket file")}</FormLabel>
+                <FormLabel className="text-gray-900 dark:text-white">{t("Biļetes fails", "Ticket file")}</FormLabel>
                 <FormControl>
                   <TicketFileUpload onChange={(file) => field.onChange(file)} />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
