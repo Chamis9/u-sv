@@ -22,12 +22,12 @@ export function TicketActions({
   t 
 }: TicketActionsProps) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2 mt-4">
       <Button
         variant="outline"
         size="sm"
         onClick={onView}
-        className="flex-1 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
+        className="flex-1 text-ticket-accent border-ticket-accent hover:bg-ticket-accent/10 hover:text-ticket-accent"
       >
         <Eye className="h-4 w-4 mr-2" />
         {t("Skatīt", "View")}
@@ -40,7 +40,7 @@ export function TicketActions({
           onClick={() => {
             window.open(`https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/tickets/${ticket.file_path}`, '_blank');
           }}
-          className="flex-1 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
+          className="flex-1 text-blue-600 dark:text-blue-400 border-blue-400 dark:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30"
         >
           <Download className="h-4 w-4 mr-2" />
           {t("Lejupielādēt", "Download")}
@@ -52,7 +52,7 @@ export function TicketActions({
           variant="outline"
           size="sm"
           onClick={onEdit}
-          className="flex-1 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600"
+          className="flex-1 text-blue-600 dark:text-blue-400 border-blue-400 dark:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30"
         >
           <Pencil className="h-4 w-4 mr-2" />
           {t("Rediģēt", "Edit")}

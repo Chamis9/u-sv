@@ -45,7 +45,7 @@ export function TicketsContent({
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 p-4">
         <Skeleton className="h-24 w-full" />
         <Skeleton className="h-24 w-full" />
         <Skeleton className="h-24 w-full" />
@@ -55,9 +55,9 @@ export function TicketsContent({
 
   if (tickets.length === 0) {
     return (
-      <Alert className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
+      <Alert className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 my-6">
         <Ticket className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-        <AlertTitle className="text-gray-900 dark:text-gray-100">{ticketType === "added" 
+        <AlertTitle className="text-gray-900 dark:text-gray-100 font-medium">{ticketType === "added" 
           ? t("Nav pievienotu biļešu", "No added tickets") 
           : t("Nav iegādātu biļešu", "No purchased tickets")}
         </AlertTitle>
@@ -72,14 +72,14 @@ export function TicketsContent({
 
   return (
     <>
-      <div className="space-y-4 max-w-full">
+      <div className="space-y-4 p-2 max-w-full">
         {tickets.map((ticket) => (
           <VisualTicket
             key={ticket.id}
             ticket={ticket}
-            onView={handleViewTicket}
-            onEdit={onEdit}
-            onDelete={!loadingDelete ? onDelete : undefined}
+            onView={() => handleViewTicket(ticket)}
+            onEdit={onEdit ? () => onEdit(ticket) : undefined}
+            onDelete={!loadingDelete ? (id) => onDelete(id) : undefined}
             ticketType={ticketType}
           />
         ))}
