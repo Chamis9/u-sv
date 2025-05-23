@@ -19,10 +19,9 @@ export function CategoryField({ form, t }: CategoryFieldProps) {
     if (!error) return null;
     
     if (error.message === "Category is required.") {
-      if (currentLanguage.code === 'lv') return "Kategorija ir obligāta.";
-      if (currentLanguage.code === 'lt') return "Kategorija yra privaloma.";
-      if (currentLanguage.code === 'et') return "Kategooria on kohustuslik.";
-      return "Category is required.";
+      return currentLanguage.code === 'lv' 
+        ? "Kategorija ir obligāta." 
+        : "Category is required.";
     }
     
     return error.message;

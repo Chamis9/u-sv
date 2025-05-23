@@ -10,7 +10,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getAllCategories } from "./services/CategoryService";
-import { getCategoryDisplayName } from "@/utils/categoryMapping";
 
 interface CategorySelectorProps {
   value: string;
@@ -47,7 +46,7 @@ export function CategorySelector({ value, onChange }: CategorySelectorProps) {
         ) : categories.length > 0 ? (
           categories.map((category) => (
             <SelectItem key={category.id} value={category.name}>
-              {getCategoryDisplayName(category.name, currentLanguage.code)}
+              {category.name}
             </SelectItem>
           ))
         ) : (

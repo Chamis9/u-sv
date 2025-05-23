@@ -10,51 +10,17 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { Drama, Music, Film, Trophy, PartyPopper, Baby, Gift, MoreHorizontal, Plane, Ticket } from "lucide-react";
 import { useCategories } from '@/hooks/useCategories';
 import { Badge } from '@/components/ui/badge';
-import { getCategoryDisplayName } from "@/utils/categoryMapping";
 
 const categoryIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   "Teātris": Drama,
-  "Theatre": Drama,
-  "Teatras": Drama,
-  "Teater": Drama,
-  
   "Koncerti": Music,
-  "Concerts": Music,
-  "Koncertai": Music,
-  "Kontserdid": Music,
-  
   "Festivāli": PartyPopper,
-  "Festivals": PartyPopper,
-  "Festivaliai": PartyPopper,
-  "Festivalid": PartyPopper,
-  
   "Sports": Trophy,
-  "Sportas": Trophy,
-  "Sport": Trophy,
-  
   "Kino": Film,
-  "Cinema": Film,
-  "Kinas": Film,
-  
   "Bērniem": Baby,
-  "For Children": Baby,
-  "Vaikams": Baby,
-  "Lastele": Baby,
-  
   "Ceļojumi": Plane,
-  "Travel": Plane,
-  "Kelionės": Plane,
-  "Reisimine": Plane,
-  
   "Dāvanu kartes": Gift,
-  "Gift Cards": Gift,
-  "Dovanų kortelės": Gift,
-  "Kinkekaardid": Gift,
-  
-  "Citi pasākumi": MoreHorizontal,
-  "Other Events": MoreHorizontal,
-  "Kiti renginiai": MoreHorizontal,
-  "Muud üritused": MoreHorizontal
+  "Citi pasākumi": MoreHorizontal
 };
 
 // Map category names to URL slugs
@@ -67,7 +33,7 @@ const categorySlugMap: Record<string, string> = {
   "Bērniem": "berniem",
   "Ceļojumi": "celojumi",
   "Dāvanu kartes": "davanu-kartes",
-  "Citi pasākumi": "citi-pasakumi"
+  "Citi pasākumi": "citi-pasākumi"
 };
 
 const Events = () => {
@@ -113,8 +79,7 @@ const Events = () => {
 
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {categories?.map((category) => {
-                  const categoryDisplayName = getCategoryDisplayName(category.name, currentLanguage.code);
-                  const IconComponent = categoryIcons[categoryDisplayName] || MoreHorizontal;
+                  const IconComponent = categoryIcons[category.name as keyof typeof categoryIcons] || MoreHorizontal;
                   // Get the correct URL slug for this category
                   const slug = categorySlugMap[category.name] || category.name.toLowerCase().replace(/\s+/g, '-');
                   
@@ -124,7 +89,7 @@ const Events = () => {
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">
                             <IconComponent className="h-6 w-6 text-ticket-accent" />
-                            <span className="text-ticket-accent">{categoryDisplayName}</span>
+                            <span className="text-ticket-accent">{category.name}</span>
                           </CardTitle>
                           <CardDescription className="text-ticket-text/80">
                             {category.description}
