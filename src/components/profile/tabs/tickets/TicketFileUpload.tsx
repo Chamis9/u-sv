@@ -55,11 +55,11 @@ export function TicketFileUpload({ onChange }: TicketFileUploadProps) {
       <div className="border border-input rounded-md p-2">
         <label htmlFor="file-upload" className="cursor-pointer">
           <div className="flex flex-col items-center justify-center py-4 text-center">
-            <UploadCloud className="h-8 w-8 text-muted-foreground mb-2" />
-            <p className="text-sm font-medium">
+            <UploadCloud className="h-8 w-8 text-gray-600 dark:text-gray-400 mb-2" />
+            <p className="text-sm font-medium text-gray-900 dark:text-white">
               {file ? file.name : t("Izvēlieties failu vai velciet to šeit", "Click to browse or drag and drop")}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
               {t("PDF, JPG, PNG (max. 10MB)", "PDF, JPG, PNG (max. 10MB)")}
             </p>
           </div>

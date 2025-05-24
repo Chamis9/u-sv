@@ -24,15 +24,15 @@ export function AppearanceAndLanguage({
   return (
     <>
       <CardHeader>
-        <CardTitle>{cardTitle}</CardTitle>
-        <CardDescription>{cardDescription}</CardDescription>
+        <CardTitle className="text-gray-900 dark:text-white">{cardTitle}</CardTitle>
+        <CardDescription className="text-gray-700 dark:text-gray-300 font-medium">{cardDescription}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="space-y-2">
-          <Label>
+          <Label className="text-gray-900 dark:text-white font-medium">
             {t("Valoda", "Language")}
           </Label>
-          <p className="text-sm text-muted-foreground mb-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
             {formDescriptionText}
           </p>
           <LanguageSelector />
