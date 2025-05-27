@@ -68,14 +68,18 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
         <DialogHeader>
-          <DialogTitle className="text-xl text-gray-900 dark:text-gray-100">{t('Biļetes informācija', 'Ticket Information')}</DialogTitle>
+          <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            {t('Biļetes informācija', 'Ticket Information')}
+          </DialogTitle>
         </DialogHeader>
         
         <div className="py-4">
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 break-words">{ticket.title}</h3>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 break-words">
+              {ticket.title}
+            </h3>
             
             {ticket.description && (
               <p className="text-sm text-gray-700 dark:text-gray-300 break-words">
@@ -123,13 +127,13 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
             <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">{t('Cena', 'Price')}:</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">{t('Cena', 'Price')}:</span>
                   <div className="text-xl font-bold text-gray-900 dark:text-gray-100">{formatPrice(ticket.price)}</div>
                 </div>
                 <Ticket className="h-8 w-8 text-orange-500 opacity-50" />
               </div>
               
-              <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+              <div className="text-sm text-gray-700 dark:text-gray-300 mt-1">
                 {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
               </div>
             </div>
@@ -140,7 +144,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
                 <Button 
                   variant="orange" 
                   onClick={handlePurchase}
-                  className="flex items-center"
+                  className="flex items-center text-white"
                 >
                   <Ticket className="h-4 w-4 mr-2" />
                   {t('Pirkt biļeti', 'Buy ticket')}
