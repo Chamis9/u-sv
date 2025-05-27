@@ -32,8 +32,16 @@ export function TicketsContent({
   const [selectedTicket, setSelectedTicket] = useState<UserTicket | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
+  };
 
   // Enhanced view handler to open the preview
   const handleViewTicket = (ticket: UserTicket) => {
@@ -57,13 +65,13 @@ export function TicketsContent({
       <Alert className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 my-6">
         <Ticket className="h-5 w-5 text-gray-500 dark:text-gray-400" />
         <AlertTitle className="text-gray-900 dark:text-gray-100 font-medium">{ticketType === "added" 
-          ? t("Nav pievienotu biļešu", "No added tickets") 
-          : t("Nav iegādātu biļešu", "No purchased tickets")}
+          ? t("Nav pievienotu biļešu", "No added tickets", "Nėra pridėtų bilietų", "Pole lisatud pileteid") 
+          : t("Nav iegādātu biļešu", "No purchased tickets", "Nėra įsigytų bilietų", "Pole ostetud pileteid")}
         </AlertTitle>
         <AlertDescription className="text-gray-600 dark:text-gray-300">
           {ticketType === "added" 
-            ? t("Jūsu pievienotās biļetes parādīsies šeit", "Your added tickets will appear here") 
-            : t("Jūsu iegādātās biļetes parādīsies šeit", "Your purchased tickets will appear here")}
+            ? t("Jūsu pievienotās biļetes parādīsies šeit", "Your added tickets will appear here", "Jūsų pridėti bilietai atsiras čia", "Teie lisatud piletid kuvatakse siin") 
+            : t("Jūsu iegādātās biļetes parādīsies šeit", "Your purchased tickets will appear here", "Jūsų įsigyti bilietai atsiras čia", "Teie ostetud piletid kuvatakse siin")}
         </AlertDescription>
       </Alert>
     );

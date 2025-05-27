@@ -8,20 +8,33 @@ import { useLanguage } from "@/features/language";
 
 interface CategoryFieldProps {
   form: UseFormReturn<TicketFormValues>;
-  t: (lv: string, en: string) => string;
 }
 
-export function CategoryField({ form, t }: CategoryFieldProps) {
+export function CategoryField({ form }: CategoryFieldProps) {
   const { currentLanguage } = useLanguage();
+  
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
+  };
   
   // Custom error messages based on language
   const getErrorMessage = (error: any) => {
     if (!error) return null;
     
     if (error.message === "Category is required.") {
-      return currentLanguage.code === 'lv' 
-        ? "Kategorija ir obligāta." 
-        : "Category is required.";
+      return t(
+        "Kategorija ir obligāta.", 
+        "Category is required.",
+        "Kategorija yra privaloma.",
+        "Kategooria on kohustuslik."
+      );
     }
     
     return error.message;
@@ -34,7 +47,7 @@ export function CategoryField({ form, t }: CategoryFieldProps) {
       render={({ field, fieldState }) => (
         <FormItem>
           <FormLabel className="font-medium text-gray-900 dark:text-white">
-            {t("Kategorija", "Category")} <span className="text-red-500">*</span>
+            {t("Kategorija", "Category", "Kategorija", "Kategooria")} <span className="text-red-500">*</span>
           </FormLabel>
           <FormControl>
             <CategorySelector 

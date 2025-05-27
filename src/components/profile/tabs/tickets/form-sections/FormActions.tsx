@@ -1,15 +1,28 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/features/language";
 
 interface FormActionsProps {
   onClose: () => void;
   isEditing: boolean;
   submitting: boolean;
-  t: (lv: string, en: string) => string;
 }
 
-export function FormActions({ onClose, isEditing, submitting, t }: FormActionsProps) {
+export function FormActions({ onClose, isEditing, submitting }: FormActionsProps) {
+  const { currentLanguage } = useLanguage();
+  
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
+  };
+  
   return (
     <div className="flex justify-end space-x-2 pt-4">
       <Button 
@@ -19,7 +32,7 @@ export function FormActions({ onClose, isEditing, submitting, t }: FormActionsPr
         disabled={submitting} 
         className="text-gray-800 dark:text-white border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
       >
-        {t("Atcelt", "Cancel")}
+        {t("Atcelt", "Cancel", "Atšaukti", "Tühista")}
       </Button>
       <Button 
         type="submit" 
@@ -27,10 +40,10 @@ export function FormActions({ onClose, isEditing, submitting, t }: FormActionsPr
         className="bg-orange-500 hover:bg-orange-600 text-white font-medium"
       >
         {submitting 
-          ? t("Notiek...", "Processing...") 
+          ? t("Notiek...", "Processing...", "Vykdoma...", "Töötleb...") 
           : isEditing 
-            ? t("Atjaunināt", "Update") 
-            : t("Pievienot", "Add")}
+            ? t("Atjaunināt", "Update", "Atnaujinti", "Uuenda") 
+            : t("Pievienot", "Add", "Pridėti", "Lisa")}
       </Button>
     </div>
   );

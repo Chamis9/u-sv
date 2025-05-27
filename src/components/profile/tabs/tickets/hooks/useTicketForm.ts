@@ -18,8 +18,16 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
   const { addTicket, loading: ticketLoading, error } = useUserTickets(user?.id);
   const [file, setFile] = useState<File | null>(null);
   
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
+  };
   
   const form = useForm<TicketFormValues>({
     resolver: zodResolver(ticketFormSchema),
@@ -51,8 +59,13 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
   const handleSubmit = async (values: TicketFormValues) => {
     if (!user) {
       toast({
-        title: t("Kļūda", "Error"),
-        description: t("Lietotājs nav autorizēts", "User is not authenticated"),
+        title: t("Kļūda", "Error", "Klaida", "Viga"),
+        description: t(
+          "Lietotājs nav autorizēts", 
+          "User is not authenticated",
+          "Vartotojas nėra autentifikuotas",
+          "Kasutaja pole autentitud"
+        ),
         variant: "destructive"
       });
       return;
@@ -81,8 +94,13 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       
       if (!categoryId) {
         toast({
-          title: t("Kļūda", "Error"),
-          description: t("Nevarēja atrast kategoriju", "Could not find or create category"),
+          title: t("Kļūda", "Error", "Klaida", "Viga"),
+          description: t(
+            "Nevarēja atrast kategoriju", 
+            "Could not find or create category",
+            "Nepavyko rasti ar sukurti kategorijos",
+            "Kategooriat ei leitud ega suudetud luua"
+          ),
           variant: "destructive"
         });
         return;
@@ -116,16 +134,26 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
       
       if (!result.success) {
         toast({
-          title: t("Kļūda", "Error"),
-          description: result.error || t("Kļūda pievienojot biļeti", "Error adding ticket"),
+          title: t("Kļūda", "Error", "Klaida", "Viga"),
+          description: result.error || t(
+            "Kļūda pievienojot biļeti", 
+            "Error adding ticket",
+            "Klaida pridedant bilietą",
+            "Viga pileti lisamisel"
+          ),
           variant: "destructive"
         });
         return;
       }
       
       toast({
-        title: t("Veiksmīgi!", "Success!"),
-        description: t("Biļete ir pievienota", "Ticket has been added"),
+        title: t("Veiksmīgi!", "Success!", "Sėkmingai!", "Edukas!"),
+        description: t(
+          "Biļete ir pievienota", 
+          "Ticket has been added",
+          "Bilietas pridėtas",
+          "Pilet on lisatud"
+        ),
       });
       
       // Reset the form
@@ -138,8 +166,13 @@ export function useTicketForm({ onClose }: { onClose: () => void }) {
     } catch (err: any) {
       console.error("Error adding ticket:", err);
       toast({
-        title: t("Kļūda", "Error"),
-        description: err.message || t("Kļūda pievienojot biļeti", "Error adding ticket"),
+        title: t("Kļūda", "Error", "Klaida", "Viga"),
+        description: err.message || t(
+          "Kļūda pievienojot biļeti", 
+          "Error adding ticket",
+          "Klaida pridedant bilietą",
+          "Viga pileti lisamisel"
+        ),
         variant: "destructive"
       });
     }

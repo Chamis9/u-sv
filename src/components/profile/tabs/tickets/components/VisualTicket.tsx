@@ -20,8 +20,16 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
   const { currentLanguage } = useLanguage();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
+  };
   
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -39,13 +47,13 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
   const getStatusText = (status: string) => {
     switch (status) {
       case 'sold':
-        return t("Pārdota", "Sold");
+        return t("Pārdota", "Sold", "Parduotas", "Müüdud");
       case 'available':
-        return t("Aktīva", "Active");
+        return t("Aktīva", "Active", "Aktyvus", "Aktiivne");
       case 'expired':
-        return t("Beigusies", "Expired");
+        return t("Beigusies", "Expired", "Baigėsi", "Aegunud");
       default:
-        return t("Nezināms", "Unknown");
+        return t("Nezināms", "Unknown", "Nežinomas", "Teadmata");
     }
   };
 
@@ -121,7 +129,10 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
             
             {/* Always show quantity and price per unit, even for single tickets */}
             <div className="text-xs sm:text-sm text-muted-foreground mb-4">
-              {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
+              {ticket.quantity} {ticket.quantity === 1 
+                ? t("biļete", "ticket", "bilietas", "pilet") 
+                : t("biļetes", "tickets", "bilietai", "piletid")
+              } × {formatPrice(ticket.price_per_unit || ticket.price)}
             </div>
             
             <div className="flex flex-wrap gap-2">
@@ -132,7 +143,7 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
                 className="flex-1 text-xs px-2 h-8"
               >
                 <Eye className="h-3 w-3 mr-1" />
-                {t("Skatīt", "View")}
+                {t("Skatīt", "View", "Žiūrėti", "Vaata")}
               </Button>
               
               {ticket.file_path && (
@@ -145,7 +156,7 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
                   className="flex-1 text-xs px-2 h-8"
                 >
                   <Download className="h-3 w-3 mr-1" />
-                  {t("Lejupielādēt", "Download")}
+                  {t("Lejupielādēt", "Download", "Atsisiųsti", "Laadi alla")}
                 </Button>
               )}
               
@@ -157,7 +168,7 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
                   className="flex-1 text-xs px-2 h-8"
                 >
                   <Pencil className="h-3 w-3 mr-1" />
-                  {t("Rediģēt", "Edit")}
+                  {t("Rediģēt", "Edit", "Redaguoti", "Muuda")}
                 </Button>
               )}
               
@@ -169,7 +180,7 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
                   className="flex-1 text-xs px-2 h-8"
                 >
                   <Trash2 className="h-3 w-3 mr-1" />
-                  {t("Dzēst", "Delete")}
+                  {t("Dzēst", "Delete", "Ištrinti", "Kustuta")}
                 </Button>
               )}
             </div>

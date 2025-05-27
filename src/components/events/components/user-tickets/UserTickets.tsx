@@ -27,7 +27,16 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const { user, isAuthenticated } = useAuth();
   
-  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
+  const t = (lv: string, en: string, lt: string, ee: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lv;
+      case 'en': return en;
+      case 'lt': return lt;
+      case 'et':
+      case 'ee': return ee;
+      default: return lv;
+    }
+  };
 
   const { 
     isDeleting, 
@@ -37,7 +46,7 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
     cancelDelete 
   } = useTicketActions({ 
     onTicketsChanged, 
-    t, 
+    t: (lv: string, en: string) => t(lv, en, lv, en), // Fallback for 2-param function
     userId: user?.id 
   });
 
@@ -47,13 +56,13 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
   };
 
   if (availableTickets.length === 0) {
-    return <TicketsEmptyState t={t} />;
+    return <TicketsEmptyState t={(lv: string, en: string) => t(lv, en, lv, en)} />;
   }
 
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-semibold mb-4">
-        {t("Pieejamās biļetes", "Available tickets")}
+        {t("Pieejamās biļetes", "Available tickets", "Prieinami bilietai", "Saadaolevad piletid")}
       </h2>
       
       <TicketGrid
@@ -64,7 +73,7 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
         isAuthenticated={isAuthenticated}
         userId={user?.id}
         currentLanguageCode={currentLanguage.code}
-        t={t}
+        t={(lv: string, en: string) => t(lv, en, lv, en)}
         isDeleting={isDeleting}
       />
       
@@ -82,7 +91,7 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
         onClose={cancelDelete}
         onConfirm={confirmDelete}
         isDeleting={isDeleting}
-        t={t}
+        t={(lv: string, en: string) => t(lv, en, lv, en)}
       />
     </div>
   );

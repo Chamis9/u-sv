@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
@@ -36,14 +37,27 @@ export function useAddTicketForm({
   // Get the ticket refresh function
   const { refreshTickets } = useTicketRefresh({ userId, isAuthenticated });
   
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
+  };
   
   const onSubmit = async (values: TicketFormValues) => {
     if (!userId) {
       toast({
-        title: t("Kļūda", "Error"),
-        description: t("Lai pievienotu biļeti, lūdzu pieslēdzieties", "Please log in to add a ticket"),
+        title: t("Kļūda", "Error", "Klaida", "Viga"),
+        description: t(
+          "Lai pievienotu biļeti, lūdzu pieslēdzieties", 
+          "Please log in to add a ticket",
+          "Norėdami pridėti bilietą, prisijunkite",
+          "Pileti lisamiseks palun sisse logida"
+        ),
         variant: "destructive",
       });
       return;
@@ -58,7 +72,12 @@ export function useAddTicketForm({
         const uploadResult = await uploadTicketFile(values.file);
         if (uploadResult.error) {
           toast({
-            title: t("Kļūda augšupielādējot failu", "File upload error"),
+            title: t(
+              "Kļūda augšupielādējot failu", 
+              "File upload error",
+              "Failo įkėlimo klaida",
+              "Faili üleslaadimisel viga"
+            ),
             description: uploadResult.error,
             variant: "destructive",
           });
@@ -104,10 +123,12 @@ export function useAddTicketForm({
         
         if (!success) {
           toast({
-            title: t("Kļūda", "Error"),
+            title: t("Kļūda", "Error", "Klaida", "Viga"),
             description: updateResult.error || t(
               "Kļūda atjauninot biļeti. Lūdzu mēģiniet vēlreiz.", 
-              "Failed to update ticket. Please try again."
+              "Failed to update ticket. Please try again.",
+              "Nepavyko atnaujinti bilieto. Bandykite dar kartą.",
+              "Pileti uuendamine ebaõnnestus. Palun proovige uuesti."
             ),
             variant: "destructive",
           });
@@ -116,10 +137,12 @@ export function useAddTicketForm({
         }
         
         toast({
-          title: t("Biļete atjaunināta", "Ticket updated"),
+          title: t("Biļete atjaunināta", "Ticket updated", "Bilietas atnaujintas", "Pilet uuendatud"),
           description: t(
             "Biļetes informācija ir veiksmīgi atjaunināta", 
-            "Ticket information has been successfully updated"
+            "Ticket information has been successfully updated",
+            "Bilieto informacija sėkmingai atnaujinta",
+            "Pileti andmed on edukalt uuendatud"
           ),
         });
       } else if (addTicket) {
@@ -129,10 +152,12 @@ export function useAddTicketForm({
         
         if (!success) {
           toast({
-            title: t("Kļūda", "Error"),
+            title: t("Kļūda", "Error", "Klaida", "Viga"),
             description: error || t(
               "Kļūda pievienojot biļeti. Lūdzu mēģiniet vēlreiz.", 
-              "Failed to add ticket. Please try again."
+              "Failed to add ticket. Please try again.",
+              "Nepavyko pridėti bilieto. Bandykite dar kartą.",
+              "Pileti lisamine ebaõnnestus. Palun proovige uuesti."
             ),
             variant: "destructive",
           });
@@ -141,10 +166,12 @@ export function useAddTicketForm({
         }
         
         toast({
-          title: t("Biļete pievienota", "Ticket added"),
+          title: t("Biļete pievienota", "Ticket added", "Bilietas pridėtas", "Pilet lisatud"),
           description: t(
             "Biļete ir veiksmīgi pievienota", 
-            "Ticket has been successfully added"
+            "Ticket has been successfully added",
+            "Bilietas sėkmingai pridėtas",
+            "Pilet on edukalt lisatud"
           ),
         });
       }
@@ -157,10 +184,12 @@ export function useAddTicketForm({
     } catch (error) {
       console.error("Error handling ticket submission:", error);
       toast({
-        title: t("Kļūda", "Error"),
+        title: t("Kļūda", "Error", "Klaida", "Viga"),
         description: t(
           "Nezināma kļūda. Lūdzu mēģiniet vēlreiz.", 
-          "Unknown error. Please try again."
+          "Unknown error. Please try again.",
+          "Nežinoma klaida. Bandykite dar kartą.",
+          "Tundmatu viga. Palun proovige uuesti."
         ),
         variant: "destructive",
       });

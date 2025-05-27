@@ -44,9 +44,17 @@ export function useTicketsTab(user: User) {
   // Use the authenticated user ID for ticket operations
   const { tickets, isLoading, refreshTickets, updateTicket } = useUserTickets(authUserId || undefined);
 
-  // Define translation function
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
+  // Define translation function with all four languages
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
+  };
 
   // Setup ticket operations (delete, update, etc.)
   const {
@@ -59,7 +67,7 @@ export function useTicketsTab(user: User) {
     refreshTickets: refreshTicketsFromOperations
   } = useTicketOperations({
     onTicketsChanged: refreshTickets,
-    t
+    t: (lv: string, en: string) => t(lv, en, lv, en) // Fallback for components using 2-param t function
   });
   
   // Sort tickets into added and purchased categories

@@ -20,8 +20,16 @@ export function VisualTicket({ ticket, onView, onEdit, onDelete, ticketType }: V
   const { currentLanguage } = useLanguage();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
+  };
   
   const handleViewClick = () => {
     setIsPreviewOpen(true);
