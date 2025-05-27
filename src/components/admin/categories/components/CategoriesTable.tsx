@@ -22,11 +22,14 @@ export function CategoriesTable({
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>{t('Nosaukums', 'Name')}</TableHead>
+            <TableHead>{t('Nosaukums (LV)', 'Name (LV)')}</TableHead>
+            <TableHead>{t('Nosaukums (EN)', 'Name (EN)')}</TableHead>
+            <TableHead>{t('Nosaukums (LT)', 'Name (LT)')}</TableHead>
+            <TableHead>{t('Nosaukums (EE)', 'Name (EE)')}</TableHead>
             <TableHead>{t('Apraksts', 'Description')}</TableHead>
             <TableHead>{t('Prioritāte', 'Priority')}</TableHead>
             <TableHead>{t('Statuss', 'Status')}</TableHead>

@@ -8,6 +8,14 @@ export interface Category {
   description: string | null;
   priority: number;
   status: string; // 'active' | 'hidden'
+  name_lv: string | null;
+  name_en: string | null;
+  name_lt: string | null;
+  name_ee: string | null;
+  description_lv: string | null;
+  description_en: string | null;
+  description_lt: string | null;
+  description_ee: string | null;
 }
 
 export const useCategories = (includeHidden = false) => {

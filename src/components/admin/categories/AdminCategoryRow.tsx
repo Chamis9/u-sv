@@ -73,8 +73,11 @@ export function AdminCategoryRow({
   return (
     <>
       <TableRow className={category.status === 'hidden' ? 'opacity-60' : ''}>
-        <TableCell>{category.name}</TableCell>
-        <TableCell>{category.description || '-'}</TableCell>
+        <TableCell className="font-medium">{category.name_lv || category.name}</TableCell>
+        <TableCell>{category.name_en || '-'}</TableCell>
+        <TableCell>{category.name_lt || '-'}</TableCell>
+        <TableCell>{category.name_ee || '-'}</TableCell>
+        <TableCell className="max-w-xs truncate">{category.description || '-'}</TableCell>
         <TableCell>{category.priority || 999}</TableCell>
         <TableCell>
           <Badge variant={category.status === 'active' ? 'default' : 'secondary'}>

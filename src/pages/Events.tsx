@@ -9,31 +9,82 @@ import { useLanguage } from "@/features/language";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Drama, Music, Film, Trophy, PartyPopper, Baby, Gift, MoreHorizontal, Plane, Ticket } from "lucide-react";
 import { useCategories } from '@/hooks/useCategories';
+import { getLocalizedCategoryName, getLocalizedCategoryDescription } from '@/utils/categoryLocalization';
 import { Badge } from '@/components/ui/badge';
 
 const categoryIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>> = {
   "Teātris": Drama,
+  "Theatre": Drama,
+  "Teatras": Drama,
+  "Teater": Drama,
   "Koncerti": Music,
+  "Concerts": Music,
+  "Koncertai": Music,
+  "Kontserdid": Music,
   "Festivāli": PartyPopper,
+  "Festivals": PartyPopper,
+  "Festivaliai": PartyPopper,
+  "Festivalid": PartyPopper,
   "Sports": Trophy,
+  "Sportas": Trophy,
+  "Sport": Trophy,
   "Kino": Film,
+  "Cinema": Film,
+  "Kinas": Film,
   "Bērniem": Baby,
+  "For Children": Baby,
+  "Vaikams": Baby,
+  "Lastele": Baby,
   "Ceļojumi": Plane,
+  "Travel": Plane,
+  "Kelionės": Plane,
+  "Reisimine": Plane,
   "Dāvanu kartes": Gift,
-  "Citi pasākumi": MoreHorizontal
+  "Gift Cards": Gift,
+  "Dovanų kortelės": Gift,
+  "Kinkekaardid": Gift,
+  "Citi pasākumi": MoreHorizontal,
+  "Other Events": MoreHorizontal,
+  "Kiti renginiai": MoreHorizontal,
+  "Muud üritused": MoreHorizontal
 };
 
-// Map category names to URL slugs
+// Map category names to URL slugs (using base Latvian names for consistency)
 const categorySlugMap: Record<string, string> = {
   "Teātris": "teatris",
+  "Theatre": "teatris",
+  "Teatras": "teatris",
+  "Teater": "teatris",
   "Koncerti": "koncerti",
+  "Concerts": "koncerti",
+  "Koncertai": "koncerti",
+  "Kontserdid": "koncerti",
   "Festivāli": "festivali",
+  "Festivals": "festivali",
+  "Festivaliai": "festivali",
+  "Festivalid": "festivali",
   "Sports": "sports",
+  "Sportas": "sports",
+  "Sport": "sports",
   "Kino": "kino",
+  "Cinema": "kino",
+  "Kinas": "kino",
   "Bērniem": "berniem",
+  "For Children": "berniem",
+  "Vaikams": "berniem",
+  "Lastele": "berniem",
   "Ceļojumi": "celojumi",
+  "Travel": "celojumi",
+  "Kelionės": "celojumi",
+  "Reisimine": "celojumi",
   "Dāvanu kartes": "davanu-kartes",
-  "Citi pasākumi": "citi-pasākumi"
+  "Gift Cards": "davanu-kartes",
+  "Dovanų kortelės": "davanu-kartes",
+  "Kinkekaardid": "davanu-kartes",
+  "Citi pasākumi": "citi-pasākumi",
+  "Other Events": "citi-pasākumi",
+  "Kiti renginiai": "citi-pasākumi",
+  "Muud üritused": "citi-pasākumi"
 };
 
 const Events = () => {
@@ -79,8 +130,10 @@ const Events = () => {
 
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {categories?.map((category) => {
-                  const IconComponent = categoryIcons[category.name as keyof typeof categoryIcons] || MoreHorizontal;
-                  // Get the correct URL slug for this category
+                  const localizedName = getLocalizedCategoryName(category, currentLanguage.code);
+                  const localizedDescription = getLocalizedCategoryDescription(category, currentLanguage.code);
+                  const IconComponent = categoryIcons[localizedName] || categoryIcons[category.name] || MoreHorizontal;
+                  // Get the correct URL slug for this category (always use base slug for consistency)
                   const slug = categorySlugMap[category.name] || category.name.toLowerCase().replace(/\s+/g, '-');
                   
                   return (
@@ -89,10 +142,10 @@ const Events = () => {
                         <CardHeader>
                           <CardTitle className="flex items-center gap-2">
                             <IconComponent className="h-6 w-6 text-ticket-accent" />
-                            <span className="text-ticket-accent">{category.name}</span>
+                            <span className="text-ticket-accent">{localizedName}</span>
                           </CardTitle>
                           <CardDescription className="text-ticket-text/80">
-                            {category.description}
+                            {localizedDescription}
                           </CardDescription>
                         </CardHeader>
                       </Card>

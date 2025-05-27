@@ -67,24 +67,48 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          description_ee: string | null
+          description_en: string | null
+          description_lt: string | null
+          description_lv: string | null
           id: string
           name: string
+          name_ee: string | null
+          name_en: string | null
+          name_lt: string | null
+          name_lv: string | null
           priority: number | null
           status: string
         }
         Insert: {
           created_at?: string
           description?: string | null
+          description_ee?: string | null
+          description_en?: string | null
+          description_lt?: string | null
+          description_lv?: string | null
           id?: string
           name: string
+          name_ee?: string | null
+          name_en?: string | null
+          name_lt?: string | null
+          name_lv?: string | null
           priority?: number | null
           status?: string
         }
         Update: {
           created_at?: string
           description?: string | null
+          description_ee?: string | null
+          description_en?: string | null
+          description_lt?: string | null
+          description_lv?: string | null
           id?: string
           name?: string
+          name_ee?: string | null
+          name_en?: string | null
+          name_lt?: string | null
+          name_lv?: string | null
           priority?: number | null
           status?: string
         }

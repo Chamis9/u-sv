@@ -9,7 +9,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getAllCategories } from "./services/CategoryService";
+import { supabase } from "@/integrations/supabase/client";
+import { Category } from "@/hooks/useCategories";
+import { getLocalizedCategoryName } from "@/utils/categoryLocalization";
 
 interface CategorySelectorProps {
   value: string;
@@ -22,10 +24,23 @@ export function CategorySelector({ value, onChange }: CategorySelectorProps) {
   const t = (lvText: string, enText: string) => 
     currentLanguage.code === 'lv' ? lvText : enText;
 
-  // Fetch categories using our service function
+  // Fetch categories directly from supabase to get all language columns
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ['categories'],
-    queryFn: getAllCategories,
+    queryFn: async (): Promise<Category[]> => {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('status', 'active')
+        .order('priority', { ascending: true });
+      
+      if (error) {
+        console.error('Error fetching categories:', error);
+        return [];
+      }
+      
+      return data || [];
+    },
     staleTime: 60000, // Cache for 1 minute
   });
 
@@ -44,11 +59,14 @@ export function CategorySelector({ value, onChange }: CategorySelectorProps) {
             {t("Ielādē...", "Loading...")}
           </SelectItem>
         ) : categories.length > 0 ? (
-          categories.map((category) => (
-            <SelectItem key={category.id} value={category.name}>
-              {category.name}
-            </SelectItem>
-          ))
+          categories.map((category) => {
+            const localizedName = getLocalizedCategoryName(category, currentLanguage.code);
+            return (
+              <SelectItem key={category.id} value={localizedName}>
+                {localizedName}
+              </SelectItem>
+            );
+          })
         ) : (
           <SelectItem value="other">{t("Cits", "Other")}</SelectItem>
         )}

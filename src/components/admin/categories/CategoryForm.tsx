@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useLanguage } from '@/features/language';
@@ -22,8 +23,14 @@ export function CategoryForm({ onSubmit, onCancel, initialData, isSubmitting = f
 
   // Define schema for form validation
   const formSchema = z.object({
-    name: z.string().min(1, t('Nosaukums ir obligāts', 'Name is required')),
-    description: z.string().optional().nullable(),
+    name_lv: z.string().min(1, t('Nosaukums latviešu valodā ir obligāts', 'Latvian name is required')),
+    name_en: z.string().min(1, t('Nosaukums angļu valodā ir obligāts', 'English name is required')),
+    name_lt: z.string().optional(),
+    name_ee: z.string().optional(),
+    description_lv: z.string().optional(),
+    description_en: z.string().optional(),
+    description_lt: z.string().optional(),
+    description_ee: z.string().optional(),
     priority: z.number().default(999)
   });
 
@@ -32,8 +39,14 @@ export function CategoryForm({ onSubmit, onCancel, initialData, isSubmitting = f
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: initialData?.name || '',
-      description: initialData?.description || '',
+      name_lv: initialData?.name_lv || initialData?.name || '',
+      name_en: initialData?.name_en || '',
+      name_lt: initialData?.name_lt || '',
+      name_ee: initialData?.name_ee || '',
+      description_lv: initialData?.description_lv || initialData?.description || '',
+      description_en: initialData?.description_en || '',
+      description_lt: initialData?.description_lt || '',
+      description_ee: initialData?.description_ee || '',
       priority: initialData?.priority ?? 999
     }
   });
@@ -41,8 +54,16 @@ export function CategoryForm({ onSubmit, onCancel, initialData, isSubmitting = f
   const handleFormSubmit = async (data: FormValues) => {
     try {
       await onSubmit({
-        name: data.name,
-        description: data.description,
+        name: data.name_lv, // Keep the main name field as Latvian for backward compatibility
+        name_lv: data.name_lv,
+        name_en: data.name_en,
+        name_lt: data.name_lt,
+        name_ee: data.name_ee,
+        description: data.description_lv, // Keep the main description field as Latvian for backward compatibility
+        description_lv: data.description_lv,
+        description_en: data.description_en,
+        description_lt: data.description_lt,
+        description_ee: data.description_ee,
         priority: data.priority
       });
       form.reset();
@@ -53,34 +74,122 @@ export function CategoryForm({ onSubmit, onCancel, initialData, isSubmitting = f
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('Nosaukums', 'Name')}</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4 max-h-96 overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="name_lv"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('Nosaukums (LV)', 'Name (LV)')} *</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t('Apraksts', 'Description')}</FormLabel>
-              <FormControl>
-                <Textarea {...field} value={field.value || ''} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="name_en"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('Nosaukums (EN)', 'Name (EN)')} *</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="name_lt"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('Nosaukums (LT)', 'Name (LT)')}</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="name_ee"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('Nosaukums (EE)', 'Name (EE)')}</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="description_lv"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('Apraksts (LV)', 'Description (LV)')}</FormLabel>
+                <FormControl>
+                  <Textarea {...field} value={field.value || ''} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="description_en"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('Apraksts (EN)', 'Description (EN)')}</FormLabel>
+                <FormControl>
+                  <Textarea {...field} value={field.value || ''} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="description_lt"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('Apraksts (LT)', 'Description (LT)')}</FormLabel>
+                <FormControl>
+                  <Textarea {...field} value={field.value || ''} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="description_ee"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t('Apraksts (EE)', 'Description (EE)')}</FormLabel>
+                <FormControl>
+                  <Textarea {...field} value={field.value || ''} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
@@ -101,7 +210,7 @@ export function CategoryForm({ onSubmit, onCancel, initialData, isSubmitting = f
           )}
         />
 
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2 pt-4">
           <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
             {t('Atcelt', 'Cancel')}
           </Button>
