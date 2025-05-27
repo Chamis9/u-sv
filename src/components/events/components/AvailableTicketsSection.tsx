@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Ticket } from "lucide-react";
+import { Ticket, Tag } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { UserTicket } from "@/hooks/tickets";
 
@@ -21,6 +21,57 @@ export const AvailableTicketsSection: React.FC<AvailableTicketsSectionProps> = (
       case 'et':
       case 'ee': return ee;
       default: return lv;
+    }
+  };
+
+  // Function to get localized category name
+  const getLocalizedCategory = (categoryName: string) => {
+    switch (categoryName.toLowerCase()) {
+      case 'teātris':
+      case 'theatre':
+      case 'teatras':
+      case 'teater':
+        return t('Teātris', 'Theatre', 'Teatras', 'Teater');
+      case 'koncerti':
+      case 'concerts':
+      case 'koncertai':
+      case 'kontserdid':
+        return t('Koncerti', 'Concerts', 'Koncertai', 'Kontserdid');
+      case 'festivāli':
+      case 'festivals':
+      case 'festivaliai':
+      case 'festivalid':
+        return t('Festivāli', 'Festivals', 'Festivaliai', 'Festivalid');
+      case 'sports':
+      case 'sportas':
+      case 'sport':
+        return t('Sports', 'Sports', 'Sportas', 'Sport');
+      case 'kino':
+      case 'cinema':
+      case 'kinas':
+        return t('Kino', 'Cinema', 'Kinas', 'Kino');
+      case 'bērniem':
+      case 'for children':
+      case 'vaikams':
+      case 'lastele':
+        return t('Bērniem', 'For Children', 'Vaikams', 'Lastele');
+      case 'ceļojumi':
+      case 'travel':
+      case 'kelionės':
+      case 'reisimine':
+        return t('Ceļojumi', 'Travel', 'Kelionės', 'Reisimine');
+      case 'dāvanu kartes':
+      case 'gift cards':
+      case 'dovanų kortelės':
+      case 'kinkekaardid':
+        return t('Dāvanu kartes', 'Gift Cards', 'Dovanų kortelės', 'Kinkekaardid');
+      case 'citi pasākumi':
+      case 'other events':
+      case 'kiti renginiai':
+      case 'muud üritused':
+        return t('Citi pasākumi', 'Other Events', 'Kiti renginiai', 'Muud üritused');
+      default:
+        return categoryName;
     }
   };
 
@@ -56,6 +107,10 @@ export const AvailableTicketsSection: React.FC<AvailableTicketsSectionProps> = (
                   {ticket.description}
                 </CardDescription>
               )}
+              <div className="flex items-center text-sm text-muted-foreground mt-2">
+                <Tag className="h-4 w-4 mr-1 flex-shrink-0" />
+                <span className="break-words">{getLocalizedCategory(ticket.category)}</span>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-orange-500">

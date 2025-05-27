@@ -40,6 +40,57 @@ export function TicketDetails({ ticket, t }: TicketDetailsProps) {
     }
   };
 
+  // Function to get localized category name
+  const getLocalizedCategory = (categoryName: string) => {
+    switch (categoryName.toLowerCase()) {
+      case 'teātris':
+      case 'theatre':
+      case 'teatras':
+      case 'teater':
+        return t('Teātris', 'Theatre', 'Teatras', 'Teater');
+      case 'koncerti':
+      case 'concerts':
+      case 'koncertai':
+      case 'kontserdid':
+        return t('Koncerti', 'Concerts', 'Koncertai', 'Kontserdid');
+      case 'festivāli':
+      case 'festivals':
+      case 'festivaliai':
+      case 'festivalid':
+        return t('Festivāli', 'Festivals', 'Festivaliai', 'Festivalid');
+      case 'sports':
+      case 'sportas':
+      case 'sport':
+        return t('Sports', 'Sports', 'Sportas', 'Sport');
+      case 'kino':
+      case 'cinema':
+      case 'kinas':
+        return t('Kino', 'Cinema', 'Kinas', 'Kino');
+      case 'bērniem':
+      case 'for children':
+      case 'vaikams':
+      case 'lastele':
+        return t('Bērniem', 'For Children', 'Vaikams', 'Lastele');
+      case 'ceļojumi':
+      case 'travel':
+      case 'kelionės':
+      case 'reisimine':
+        return t('Ceļojumi', 'Travel', 'Kelionės', 'Reisimine');
+      case 'dāvanu kartes':
+      case 'gift cards':
+      case 'dovanų kortelės':
+      case 'kinkekaardid':
+        return t('Dāvanu kartes', 'Gift Cards', 'Dovanų kortelės', 'Kinkekaardid');
+      case 'citi pasākumi':
+      case 'other events':
+      case 'kiti renginiai':
+      case 'muud üritused':
+        return t('Citi pasākumi', 'Other Events', 'Kiti renginiai', 'Muud üritused');
+      default:
+        return categoryName;
+    }
+  };
+
   const formatTime = (timeStr: string | null) => {
     if (!timeStr) return null;
     return timeStr;
@@ -72,7 +123,7 @@ export function TicketDetails({ ticket, t }: TicketDetailsProps) {
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <div className="flex items-center">
           <Tag className="h-3 w-3 sm:h-4 sm:w-4 mr-1 text-muted-foreground flex-shrink-0" />
-          <span className="text-xs sm:text-sm text-muted-foreground break-words max-w-[150px]">{ticket.category}</span>
+          <span className="text-xs sm:text-sm text-muted-foreground break-words max-w-[150px]">{getLocalizedCategory(ticket.category)}</span>
         </div>
         <Badge className={`${getStatusColor(ticket.status)} text-xs whitespace-nowrap`}>
           {getStatusText(ticket.status)}

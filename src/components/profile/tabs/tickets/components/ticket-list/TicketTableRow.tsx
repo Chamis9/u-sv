@@ -39,10 +39,64 @@ export function TicketTableRow({
     }
   };
   
+  // Function to get localized category name
+  const getLocalizedCategory = (categoryName: string) => {
+    switch (categoryName.toLowerCase()) {
+      case 'teātris':
+      case 'theatre':
+      case 'teatras':
+      case 'teater':
+        return t('Teātris', 'Theatre', 'Teatras', 'Teater');
+      case 'koncerti':
+      case 'concerts':
+      case 'koncertai':
+      case 'kontserdid':
+        return t('Koncerti', 'Concerts', 'Koncertai', 'Kontserdid');
+      case 'festivāli':
+      case 'festivals':
+      case 'festivaliai':
+      case 'festivalid':
+        return t('Festivāli', 'Festivals', 'Festivaliai', 'Festivalid');
+      case 'sports':
+      case 'sportas':
+      case 'sport':
+        return t('Sports', 'Sports', 'Sportas', 'Sport');
+      case 'kino':
+      case 'cinema':
+      case 'kinas':
+        return t('Kino', 'Cinema', 'Kinas', 'Kino');
+      case 'bērniem':
+      case 'for children':
+      case 'vaikams':
+      case 'lastele':
+        return t('Bērniem', 'For Children', 'Vaikams', 'Lastele');
+      case 'ceļojumi':
+      case 'travel':
+      case 'kelionės':
+      case 'reisimine':
+        return t('Ceļojumi', 'Travel', 'Kelionės', 'Reisimine');
+      case 'dāvanu kartes':
+      case 'gift cards':
+      case 'dovanų kortelės':
+      case 'kinkekaardid':
+        return t('Dāvanu kartes', 'Gift Cards', 'Dovanų kortelės', 'Kinkekaardid');
+      case 'citi pasākumi':
+      case 'other events':
+      case 'kiti renginiai':
+      case 'muud üritused':
+        return t('Citi pasākumi', 'Other Events', 'Kiti renginiai', 'Muud üritused');
+      default:
+        return categoryName;
+    }
+  };
+  
   return (
     <TableRow key={ticket.id}>
       <TableCell className="font-medium text-gray-900 dark:text-gray-100">
         {ticket.title}
+        <div className="text-xs text-muted-foreground mt-1">
+          {getLocalizedCategory(ticket.category)}
+        </div>
       </TableCell>
       <TableCell className="text-gray-900 dark:text-gray-100 font-semibold">{formatPrice(ticket.price)}</TableCell>
       <TableCell className="hidden md:table-cell text-gray-700 dark:text-gray-300">

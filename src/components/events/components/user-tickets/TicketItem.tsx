@@ -28,6 +28,57 @@ export const TicketItem: React.FC<TicketItemProps> = ({
   t,
   isDeleting
 }) => {
+  // Function to get localized category name
+  const getLocalizedCategory = (categoryName: string) => {
+    switch (categoryName.toLowerCase()) {
+      case 'teātris':
+      case 'theatre':
+      case 'teatras':
+      case 'teater':
+        return t('Teātris', 'Theatre', 'Teatras', 'Teater');
+      case 'koncerti':
+      case 'concerts':
+      case 'koncertai':
+      case 'kontserdid':
+        return t('Koncerti', 'Concerts', 'Koncertai', 'Kontserdid');
+      case 'festivāli':
+      case 'festivals':
+      case 'festivaliai':
+      case 'festivalid':
+        return t('Festivāli', 'Festivals', 'Festivaliai', 'Festivalid');
+      case 'sports':
+      case 'sportas':
+      case 'sport':
+        return t('Sports', 'Sports', 'Sportas', 'Sport');
+      case 'kino':
+      case 'cinema':
+      case 'kinas':
+        return t('Kino', 'Cinema', 'Kinas', 'Kino');
+      case 'bērniem':
+      case 'for children':
+      case 'vaikams':
+      case 'lastele':
+        return t('Bērniem', 'For Children', 'Vaikams', 'Lastele');
+      case 'ceļojumi':
+      case 'travel':
+      case 'kelionės':
+      case 'reisimine':
+        return t('Ceļojumi', 'Travel', 'Kelionės', 'Reisimine');
+      case 'dāvanu kartes':
+      case 'gift cards':
+      case 'dovanų kortelės':
+      case 'kinkekaardid':
+        return t('Dāvanu kartes', 'Gift Cards', 'Dovanų kortelės', 'Kinkekaardid');
+      case 'citi pasākumi':
+      case 'other events':
+      case 'kiti renginiai':
+      case 'muud üritused':
+        return t('Citi pasākumi', 'Other Events', 'Kiti renginiai', 'Muud üritused');
+      default:
+        return categoryName;
+    }
+  };
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col h-full">
       {/* Ticket color band */}
@@ -61,7 +112,7 @@ export const TicketItem: React.FC<TicketItemProps> = ({
             
             <div className="flex items-center mb-4">
               <Tag className="h-4 w-4 mr-1 text-muted-foreground flex-shrink-0" />
-              <span className="text-sm text-muted-foreground break-words">{ticket.category}</span>
+              <span className="text-sm text-muted-foreground break-words">{getLocalizedCategory(ticket.category)}</span>
             </div>
           </div>
           
