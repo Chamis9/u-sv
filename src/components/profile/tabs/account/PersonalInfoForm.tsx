@@ -9,7 +9,7 @@ interface PersonalInfoFormProps {
   user: User;
   onSave: (updatedUser: User) => void;
   onCancel: () => void;
-  t: (lvText: string, enText: string) => string;
+  t: (lvText: string, enText: string, ltText: string, eeText: string) => string;
 }
 
 export function PersonalInfoForm({ user, onSave, onCancel, t }: PersonalInfoFormProps) {
@@ -39,54 +39,64 @@ export function PersonalInfoForm({ user, onSave, onCancel, t }: PersonalInfoForm
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="first_name">{t("Vārds", "First Name")}</Label>
+        <Label htmlFor="first_name">
+          {t("Vārds", "First Name", "Vardas", "Eesnimi")}
+        </Label>
         <Input
           id="first_name"
           name="first_name"
           value={formData.first_name}
           onChange={onChange}
-          placeholder={t("Ievadiet vārdu", "Enter your first name")}
+          placeholder={t("Ievadiet vārdu", "Enter your first name", "Įveskite vardą", "Sisestage eesnimi")}
         />
       </div>
       
       <div>
-        <Label htmlFor="last_name">{t("Uzvārds", "Last Name")}</Label>
+        <Label htmlFor="last_name">
+          {t("Uzvārds", "Last Name", "Pavardė", "Perekonnanimi")}
+        </Label>
         <Input
           id="last_name"
           name="last_name"
           value={formData.last_name}
           onChange={onChange}
-          placeholder={t("Ievadiet uzvārdu", "Enter your last name")}
+          placeholder={t("Ievadiet uzvārdu", "Enter your last name", "Įveskite pavardę", "Sisestage perekonnanimi")}
         />
       </div>
       
       <div>
-        <Label htmlFor="email">{t("E-pasts", "Email")}</Label>
+        <Label htmlFor="email">
+          {t("E-pasts", "Email", "El. paštas", "E-post")}
+        </Label>
         <Input
           id="email"
           name="email"
           value={formData.email}
           onChange={onChange}
-          placeholder={t("Ievadiet e-pastu", "Enter your email")}
+          placeholder={t("Ievadiet e-pastu", "Enter your email", "Įveskite el. paštą", "Sisestage e-post")}
           type="email"
         />
       </div>
       
       <div>
-        <Label htmlFor="phone">{t("Tālrunis", "Phone")}</Label>
+        <Label htmlFor="phone">
+          {t("Tālrunis", "Phone", "Telefonas", "Telefon")}
+        </Label>
         <Input
           id="phone"
           name="phone"
           value={formData.phone}
           onChange={onChange}
-          placeholder={t("Ievadiet tālruni", "Enter your phone")}
+          placeholder={t("Ievadiet tālruni", "Enter your phone", "Įveskite telefoną", "Sisestage telefon")}
         />
       </div>
 
       <div className="flex space-x-2 pt-2">
-        <Button type="submit">{t("Saglabāt", "Save")}</Button>
+        <Button type="submit">
+          {t("Saglabāt", "Save", "Išsaugoti", "Salvesta")}
+        </Button>
         <Button type="button" variant="outline" onClick={onCancel}>
-          {t("Atcelt", "Cancel")}
+          {t("Atcelt", "Cancel", "Atšaukti", "Tühista")}
         </Button>
       </div>
     </form>

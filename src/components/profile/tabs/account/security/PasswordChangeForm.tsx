@@ -33,7 +33,7 @@ const passwordFormSchema = z.object({
 
 interface PasswordChangeFormProps {
   onSuccess: () => void;
-  t: (lvText: string, enText: string) => string;
+  t: (lvText: string, enText: string, ltText: string, eeText: string) => string;
 }
 
 export function PasswordChangeForm({ onSuccess, t }: PasswordChangeFormProps) {
@@ -61,7 +61,9 @@ export function PasswordChangeForm({ onSuccess, t }: PasswordChangeFormProps) {
         console.error("Error updating password:", error);
         toast.error(t(
           "Kļūda mainot paroli. Lūdzu, mēģiniet vēlreiz.",
-          "Error changing password. Please try again."
+          "Error changing password. Please try again.",
+          "Klaida keičiant slaptažodį. Bandykite dar kartą.",
+          "Viga parooli muutmisel. Palun proovige uuesti."
         ));
         return;
       }
@@ -69,7 +71,9 @@ export function PasswordChangeForm({ onSuccess, t }: PasswordChangeFormProps) {
       // Success
       toast.success(t(
         "Parole veiksmīgi nomainīta!",
-        "Password changed successfully!"
+        "Password changed successfully!",
+        "Slaptažodis sėkmingai pakeistas!",
+        "Parool edukalt muudetud!"
       ));
       
       // Close dialog and reset form
@@ -80,7 +84,9 @@ export function PasswordChangeForm({ onSuccess, t }: PasswordChangeFormProps) {
       console.error("Error:", error);
       toast.error(t(
         "Kļūda mainot paroli. Lūdzu, mēģiniet vēlreiz.",
-        "Error changing password. Please try again."
+        "Error changing password. Please try again.",
+        "Klaida keičiant slaptažodį. Bandykite dar kartą.",
+        "Viga parooli muutmisel. Palun proovige uuesti."
       ));
     } finally {
       setIsLoading(false);
@@ -96,7 +102,7 @@ export function PasswordChangeForm({ onSuccess, t }: PasswordChangeFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-gray-900 dark:text-gray-100">
-                {t("Pašreizējā parole", "Current Password")}
+                {t("Pašreizējā parole", "Current Password", "Dabartinis slaptažodis", "Praegune parool")}
               </FormLabel>
               <FormControl>
                 <Input type="password" {...field} className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
@@ -112,7 +118,7 @@ export function PasswordChangeForm({ onSuccess, t }: PasswordChangeFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-gray-900 dark:text-gray-100">
-                {t("Jaunā parole", "New Password")}
+                {t("Jaunā parole", "New Password", "Naujas slaptažodis", "Uus parool")}
               </FormLabel>
               <FormControl>
                 <Input type="password" {...field} className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
@@ -128,7 +134,7 @@ export function PasswordChangeForm({ onSuccess, t }: PasswordChangeFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-gray-900 dark:text-gray-100">
-                {t("Apstiprināt jauno paroli", "Confirm New Password")}
+                {t("Apstiprināt jauno paroli", "Confirm New Password", "Patvirtinkite naują slaptažodį", "Kinnitage uus parool")}
               </FormLabel>
               <FormControl>
                 <Input type="password" {...field} className="bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" />
@@ -145,7 +151,7 @@ export function PasswordChangeForm({ onSuccess, t }: PasswordChangeFormProps) {
             onClick={onSuccess}
             className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300"
           >
-            {t("Atcelt", "Cancel")}
+            {t("Atcelt", "Cancel", "Atšaukti", "Tühista")}
           </Button>
           <Button type="submit" variant="orange" disabled={isLoading}>
             {isLoading ? (
@@ -154,9 +160,9 @@ export function PasswordChangeForm({ onSuccess, t }: PasswordChangeFormProps) {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                {t("Saglabāt", "Save")}
+                {t("Saglabāt", "Save", "Išsaugoti", "Salvesta")}
               </span>
-            ) : t("Saglabāt", "Save")}
+            ) : t("Saglabāt", "Save", "Išsaugoti", "Salvesta")}
           </Button>
         </div>
       </form>

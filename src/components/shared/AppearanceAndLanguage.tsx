@@ -18,8 +18,16 @@ export function AppearanceAndLanguage({
 }: AppearanceAndLanguageProps) {
   const { currentLanguage } = useLanguage();
   
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
+  };
   
   return (
     <>
@@ -30,7 +38,7 @@ export function AppearanceAndLanguage({
       <CardContent className="space-y-2">
         <div className="space-y-2">
           <Label className="text-gray-900 dark:text-white font-medium">
-            {t("Valoda", "Language")}
+            {t("Valoda", "Language", "Kalba", "Keel")}
           </Label>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
             {formDescriptionText}

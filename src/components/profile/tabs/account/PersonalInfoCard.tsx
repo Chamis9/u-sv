@@ -22,19 +22,29 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
   const [isEditing, setIsEditing] = useState(false);
   const { currentLanguage } = useLanguage();
   
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
+  };
   
   return (
     <Card className="bg-card dark:bg-gray-900">
       <CardHeader>
         <CardTitle className="text-gray-900 dark:text-white">
-          {t("Personīgā informācija", "Personal Information")}
+          {t("Personīgā informācija", "Personal Information", "Asmeninė informacija", "Isiklik teave")}
         </CardTitle>
         <CardDescription className="text-gray-700 dark:text-gray-300 font-medium">
           {t(
             "Pārvaldiet savu profila informāciju", 
-            "Manage your profile information"
+            "Manage your profile information",
+            "Tvarkykite savo profilio informaciją",
+            "Hallake oma profiili teavet"
           )}
         </CardDescription>
       </CardHeader>
@@ -57,7 +67,7 @@ export function PersonalInfoCard({ user, onUserUpdate }: PersonalInfoCardProps) 
               className="mt-4"
               variant="orange"
             >
-              {t("Rediģēt", "Edit")}
+              {t("Rediģēt", "Edit", "Redaguoti", "Muuda")}
             </Button>
           </div>
         )}
