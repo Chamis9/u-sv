@@ -68,9 +68,8 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
         <PopoverTrigger asChild>
           <Button variant="outline" className="w-full sm:w-[300px] flex justify-between items-center">
             <div className="flex items-center">
-              <CalendarIcon className="mr-2 h-4 w-4 text-green-600 dark:text-green-400" />
-              {/* Always apply green text color to the dates text */}
-              <span className="truncate text-green-600 dark:text-green-400">
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              <span className="truncate">
                 {dateButtonText}
               </span>
             </div>
@@ -108,7 +107,7 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
               <Button 
                 variant="outline" 
                 onClick={clearDateFilters}
-                className="flex items-center gap-2 self-end text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 border-green-600 dark:border-green-400 hover:border-green-700 dark:hover:border-green-300"
+                className="flex items-center gap-2 self-end"
               >
                 <Trash2 className="h-4 w-4" />
                 {t("Notīrīt", "Clear", "Išvalyti", "Tühjenda")}
