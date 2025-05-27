@@ -18,7 +18,16 @@ interface EventCardProps {
 export const EventCard: React.FC<EventCardProps> = ({ event, eventTickets }) => {
   const { currentLanguage } = useLanguage();
   const locale = currentLanguage.code === 'lv' ? lv : enUS;
-  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
+  const t = (lv: string, en: string, lt: string, ee: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lv;
+      case 'en': return en;
+      case 'lt': return lt;
+      case 'et':
+      case 'ee': return ee;
+      default: return lv;
+    }
+  };
   
   // Calculate price range
   const lowestPrice = eventTickets.length > 0 
@@ -70,14 +79,14 @@ export const EventCard: React.FC<EventCardProps> = ({ event, eventTickets }) => 
           </div>
         ) : (
           <div className="text-gray-500 text-sm">
-            {t('Nav pieejamu biļešu', 'No tickets available')}
+            {t('Nav pieejamu biļešu', 'No tickets available', 'Nėra bilietų', 'Pileteid pole saadaval')}
           </div>
         )}
         
         <Link to={`/events/${event.category}/${event.id}`}>
           <Button className="whitespace-nowrap text-gray-800 border-gray-400" variant="outline">
             <Ticket className="h-4 w-4 mr-1" />
-            {t('Biļetes', 'Tickets')}
+            {t('Biļetes', 'Tickets', 'Bilietai', 'Piletid')}
           </Button>
         </Link>
       </div>

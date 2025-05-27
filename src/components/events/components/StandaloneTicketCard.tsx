@@ -21,7 +21,16 @@ export const StandaloneTicketCard: React.FC<StandaloneTicketCardProps> = ({
 }) => {
   const { currentLanguage } = useLanguage();
   const locale = currentLanguage.code === 'lv' ? lv : enUS;
-  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
+  const t = (lv: string, en: string, lt: string, ee: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lv;
+      case 'en': return en;
+      case 'lt': return lt;
+      case 'et':
+      case 'ee': return ee;
+      default: return lv;
+    }
+  };
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col h-full">
@@ -35,7 +44,7 @@ export const StandaloneTicketCard: React.FC<StandaloneTicketCardProps> = ({
           )}
           {ticket.venue && (
             <div className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-              {t('Vieta', 'Venue')}: {ticket.venue}
+              {t('Vieta', 'Venue', 'Vieta', 'Koht')}: {ticket.venue}
             </div>
           )}
           {ticket.event_date && (
@@ -53,7 +62,7 @@ export const StandaloneTicketCard: React.FC<StandaloneTicketCardProps> = ({
             {formatPrice(ticket.price)}
           </div>
           <div className="text-sm text-gray-500">
-            {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
+            {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket", "bilietas", "pilet") : t("biļetes", "tickets", "bilietai", "piletid")} × {formatPrice(ticket.price_per_unit || ticket.price)}
           </div>
         </div>
         
@@ -63,7 +72,7 @@ export const StandaloneTicketCard: React.FC<StandaloneTicketCardProps> = ({
             className="whitespace-nowrap text-gray-800 border-gray-400" 
             variant="outline"
           >
-            {t('Skatīt', 'View')}
+            {t('Skatīt', 'View', 'Žiūrėti', 'Vaata')}
           </Button>
           <Button 
             onClick={() => onPurchase(ticket)} 
@@ -71,7 +80,7 @@ export const StandaloneTicketCard: React.FC<StandaloneTicketCardProps> = ({
             variant="orange"
           >
             <Ticket className="h-4 w-4 mr-1" />
-            {t('Pirkt biļeti', 'Buy ticket')}
+            {t('Pirkt biļeti', 'Buy ticket', 'Pirkti bilietą', 'Osta pilet')}
           </Button>
         </div>
       </div>

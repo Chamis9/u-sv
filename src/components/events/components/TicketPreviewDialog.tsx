@@ -24,7 +24,16 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
   const { currentLanguage } = useLanguage();
   const [sellerName, setSellerName] = useState<string | null>(null);
   
-  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
+  const t = (lv: string, en: string, lt: string, ee: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lv;
+      case 'en': return en;
+      case 'lt': return lt;
+      case 'et':
+      case 'ee': return ee;
+      default: return lv;
+    }
+  };
 
   useEffect(() => {
     const fetchSellerInfo = async () => {
@@ -71,7 +80,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
       <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-black dark:text-white">
-            {t('Biļetes informācija', 'Ticket Information')}
+            {t('Biļetes informācija', 'Ticket Information', 'Bilieto informacija', 'Pileti informatsioon')}
           </DialogTitle>
         </DialogHeader>
         
@@ -119,7 +128,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
               {sellerName && (
                 <div className="flex items-center text-sm text-black dark:text-white">
                   <User className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
-                  <span>{t('Pārdevējs', 'Seller')}: {sellerName}</span>
+                  <span>{t('Pārdevējs', 'Seller', 'Pardavėjas', 'Müüja')}: {sellerName}</span>
                 </div>
               )}
             </div>
@@ -127,14 +136,14 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
             <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('Cena', 'Price')}:</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('Cena', 'Price', 'Kaina', 'Hind')}:</span>
                   <div className="text-xl font-bold text-black dark:text-white">{formatPrice(ticket.price)}</div>
                 </div>
                 <Ticket className="h-8 w-8 text-orange-500 opacity-50" />
               </div>
               
               <div className="text-sm text-black dark:text-white mt-1">
-                {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
+                {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket", "bilietas", "pilet") : t("biļetes", "tickets", "bilietai", "piletid")} × {formatPrice(ticket.price_per_unit || ticket.price)}
               </div>
             </div>
             
@@ -146,7 +155,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
                   className="flex items-center text-white"
                 >
                   <Ticket className="h-4 w-4 mr-2" />
-                  {t('Pirkt biļeti', 'Buy ticket')}
+                  {t('Pirkt biļeti', 'Buy ticket', 'Pirkti bilietą', 'Osta pilet')}
                 </Button>
               </div>
             )}

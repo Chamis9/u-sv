@@ -13,7 +13,7 @@ interface TicketItemProps {
   isAuthenticated: boolean;
   userId?: string | null;
   currentLanguageCode: string;
-  t: (lv: string, en: string) => string;
+  t: (lv: string, en: string, lt: string, ee: string) => string;
   isDeleting: boolean;
 }
 
@@ -77,7 +77,7 @@ export const TicketItem: React.FC<TicketItemProps> = ({
           
           {/* Always show quantity and price per unit, even for single tickets */}
           <div className="text-sm text-muted-foreground mt-1 mb-4">
-            {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
+            {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket", "bilietas", "pilet") : t("biļetes", "tickets", "bilietai", "piletid")} × {formatPrice(ticket.price_per_unit || ticket.price)}
           </div>
           
           <div className="flex gap-2">
@@ -88,7 +88,7 @@ export const TicketItem: React.FC<TicketItemProps> = ({
               className="flex-1 text-gray-800 border-gray-400"
             >
               <Eye className="h-4 w-4 mr-2" />
-              {t("Skatīt", "View")}
+              {t("Skatīt", "View", "Žiūrėti", "Vaata")}
             </Button>
             
             {/* Show Delete button if user is the owner of this ticket */}
@@ -101,7 +101,7 @@ export const TicketItem: React.FC<TicketItemProps> = ({
                 disabled={isDeleting}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                {t("Dzēst", "Delete")}
+                {t("Dzēst", "Delete", "Ištrinti", "Kustuta")}
               </Button>
             )}
             
@@ -114,7 +114,7 @@ export const TicketItem: React.FC<TicketItemProps> = ({
                 className="flex-1"
               >
                 <Ticket className="h-4 w-4 mr-2" />
-                {t("Pirkt biļeti", "Buy ticket")}
+                {t("Pirkt biļeti", "Buy ticket", "Pirkti bilietą", "Osta pilet")}
               </Button>
             )}
           </div>
