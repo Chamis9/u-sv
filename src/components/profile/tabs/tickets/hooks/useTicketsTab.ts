@@ -56,7 +56,9 @@ export function useTicketsTab(user: User) {
     }
   };
 
-  // Setup ticket operations (delete, update, etc.)
+  // Setup ticket operations (delete, update, etc.) - create fallback function for 2-param components
+  const twoParamT = (lv: string, en: string) => t(lv, en, lv, en);
+
   const {
     openDeleteConfirmation,
     confirmDelete,
@@ -67,7 +69,7 @@ export function useTicketsTab(user: User) {
     refreshTickets: refreshTicketsFromOperations
   } = useTicketOperations({
     onTicketsChanged: refreshTickets,
-    t: (lv: string, en: string) => t(lv, en, lv, en) // Fallback for components using 2-param t function
+    t: twoParamT
   });
   
   // Sort tickets into added and purchased categories

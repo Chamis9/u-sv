@@ -34,6 +34,17 @@ export function AddTicketForm({
   const { user } = useAuth();
   const { addTicket, uploadTicketFile } = useUserTickets(user?.id);
   
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
+  };
+  
   const form = useForm<TicketFormValues>({
     resolver: zodResolver(ticketFormSchema),
     defaultValues: isEditing && ticketToEdit ? {
@@ -59,7 +70,7 @@ export function AddTicketForm({
     },
   });
   
-  const { submitting, onSubmit, t } = useAddTicketForm({
+  const { submitting, onSubmit } = useAddTicketForm({
     form,
     userId: user?.id,
     onClose,
@@ -74,10 +85,10 @@ export function AddTicketForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[60vh] overflow-y-auto px-1">
         {/* Field order as requested */}
-        <BasicInfoFields form={form} t={t} />
-        <CategoryField form={form} t={t} />
-        <EventDetailsFields form={form} t={t} />
-        <QuantityPriceFields form={form} t={t} />
+        <BasicInfoFields form={form} />
+        <CategoryField form={form} />
+        <EventDetailsFields form={form} />
+        <QuantityPriceFields form={form} />
 
         {!isEditing && (
           <FormField
@@ -85,7 +96,9 @@ export function AddTicketForm({
             name="file"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-900 dark:text-white">{t("Biļetes fails", "Ticket file")}</FormLabel>
+                <FormLabel className="text-gray-900 dark:text-white">
+                  {t("Biļetes fails", "Ticket file", "Bilieto failas", "Pileti fail")}
+                </FormLabel>
                 <FormControl>
                   <TicketFileUpload onChange={(file) => field.onChange(file)} />
                 </FormControl>
@@ -99,7 +112,6 @@ export function AddTicketForm({
           onClose={onClose}
           isEditing={isEditing}
           submitting={submitting}
-          t={t}
         />
       </form>
     </Form>

@@ -9,26 +9,42 @@ import { useLanguage } from "@/features/language";
 
 interface QuantityPriceFieldsProps {
   form: UseFormReturn<TicketFormValues>;
-  t: (lv: string, en: string) => string;
 }
 
-export function QuantityPriceFields({ form, t }: QuantityPriceFieldsProps) {
+export function QuantityPriceFields({ form }: QuantityPriceFieldsProps) {
   const { currentLanguage } = useLanguage();
+  
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
+  };
   
   // Custom error messages based on language
   const getErrorMessage = (error: any) => {
     if (!error) return null;
     
     if (error.message === "Price per unit must be a valid number greater than 0") {
-      return currentLanguage.code === 'lv' 
-        ? "Cenai par biļeti jābūt lielākai par 0" 
-        : "Price per unit must be a valid number greater than 0";
+      return t(
+        "Cenai par biļeti jābūt lielākai par 0", 
+        "Price per unit must be a valid number greater than 0",
+        "Kaina už bilietą turi būti didesnė nei 0",
+        "Pileti hind peab olema suurem kui 0"
+      );
     }
     
     if (error.message === "Quantity must be a valid number greater than 0") {
-      return currentLanguage.code === 'lv' 
-        ? "Biļešu skaitam jābūt lielākam par 0" 
-        : "Quantity must be a valid number greater than 0";
+      return t(
+        "Biļešu skaitam jābūt lielākam par 0", 
+        "Quantity must be a valid number greater than 0",
+        "Bilietų kiekis turi būti didesnis nei 0",
+        "Piletite arv peab olema suurem kui 0"
+      );
     }
     
     return error.message;
@@ -43,7 +59,7 @@ export function QuantityPriceFields({ form, t }: QuantityPriceFieldsProps) {
           render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel className="font-medium text-gray-900 dark:text-white">
-                {t("Cena par biļeti", "Price per ticket")} <span className="text-red-500">*</span>
+                {t("Cena par biļeti", "Price per ticket", "Kaina už bilietą", "Pileti hind")} <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
                 <Input 
@@ -71,7 +87,7 @@ export function QuantityPriceFields({ form, t }: QuantityPriceFieldsProps) {
           render={({ field, fieldState }) => (
             <FormItem>
               <FormLabel className="font-medium text-gray-900 dark:text-white">
-                {t("Biļešu skaits", "Ticket quantity")} <span className="text-red-500">*</span>
+                {t("Biļešu skaits", "Ticket quantity", "Bilietų kiekis", "Piletite arv")} <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl>
                 <Input 
@@ -94,7 +110,7 @@ export function QuantityPriceFields({ form, t }: QuantityPriceFieldsProps) {
         />
       </div>
       
-      <TotalPriceField form={form} t={t} />
+      <TotalPriceField form={form} />
     </>
   );
 }
