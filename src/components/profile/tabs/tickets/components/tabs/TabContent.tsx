@@ -4,7 +4,6 @@ import { TabsContent } from '@/components/ui/tabs';
 import { UserTicket } from '@/hooks/tickets/types';
 import { TicketsContent } from '../TicketsContent';
 import { TicketsList } from '../ticket-list/TicketsList';
-import { VisualTicket } from '../visual-ticket/VisualTicket';
 
 interface TabContentProps {
   value: "added" | "purchased";
@@ -28,14 +27,25 @@ export function TabContent({
   return (
     <TabsContent value={value} className="mt-2 p-0">
       <div className="w-full">
-        <TicketsContent 
-          tickets={tickets}
-          isLoading={isLoading}
-          onDelete={onDelete}
-          onView={onView}
-          onEdit={onEdit}
-          ticketType={ticketType}
-        />
+        {value === "added" ? (
+          <TicketsList 
+            tickets={tickets}
+            isLoading={isLoading}
+            onDelete={onDelete}
+            onView={onView}
+            onEdit={onEdit}
+            ticketType={ticketType}
+          />
+        ) : (
+          <TicketsContent 
+            tickets={tickets}
+            isLoading={isLoading}
+            onDelete={onDelete}
+            onView={onView}
+            onEdit={onEdit}
+            ticketType={ticketType}
+          />
+        )}
       </div>
     </TabsContent>
   );
