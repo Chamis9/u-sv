@@ -11,39 +11,44 @@ interface ProfileHeaderProps {
 export function ProfileHeader({ activeTab, user }: ProfileHeaderProps) {
   const { currentLanguage } = useLanguage();
   
-  const t = (lvText: string, enText: string, ruText?: string) => {
-    if (currentLanguage.code === 'lv') return lvText;
-    if (currentLanguage.code === 'ru') return ruText || enText;
-    return enText;
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
   };
   
   const getHeaderTitle = () => {
     switch (activeTab) {
       case "account":
-        return t("Mans konts", "My Account", "Мой аккаунт");
+        return t("Mans konts", "My Account", "Mano paskyra", "Minu konto");
       case "tickets":
-        return t("Manas biļetes", "My Tickets", "Мои билеты");
+        return t("Manas biļetes", "My Tickets", "Mano bilietai", "Minu piletid");
       case "payments":
-        return t("Mani maksājumi", "My Payments", "Мои платежи");
+        return t("Mani maksājumi", "My Payments", "Mano mokėjimai", "Minu maksed");
       case "settings":
-        return t("Iestatījumi", "Settings", "Настройки");
+        return t("Iestatījumi", "Settings", "Nustatymai", "Seaded");
       default:
-        return t("Mans profils", "My Profile", "Мой профиль");
+        return t("Mans profils", "My Profile", "Mano profilis", "Minu profiil");
     }
   };
   
   const getHeaderDescription = () => {
     switch (activeTab) {
       case "account":
-        return t("Pārvaldiet savu konta informāciju", "Manage your account information", "Управление информацией вашего аккаунта");
+        return t("Pārvaldiet savu konta informāciju", "Manage your account information", "Tvarkykite savo paskyros informaciją", "Hallake oma konto teavet");
       case "tickets":
-        return t("Apskatiet savas biļetes", "View your tickets", "Просмотр ваших билетов");
+        return t("Apskatiet savas biļetes", "View your tickets", "Peržiūrėkite savo bilietus", "Vaadake oma pileteid");
       case "payments":
-        return t("Apskatiet savus maksājumus", "View your payment history", "Просмотр истории ваших платежей");
+        return t("Apskatiet savus maksājumus", "View your payment history", "Peržiūrėkite savo mokėjimų istoriją", "Vaadake oma maksete ajalugu");
       case "settings":
-        return t("Pielāgojiet savas preferences", "Customize your preferences", "Настройка ваших предпочтений");
+        return t("Pielāgojiet savas preferences", "Customize your preferences", "Pritaikykite savo nuostatas", "Kohandage oma eelistusi");
       default:
-        return t("Pārvaldiet savu lietotāja profilu", "Manage your user profile", "Управление вашим профилем пользователя");
+        return t("Pārvaldiet savu lietotāja profilu", "Manage your user profile", "Tvarkykite savo vartotojo profilį", "Hallake oma kasutajaprofiili");
     }
   };
   

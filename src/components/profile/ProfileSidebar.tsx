@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useLanguage } from "@/features/language";
 import { UserAvatar } from "./UserAvatar";
@@ -27,10 +26,15 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
   const { logout } = useAuth();
   const { toast } = useToast();
   
-  const t = (lvText: string, enText: string, ruText?: string) => {
-    if (currentLanguage.code === 'lv') return lvText;
-    if (currentLanguage.code === 'ru') return ruText || enText;
-    return enText;
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
   };
   
   const handleLogout = async () => {
@@ -40,7 +44,8 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
         description: t(
           "Jūs esat veiksmīgi izgājis no sistēmas",
           "You have been successfully logged out",
-          "Вы успешно вышли из системы"
+          "Sėkmingai atsijungėte nuo sistemos",
+          "Olete edukalt süsteemist välja logitud"
         ),
       });
     } catch (error) {
@@ -50,7 +55,8 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
         description: t(
           "Kļūda izejot no sistēmas",
           "Error during logout process",
-          "Ошибка при выходе из системы"
+          "Klaida atsijungiant nuo sistemos",
+          "Viga süsteemist väljumisel"
         ),
       });
     }
@@ -60,28 +66,28 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
     {
       id: "account",
       icon: <UserIcon size={18} />,
-      label: t("Mans konts", "My Account", "Мой аккаунт")
+      label: t("Mans konts", "My Account", "Mano paskyra", "Minu konto")
     },
     {
       id: "tickets",
       icon: <Ticket size={18} />,
-      label: t("Manas biļetes", "My Tickets", "Мои билеты")
+      label: t("Manas biļetes", "My Tickets", "Mano bilietai", "Minu piletid")
     },
     {
       id: "payments",
       icon: <CreditCard size={18} />,
-      label: t("Mani maksājumi", "My Payments", "Мои платежи")
+      label: t("Mani maksājumi", "My Payments", "Mano mokėjimai", "Minu maksed")
     },
     {
       id: "settings",
       icon: <Settings size={18} />,
-      label: t("Iestatījumi", "Settings", "Настройки")
+      label: t("Iestatījumi", "Settings", "Nustatymai", "Seaded")
     }
   ];
   
   const fullName = user && (user.first_name || user.last_name) 
     ? [user.first_name, user.last_name].filter(Boolean).join(" ")
-    : t("Lietotājs", "User", "Пользователь");
+    : t("Lietotājs", "User", "Vartotojas", "Kasutaja");
   
   const completeUserObject: User = user ? {
     id: user.id,
@@ -141,7 +147,7 @@ export function ProfileSidebar({ activeTab, onTabChange, user }: ProfileSidebarP
           onClick={handleLogout}
         >
           <LogOut size={18} className="mr-2" />
-          {t("Iziet", "Logout", "Выйти")}
+          {t("Iziet", "Logout", "Atsijungti", "Logi välja")}
         </Button>
       </div>
     </aside>
