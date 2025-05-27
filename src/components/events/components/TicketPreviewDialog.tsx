@@ -68,7 +68,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
             {t('Biļetes informācija', 'Ticket Information')}
@@ -138,7 +138,6 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
               </div>
             </div>
             
-            {/* Add purchase button */}
             {onPurchase && (
               <div className="flex justify-end mt-4">
                 <Button 
