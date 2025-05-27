@@ -70,14 +70,14 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white">
             {t('Biļetes informācija', 'Ticket Information')}
           </DialogTitle>
         </DialogHeader>
         
         <div className="py-4">
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 break-words">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white break-words">
               {ticket.title}
             </h3>
             
@@ -128,7 +128,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-sm text-gray-600 dark:text-gray-400">{t('Cena', 'Price')}:</span>
-                  <div className="text-xl font-bold text-gray-900 dark:text-gray-100">{formatPrice(ticket.price)}</div>
+                  <div className="text-xl font-bold text-gray-900 dark:text-white">{formatPrice(ticket.price)}</div>
                 </div>
                 <Ticket className="h-8 w-8 text-orange-500 opacity-50" />
               </div>
