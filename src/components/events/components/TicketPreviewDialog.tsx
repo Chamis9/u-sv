@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { UserTicket } from "@/hooks/tickets";
@@ -69,27 +70,27 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white">
+          <DialogTitle className="text-xl font-semibold text-black dark:text-white">
             {t('Biļetes informācija', 'Ticket Information')}
           </DialogTitle>
         </DialogHeader>
         
         <div className="py-4">
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white break-words">
+            <h3 className="text-xl font-bold text-black dark:text-white break-words">
               {ticket.title}
             </h3>
             
             {ticket.description && (
-              <p className="text-sm text-gray-900 dark:text-gray-100 break-words">
+              <p className="text-sm text-black dark:text-white break-words">
                 {ticket.description}
               </p>
             )}
             
             <div className="grid gap-3">
               {ticket.event_date && (
-                <div className="flex items-center text-sm text-gray-900 dark:text-gray-100">
-                  <Calendar className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-300 flex-shrink-0" />
+                <div className="flex items-center text-sm text-black dark:text-white">
+                  <Calendar className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
                   <span>
                     {formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
                   </span>
@@ -97,27 +98,27 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
               )}
               
               {ticket.event_time && (
-                <div className="flex items-center text-sm text-gray-900 dark:text-gray-100">
-                  <Clock className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-300 flex-shrink-0" />
+                <div className="flex items-center text-sm text-black dark:text-white">
+                  <Clock className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
                   <span>{ticket.event_time}</span>
                 </div>
               )}
               
               {ticket.venue && (
-                <div className="flex items-center text-sm text-gray-900 dark:text-gray-100">
-                  <MapPin className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-300 flex-shrink-0" />
+                <div className="flex items-center text-sm text-black dark:text-white">
+                  <MapPin className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
                   <span className="break-words">{ticket.venue}</span>
                 </div>
               )}
               
-              <div className="flex items-center text-sm text-gray-900 dark:text-gray-100">
-                <Tag className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-300 flex-shrink-0" />
+              <div className="flex items-center text-sm text-black dark:text-white">
+                <Tag className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
                 <span className="break-words">{ticket.category}</span>
               </div>
               
               {sellerName && (
-                <div className="flex items-center text-sm text-gray-900 dark:text-gray-100">
-                  <User className="h-4 w-4 mr-2 text-gray-600 dark:text-gray-300 flex-shrink-0" />
+                <div className="flex items-center text-sm text-black dark:text-white">
+                  <User className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
                   <span>{t('Pārdevējs', 'Seller')}: {sellerName}</span>
                 </div>
               )}
@@ -126,13 +127,13 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
             <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-sm text-gray-600 dark:text-gray-300">{t('Cena', 'Price')}:</span>
-                  <div className="text-xl font-bold text-gray-900 dark:text-white">{formatPrice(ticket.price)}</div>
+                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('Cena', 'Price')}:</span>
+                  <div className="text-xl font-bold text-black dark:text-white">{formatPrice(ticket.price)}</div>
                 </div>
                 <Ticket className="h-8 w-8 text-orange-500 opacity-50" />
               </div>
               
-              <div className="text-sm text-gray-900 dark:text-gray-100 mt-1">
+              <div className="text-sm text-black dark:text-white mt-1">
                 {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")} × {formatPrice(ticket.price_per_unit || ticket.price)}
               </div>
             </div>
