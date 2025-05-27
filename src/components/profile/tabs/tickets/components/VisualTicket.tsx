@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { UserTicket } from "@/hooks/tickets/types";
 import { formatPrice, formatDate } from "@/utils/formatters";

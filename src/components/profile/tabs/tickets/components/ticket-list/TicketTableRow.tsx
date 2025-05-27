@@ -14,7 +14,7 @@ interface TicketTableRowProps {
   onDelete: (id: string) => void;
   isLoading: boolean;
   ticketType: "added" | "purchased";
-  t: (lvText: string, enText: string) => string;
+  t: (lvText: string, enText: string, ltText: string, eeText: string) => string;
 }
 
 export function TicketTableRow({
@@ -29,13 +29,13 @@ export function TicketTableRow({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'sold':
-        return <Badge className="bg-blue-500 text-white">{t("Pārdota", "Sold")}</Badge>;
+        return <Badge className="bg-blue-500 text-white">{t("Pārdota", "Sold", "Parduotas", "Müüdud")}</Badge>;
       case 'available':
-        return <Badge className="bg-green-500 text-white">{t("Aktīva", "Active")}</Badge>;
+        return <Badge className="bg-green-500 text-white">{t("Aktīva", "Active", "Aktyvus", "Aktiivne")}</Badge>;
       case 'expired':
-        return <Badge className="bg-orange-500 text-white">{t("Beigusies", "Expired")}</Badge>;
+        return <Badge className="bg-orange-500 text-white">{t("Beigusies", "Expired", "Baigėsi", "Aegunud")}</Badge>;
       default:
-        return <Badge className="bg-gray-500 text-white">{t("Nezināms", "Unknown")}</Badge>;
+        return <Badge className="bg-gray-500 text-white">{t("Nezināms", "Unknown", "Nežinomas", "Teadmata")}</Badge>;
     }
   };
   
@@ -46,10 +46,10 @@ export function TicketTableRow({
       </TableCell>
       <TableCell className="text-gray-900 dark:text-gray-100 font-semibold">{formatPrice(ticket.price)}</TableCell>
       <TableCell className="hidden md:table-cell text-gray-700 dark:text-gray-300">
-        {formatDate(ticket.created_at, t('lv-LV', 'en-US'))}
+        {formatDate(ticket.created_at, t('lv-LV', 'en-US', 'lt-LT', 'et-EE'))}
       </TableCell>
       <TableCell className="hidden md:table-cell text-gray-700 dark:text-gray-300">
-        {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")}
+        {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket", "bilietas", "pilet") : t("biļetes", "tickets", "bilietai", "piletid")}
       </TableCell>
       <TableCell>{getStatusBadge(ticket.status)}</TableCell>
       <TableCell className="text-right">
@@ -58,7 +58,7 @@ export function TicketTableRow({
             variant="outline"
             size="icon"
             onClick={() => onView(ticket)}
-            title={t("Skatīt", "View")}
+            title={t("Skatīt", "View", "Žiūrėti", "Vaata")}
             className="border-gray-300 dark:border-gray-600"
           >
             <Eye className="h-4 w-4 text-gray-700 dark:text-gray-300" />
@@ -71,7 +71,7 @@ export function TicketTableRow({
               onClick={() => {
                 window.open(`https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/tickets/${ticket.file_path}`, '_blank');
               }}
-              title={t("Lejupielādēt", "Download")}
+              title={t("Lejupielādēt", "Download", "Atsisiųsti", "Laadi alla")}
               className="border-gray-300 dark:border-gray-600"
             >
               <Download className="h-4 w-4 text-gray-700 dark:text-gray-300" />
@@ -84,7 +84,7 @@ export function TicketTableRow({
               size="icon"
               onClick={() => onEdit(ticket)}
               className="text-blue-600 hover:bg-blue-50 hover:text-blue-800 border-blue-300 dark:border-blue-600"
-              title={t("Rediģēt", "Edit")}
+              title={t("Rediģēt", "Edit", "Redaguoti", "Muuda")}
             >
               <Pencil className="h-4 w-4" />
             </Button>
@@ -97,7 +97,7 @@ export function TicketTableRow({
               onClick={() => onDelete(ticket.id)}
               className="text-red-600 hover:bg-red-50 hover:text-red-800 border-red-300 dark:border-red-600"
               disabled={isLoading}
-              title={t("Dzēst", "Delete")}
+              title={t("Dzēst", "Delete", "Ištrinti", "Kustuta")}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
