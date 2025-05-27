@@ -44,6 +44,9 @@ export function TicketsTab({ user }: TicketsTabProps) {
     authUserId
   } = useTicketsTab(user);
   
+  // Create a 2-parameter translation function for components that still expect the old format
+  const twoParamT = (lv: string, en: string) => t(lv, en, lv, en);
+  
   // Use the enhanced refresh functionality with the authenticated user ID
   const { refreshTickets } = useTicketRefresh({
     userId: authUserId || undefined,
@@ -117,7 +120,7 @@ export function TicketsTab({ user }: TicketsTabProps) {
     return (
       <Card className="bg-card dark:bg-gray-900">
         <CardContent className="pt-6">
-          <AuthRequiredAlert t={t} />
+          <AuthRequiredAlert t={twoParamT} />
         </CardContent>
       </Card>
     );
