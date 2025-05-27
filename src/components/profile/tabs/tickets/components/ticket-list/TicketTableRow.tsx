@@ -29,26 +29,26 @@ export function TicketTableRow({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'sold':
-        return <Badge className="bg-blue-500">{t("Pārdota", "Sold")}</Badge>;
+        return <Badge className="bg-blue-500 text-white">{t("Pārdota", "Sold")}</Badge>;
       case 'available':
-        return <Badge className="bg-green-500">{t("Aktīva", "Active")}</Badge>;
+        return <Badge className="bg-green-500 text-white">{t("Aktīva", "Active")}</Badge>;
       case 'expired':
-        return <Badge className="bg-orange-500">{t("Beigusies", "Expired")}</Badge>;
+        return <Badge className="bg-orange-500 text-white">{t("Beigusies", "Expired")}</Badge>;
       default:
-        return <Badge className="bg-gray-500">{t("Nezināms", "Unknown")}</Badge>;
+        return <Badge className="bg-gray-500 text-white">{t("Nezināms", "Unknown")}</Badge>;
     }
   };
   
   return (
     <TableRow key={ticket.id}>
-      <TableCell className="font-medium">
+      <TableCell className="font-medium text-gray-900 dark:text-gray-100">
         {ticket.title}
       </TableCell>
-      <TableCell>{formatPrice(ticket.price)}</TableCell>
-      <TableCell className="hidden md:table-cell">
+      <TableCell className="text-gray-900 dark:text-gray-100 font-semibold">{formatPrice(ticket.price)}</TableCell>
+      <TableCell className="hidden md:table-cell text-gray-700 dark:text-gray-300">
         {formatDate(ticket.created_at, t('lv-LV', 'en-US'))}
       </TableCell>
-      <TableCell className="hidden md:table-cell">
+      <TableCell className="hidden md:table-cell text-gray-700 dark:text-gray-300">
         {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket") : t("biļetes", "tickets")}
       </TableCell>
       <TableCell>{getStatusBadge(ticket.status)}</TableCell>
@@ -59,8 +59,9 @@ export function TicketTableRow({
             size="icon"
             onClick={() => onView(ticket)}
             title={t("Skatīt", "View")}
+            className="border-gray-300 dark:border-gray-600"
           >
-            <Eye className="h-4 w-4" />
+            <Eye className="h-4 w-4 text-gray-700 dark:text-gray-300" />
           </Button>
           
           {ticket.file_path && (
@@ -71,8 +72,9 @@ export function TicketTableRow({
                 window.open(`https://bljjkzgswgeqswuuryvm.supabase.co/storage/v1/object/public/tickets/${ticket.file_path}`, '_blank');
               }}
               title={t("Lejupielādēt", "Download")}
+              className="border-gray-300 dark:border-gray-600"
             >
-              <Download className="h-4 w-4" />
+              <Download className="h-4 w-4 text-gray-700 dark:text-gray-300" />
             </Button>
           )}
           
@@ -81,7 +83,7 @@ export function TicketTableRow({
               variant="outline"
               size="icon"
               onClick={() => onEdit(ticket)}
-              className="text-blue-600 hover:bg-blue-50 hover:text-blue-800"
+              className="text-blue-600 hover:bg-blue-50 hover:text-blue-800 border-blue-300 dark:border-blue-600"
               title={t("Rediģēt", "Edit")}
             >
               <Pencil className="h-4 w-4" />
@@ -93,7 +95,7 @@ export function TicketTableRow({
               variant="outline"
               size="icon"
               onClick={() => onDelete(ticket.id)}
-              className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+              className="text-red-600 hover:bg-red-50 hover:text-red-800 border-red-300 dark:border-red-600"
               disabled={isLoading}
               title={t("Dzēst", "Delete")}
             >
