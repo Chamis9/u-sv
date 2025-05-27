@@ -18,14 +18,15 @@ export const TicketCard: React.FC<TicketCardProps> = ({
 }) => {
   const { currentLanguage } = useLanguage();
   
-  const availableText = {
-    lv: "Pieejamas",
-    en: "Available"
-  };
-
-  const buyTicketText = {
-    lv: "Pirkt biļeti",
-    en: "Buy ticket"
+  const t = (lv: string, en: string, lt: string, ee: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lv;
+      case 'en': return en;
+      case 'lt': return lt;
+      case 'et':
+      case 'ee': return ee;
+      default: return lv;
+    }
   };
 
   return (
@@ -36,7 +37,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
           {type}
         </CardTitle>
         <CardDescription>
-          {availableText[currentLanguage.code as keyof typeof availableText]}: {available}
+          {t("Pieejamas", "Available", "Prieinama", "Saadaval")}: {available}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -46,7 +47,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
       </CardContent>
       <CardFooter>
         <Button className="w-full" variant="orange">
-          {buyTicketText[currentLanguage.code as keyof typeof buyTicketText]}
+          {t("Pirkt biļeti", "Buy ticket", "Pirkti bilietą", "Osta pilet")}
         </Button>
       </CardFooter>
     </Card>

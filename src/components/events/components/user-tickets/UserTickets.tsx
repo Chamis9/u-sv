@@ -73,7 +73,7 @@ export const UserTickets: React.FC<UserTicketsProps> = ({
         isAuthenticated={isAuthenticated}
         userId={user?.id}
         currentLanguageCode={currentLanguage.code}
-        t={(lv: string, en: string) => t(lv, en, lv, en)}
+        t={t}
         isDeleting={isDeleting}
       />
       

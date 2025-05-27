@@ -11,7 +11,7 @@ interface TicketGridProps {
   isAuthenticated: boolean;
   userId?: string | null;
   currentLanguageCode: string;
-  t: (lvText: string, enText: string) => string;
+  t: (lv: string, en: string, lt: string, ee: string) => string;
   isDeleting: boolean;
 }
 
