@@ -21,8 +21,16 @@ interface CategorySelectorProps {
 export function CategorySelector({ value, onChange }: CategorySelectorProps) {
   const { currentLanguage } = useLanguage();
   
-  const t = (lvText: string, enText: string) => 
-    currentLanguage.code === 'lv' ? lvText : enText;
+  const t = (lvText: string, enText: string, ltText: string, eeText: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lvText;
+      case 'en': return enText;
+      case 'lt': return ltText;
+      case 'et':
+      case 'ee': return eeText;
+      default: return lvText;
+    }
+  };
 
   // Fetch categories directly from supabase to get all language columns
   const { data: categories = [], isLoading } = useQuery({
@@ -51,12 +59,12 @@ export function CategorySelector({ value, onChange }: CategorySelectorProps) {
       required
     >
       <SelectTrigger className={`${value ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400"} border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700`}>
-        <SelectValue placeholder={t("Izvēlieties kategoriju", "Select a category")} />
+        <SelectValue placeholder={t("Izvēlieties kategoriju", "Select a category", "Pasirinkite kategoriją", "Valige kategooria")} />
       </SelectTrigger>
       <SelectContent className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600">
         {isLoading ? (
           <SelectItem value="loading" disabled>
-            {t("Ielādē...", "Loading...")}
+            {t("Ielādē...", "Loading...", "Kraunama...", "Laadimine...")}
           </SelectItem>
         ) : categories.length > 0 ? (
           categories.map((category) => {
@@ -68,7 +76,7 @@ export function CategorySelector({ value, onChange }: CategorySelectorProps) {
             );
           })
         ) : (
-          <SelectItem value="other">{t("Cits", "Other")}</SelectItem>
+          <SelectItem value="other">{t("Cits", "Other", "Kita", "Muu")}</SelectItem>
         )}
       </SelectContent>
     </Select>

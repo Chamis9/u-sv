@@ -26,14 +26,24 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
   setEndDate
 }) => {
   const { currentLanguage } = useLanguage();
-  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
+  
+  const t = (lv: string, en: string, lt: string, ee: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lv;
+      case 'en': return en;
+      case 'lt': return lt;
+      case 'et':
+      case 'ee': return ee;
+      default: return lv;
+    }
+  };
   
   // Format the date range for display
   const dateButtonText = startDate && endDate
     ? `${format(startDate, 'dd.MM.yyyy')} - ${format(endDate, 'dd.MM.yyyy')}`
     : startDate 
       ? `${format(startDate, 'dd.MM.yyyy')} - ...` 
-      : t('Izvēlies datumus', 'Select dates');
+      : t('Izvēlies datumus', 'Select dates', 'Pasirinkite datas', 'Valige kuupäevad');
   
   // Clear date filters
   const clearDateFilters = () => {
@@ -46,7 +56,7 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
       <div className="relative flex-grow">
         <Input
           type="search"
-          placeholder={t("Meklēt pasākumus un biļetes...", "Search events and tickets...")}
+          placeholder={t("Meklēt pasākumus un biļetes...", "Search events and tickets...", "Ieškoti renginių ir bilietų...", "Otsige üritusi ja pileteid...")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10 text-green-600 dark:text-green-400 focus-visible:ring-ticket-accent focus-visible:ring-2 focus-visible:border-ticket-accent"
@@ -101,7 +111,7 @@ export const EventSearchFilter: React.FC<EventSearchFilterProps> = ({
                 className="flex items-center gap-2 self-end text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 border-green-600 dark:border-green-400 hover:border-green-700 dark:hover:border-green-300"
               >
                 <Trash2 className="h-4 w-4" />
-                {t("Notīrīt", "Clear")}
+                {t("Notīrīt", "Clear", "Išvalyti", "Tühjenda")}
               </Button>
             )}
           </div>
