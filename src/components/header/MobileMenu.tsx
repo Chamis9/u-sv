@@ -32,35 +32,35 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onLinkClick }) => {
             className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
             onClick={onLinkClick}
           >
-            {translations?.navigation?.home || "Sākums"}
+            {translations?.navigation?.home || "Home"}
           </Link>
           <Link 
             to={createPath('/events')} 
             className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
             onClick={onLinkClick}
           >
-            {translations?.navigation?.events || "Pasākumi"}
+            {translations?.navigation?.events || "Events"}
           </Link>
           <Link 
             to={createPath('/tickets')} 
             className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
             onClick={onLinkClick}
           >
-            {translations?.navigation?.tickets || "Biļetes"}
+            {translations?.navigation?.tickets || "Tickets"}
           </Link>
           <Link 
             to={createPath('/about-us')} 
             className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
             onClick={onLinkClick}
           >
-            {translations?.navigation?.about || "Par mums"}
+            {translations?.navigation?.aboutUs || "About Us"}
           </Link>
           <Link 
             to={createPath('/contact')} 
             className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
             onClick={onLinkClick}
           >
-            {translations?.navigation?.contact || "Kontakti"}
+            {translations?.navigation?.contact || "Contact"}
           </Link>
         </nav>
       </SheetContent>

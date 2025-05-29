@@ -1,8 +1,8 @@
 
 import { LanguageSelector } from "@/features/language";
 import { Logo } from "./header/Logo";
-import { Navigation, getNavigationLinks } from "./header/Navigation";
-import { MobileMenu } from "./header/MobileMenu";
+import Navigation from "./header/Navigation";
+import MobileMenu from "./header/MobileMenu";
 import { UserCircle } from "lucide-react";
 import { useLanguage } from "@/features/language";
 import { useAuth } from "@/contexts/AuthContext";
