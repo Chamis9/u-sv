@@ -93,6 +93,22 @@ const Tickets = () => {
   
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
+  // Debug function to check category data
+  React.useEffect(() => {
+    if (categories) {
+      console.log('Categories data:', categories);
+      categories.forEach(category => {
+        console.log(`Category: ${category.name}`, {
+          name_lv: category.name_lv,
+          name_en: category.name_en,
+          name_lt: category.name_lt,
+          name_ee: category.name_ee,
+          localizedName: getLocalizedCategoryName(category, currentLanguage.code)
+        });
+      });
+    }
+  }, [categories, currentLanguage.code]);
+
   if (categoriesLoading) {
     return (
       <ThemeProvider>
