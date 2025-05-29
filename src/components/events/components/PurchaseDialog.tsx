@@ -26,7 +26,16 @@ export const PurchaseDialog: React.FC<PurchaseDialogProps> = ({
   onPurchaseConfirm
 }) => {
   const { currentLanguage } = useLanguage();
-  const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
+  const t = (lv: string, en: string, lt: string, ee: string) => {
+    switch (currentLanguage.code) {
+      case 'lv': return lv;
+      case 'en': return en;
+      case 'lt': return lt;
+      case 'et':
+      case 'ee': return ee;
+      default: return lv;
+    }
+  };
 
   if (!ticket) return null;
 
@@ -34,9 +43,9 @@ export const PurchaseDialog: React.FC<PurchaseDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t("Biļetes pirkšana", "Purchase Ticket")}</DialogTitle>
+          <DialogTitle>{t("Biļetes pirkšana", "Purchase Ticket", "Bilieto pirkimas", "Pileti ostmine")}</DialogTitle>
           <DialogDescription>
-            {t("Vai vēlaties iegādāties šo biļeti?", "Do you want to purchase this ticket?")}
+            {t("Vai vēlaties iegādāties šo biļeti?", "Do you want to purchase this ticket?", "Ar norite įsigyti šį bilietą?", "Kas soovite seda piletit osta?")}
           </DialogDescription>
         </DialogHeader>
         
@@ -53,13 +62,13 @@ export const PurchaseDialog: React.FC<PurchaseDialogProps> = ({
             variant="outline" 
             onClick={() => onOpenChange(false)}
           >
-            {t("Atcelt", "Cancel")}
+            {t("Atcelt", "Cancel", "Atšaukti", "Tühista")}
           </Button>
           <Button 
             variant="orange" 
             onClick={() => ticket && onPurchaseConfirm(ticket)}
           >
-            {t("Apstiprināt pirkumu", "Confirm Purchase")}
+            {t("Apstiprināt pirkumu", "Confirm Purchase", "Patvirtinti pirkimą", "Kinnita ost")}
           </Button>
         </DialogFooter>
       </DialogContent>
