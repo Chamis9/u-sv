@@ -8,6 +8,7 @@ import { ProfileMainContent } from "./components/ProfileMainContent";
 import { useProfileData } from "./hooks/useProfileData";
 import { useUserUpdates } from "./hooks/useUserUpdates";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/features/language";
 
 interface ProfileContainerProps {
   isAuthenticated: boolean;
@@ -20,15 +21,16 @@ export function ProfileContainer({ isAuthenticated, isLoading, userId }: Profile
   const { user: authUser } = useAuth();
   const { user, setUser, isLoading: isDataLoading } = useProfileData();
   const { handleUserUpdate } = useUserUpdates();
+  const { currentLanguage } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
 
   // Check if user is trying to access their own profile
   React.useEffect(() => {
     if (routeUserId && authUser && routeUserId !== authUser.id) {
-      navigate(`/profile/${authUser.id}/account`, { replace: true });
+      navigate(`/${currentLanguage.code}/profile/${authUser.id}/account`, { replace: true });
     }
-  }, [routeUserId, authUser, navigate]);
+  }, [routeUserId, authUser, navigate, currentLanguage.code]);
 
   // Get the active tab from the current route - fix the parsing logic
   const getActiveTabFromRoute = () => {
@@ -51,7 +53,7 @@ export function ProfileContainer({ isAuthenticated, isLoading, userId }: Profile
 
   // Handle tab change by navigating to the appropriate route
   const handleTabChange = (tab: string) => {
-    navigate(`/profile/${userId}/${tab}`);
+    navigate(`/${currentLanguage.code}/profile/${userId}/${tab}`);
   };
 
   // Function to handle user updates
@@ -64,6 +66,7 @@ export function ProfileContainer({ isAuthenticated, isLoading, userId }: Profile
   const activeTab = getActiveTabFromRoute();
   console.log("Current route:", location.pathname);
   console.log("Active tab:", activeTab);
+  console.log("Current language:", currentLanguage.code);
 
   return (
     <ProfileAuthGuard isAuthenticated={isAuthenticated} isLoading={isLoading}>
@@ -76,7 +79,7 @@ export function ProfileContainer({ isAuthenticated, isLoading, userId }: Profile
         
         <div className="flex-1 overflow-auto p-8">
           <Routes>
-            <Route path="/" element={<Navigate to={`/profile/${userId}/account`} replace />} />
+            <Route path="/" element={<Navigate to={`/${currentLanguage.code}/profile/${userId}/account`} replace />} />
             <Route path="/account" element={
               <ProfileMainContent
                 activeTab="account"
@@ -109,7 +112,7 @@ export function ProfileContainer({ isAuthenticated, isLoading, userId }: Profile
                 isLoading={isDataLoading}
               />
             } />
-            <Route path="*" element={<Navigate to={`/profile/${userId}/account`} replace />} />
+            <Route path="*" element={<Navigate to={`/${currentLanguage.code}/profile/${userId}/account`} replace />} />
           </Routes>
         </div>
       </div>
