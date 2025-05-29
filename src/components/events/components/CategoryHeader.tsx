@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/features/language";
+import { eventsTranslations } from "@/features/language/translations/features/events";
 
 interface CategoryHeaderProps {
   categoryDisplayName: string;
@@ -14,16 +15,53 @@ export const CategoryHeader: React.FC<CategoryHeaderProps> = ({ categoryDisplayN
   
   const backButtonText = {
     lv: "Atpakaļ",
-    en: "Back"
+    en: "Back",
+    lt: "Atgal",
+    et: "Tagasi",
+    ee: "Tagasi"
   };
   
-  // Get proper display name from translations if available
+  // Get proper display name from translations
   const getTranslatedCategoryName = () => {
-    if (categoryDisplayName.toLowerCase() === 'citi-pasākumi' || categoryDisplayName.toLowerCase() === 'citi pasākumi') {
-      return currentLanguage.code === 'lv' ? 'Citi pasākumi' : 'Other Events';
+    const langCode = currentLanguage.code === 'ee' ? 'et' : currentLanguage.code;
+    const translations = eventsTranslations[langCode as keyof typeof eventsTranslations];
+    
+    if (!translations) {
+      return categoryDisplayName.charAt(0).toUpperCase() + categoryDisplayName.slice(1);
     }
     
-    // For other categories, capitalize first letter as before
+    // Map category display names to translation keys
+    const categoryName = categoryDisplayName.toLowerCase();
+    
+    if (categoryName === 'teatris' || categoryName === 'theatre' || categoryName === 'teatras' || categoryName === 'teater') {
+      return translations.theatre;
+    }
+    if (categoryName === 'koncerti' || categoryName === 'concerts' || categoryName === 'koncertai' || categoryName === 'kontserdid') {
+      return translations.concerts;
+    }
+    if (categoryName === 'festivāli' || categoryName === 'festivals' || categoryName === 'festivaliai' || categoryName === 'festivalid') {
+      return translations.festivals;
+    }
+    if (categoryName === 'sports' || categoryName === 'sportas' || categoryName === 'sport') {
+      return translations.sports;
+    }
+    if (categoryName === 'kino' || categoryName === 'cinema' || categoryName === 'kinas') {
+      return translations.cinema;
+    }
+    if (categoryName === 'bērniem' || categoryName === 'for children' || categoryName === 'vaikams' || categoryName === 'lastele') {
+      return translations.children;
+    }
+    if (categoryName === 'ceļojumi' || categoryName === 'travel' || categoryName === 'kelionės' || categoryName === 'reisimine') {
+      return translations.travel;
+    }
+    if (categoryName === 'dāvanu kartes' || categoryName === 'gift cards' || categoryName === 'dovanų kortelės' || categoryName === 'kinkekaardid') {
+      return translations.giftCards;
+    }
+    if (categoryName === 'citi pasākumi' || categoryName === 'other events' || categoryName === 'kiti renginiai' || categoryName === 'muud üritused') {
+      return translations.other;
+    }
+    
+    // For other categories, capitalize first letter as fallback
     return categoryDisplayName.charAt(0).toUpperCase() + categoryDisplayName.slice(1);
   };
   
