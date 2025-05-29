@@ -30,10 +30,23 @@ export function ProfileContainer({ isAuthenticated, isLoading, userId }: Profile
     }
   }, [routeUserId, authUser, navigate]);
 
-  // Get the active tab from the current route
+  // Get the active tab from the current route - fix the parsing logic
   const getActiveTabFromRoute = () => {
-    const path = location.pathname.split('/')[3] || 'account';
-    return path;
+    // URL structure: /lang/profile/userId/tab
+    // Split by '/' and get the last segment which should be the tab
+    const pathSegments = location.pathname.split('/').filter(segment => segment !== '');
+    
+    // For profile routes, the structure should be: [lang, 'profile', userId, tab]
+    // So the tab should be at index 3
+    const lastSegment = pathSegments[pathSegments.length - 1];
+    
+    // If the last segment is a valid tab name, use it, otherwise default to 'account'
+    const validTabs = ['account', 'tickets', 'payments', 'settings'];
+    if (validTabs.includes(lastSegment)) {
+      return lastSegment;
+    }
+    
+    return 'account';
   };
 
   // Handle tab change by navigating to the appropriate route
@@ -48,14 +61,15 @@ export function ProfileContainer({ isAuthenticated, isLoading, userId }: Profile
     setUser(result);
   };
 
+  const activeTab = getActiveTabFromRoute();
   console.log("Current route:", location.pathname);
-  console.log("Active tab:", getActiveTabFromRoute());
+  console.log("Active tab:", activeTab);
 
   return (
     <ProfileAuthGuard isAuthenticated={isAuthenticated} isLoading={isLoading}>
       <div className="flex flex-1 overflow-hidden pt-16">
         <ProfileSidebar 
-          activeTab={getActiveTabFromRoute()} 
+          activeTab={activeTab} 
           onTabChange={handleTabChange}
           user={user}
         />
