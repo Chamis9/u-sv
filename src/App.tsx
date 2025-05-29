@@ -17,7 +17,6 @@ import Contact from "./pages/Contact";
 import Events from "./pages/Events";
 import Tickets from "./pages/Tickets";
 import AboutUs from "./pages/AboutUs";
-// Import Profile page directly instead of using dynamic import
 import Profile from "./pages/Profile";
 
 // Lazy load other pages for better performance
@@ -80,27 +79,43 @@ const App = () => {
         <TooltipProvider>
           <ThemeProvider defaultTheme="light" storageKey="ui-theme">
             <AuthProvider>
-              <LanguageProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
+              <BrowserRouter>
+                <LanguageProvider>
+                  <Toaster />
+                  <Sonner />
                   <Suspense fallback={<PageLoader />}>
                     <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/events" element={<Events />} />
-                      <Route path="/events/:category" element={<CategoryEventList />} />
-                      <Route path="/events/:category/:eventId" element={<EventTickets />} />
-                      <Route path="/tickets" element={<Tickets />} />
-                      <Route path="/about-us" element={<AboutUs />} />
-                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/admin/*" element={<Admin />} />
-                      <Route path="/profile/*" element={<Profile />} />
+                      {/* Redirect root to /en */}
+                      <Route path="/" element={<Navigate to="/en" replace />} />
+                      
+                      {/* Language-prefixed routes */}
+                      <Route path="/:lang" element={<Index />} />
+                      <Route path="/:lang/events" element={<Events />} />
+                      <Route path="/:lang/events/:category" element={<CategoryEventList />} />
+                      <Route path="/:lang/events/:category/:eventId" element={<EventTickets />} />
+                      <Route path="/:lang/tickets" element={<Tickets />} />
+                      <Route path="/:lang/about-us" element={<AboutUs />} />
+                      <Route path="/:lang/privacy-policy" element={<PrivacyPolicy />} />
+                      <Route path="/:lang/contact" element={<Contact />} />
+                      <Route path="/:lang/admin/*" element={<Admin />} />
+                      <Route path="/:lang/profile/*" element={<Profile />} />
+                      
+                      {/* Legacy routes without language prefix - redirect to English */}
+                      <Route path="/events" element={<Navigate to="/en/events" replace />} />
+                      <Route path="/events/:category" element={<Navigate to="/en/events" replace />} />
+                      <Route path="/events/:category/:eventId" element={<Navigate to="/en/events" replace />} />
+                      <Route path="/tickets" element={<Navigate to="/en/tickets" replace />} />
+                      <Route path="/about-us" element={<Navigate to="/en/about-us" replace />} />
+                      <Route path="/privacy-policy" element={<Navigate to="/en/privacy-policy" replace />} />
+                      <Route path="/contact" element={<Navigate to="/en/contact" replace />} />
+                      <Route path="/admin/*" element={<Navigate to="/en/admin" replace />} />
+                      <Route path="/profile/*" element={<Navigate to="/en/profile" replace />} />
+                      
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Suspense>
-                </BrowserRouter>
-              </LanguageProvider>
+                </LanguageProvider>
+              </BrowserRouter>
             </AuthProvider>
           </ThemeProvider>
         </TooltipProvider>

@@ -1,38 +1,58 @@
 
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "@/features/language";
-import { Search, Ticket } from "lucide-react";
 
-export function Navigation() {
-  const { translations } = useLanguage();
-  
-  const navigationLinks = [
-    { href: "/", label: translations?.navigation?.home || "Home" },
-    { href: "/events", label: translations?.navigation?.tickets || "Tickets" },
-    { href: "/contact", label: translations?.navigation?.contact || "Contact" }
-  ];
-  
+const Navigation = () => {
+  const { currentLanguage, translations } = useLanguage();
+  const location = useLocation();
+
+  // Helper function to create language-prefixed paths
+  const createPath = (path: string) => {
+    return `/${currentLanguage.code}${path}`;
+  };
+
+  // Helper function to check if current path is active
+  const isActive = (path: string) => {
+    const fullPath = createPath(path);
+    return location.pathname === fullPath || 
+           (path !== '/' && location.pathname.startsWith(fullPath));
+  };
+
   return (
-    <nav className="hidden md:flex items-center space-x-6">
-      {navigationLinks.map((link, index) => (
-        <Link
-          key={index}
-          to={link.href}
-          className="text-sm font-medium text-white hover:text-orange-200 transition-colors"
-        >
-          {link.label}
-        </Link>
-      ))}
+    <nav className="hidden md:flex items-center space-x-8">
+      <Link 
+        to={createPath('/')} 
+        className={`transition-colors ${isActive('/') ? 'text-orange-500' : 'text-gray-700 dark:text-gray-200 hover:text-orange-500'}`}
+      >
+        {translations?.navigation?.home || "Sākums"}
+      </Link>
+      <Link 
+        to={createPath('/events')} 
+        className={`transition-colors ${isActive('/events') ? 'text-orange-500' : 'text-gray-700 dark:text-gray-200 hover:text-orange-500'}`}
+      >
+        {translations?.navigation?.events || "Pasākumi"}
+      </Link>
+      <Link 
+        to={createPath('/tickets')} 
+        className={`transition-colors ${isActive('/tickets') ? 'text-orange-500' : 'text-gray-700 dark:text-gray-200 hover:text-orange-500'}`}
+      >
+        {translations?.navigation?.tickets || "Biļetes"}
+      </Link>
+      <Link 
+        to={createPath('/about-us')} 
+        className={`transition-colors ${isActive('/about-us') ? 'text-orange-500' : 'text-gray-700 dark:text-gray-200 hover:text-orange-500'}`}
+      >
+        {translations?.navigation?.about || "Par mums"}
+      </Link>
+      <Link 
+        to={createPath('/contact')} 
+        className={`transition-colors ${isActive('/contact') ? 'text-orange-500' : 'text-gray-700 dark:text-gray-200 hover:text-orange-500'}`}
+      >
+        {translations?.navigation?.contact || "Kontakti"}
+      </Link>
     </nav>
   );
-}
-
-export const getNavigationLinks = () => {
-  const { translations } = useLanguage();
-  
-  return [
-    { href: "/", label: translations?.navigation?.home || "Home" },
-    { href: "/events", label: translations?.navigation?.tickets || "Tickets" },
-    { href: "/contact", label: translations?.navigation?.contact || "Contact" }
-  ];
 };
+
+export default Navigation;

@@ -1,64 +1,71 @@
 
-import React, { useState } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import React from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { useLanguage } from "@/features/language";
-import { LanguageSelector } from "@/features/language";
-import { Logo } from "./Logo";
-import { Link } from "react-router-dom";
 
 interface MobileMenuProps {
-  links: Array<{
-    href: string;
-    label: string;
-  }>;
+  onLinkClick?: () => void;
 }
 
-export function MobileMenu({ links }: MobileMenuProps) {
-  const [open, setOpen] = useState(false);
-  const { translations } = useLanguage();
+const MobileMenu: React.FC<MobileMenuProps> = ({ onLinkClick }) => {
+  const { currentLanguage, translations } = useLanguage();
+
+  // Helper function to create language-prefixed paths
+  const createPath = (path: string) => {
+    return `/${currentLanguage.code}${path}`;
+  };
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="md:hidden">
-          <Menu className="h-6 w-6 text-ticket-text" />
-          <span className="sr-only">Toggle menu</span>
+          <Menu className="h-6 w-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent 
-        side="left" 
-        className="w-[280px] sm:w-[350px] bg-ticket-bg border-ticket-text/10"
-      >
-        <div className="flex flex-col h-full">
-          <div className="mb-6">
-            <Logo />
-          </div>
-          
-          <nav className="flex flex-col space-y-4 mb-8">
-            {links.map((link, index) => (
-              <Link
-                key={index}
-                to={link.href}
-                className="px-2 py-3 text-lg font-medium text-ticket-text hover:text-ticket-accent rounded-md transition-colors"
-                onClick={() => setOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-          
-          <div className="mt-auto space-y-4">
-            <div className="flex items-center justify-between px-2">
-              <span className="text-sm font-medium text-ticket-text">
-                {translations.language?.label}
-              </span>
-              <LanguageSelector />
-            </div>
-          </div>
-        </div>
+      <SheetContent side="right" className="w-64">
+        <nav className="flex flex-col space-y-4 mt-8">
+          <Link 
+            to={createPath('/')} 
+            className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
+            onClick={onLinkClick}
+          >
+            {translations?.navigation?.home || "Sākums"}
+          </Link>
+          <Link 
+            to={createPath('/events')} 
+            className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
+            onClick={onLinkClick}
+          >
+            {translations?.navigation?.events || "Pasākumi"}
+          </Link>
+          <Link 
+            to={createPath('/tickets')} 
+            className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
+            onClick={onLinkClick}
+          >
+            {translations?.navigation?.tickets || "Biļetes"}
+          </Link>
+          <Link 
+            to={createPath('/about-us')} 
+            className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
+            onClick={onLinkClick}
+          >
+            {translations?.navigation?.about || "Par mums"}
+          </Link>
+          <Link 
+            to={createPath('/contact')} 
+            className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
+            onClick={onLinkClick}
+          >
+            {translations?.navigation?.contact || "Kontakti"}
+          </Link>
+        </nav>
       </SheetContent>
     </Sheet>
   );
-}
+};
+
+export default MobileMenu;
