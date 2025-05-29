@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { UserTicket } from "@/hooks/tickets";
 import { useLanguage } from "@/features/language";
 import { Calendar, MapPin, Clock, Tag, Ticket, User } from "lucide-react";
@@ -39,22 +39,32 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
     const fetchSellerInfo = async () => {
       if (ticket?.seller_id) {
         try {
-          const { data, error } = await supabase
+          // First try to get from registered_users table
+          const { data: userData, error: userError } = await supabase
             .from('registered_users')
             .select('first_name, last_name')
             .eq('id', ticket.seller_id)
-            .single();
+            .maybeSingle();
           
-          if (error) {
-            console.error("Error fetching seller info:", error);
+          if (userData && !userError) {
+            setSellerName(`${userData.first_name || ''} ${userData.last_name || ''}`.trim() || 'Nezināms');
             return;
           }
           
-          if (data) {
-            setSellerName(`${data.first_name} ${data.last_name}`);
+          // If not found in registered_users, try to get from auth.users (fallback)
+          const { data: authData, error: authError } = await supabase.auth.admin.getUserById(ticket.seller_id);
+          
+          if (authData?.user && !authError) {
+            // Use email as fallback if no name is available
+            const email = authData.user.email || 'Nezināms';
+            setSellerName(email.split('@')[0]); // Use email username part
+          } else {
+            console.log("Seller not found, using fallback");
+            setSellerName('Nezināms');
           }
         } catch (error) {
-          console.error("Error in fetchSellerInfo:", error);
+          console.log("Error in fetchSellerInfo:", error);
+          setSellerName('Nezināms');
         }
       }
     };
@@ -77,11 +87,14 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+      <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-black dark:text-white">
             {t('Biļetes informācija', 'Ticket Information', 'Bilieto informacija', 'Pileti informatsioon')}
           </DialogTitle>
+          <DialogDescription className="text-sm text-gray-600 dark:text-gray-400">
+            {t('Detalizēta informācija par biļeti', 'Detailed ticket information', 'Detali bilieto informacija', 'Üksikasjalik pileti informatsioon')}
+          </DialogDescription>
         </DialogHeader>
         
         <div className="py-4">
@@ -91,9 +104,11 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
             </h3>
             
             {ticket.description && (
-              <p className="text-sm text-black dark:text-white break-words">
-                {ticket.description}
-              </p>
+              <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-md">
+                <p className="text-sm text-black dark:text-white break-words">
+                  <strong>{t('Apraksts', 'Description', 'Aprašymas', 'Kirjeldus')}:</strong> {ticket.description}
+                </p>
+              </div>
             )}
             
             <div className="grid gap-3">
@@ -101,7 +116,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
                 <div className="flex items-center text-sm text-black dark:text-white">
                   <Calendar className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
                   <span>
-                    {formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
+                    <strong>{t('Datums', 'Date', 'Data', 'Kuupäev')}:</strong> {formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
                   </span>
                 </div>
               )}
@@ -109,26 +124,34 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
               {ticket.event_time && (
                 <div className="flex items-center text-sm text-black dark:text-white">
                   <Clock className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
-                  <span>{ticket.event_time}</span>
+                  <span>
+                    <strong>{t('Laiks', 'Time', 'Laikas', 'Aeg')}:</strong> {ticket.event_time}
+                  </span>
                 </div>
               )}
               
               {ticket.venue && (
                 <div className="flex items-center text-sm text-black dark:text-white">
                   <MapPin className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
-                  <span className="break-words">{ticket.venue}</span>
+                  <span className="break-words">
+                    <strong>{t('Vieta', 'Venue', 'Vieta', 'Koht')}:</strong> {ticket.venue}
+                  </span>
                 </div>
               )}
               
               <div className="flex items-center text-sm text-black dark:text-white">
                 <Tag className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
-                <span className="break-words">{ticket.category}</span>
+                <span className="break-words">
+                  <strong>{t('Kategorija', 'Category', 'Kategorija', 'Kategooria')}:</strong> {ticket.category}
+                </span>
               </div>
               
               {sellerName && (
                 <div className="flex items-center text-sm text-black dark:text-white">
                   <User className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
-                  <span>{t('Pārdevējs', 'Seller', 'Pardavėjas', 'Müüja')}: {sellerName}</span>
+                  <span>
+                    <strong>{t('Pārdevējs', 'Seller', 'Pardavėjas', 'Müüja')}:</strong> {sellerName}
+                  </span>
                 </div>
               )}
             </div>
@@ -152,7 +175,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
                 <Button 
                   variant="orange" 
                   onClick={handlePurchase}
-                  className="flex items-center text-white"
+                  className="flex items-center text-white bg-orange-500 hover:bg-orange-600"
                 >
                   <Ticket className="h-4 w-4 mr-2" />
                   {t('Pirkt biļeti', 'Buy ticket', 'Pirkti bilietą', 'Osta pilet')}
