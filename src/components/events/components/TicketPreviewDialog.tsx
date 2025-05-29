@@ -39,7 +39,6 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
     const fetchSellerInfo = async () => {
       if (ticket?.seller_id) {
         try {
-          // First try to get from registered_users table
           const { data: userData, error: userError } = await supabase
             .from('registered_users')
             .select('first_name, last_name')
@@ -48,16 +47,6 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
           
           if (userData && !userError) {
             setSellerName(`${userData.first_name || ''} ${userData.last_name || ''}`.trim() || 'Nezināms');
-            return;
-          }
-          
-          // If not found in registered_users, try to get from auth.users (fallback)
-          const { data: authData, error: authError } = await supabase.auth.admin.getUserById(ticket.seller_id);
-          
-          if (authData?.user && !authError) {
-            // Use email as fallback if no name is available
-            const email = authData.user.email || 'Nezināms';
-            setSellerName(email.split('@')[0]); // Use email username part
           } else {
             console.log("Seller not found, using fallback");
             setSellerName('Nezināms');
@@ -88,8 +77,8 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-black dark:text-white">
+        <DialogHeader className="text-left">
+          <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white">
             {t('Biļetes informācija', 'Ticket Information', 'Bilieto informacija', 'Pileti informatsioon')}
           </DialogTitle>
           <DialogDescription className="text-sm text-gray-600 dark:text-gray-400">
@@ -97,81 +86,87 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
         
-        <div className="py-4">
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-black dark:text-white break-words">
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white break-words mb-4">
               {ticket.title}
             </h3>
             
             {ticket.description && (
-              <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-md">
-                <p className="text-sm text-black dark:text-white break-words">
-                  <strong>{t('Apraksts', 'Description', 'Aprašymas', 'Kirjeldus')}:</strong> {ticket.description}
+              <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-md mb-4">
+                <p className="text-sm text-gray-900 dark:text-white break-words">
+                  <strong className="text-gray-700 dark:text-gray-200">{t('Apraksts', 'Description', 'Aprašymas', 'Kirjeldus')}:</strong>{' '}
+                  {ticket.description}
                 </p>
               </div>
             )}
             
-            <div className="grid gap-3">
+            <div className="space-y-3">
               {ticket.event_date && (
-                <div className="flex items-center text-sm text-black dark:text-white">
-                  <Calendar className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
-                  <span>
-                    <strong>{t('Datums', 'Date', 'Data', 'Kuupäev')}:</strong> {formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
+                <div className="flex items-center text-sm">
+                  <Calendar className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <span className="text-gray-900 dark:text-white">
+                    <strong className="text-gray-700 dark:text-gray-300">{t('Datums', 'Date', 'Data', 'Kuupäev')}:</strong>{' '}
+                    {formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
                   </span>
                 </div>
               )}
               
               {ticket.event_time && (
-                <div className="flex items-center text-sm text-black dark:text-white">
-                  <Clock className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
-                  <span>
-                    <strong>{t('Laiks', 'Time', 'Laikas', 'Aeg')}:</strong> {ticket.event_time}
+                <div className="flex items-center text-sm">
+                  <Clock className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <span className="text-gray-900 dark:text-white">
+                    <strong className="text-gray-700 dark:text-gray-300">{t('Laiks', 'Time', 'Laikas', 'Aeg')}:</strong>{' '}
+                    {ticket.event_time}
                   </span>
                 </div>
               )}
               
               {ticket.venue && (
-                <div className="flex items-center text-sm text-black dark:text-white">
-                  <MapPin className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
-                  <span className="break-words">
-                    <strong>{t('Vieta', 'Venue', 'Vieta', 'Koht')}:</strong> {ticket.venue}
+                <div className="flex items-center text-sm">
+                  <MapPin className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <span className="text-gray-900 dark:text-white break-words">
+                    <strong className="text-gray-700 dark:text-gray-300">{t('Vieta', 'Venue', 'Vieta', 'Koht')}:</strong>{' '}
+                    {ticket.venue}
                   </span>
                 </div>
               )}
               
-              <div className="flex items-center text-sm text-black dark:text-white">
-                <Tag className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
-                <span className="break-words">
-                  <strong>{t('Kategorija', 'Category', 'Kategorija', 'Kategooria')}:</strong> {ticket.category}
+              <div className="flex items-center text-sm">
+                <Tag className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                <span className="text-gray-900 dark:text-white break-words">
+                  <strong className="text-gray-700 dark:text-gray-300">{t('Kategorija', 'Category', 'Kategorija', 'Kategooria')}:</strong>{' '}
+                  {ticket.category}
                 </span>
               </div>
               
               {sellerName && (
-                <div className="flex items-center text-sm text-black dark:text-white">
-                  <User className="h-4 w-4 mr-2 text-gray-700 dark:text-gray-200 flex-shrink-0" />
-                  <span>
-                    <strong>{t('Pārdevējs', 'Seller', 'Pardavėjas', 'Müüja')}:</strong> {sellerName}
+                <div className="flex items-center text-sm">
+                  <User className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <span className="text-gray-900 dark:text-white">
+                    <strong className="text-gray-700 dark:text-gray-300">{t('Pārdevējs', 'Seller', 'Pardavėjas', 'Müüja')}:</strong>{' '}
+                    {sellerName}
                   </span>
                 </div>
               )}
             </div>
 
-            <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
+            <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-sm text-gray-700 dark:text-gray-200">{t('Cena', 'Price', 'Kaina', 'Hind')}:</span>
-                  <div className="text-xl font-bold text-black dark:text-white">{formatPrice(ticket.price)}</div>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">{t('Cena', 'Price', 'Kaina', 'Hind')}:</span>
+                  <div className="text-xl font-bold text-gray-900 dark:text-white">{formatPrice(ticket.price)}</div>
                 </div>
                 <Ticket className="h-8 w-8 text-orange-500 opacity-50" />
               </div>
               
-              <div className="text-sm text-black dark:text-white mt-1">
+              <div className="text-sm text-gray-700 dark:text-gray-300 mt-2">
                 {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket", "bilietas", "pilet") : t("biļetes", "tickets", "bilietai", "piletid")} × {formatPrice(ticket.price_per_unit || ticket.price)}
               </div>
             </div>
             
             {onPurchase && (
-              <div className="flex justify-end mt-4">
+              <div className="flex justify-end mt-6">
                 <Button 
                   variant="orange" 
                   onClick={handlePurchase}
@@ -187,4 +182,4 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
       </DialogContent>
     </Dialog>
   );
-}
+};
