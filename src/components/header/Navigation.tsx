@@ -23,25 +23,25 @@ const Navigation = () => {
     <nav className="hidden md:flex items-center space-x-8">
       <Link 
         to={createPath('/')} 
-        className={`transition-colors ${isActive('/') ? 'text-orange-500' : 'text-gray-700 dark:text-gray-200 hover:text-orange-500'}`}
+        className={`transition-colors font-medium ${isActive('/') ? 'text-orange-500' : 'text-white hover:text-orange-300'}`}
       >
         {translations?.navigation?.home || "Home"}
       </Link>
       <Link 
         to={createPath('/tickets')} 
-        className={`transition-colors ${isActive('/tickets') ? 'text-orange-500' : 'text-gray-700 dark:text-gray-200 hover:text-orange-500'}`}
+        className={`transition-colors font-medium ${isActive('/tickets') ? 'text-orange-500' : 'text-white hover:text-orange-300'}`}
       >
         {translations?.navigation?.tickets || "Tickets"}
       </Link>
       <Link 
         to={createPath('/about-us')} 
-        className={`transition-colors ${isActive('/about-us') ? 'text-orange-500' : 'text-gray-700 dark:text-gray-200 hover:text-orange-500'}`}
+        className={`transition-colors font-medium ${isActive('/about-us') ? 'text-orange-500' : 'text-white hover:text-orange-300'}`}
       >
         {translations?.navigation?.aboutUs || "About Us"}
       </Link>
       <Link 
         to={createPath('/contact')} 
-        className={`transition-colors ${isActive('/contact') ? 'text-orange-500' : 'text-gray-700 dark:text-gray-200 hover:text-orange-500'}`}
+        className={`transition-colors font-medium ${isActive('/contact') ? 'text-orange-500' : 'text-white hover:text-orange-300'}`}
       >
         {translations?.navigation?.contact || "Contact"}
       </Link>

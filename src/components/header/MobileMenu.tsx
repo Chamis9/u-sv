@@ -21,7 +21,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onLinkClick }) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button variant="ghost" size="icon" className="md:hidden text-white hover:text-orange-300">
           <Menu className="h-6 w-6" />
         </Button>
       </SheetTrigger>
@@ -29,28 +29,28 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onLinkClick }) => {
         <nav className="flex flex-col space-y-4 mt-8">
           <Link 
             to={createPath('/')} 
-            className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
+            className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-orange-500 transition-colors"
             onClick={onLinkClick}
           >
             {translations?.navigation?.home || "Home"}
           </Link>
           <Link 
             to={createPath('/tickets')} 
-            className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
+            className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-orange-500 transition-colors"
             onClick={onLinkClick}
           >
             {translations?.navigation?.tickets || "Tickets"}
           </Link>
           <Link 
             to={createPath('/about-us')} 
-            className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
+            className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-orange-500 transition-colors"
             onClick={onLinkClick}
           >
             {translations?.navigation?.aboutUs || "About Us"}
           </Link>
           <Link 
             to={createPath('/contact')} 
-            className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 transition-colors"
+            className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-orange-500 transition-colors"
             onClick={onLinkClick}
           >
             {translations?.navigation?.contact || "Contact"}
