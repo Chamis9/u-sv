@@ -15,13 +15,6 @@ export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Default navigation links if there's an issue with the translations
-  const navigationLinks = [
-    { href: "/", label: "Home" },
-    { href: "/events", label: "Events" },
-    { href: "/contact", label: "Contact" }
-  ];
-
   const t = (lvText: string, enText: string) => {
     if (currentLanguage.code === 'lv') return lvText;
     if (currentLanguage.code === 'et') return enText;
@@ -38,7 +31,7 @@ export function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 py-3 md:py-4 px-4 md:px-6 bg-ticket-bg/90 backdrop-blur-sm border-b border-ticket-accent/10">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
-          <MobileMenu links={navigationLinks} />
+          <MobileMenu />
           <Logo />
         </div>
         
