@@ -74,6 +74,8 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
     }
   };
 
+  console.log("Ticket data in modal:", ticket);
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 max-h-[90vh] overflow-y-auto">
@@ -86,10 +88,10 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-6">
+        <div className="space-y-6 mt-4">
           <div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white break-words mb-4">
-              {ticket.title}
+              {ticket.title || 'Nav nosaukuma'}
             </h3>
             
             {ticket.description && (
@@ -132,13 +134,15 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
                 </div>
               )}
               
-              <div className="flex items-center text-sm">
-                <Tag className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                <span className="text-gray-900 dark:text-white break-words">
-                  <strong className="text-gray-700 dark:text-gray-300">{t('Kategorija', 'Category', 'Kategorija', 'Kategooria')}:</strong>{' '}
-                  {ticket.category}
-                </span>
-              </div>
+              {ticket.category && (
+                <div className="flex items-center text-sm">
+                  <Tag className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
+                  <span className="text-gray-900 dark:text-white break-words">
+                    <strong className="text-gray-700 dark:text-gray-300">{t('Kategorija', 'Category', 'Kategorija', 'Kategooria')}:</strong>{' '}
+                    {ticket.category}
+                  </span>
+                </div>
+              )}
               
               {sellerName && (
                 <div className="flex items-center text-sm">
@@ -155,13 +159,18 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-sm text-gray-600 dark:text-gray-300">{t('Cena', 'Price', 'Kaina', 'Hind')}:</span>
-                  <div className="text-xl font-bold text-gray-900 dark:text-white">{formatPrice(ticket.price)}</div>
+                  <div className="text-xl font-bold text-gray-900 dark:text-white">
+                    {ticket.price ? formatPrice(ticket.price) : '€0.00'}
+                  </div>
                 </div>
                 <Ticket className="h-8 w-8 text-orange-500 opacity-50" />
               </div>
               
               <div className="text-sm text-gray-700 dark:text-gray-300 mt-2">
-                {ticket.quantity} {ticket.quantity === 1 ? t("biļete", "ticket", "bilietas", "pilet") : t("biļetes", "tickets", "bilietai", "piletid")} × {formatPrice(ticket.price_per_unit || ticket.price)}
+                {ticket.quantity || 1} {(ticket.quantity || 1) === 1 
+                  ? t("biļete", "ticket", "bilietas", "pilet") 
+                  : t("biļetes", "tickets", "bilietai", "piletid")
+                } × {ticket.price_per_unit ? formatPrice(ticket.price_per_unit) : formatPrice(ticket.price || 0)}
               </div>
             </div>
             
