@@ -10,7 +10,6 @@ export const getLocalizedCategoryName = (category: Category, languageCode: strin
       return category.name_en || category.name;
     case 'lt':
       return category.name_lt || category.name;
-    case 'et':
     case 'ee':
       return category.name_ee || category.name;
     default:
@@ -31,7 +30,6 @@ export const getLocalizedCategoryDescription = (category: Category, languageCode
     case 'lt':
       description = category.description_lt || category.description || '';
       break;
-    case 'et':
     case 'ee':
       description = category.description_ee || category.description || '';
       break;
@@ -42,7 +40,7 @@ export const getLocalizedCategoryDescription = (category: Category, languageCode
   // If description is not properly translated (contains only Latvian text in non-LV languages), 
   // use fallback from translations
   if (description === 'Ceļojumu pakalpojumi' && languageCode !== 'lv') {
-    const langCode = languageCode === 'et' || languageCode === 'ee' ? 'et' : languageCode;
+    const langCode = languageCode === 'ee' ? 'et' : languageCode;
     const translations = eventsTranslations[langCode as keyof typeof eventsTranslations];
     
     // Map category names to translation keys
