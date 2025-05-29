@@ -28,12 +28,6 @@ const Navigation = () => {
         {translations?.navigation?.home || "Home"}
       </Link>
       <Link 
-        to={createPath('/events')} 
-        className={`transition-colors ${isActive('/events') ? 'text-orange-500' : 'text-gray-700 dark:text-gray-200 hover:text-orange-500'}`}
-      >
-        {translations?.navigation?.events || "Events"}
-      </Link>
-      <Link 
         to={createPath('/tickets')} 
         className={`transition-colors ${isActive('/tickets') ? 'text-orange-500' : 'text-gray-700 dark:text-gray-200 hover:text-orange-500'}`}
       >
