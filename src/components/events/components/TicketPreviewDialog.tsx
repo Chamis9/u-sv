@@ -97,7 +97,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
             {ticket.description && (
               <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-md mb-4">
                 <p className="text-sm text-gray-900 dark:text-white break-words">
-                  <strong className="text-gray-700 dark:text-gray-200">{t('Apraksts', 'Description', 'Aprašymas', 'Kirjeldus')}:</strong>{' '}
+                  <span className="font-medium text-gray-700 dark:text-gray-200">{t('Apraksts', 'Description', 'Aprašymas', 'Kirjeldus')}:</span>{' '}
                   {ticket.description}
                 </p>
               </div>
@@ -105,52 +105,62 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
             
             <div className="space-y-3">
               {ticket.event_date && (
-                <div className="flex items-center text-sm">
-                  <Calendar className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                  <span className="text-gray-900 dark:text-white">
-                    <strong className="text-gray-700 dark:text-gray-300">{t('Datums', 'Date', 'Data', 'Kuupäev')}:</strong>{' '}
-                    {formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
-                  </span>
+                <div className="flex items-start text-sm">
+                  <Calendar className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-medium text-gray-700 dark:text-gray-300 block">{t('Datums', 'Date', 'Data', 'Kuupäev')}:</span>
+                    <span className="text-gray-900 dark:text-white">
+                      {formatDate(ticket.event_date, currentLanguage.code === 'lv' ? 'lv-LV' : 'en-US')}
+                    </span>
+                  </div>
                 </div>
               )}
               
               {ticket.event_time && (
-                <div className="flex items-center text-sm">
-                  <Clock className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                  <span className="text-gray-900 dark:text-white">
-                    <strong className="text-gray-700 dark:text-gray-300">{t('Laiks', 'Time', 'Laikas', 'Aeg')}:</strong>{' '}
-                    {ticket.event_time}
-                  </span>
+                <div className="flex items-start text-sm">
+                  <Clock className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-medium text-gray-700 dark:text-gray-300 block">{t('Laiks', 'Time', 'Laikas', 'Aeg')}:</span>
+                    <span className="text-gray-900 dark:text-white">
+                      {ticket.event_time}
+                    </span>
+                  </div>
                 </div>
               )}
               
               {ticket.venue && (
-                <div className="flex items-center text-sm">
-                  <MapPin className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                  <span className="text-gray-900 dark:text-white break-words">
-                    <strong className="text-gray-700 dark:text-gray-300">{t('Vieta', 'Venue', 'Vieta', 'Koht')}:</strong>{' '}
-                    {ticket.venue}
-                  </span>
+                <div className="flex items-start text-sm">
+                  <MapPin className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-medium text-gray-700 dark:text-gray-300 block">{t('Vieta', 'Venue', 'Vieta', 'Koht')}:</span>
+                    <span className="text-gray-900 dark:text-white break-words">
+                      {ticket.venue}
+                    </span>
+                  </div>
                 </div>
               )}
               
               {ticket.category && (
-                <div className="flex items-center text-sm">
-                  <Tag className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                  <span className="text-gray-900 dark:text-white break-words">
-                    <strong className="text-gray-700 dark:text-gray-300">{t('Kategorija', 'Category', 'Kategorija', 'Kategooria')}:</strong>{' '}
-                    {ticket.category}
-                  </span>
+                <div className="flex items-start text-sm">
+                  <Tag className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-medium text-gray-700 dark:text-gray-300 block">{t('Kategorija', 'Category', 'Kategorija', 'Kategooria')}:</span>
+                    <span className="text-gray-900 dark:text-white break-words">
+                      {ticket.category}
+                    </span>
+                  </div>
                 </div>
               )}
               
               {sellerName && (
-                <div className="flex items-center text-sm">
-                  <User className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                  <span className="text-gray-900 dark:text-white">
-                    <strong className="text-gray-700 dark:text-gray-300">{t('Pārdevējs', 'Seller', 'Pardavėjas', 'Müüja')}:</strong>{' '}
-                    {sellerName}
-                  </span>
+                <div className="flex items-start text-sm">
+                  <User className="h-4 w-4 mr-3 text-gray-500 dark:text-gray-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-medium text-gray-700 dark:text-gray-300 block">{t('Pārdevējs', 'Seller', 'Pardavėjas', 'Müüja')}:</span>
+                    <span className="text-gray-900 dark:text-white">
+                      {sellerName}
+                    </span>
+                  </div>
                 </div>
               )}
             </div>
@@ -158,7 +168,7 @@ export const TicketPreviewDialog: React.FC<TicketPreviewDialogProps> = ({
             <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-md">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-sm text-gray-600 dark:text-gray-300">{t('Cena', 'Price', 'Kaina', 'Hind')}:</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300 block">{t('Cena', 'Price', 'Kaina', 'Hind')}:</span>
                   <div className="text-xl font-bold text-gray-900 dark:text-white">
                     {ticket.price ? formatPrice(ticket.price) : '€0.00'}
                   </div>
