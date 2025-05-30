@@ -10,7 +10,7 @@ import { contactTranslations } from './translations/features';
 const translationsData: Record<string, Translations> = {
   lv: lvTranslations,
   en: enTranslations,
-  et: etTranslations,
+  ee: etTranslations, // Use Estonian translations for "ee" code
   lt: ltTranslations
 };
 
