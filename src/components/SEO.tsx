@@ -9,9 +9,9 @@ interface SEOProps {
 }
 
 export function SEO({
-  title = "netieku.es - biļešu apmaiņas platforma",
-  description = "Pirmā Latvijas biļešu apmaiņas platforma - droši pērc un pārdod biļetes uz koncertiem, teātri, sporta pasākumiem un citiem notikumiem.",
-  canonicalUrl = "https://netieku.es",
+  title = "SellTiX - biļešu apmaiņas platforma",
+  description = "Pirmā Baltijas biļešu apmaiņas platforma - droši pērc un pārdod biļetes uz koncertiem, teātri, sporta pasākumiem un citiem notikumiem.",
+  canonicalUrl = "https://selltix.eu",
   ogImage = "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14"
 }: SEOProps) {
   return (

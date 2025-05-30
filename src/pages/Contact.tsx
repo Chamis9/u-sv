@@ -16,8 +16,8 @@ const Contact = () => {
   return (
     <>
       <SEO 
-        title={`${t.title} | netieku.es`}
-        description="Sazinieties ar netieku.es komandu ar jautājumiem par biļešu apmaiņu vai citiem jautājumiem."
+        title={`${t.title} | selltix.eu`}
+        description="Sazinieties ar SellTiX komandu ar jautājumiem par biļešu apmaiņu vai citiem jautājumiem."
       />
       <ThemeProvider>
         <div className="min-h-screen flex flex-col bg-ticket-bg text-ticket-text">
