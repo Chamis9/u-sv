@@ -3,14 +3,14 @@ import { Translations } from './types';
 import { languages } from './languages';
 import { lvTranslations } from './translations/lv';
 import { enTranslations } from './translations/en';
-import { eeTranslations } from './translations/ee';
+import { etTranslations } from './translations/et';
 import { ltTranslations } from './translations/lt';
 import { contactTranslations } from './translations/features';
 
 const translationsData: Record<string, Translations> = {
   lv: lvTranslations,
   en: enTranslations,
-  ee: eeTranslations,
+  et: etTranslations,
   lt: ltTranslations
 };
 
