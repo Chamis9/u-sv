@@ -6,9 +6,11 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ProfileContainer } from "@/components/profile/ProfileContainer";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/features/language";
 
 const Profile = () => {
   const { isAuthenticated, isAuthLoading, user } = useAuth();
+  const { currentLanguage } = useLanguage();
   const navigate = useNavigate();
 
   // If loading, show nothing (prevent flash)
@@ -22,7 +24,7 @@ const Profile = () => {
 
   // If not authenticated, redirect to login
   if (!isAuthenticated || !user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={`/${currentLanguage.code}`} replace />;
   }
 
   return (
@@ -34,7 +36,7 @@ const Profile = () => {
       <Header />
       <div className="flex-1">
         <Routes>
-          <Route path="/" element={<Navigate to={`/profile/${user.id}/account`} replace />} />
+          <Route path="/" element={<Navigate to={`/${currentLanguage.code}/profile/${user.id}/account`} replace />} />
           <Route path="/:userId/*" element={
             <ProfileContainer 
               isAuthenticated={isAuthenticated}
