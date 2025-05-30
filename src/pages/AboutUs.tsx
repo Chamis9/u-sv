@@ -11,6 +11,9 @@ import { Check, Users, Info } from "lucide-react";
 const AboutUs = () => {
   const { translations, currentLanguage } = useLanguage();
   
+  // For Estonian route /ee/, use Estonian content (et)
+  const effectiveLanguageCode = currentLanguage.code === 'ee' ? 'et' : currentLanguage.code;
+  
   const companyInfo = {
     lv: [
       {
@@ -82,7 +85,7 @@ const AboutUs = () => {
     ]
   };
   
-  const content = companyInfo[currentLanguage.code as keyof typeof companyInfo] || companyInfo.en;
+  const content = companyInfo[effectiveLanguageCode as keyof typeof companyInfo] || companyInfo.en;
   
   return (
     <ThemeProvider defaultTheme="light" disableToggle={false}>
@@ -102,9 +105,9 @@ const AboutUs = () => {
               
               <div className="text-xl mb-12 text-ticket-text/80 text-center">
                 <span className="text-ticket-accent font-semibold">SellTiX</span> {
-                  currentLanguage.code === 'lv' ? "ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem" : 
-                  currentLanguage.code === 'et' ? "on platvorm, kus kasutajad saavad turvaliselt müüa ja osta pileteid teistelt kasutajatelt" :
-                  currentLanguage.code === 'lt' ? "yra platforma, kurioje vartotojai gali saugiai parduoti ir pirkti bilietus iš kitų vartotojų" :
+                  effectiveLanguageCode === 'lv' ? "ir platforma, kurā lietotāji var droši pārdot un iegādāties biļetes no citiem lietotājiem" : 
+                  effectiveLanguageCode === 'et' ? "on platvorm, kus kasutajad saavad turvaliselt müüa ja osta pileteid teistelt kasutajatelt" :
+                  effectiveLanguageCode === 'lt' ? "yra platforma, kurioje vartotojai gali saugiai parduoti ir pirkti bilietus iš kitų vartotojų" :
                   "is a platform where users can safely sell and purchase tickets from other users"
                 }
               </div>
@@ -129,19 +132,19 @@ const AboutUs = () => {
 
               <div className="mt-12 bg-ticket-bg/50 p-6 rounded-lg border border-ticket-accent">
                 <h2 className="text-2xl font-semibold mb-4 text-ticket-accent">
-                  {currentLanguage.code === 'lv' ? "Verificēti lietotāji" : 
-                   currentLanguage.code === 'et' ? "Verifitseeritud kasutajad" :
-                   currentLanguage.code === 'lt' ? "Patvirtinti vartotojai" : 
+                  {effectiveLanguageCode === 'lv' ? "Verificēti lietotāji" : 
+                   effectiveLanguageCode === 'et' ? "Verifitseeritud kasutajad" :
+                   effectiveLanguageCode === 'lt' ? "Patvirtinti vartotojai" : 
                    "Verified Users"}
                 </h2>
                 <div className="flex items-start">
                   <Check className="h-6 w-6 text-ticket-accent mt-1 mr-3 flex-shrink-0" />
                   <p className="text-ticket-text/80">
-                    {currentLanguage.code === 'lv' ? 
+                    {effectiveLanguageCode === 'lv' ? 
                       "Mūsu platformā pārdot var tikai verificēti lietotāji. Tas nodrošina augstākā līmeņa drošību un uzticamību visiem mūsu lietotājiem. Katra darījuma drošība tiek garantēta." : 
-                    currentLanguage.code === 'et' ? 
+                    effectiveLanguageCode === 'et' ? 
                       "Meie platvormil saavad müüa ainult verifitseeritud kasutajad. See tagab kõrgeima turvalisuse ja usaldusväärsuse kõigile meie kasutajatele. Iga tehingu turvalisus on garanteeritud." :
-                    currentLanguage.code === 'lt' ? 
+                    effectiveLanguageCode === 'lt' ? 
                       "Mūsų platformoje parduoti gali tik patvirtinti vartotojai. Tai užtikrina aukščiausio lygio saugumą ir patikimumą visiems mūsų vartotojams. Kiekvieno sandorio saugumas yra garantuotas." :
                       "Only verified users can sell on our platform. This ensures the highest level of security and reliability for all our users. The security of each transaction is guaranteed."}
                   </p>

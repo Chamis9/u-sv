@@ -11,7 +11,9 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 const Contact = () => {
   const { currentLanguage } = useLanguage();
-  const t = contactTranslations[currentLanguage.code] || contactTranslations.en;
+  // For Estonian route /ee/, use Estonian translations (et)
+  const languageCode = currentLanguage.code === 'ee' ? 'et' : currentLanguage.code;
+  const t = contactTranslations[languageCode] || contactTranslations.en;
 
   return (
     <>
