@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet-async";
 import { TicketVerifyIcon } from "@/components/icons/TicketVerifyIcon";
 import { Card, CardContent } from "@/components/ui/card";
 import { format, addDays } from "date-fns";
-import { lv, enUS } from "date-fns/locale";
+import { lv, enUS, et, lt } from "date-fns/locale";
 
 export const Hero = memo(function Hero() {
   const { translations, currentLanguage } = useLanguage();
@@ -15,7 +15,20 @@ export const Hero = memo(function Hero() {
   
   // Calculate date that is 3 days from today
   const eventDate = addDays(new Date(), 3);
-  const locale = currentLanguage.code === 'lv' ? lv : enUS;
+  
+  // Get the appropriate locale for date formatting
+  const getLocale = () => {
+    switch (currentLanguage.code) {
+      case 'lv': return lv;
+      case 'en': return enUS;
+      case 'et':
+      case 'ee': return et;
+      case 'lt': return lt;
+      default: return lv;
+    }
+  };
+  
+  const locale = getLocale();
   const formattedDate = format(eventDate, "PPP", { locale });
 
   return (
