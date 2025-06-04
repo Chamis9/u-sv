@@ -1,16 +1,22 @@
-
 import { memo } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
 import { Helmet } from "react-helmet-async";
 import { TicketVerifyIcon } from "@/components/icons/TicketVerifyIcon";
 import { Card, CardContent } from "@/components/ui/card";
+import { format, addDays } from "date-fns";
+import { lv, enUS } from "date-fns/locale";
 
 export const Hero = memo(function Hero() {
   const { translations, currentLanguage } = useLanguage();
   const { hero } = translations;
 
   const texts = getHeroTexts(currentLanguage.code);
+  
+  // Calculate date that is 3 days from today
+  const eventDate = addDays(new Date(), 3);
+  const locale = currentLanguage.code === 'lv' ? lv : enUS;
+  const formattedDate = format(eventDate, "PPP", { locale });
 
   return (
     <section
@@ -63,7 +69,7 @@ export const Hero = memo(function Hero() {
                       </div>
                       <div className="w-full">
                         <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Date</div>
-                        <div className="text-base text-ticket-text truncate">May 21, 2025 · 19:00</div>
+                        <div className="text-base text-ticket-text truncate">{formattedDate} · 19:00</div>
                       </div>
                       <div className="w-full">
                         <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Seat</div>
