@@ -1,4 +1,3 @@
-
 import { memo } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
@@ -37,7 +36,7 @@ export const Hero = memo(function Hero() {
     const ticketTranslations = {
       lv: {
         eventLabel: "Pasākums",
-        eventName: "Koncerts Show 2025",
+        eventName: "Koncerts Šovs 2025",
         dateLabel: "Datums",
         seatLabel: "Vieta",
         seatInfo: "Sektors A, Rinda 12, Vieta 23",
@@ -53,7 +52,7 @@ export const Hero = memo(function Hero() {
       },
       et: {
         eventLabel: "Üritus",
-        eventName: "Kontserdi Show 2025",
+        eventName: "Kontsert Etendus 2025",
         dateLabel: "Kuupäev",
         seatLabel: "Koht",
         seatInfo: "Sektor A, Rida 12, Koht 23",
@@ -61,7 +60,7 @@ export const Hero = memo(function Hero() {
       },
       ee: {
         eventLabel: "Üritus",
-        eventName: "Kontserdi Show 2025",
+        eventName: "Kontsert Etendus 2025",
         dateLabel: "Kuupäev",
         seatLabel: "Koht",
         seatInfo: "Sektor A, Rida 12, Koht 23",
@@ -69,7 +68,7 @@ export const Hero = memo(function Hero() {
       },
       lt: {
         eventLabel: "Renginys",
-        eventName: "Koncerto Show 2025",
+        eventName: "Koncertas Šou 2025",
         dateLabel: "Data",
         seatLabel: "Vieta",
         seatInfo: "Sektorius A, Eilė 12, Vieta 23",
