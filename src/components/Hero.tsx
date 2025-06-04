@@ -1,3 +1,4 @@
+
 import { memo } from "react";
 import { SubscribeForm } from "@/components/SubscribeForm";
 import { useLanguage } from "@/features/language";
@@ -30,6 +31,56 @@ export const Hero = memo(function Hero() {
   
   const locale = getLocale();
   const formattedDate = format(eventDate, "PPP", { locale });
+
+  // Get localized ticket information
+  const getTicketInfo = (langCode: string) => {
+    const ticketTranslations = {
+      lv: {
+        eventLabel: "Pasākums",
+        eventName: "Koncerts Show 2025",
+        dateLabel: "Datums",
+        seatLabel: "Vieta",
+        seatInfo: "Sektors A, Rinda 12, Vieta 23",
+        priceLabel: "Cena"
+      },
+      en: {
+        eventLabel: "Event",
+        eventName: "Concert Show 2025",
+        dateLabel: "Date",
+        seatLabel: "Seat",
+        seatInfo: "Section A, Row 12, Seat 23",
+        priceLabel: "Price"
+      },
+      et: {
+        eventLabel: "Üritus",
+        eventName: "Kontserdi Show 2025",
+        dateLabel: "Kuupäev",
+        seatLabel: "Koht",
+        seatInfo: "Sektor A, Rida 12, Koht 23",
+        priceLabel: "Hind"
+      },
+      ee: {
+        eventLabel: "Üritus",
+        eventName: "Kontserdi Show 2025",
+        dateLabel: "Kuupäev",
+        seatLabel: "Koht",
+        seatInfo: "Sektor A, Rida 12, Koht 23",
+        priceLabel: "Hind"
+      },
+      lt: {
+        eventLabel: "Renginys",
+        eventName: "Koncerto Show 2025",
+        dateLabel: "Data",
+        seatLabel: "Vieta",
+        seatInfo: "Sektorius A, Eilė 12, Vieta 23",
+        priceLabel: "Kaina"
+      }
+    };
+
+    return ticketTranslations[langCode as keyof typeof ticketTranslations] || ticketTranslations.en;
+  };
+
+  const ticketInfo = getTicketInfo(currentLanguage.code);
 
   return (
     <section
@@ -77,19 +128,19 @@ export const Hero = memo(function Hero() {
                   <div className="bg-ticket-bg/40 rounded-lg p-4 border border-ticket-accent/10">
                     <div className="flex flex-col gap-3 mt-20 items-start text-left">
                       <div className="w-full">
-                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Event</div>
-                        <div className="text-lg font-semibold text-ticket-accent truncate">Concert Show 2025</div>
+                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">{ticketInfo.eventLabel}</div>
+                        <div className="text-lg font-semibold text-ticket-accent truncate">{ticketInfo.eventName}</div>
                       </div>
                       <div className="w-full">
-                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Date</div>
+                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">{ticketInfo.dateLabel}</div>
                         <div className="text-base text-ticket-text truncate">{formattedDate} · 19:00</div>
                       </div>
                       <div className="w-full">
-                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Seat</div>
-                        <div className="text-base text-ticket-text truncate">Section A, Row 12, Seat 23</div>
+                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">{ticketInfo.seatLabel}</div>
+                        <div className="text-base text-ticket-text truncate">{ticketInfo.seatInfo}</div>
                       </div>
                       <div className="w-full">
-                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">Price</div>
+                        <div className="text-xs text-ticket-text/60 uppercase tracking-wider mb-1">{ticketInfo.priceLabel}</div>
                         <div className="text-lg font-semibold text-ticket-accent">€65.00</div>
                       </div>
                     </div>
@@ -145,6 +196,15 @@ const getHeroTexts = (langCode: string) => {
       description: "SellTiX is a platform where users can safely sell and purchase tickets from other users."
     },
     et: {
+      heading: [
+        "Ei saa",
+        "üritusele?",
+        "Müü oma <span class='text-ticket-accent'>pilet</span> turvaliselt"
+      ],
+      mainCta: "Soovid minna üritusele, kuid piletid on välja müüdud? Vaata",
+      description: "SellTiX on platvorm, kus kasutajad saavad turvaliselt müüa ja osta pileteid teistelt kasutajatelt."
+    },
+    ee: {
       heading: [
         "Ei saa",
         "üritusele?",
