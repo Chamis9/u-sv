@@ -36,7 +36,7 @@ export const Hero = memo(function Hero() {
     const ticketTranslations = {
       lv: {
         eventLabel: "Pasākums",
-        eventName: "Koncerts Šovs 2025",
+        eventName: "Koncertšovs 2025",
         dateLabel: "Datums",
         seatLabel: "Vieta",
         seatInfo: "Sektors A, Rinda 12, Vieta 23",
