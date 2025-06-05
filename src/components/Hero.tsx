@@ -14,7 +14,7 @@ export const Hero = memo(function Hero() {
   const texts = getHeroTexts(currentLanguage.code);
   
   // Calculate date that is 3 days from today
-  const eventDate = addDays(new Date(), 3);
+  const eventDate = addDays(new Date(), 1);
   
   // Get the appropriate locale for date formatting
   const getLocale = () => {
