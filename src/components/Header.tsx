@@ -38,21 +38,24 @@ export function Header() {
         <Navigation />
         
         <div className="flex items-center gap-2 md:gap-4 text-ticket-text">
-          {isAuthenticated && user ? (
-            <UserHoverCard 
-              user={user}
-              onLogout={handleLogout}
-              onLinkClick={() => {}}
-            />
-          ) : (
-            <LoginButton 
-              variant="ghost" 
-              className="text-ticket-text hover:text-ticket-accent transition-colors hover:bg-transparent"
-              showIcon={false}
-            >
-              <UserCircle size={20} className="text-ticket-accent hover:text-ticket-accent" />
-            </LoginButton>
-          )}
+          {/* Login/Register ikona ir paslēpta, bet funkcionalitāte saglabāta */}
+          <div className="hidden">
+            {isAuthenticated && user ? (
+              <UserHoverCard 
+                user={user}
+                onLogout={handleLogout}
+                onLinkClick={() => {}}
+              />
+            ) : (
+              <LoginButton 
+                variant="ghost" 
+                className="text-ticket-text hover:text-ticket-accent transition-colors hover:bg-transparent"
+                showIcon={false}
+              >
+                <UserCircle size={20} className="text-ticket-accent hover:text-ticket-accent" />
+              </LoginButton>
+            )}
+          </div>
           <LanguageSelector />
         </div>
       </div>
