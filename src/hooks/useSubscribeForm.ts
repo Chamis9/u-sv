@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/features/language";
@@ -22,7 +21,7 @@ export const useSubscribeForm = () => {
     const langCode = pathSegments[0];
     
     // Check if the first segment is a valid language code
-    if (['lv', 'en', 'et', 'ee', 'lt'].includes(langCode)) {
+    if (['lv', 'en', 'ee', 'lt'].includes(langCode)) {
       return langCode;
     }
     
@@ -156,20 +155,6 @@ const getTranslations = (langCode: string) => {
       invalidEmail: "Please enter a valid email address",
       rateLimit: "Please wait 30 seconds before trying again.",
       emailExists: "This email is already subscribed to our newsletter."
-    },
-    et: {
-      placeholder: "E-posti aadress",
-      button: "Telli",
-      sending: "Saatmine...",
-      successTitle: "Täname tellimise eest!",
-      successMessage: "Hoiame teid kõigi uudistega kursis.",
-      errorTitle: "Viga!",
-      errorMessage: "E-posti aadressi salvestamine ebaõnnestus. Palun proovi uuesti.",
-      previousEmails: "Varem kasutatud e-postiaadressid",
-      selectEmail: "Vali e-post...",
-      invalidEmail: "Palun sisestage kehtiv e-posti aadress",
-      rateLimit: "Palun oodake 30 sekundit enne järgmist katset.",
-      emailExists: "See e-posti aadress on juba meie uudiskirja tellinud."
     },
     ee: {
       placeholder: "E-posti aadress",

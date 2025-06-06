@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { 
   Dialog,
@@ -61,7 +60,7 @@ export function AddSubscriberDialog({
         errorGeneric: "Error adding subscriber",
         success: "Subscriber added successfully"
       },
-      et: {
+      ee: {
         title: "Lisa uus tellija",
         emailLabel: "E-posti aadress",
         languageLabel: "Keel",
@@ -97,8 +96,7 @@ export function AddSubscriberDialog({
   const languageOptions = [
     { value: 'lv', label: 'Latviešu' },
     { value: 'en', label: 'English' },
-    { value: 'et', label: 'Eesti' },
-    { value: 'ee', label: 'Eesti (ee)' },
+    { value: 'ee', label: 'Eesti' },
     { value: 'lt', label: 'Lietuvių' }
   ];
   

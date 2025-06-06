@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/features/language";
@@ -27,11 +26,6 @@ export function SubscribeForm() {
         placeholder: "Email address",
         button: "Subscribe",
         sending: "Sending..."
-      },
-      et: {
-        placeholder: "E-posti aadress",
-        button: "Telli",
-        sending: "Saatmine..."
       },
       ee: {
         placeholder: "E-posti aadress",
