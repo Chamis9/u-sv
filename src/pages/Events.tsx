@@ -93,11 +93,37 @@ const Events = () => {
   
   const t = (lv: string, en: string) => currentLanguage.code === 'lv' ? lv : en;
 
+  // Language-specific SEO
+  const getSEOContent = () => {
+    const seoContent = {
+      lv: {
+        title: `${translations.events?.title || "Biļetes"} | SellTiX`,
+        description: "Atrodiet biļetes uz koncertiem, teātri, sporta pasākumiem un citiem notikumiem. Droša biļešu apmaiņas platforma Baltijā."
+      },
+      en: {
+        title: `${translations.events?.title || "Tickets"} | SellTiX`,
+        description: "Find tickets for concerts, theatre, sports events and other events. Safe ticket exchange platform in the Baltics."
+      },
+      ee: {
+        title: `${translations.events?.title || "Piletid"} | SellTiX`,
+        description: "Leidke pileteid kontsertidele, teatrisse, spordiüritustele ja muudele sündmustele. Turvaline piletite vahetusplatvorm Baltikumis."
+      },
+      lt: {
+        title: `${translations.events?.title || "Bilietai"} | SellTiX`,
+        description: "Raskite bilietus į koncertus, teatrą, sporto renginius ir kitus renginius. Saugi bilietų mainų platforma Baltijos šalyse."
+      }
+    };
+    
+    return seoContent[currentLanguage.code as keyof typeof seoContent] || seoContent.en;
+  };
+
+  const seoContent = getSEOContent();
+
   if (categoriesLoading) {
     return (
       <ThemeProvider>
         <div className="min-h-screen flex flex-col bg-ticket-bg">
-          <SEO />
+          <SEO title={seoContent.title} description={seoContent.description} />
           <Header />
           <main className="flex-grow pt-24 pb-12">
             <div className="container mx-auto px-4">
@@ -117,7 +143,7 @@ const Events = () => {
   return (
     <ThemeProvider>
       <div className="min-h-screen flex flex-col bg-ticket-bg text-ticket-text">
-        <SEO />
+        <SEO title={seoContent.title} description={seoContent.description} />
         <Header />
         <main className="flex-grow pt-24 pb-12">
           <div className="container mx-auto px-4 sm:px-6">
