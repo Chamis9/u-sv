@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/features/language";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +28,7 @@ export function AddSubscriberDialog({
   onSubscriberAdded 
 }: AddSubscriberDialogProps) {
   const [email, setEmail] = useState("");
+  const [language, setLanguage] = useState("lv");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { currentLanguage } = useLanguage();
@@ -36,6 +38,7 @@ export function AddSubscriberDialog({
       lv: {
         title: "Pievienot jaunu abonentu",
         emailLabel: "E-pasta adrese",
+        languageLabel: "Valoda",
         cancel: "Atcelt",
         add: "Pievienot",
         adding: "Pievieno...",
@@ -48,6 +51,7 @@ export function AddSubscriberDialog({
       en: {
         title: "Add new subscriber",
         emailLabel: "Email address",
+        languageLabel: "Language",
         cancel: "Cancel",
         add: "Add",
         adding: "Adding...",
@@ -60,6 +64,7 @@ export function AddSubscriberDialog({
       et: {
         title: "Lisa uus tellija",
         emailLabel: "E-posti aadress",
+        languageLabel: "Keel",
         cancel: "Tühista",
         add: "Lisa",
         adding: "Lisamine...",
@@ -72,6 +77,7 @@ export function AddSubscriberDialog({
       lt: {
         title: "Pridėti naują prenumeratorių",
         emailLabel: "El. pašto adresas",
+        languageLabel: "Kalba",
         cancel: "Atšaukti",
         add: "Pridėti",
         adding: "Pridedama...",
@@ -87,6 +93,14 @@ export function AddSubscriberDialog({
   };
   
   const t = getTranslation();
+  
+  const languageOptions = [
+    { value: 'lv', label: 'Latviešu' },
+    { value: 'en', label: 'English' },
+    { value: 'et', label: 'Eesti' },
+    { value: 'ee', label: 'Eesti (ee)' },
+    { value: 'lt', label: 'Lietuvių' }
+  ];
   
   const isValidEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -116,7 +130,10 @@ export function AddSubscriberDialog({
     try {
       const { data, error } = await supabase
         .from('newsletter_subscribers')
-        .insert({ email })
+        .insert({ 
+          email,
+          language 
+        })
         .select();
       
       if (error) {
@@ -137,6 +154,7 @@ export function AddSubscriberDialog({
           description: t.success
         });
         setEmail("");
+        setLanguage("lv");
         onSubscriberAdded();
         onClose();
       }
@@ -172,6 +190,24 @@ export function AddSubscriberDialog({
               disabled={isSubmitting}
               required
             />
+          </div>
+          
+          <div className="grid w-full items-center gap-2">
+            <label htmlFor="language" className="text-sm font-medium">
+              {t.languageLabel}
+            </label>
+            <Select value={language} onValueChange={setLanguage} disabled={isSubmitting}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {languageOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           
           <DialogFooter className="pt-4">

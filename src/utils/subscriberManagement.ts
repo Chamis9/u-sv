@@ -81,11 +81,12 @@ export const updateSubscriber = async (id: number, email: string, oldEmail: stri
 
 // Create downloadable CSV file from subscribers data
 export const createDownloadableCSV = (subscribers: Subscriber[]) => {
-  const headers = 'ID,Email,Created At\n';
+  const headers = 'ID,Email,Language,Created At\n';
   
   const rows = subscribers.map(sub => {
     const formattedDate = sub.created_at ? new Date(sub.created_at).toLocaleDateString() : '';
-    return `${sub.id},"${sub.email}","${formattedDate}"`;
+    const language = (sub as any).language || 'lv'; // Default to 'lv' if language is not available
+    return `${sub.id},"${sub.email}","${language}","${formattedDate}"`;
   }).join('\n');
   
   const csv = headers + rows;

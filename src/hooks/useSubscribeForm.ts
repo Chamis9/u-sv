@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/features/language";
 import { supabase } from "@/integrations/supabase/client";
+import { useLocation } from "react-router-dom";
 
 // Email validation regex
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -13,6 +14,21 @@ export const useSubscribeForm = () => {
   const [formError, setFormError] = useState("");
   const { toast } = useToast();
   const { currentLanguage } = useLanguage();
+  const location = useLocation();
+
+  // Get language from URL path
+  const getLanguageFromUrl = (): string => {
+    const pathSegments = location.pathname.split('/').filter(Boolean);
+    const langCode = pathSegments[0];
+    
+    // Check if the first segment is a valid language code
+    if (['lv', 'en', 'et', 'ee', 'lt'].includes(langCode)) {
+      return langCode;
+    }
+    
+    // Fallback to current language context
+    return currentLanguage.code;
+  };
 
   const validateEmail = (emailToValidate: string): boolean => {
     if (!emailToValidate || !EMAIL_REGEX.test(emailToValidate)) {
@@ -46,9 +62,14 @@ export const useSubscribeForm = () => {
     setIsLoading(true);
     
     try {
+      const language = getLanguageFromUrl();
+      
       const { error } = await supabase
         .from('newsletter_subscribers')
-        .insert([{ email: email.toLowerCase().trim() }]);
+        .insert([{ 
+          email: email.toLowerCase().trim(),
+          language: language
+        }]);
       
       if (error) {
         if (error.code === '23505') { // Unique violation error code
