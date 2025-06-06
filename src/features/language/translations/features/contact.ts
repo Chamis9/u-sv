@@ -5,7 +5,7 @@ export const contactTranslations: Record<string, ContactTranslations> = {
   lv: {
     title: "Kontaktinformācija",
     subtitle: "Sazinieties ar mums, ja jums ir jautājumi vai nepieciešama palīdzība",
-    companyName: "SIA \"Par to tiek domāts\"",
+    companyName: "SellTiX.eu",
     addressTitle: "Mūsu birojs",
     address: "Rīga, Latvija",
     emailTitle: "E-pasts",
@@ -27,7 +27,7 @@ export const contactTranslations: Record<string, ContactTranslations> = {
   en: {
     title: "Contact Information",
     subtitle: "Get in touch with us if you have any questions or need assistance",
-    companyName: "SIA \"Par to tiek domāts\"",
+    companyName: "SellTiX.eu",
     addressTitle: "Our Office",
     address: "Riga, Latvia",
     emailTitle: "Email",
@@ -49,7 +49,7 @@ export const contactTranslations: Record<string, ContactTranslations> = {
   et: {
     title: "Kontaktandmed",
     subtitle: "Võtke meiega ühendust, kui teil on küsimusi või vajate abi",
-    companyName: "SIA \"Par to tiek domāts\"",
+    companyName: "SellTiX.eu",
     addressTitle: "Meie kontor",
     address: "Riia, Läti",
     emailTitle: "E-post",
@@ -71,7 +71,7 @@ export const contactTranslations: Record<string, ContactTranslations> = {
   lt: {
     title: "Kontaktinė informacija",
     subtitle: "Susisiekite su mumis, jei turite klausimų ar reikia pagalbos",
-    companyName: "SIA \"Par to tiek domāts\"",
+    companyName: "SellTiX.eu",
     addressTitle: "Mūsų biuras",
     address: "Ryga, Latvija",
     emailTitle: "El. paštas",
