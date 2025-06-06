@@ -26,16 +26,45 @@ export const PurchaseDialog: React.FC<PurchaseDialogProps> = ({
   onPurchaseConfirm
 }) => {
   const { currentLanguage } = useLanguage();
-  const t = (lv: string, en: string, lt: string, ee: string) => {
-    switch (currentLanguage.code) {
-      case 'lv': return lv;
-      case 'en': return en;
-      case 'lt': return lt;
-      case 'et':
-      case 'ee': return ee;
-      default: return lv;
-    }
+  
+  const getTranslations = () => {
+    const translations = {
+      lv: {
+        title: "Biļetes pirkšana",
+        description: "Vai vēlaties iegādāties šo biļeti?",
+        cancel: "Atcelt",
+        confirm: "Apstiprināt pirkumu"
+      },
+      en: {
+        title: "Purchase Ticket",
+        description: "Do you want to purchase this ticket?",
+        cancel: "Cancel",
+        confirm: "Confirm Purchase"
+      },
+      lt: {
+        title: "Bilieto pirkimas",
+        description: "Ar norite įsigyti šį bilietą?",
+        cancel: "Atšaukti",
+        confirm: "Patvirtinti pirkimą"
+      },
+      et: {
+        title: "Pileti ostmine",
+        description: "Kas soovite seda piletit osta?",
+        cancel: "Tühista",
+        confirm: "Kinnita ost"
+      },
+      ee: {
+        title: "Pileti ostmine",
+        description: "Kas soovite seda piletit osta?",
+        cancel: "Tühista",
+        confirm: "Kinnita ost"
+      }
+    };
+    
+    return translations[currentLanguage.code as keyof typeof translations] || translations.lv;
   };
+
+  const t = getTranslations();
 
   if (!ticket) return null;
 
@@ -44,10 +73,10 @@ export const PurchaseDialog: React.FC<PurchaseDialogProps> = ({
       <DialogContent className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            {t("Biļetes pirkšana", "Purchase Ticket", "Bilieto pirkimas", "Pileti ostmine")}
+            {t.title}
           </DialogTitle>
           <DialogDescription className="text-gray-600 dark:text-gray-300">
-            {t("Vai vēlaties iegādāties šo biļeti?", "Do you want to purchase this ticket?", "Ar norite įsigyti šį bilietą?", "Kas soovite seda piletit osta?")}
+            {t.description}
           </DialogDescription>
         </DialogHeader>
         
@@ -65,14 +94,14 @@ export const PurchaseDialog: React.FC<PurchaseDialogProps> = ({
             onClick={() => onOpenChange(false)}
             className="text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600"
           >
-            {t("Atcelt", "Cancel", "Atšaukti", "Tühista")}
+            {t.cancel}
           </Button>
           <Button 
             variant="orange" 
             onClick={() => ticket && onPurchaseConfirm(ticket)}
             className="bg-orange-500 hover:bg-orange-600 text-white"
           >
-            {t("Apstiprināt pirkumu", "Confirm Purchase", "Patvirtinti pirkimą", "Kinnita ost")}
+            {t.confirm}
           </Button>
         </DialogFooter>
       </DialogContent>
