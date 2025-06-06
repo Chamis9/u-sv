@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Mail, Phone, MapPin, Instagram, Facebook, Twitter } from "lucide-react";
+import { Mail, Phone, MapPin, Instagram, Facebook, Linkedin } from "lucide-react";
 import { useLanguage } from "@/features/language";
 
 interface ContactInfoProps {
@@ -66,10 +66,10 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({ translations: t }) => 
              aria-label="Facebook">
             <Facebook size={20} className="text-ticket-accent" />
           </a>
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
              className="p-2 bg-ticket-bg/80 border border-ticket-accent/20 rounded-full hover:bg-ticket-accent/10 transition-colors"
-             aria-label="X (Twitter)">
-            <Twitter size={20} className="text-ticket-accent" />
+             aria-label="LinkedIn">
+            <Linkedin size={20} className="text-ticket-accent" />
           </a>
           <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer"
              className="p-2 bg-ticket-bg/80 border border-ticket-accent/20 rounded-full hover:bg-ticket-accent/10 transition-colors"
