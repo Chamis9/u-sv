@@ -33,6 +33,11 @@ export function SubscribeForm() {
         button: "Telli",
         sending: "Saatmine..."
       },
+      ee: {
+        placeholder: "E-posti aadress",
+        button: "Telli",
+        sending: "Saatmine..."
+      },
       lt: {
         placeholder: "El. pašto adresas",
         button: "Prenumeruoti",
