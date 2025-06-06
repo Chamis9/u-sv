@@ -1,4 +1,5 @@
 
+
 import { ContactTranslations } from "@/components/contact/types";
 
 export const contactTranslations: Record<string, ContactTranslations> = {
@@ -9,7 +10,7 @@ export const contactTranslations: Record<string, ContactTranslations> = {
     addressTitle: "Mūsu birojs",
     address: "Rīga, Latvija",
     emailTitle: "E-pasts",
-    email: "info@selltix.eu",
+    email: "Šobrīd izmantojiet saziņas formu! Paldies!",
     phoneTitle: "Tālrunis",
     phone: "Drīzumā",
     socialTitle: "Sociālie tīkli (Drīzumā)",
@@ -31,7 +32,7 @@ export const contactTranslations: Record<string, ContactTranslations> = {
     addressTitle: "Our Office",
     address: "Riga, Latvia",
     emailTitle: "Email",
-    email: "info@selltix.eu",
+    email: "Currently use the contact form! Thank you!",
     phoneTitle: "Phone",
     phone: "Coming soon",
     socialTitle: "Social Media (Coming Soon)",
@@ -53,7 +54,7 @@ export const contactTranslations: Record<string, ContactTranslations> = {
     addressTitle: "Meie kontor",
     address: "Riia, Läti",
     emailTitle: "E-post",
-    email: "info@selltix.eu",
+    email: "Praegu kasutage kontaktivormi! Aitäh!",
     phoneTitle: "Telefon",
     phone: "Peagi",
     socialTitle: "Sotsiaalmeedia (Peagi)",
@@ -75,7 +76,7 @@ export const contactTranslations: Record<string, ContactTranslations> = {
     addressTitle: "Mūsų biuras",
     address: "Ryga, Latvija",
     emailTitle: "El. paštas",
-    email: "info@selltix.eu",
+    email: "Šiuo metu naudokite kontaktų formą! Ačiū!",
     phoneTitle: "Telefonas",
     phone: "Netrukus",
     socialTitle: "Socialiniai tinklai (Netrukus)",
@@ -91,3 +92,4 @@ export const contactTranslations: Record<string, ContactTranslations> = {
     errorMessage: "Klaida! Nepavyko išsiųsti žinutės. Bandykite dar kartą."
   }
 };
+
