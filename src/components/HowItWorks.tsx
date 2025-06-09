@@ -1,6 +1,6 @@
 
 import { memo } from "react";
-import { Search, TicketIcon, Users, RefreshCw } from "lucide-react";
+import { Check, TicketIcon, Users, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/features/language";
 
 export const HowItWorks = memo(function HowItWorks() {
@@ -27,7 +27,7 @@ export const HowItWorks = memo(function HowItWorks() {
                 {index === 0 && <Users className="h-8 w-8 md:h-10 md:w-10 text-ticket-check" />}
                 {index === 1 && <TicketIcon className="h-8 w-8 md:h-10 md:w-10 text-ticket-check" />}
                 {index === 2 && <RefreshCw className="h-8 w-8 md:h-10 md:w-10 text-ticket-check" />}
-                {index === 3 && <Search className="h-8 w-8 md:h-10 md:w-10 text-ticket-check" />}
+                {index === 3 && <Check className="h-8 w-8 md:h-10 md:w-10 text-ticket-check" />}
               </div>
               <h3 className="text-lg md:text-xl font-semibold mb-2 text-ticket-text">{step.title}</h3>
               <p className="text-sm md:text-base text-center text-ticket-text/70 font-medium">{step.description}</p>
