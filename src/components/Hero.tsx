@@ -159,15 +159,6 @@ export const Hero = memo(function Hero() {
               {texts.description}
             </p>
           </div>
-          
-          <div className="flex flex-col items-center space-y-6 bg-ticket-accent/10 dark:bg-ticket-accent/5 rounded-xl p-4 sm:p-6 md:p-8 mt-8 border border-ticket-text/10">
-            <p className="text-ticket-text text-base md:text-lg">
-              {hero.subscribeText}
-            </p>
-            <div className="w-full max-w-md mx-auto">
-              <SubscribeForm />
-            </div>
-          </div>
         </div>
       </div>
     </section>
