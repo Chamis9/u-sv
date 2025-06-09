@@ -11,8 +11,8 @@ const Index = () => {
       <SEO />
       <Header />
       <main className="flex-grow pt-4">
-        <HowItWorks />
         <Hero />
+        <HowItWorks />
       </main>
       <Footer />
     </div>
